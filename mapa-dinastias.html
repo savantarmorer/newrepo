@@ -509,17 +509,16 @@ LIMIT 5000
                                window.location.hostname === '127.0.0.1' ||
                                window.location.port !== '';
             
-            // URLs para tentar (proxy local primeiro se em desenvolvimento)
-            const apiUrls = isLocalhost ? [
-                // Método 1: Proxy local (se servidor estiver rodando)
-                `http://localhost:3000/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`,
-                // Método 2: API direta (pode falhar por CORS)
+            const currentOrigin = window.location.origin;
+            
+            // URLs para tentar (proxy primeiro, depois API direta)
+            const apiUrls = [
+                // Método 1: Proxy no mesmo domínio (funciona em produção e desenvolvimento)
+                `${currentOrigin}/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`,
+                // Método 2: Proxy local (apenas em desenvolvimento)
+                ...(isLocalhost ? [`http://localhost:3000/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`] : []),
+                // Método 3: API direta (pode falhar por CORS, mas tentamos por último)
                 `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`
-            ] : [
-                // Em produção, tentar API direta primeiro
-                `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`,
-                // Se tiver proxy em produção, adicione aqui
-                // `https://seu-dominio.com/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`
             ];
             
             let lastError = null;
