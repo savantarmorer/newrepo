@@ -752,6 +752,16 @@
                 dynastySidebar.classList.add('open');
                 console.log('Sidebar classList after add:', dynastySidebar.classList.toString());
                 console.log('Sidebar computed transform:', window.getComputedStyle(dynastySidebar).transform);
+                console.log('Sidebar display:', window.getComputedStyle(dynastySidebar).display);
+                console.log('Sidebar visibility:', window.getComputedStyle(dynastySidebar).visibility);
+                console.log('Sidebar z-index:', window.getComputedStyle(dynastySidebar).zIndex);
+                
+                // Teste: tentar mostrar a sidebar diretamente
+                setTimeout(() => {
+                    dynastySidebar.style.transform = 'translateX(0)';
+                    dynastySidebar.style.display = 'flex';
+                    console.log('Sidebar forçada a aparecer após 100ms');
+                }, 100);
             };
 
             // FunÃ§Ã£o para obter nome do estado
