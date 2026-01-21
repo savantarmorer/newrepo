@@ -577,14 +577,39 @@
 
         // InicializaÃ§Ã£o do mapa
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded - Iniciando mapa');
+            
             const mapSvg = document.getElementById('brasilMap');
             const mapWrapper = document.getElementById('mapWrapper');
+            
+            if (!mapSvg) {
+                console.error('mapSvg não encontrado!');
+                return;
+            }
+            if (!mapWrapper) {
+                console.error('mapWrapper não encontrado!');
+                return;
+            }
+            
             const statePaths = mapSvg.querySelectorAll('.state-path');
+            console.log('State paths encontrados:', statePaths.length);
+            
             const dynastySidebar = document.getElementById('dynastySidebar');
             const sidebarContent = document.getElementById('sidebarContent');
             const sidebarTitle = document.getElementById('sidebarTitle');
             const closeSidebarBtn = document.getElementById('closeSidebar');
             const resetZoom = document.getElementById('resetZoom');
+
+            console.log('dynastySidebar:', dynastySidebar);
+            console.log('sidebarContent:', sidebarContent);
+            console.log('sidebarTitle:', sidebarTitle);
+            console.log('closeSidebarBtn:', closeSidebarBtn);
+            console.log('resetZoom:', resetZoom);
+
+            if (!dynastySidebar || !sidebarContent) {
+                console.error('Elementos da sidebar não encontrados!');
+                return;
+            }
 
             let currentState = null;
             let currentTransform = { x: 0, y: 0, scale: 1 };
@@ -599,7 +624,9 @@
 
             // FunÃ§Ã£o para fechar sidebar
             const closeSidebar = () => {
-                dynastySidebar.classList.remove('open');
+                if (dynastySidebar) {
+                    dynastySidebar.classList.remove('open');
+                }
             };
 
             // FunÃ§Ã£o para fazer zoom no estado
@@ -652,7 +679,9 @@
                 statePath.classList.add('active');
                 
                 currentState = stateCode;
-                resetZoom.disabled = false;
+                if (resetZoom) {
+                    resetZoom.disabled = false;
+                }
                 
                 // Mostrar sidebar
                 showDynasties(stateCode);
@@ -664,7 +693,9 @@
                 mapSvg.style.transform = 'translate(0, 0) scale(1)';
                 statePaths.forEach(p => p.classList.remove('active'));
                 currentState = null;
-                resetZoom.disabled = true;
+                if (resetZoom) {
+                    resetZoom.disabled = true;
+                }
                 closeSidebar();
             };
 
@@ -738,19 +769,40 @@
             };
 
             // Event listeners
-            statePaths.forEach(path => {
+            console.log('Adicionando event listeners aos paths...');
+            statePaths.forEach((path, index) => {
+                const stateCode = path.dataset.state;
+                console.log(`Path ${index}: stateCode=${stateCode}, has click listener`);
+                
                 path.addEventListener('click', (e) => {
+                    e.preventDefault();
                     e.stopPropagation();
-                    const stateCode = path.dataset.state;
-                    console.log('State clicked:', stateCode);
-                    zoomToState(stateCode, path);
+                    const clickedStateCode = path.dataset.state;
+                    console.log('=== STATE CLICKED ===');
+                    console.log('State code:', clickedStateCode);
+                    console.log('Path element:', path);
+                    zoomToState(clickedStateCode, path);
                 });
+                
+                // Adicionar estilo de cursor para indicar que é clicável
+                path.style.cursor = 'pointer';
             });
+            
+            console.log('Event listeners adicionados. Total de paths:', statePaths.length);
 
-            resetZoom.addEventListener('click', resetZoomMap);
-            closeSidebarBtn.addEventListener('click', () => {
-                closeSidebar();
-            });
+            if (resetZoom) {
+                resetZoom.addEventListener('click', resetZoomMap);
+            } else {
+                console.warn('resetZoom button not found');
+            }
+            
+            if (closeSidebarBtn) {
+                closeSidebarBtn.addEventListener('click', () => {
+                    closeSidebar();
+                });
+            } else {
+                console.warn('closeSidebarBtn not found');
+            }
 
             // Fechar sidebar ao clicar fora
             mapWrapper.addEventListener('click', (e) => {
