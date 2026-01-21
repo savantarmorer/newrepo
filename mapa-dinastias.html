@@ -582,7 +582,7 @@
             const dynastySidebar = document.getElementById('dynastySidebar');
             const sidebarContent = document.getElementById('sidebarContent');
             const sidebarTitle = document.getElementById('sidebarTitle');
-            const closeSidebar = document.getElementById('closeSidebar');
+            const closeSidebarBtn = document.getElementById('closeSidebar');
             const resetZoom = document.getElementById('resetZoom');
 
             let currentState = null;
@@ -596,13 +596,18 @@
                 }
             });
 
+            // FunÃ§Ã£o para fechar sidebar
+            const closeSidebar = () => {
+                dynastySidebar.classList.remove('open');
+            };
+
             // FunÃ§Ã£o para fazer zoom no estado
             const zoomToState = (stateCode, statePath) => {
                 const bbox = statePath.getBBox();
                 const svg = statePath.ownerSVGElement;
                 const svgViewBox = svg.viewBox.baseVal;
-                const svgWidth = svgViewBox.width;
-                const svgHeight = svgViewBox.height;
+                const svgWidth = svgViewBox.width;  // 1000
+                const svgHeight = svgViewBox.height; // 912
                 
                 // Obter dimensÃµes do container
                 const container = mapWrapper.getBoundingClientRect();
@@ -617,17 +622,29 @@
                 const scale = 3;
                 
                 // Calcular transformaÃ§Ã£o para centralizar o estado
-                // Converter coordenadas do viewBox para pixels
+                // O SVG usa preserveAspectRatio="xMidYMid meet", entÃ£o precisamos calcular o scaleFactor correto
                 const scaleX = containerWidth / svgWidth;
                 const scaleY = containerHeight / svgHeight;
                 const scaleFactor = Math.min(scaleX, scaleY);
                 
-                const translateX = (containerWidth / 2) - (centerX * scaleFactor * scale);
-                const translateY = (containerHeight / 2) - (centerY * scaleFactor * scale);
+                // Calcular o offset do SVG dentro do container (devido ao preserveAspectRatio)
+                const scaledSvgWidth = svgWidth * scaleFactor;
+                const scaledSvgHeight = svgHeight * scaleFactor;
+                const offsetX = (containerWidth - scaledSvgWidth) / 2;
+                const offsetY = (containerHeight - scaledSvgHeight) / 2;
+                
+                // Calcular posiÃ§Ã£o do centro do estado em pixels do container (antes do zoom)
+                const centerXPixels = offsetX + (centerX * scaleFactor);
+                const centerYPixels = offsetY + (centerY * scaleFactor);
+                
+                // Calcular transformaÃ§Ã£o para centralizar o estado no container apÃ³s o zoom
+                // O transformOrigin precisa ser o centro do container
+                const translateX = (containerWidth / 2) - centerXPixels;
+                const translateY = (containerHeight / 2) - centerYPixels;
                 
                 currentTransform = { x: translateX, y: translateY, scale };
                 mapSvg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
-                mapSvg.style.transformOrigin = 'center center';
+                mapSvg.style.transformOrigin = `${centerXPixels}px ${centerYPixels}px`;
                 
                 // Destacar estado
                 statePaths.forEach(p => p.classList.remove('active'));
@@ -713,8 +730,8 @@
             });
 
             resetZoom.addEventListener('click', resetZoomMap);
-            closeSidebar.addEventListener('click', () => {
-                dynastySidebar.classList.remove('open');
+            closeSidebarBtn.addEventListener('click', () => {
+                closeSidebar();
             });
 
             // Fechar sidebar ao clicar fora
