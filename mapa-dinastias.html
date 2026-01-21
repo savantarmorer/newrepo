@@ -504,19 +504,29 @@ ORDER BY ano DESC, sigla_uf, nome
 LIMIT 5000
             `.trim();
             
-            // Tentar diferentes métodos de acesso à API
-            const apiUrls = [
-                // Método 1: API direta (pode falhar por CORS)
+            // Detectar se estamos em localhost (desenvolvimento) ou produção
+            const isLocalhost = window.location.hostname === 'localhost' || 
+                               window.location.hostname === '127.0.0.1' ||
+                               window.location.port !== '';
+            
+            // URLs para tentar (proxy local primeiro se em desenvolvimento)
+            const apiUrls = isLocalhost ? [
+                // Método 1: Proxy local (se servidor estiver rodando)
+                `http://localhost:3000/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`,
+                // Método 2: API direta (pode falhar por CORS)
+                `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`
+            ] : [
+                // Em produção, tentar API direta primeiro
                 `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`,
-                // Método 2: Via proxy CORS público (pode não estar disponível)
-                `https://cors-anywhere.herokuapp.com/https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`
+                // Se tiver proxy em produção, adicione aqui
+                // `https://seu-dominio.com/api/candidatos?sql=${encodeURIComponent(sqlQuery)}`
             ];
             
             let lastError = null;
             
             for (const apiUrl of apiUrls) {
                 try {
-                    console.log(`Tentando: ${apiUrl.substring(0, 50)}...`);
+                    console.log(`Tentando: ${apiUrl.substring(0, 60)}...`);
                     const response = await fetch(apiUrl, {
                         method: 'GET',
                         headers: {
@@ -533,9 +543,11 @@ LIMIT 5000
                             processarDadosCandidatos(data);
                             return; // Sucesso!
                         }
+                    } else {
+                        console.warn(`Resposta não OK: ${response.status}`);
                     }
                 } catch (error) {
-                    console.warn(`Falha ao acessar ${apiUrl.substring(0, 30)}:`, error.message);
+                    console.warn(`Falha ao acessar API:`, error.message);
                     lastError = error;
                     continue; // Tentar próximo método
                 }
