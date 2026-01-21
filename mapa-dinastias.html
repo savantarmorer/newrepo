@@ -174,14 +174,15 @@
             border-left: 1px solid var(--color-border);
             transform: translateX(100%);
             transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 200;
+            z-index: 1000;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.3);
         }
 
         .dynasty-sidebar.open {
-            transform: translateX(0);
+            transform: translateX(0) !important;
         }
 
         .sidebar-header {
@@ -669,8 +670,18 @@
 
             // FunÃ§Ã£o para mostrar dinastias
             const showDynasties = (stateCode) => {
+                console.log('showDynasties called with stateCode:', stateCode);
+                console.log('dynastySidebar:', dynastySidebar);
+                console.log('sidebarContent:', sidebarContent);
+                
+                if (!dynastySidebar || !sidebarContent) {
+                    console.error('Sidebar elements not found');
+                    return;
+                }
+                
                 const dinastias = dinastiasPorEstado[stateCode] || [];
                 const stateName = getStateName(stateCode);
+                console.log('Dinastias found:', dinastias.length);
                 
                 if (dinastias.length === 0) {
                     sidebarContent.innerHTML = `
@@ -683,7 +694,9 @@
                         </div>
                     `;
                 } else {
-                    sidebarTitle.textContent = `${stateName} (${stateCode})`;
+                    if (sidebarTitle) {
+                        sidebarTitle.textContent = `${stateName} (${stateCode})`;
+                    }
                     sidebarContent.innerHTML = `
                         <div class="state-info">
                             <div class="state-name">${stateName}</div>
@@ -703,7 +716,11 @@
                     `;
                 }
                 
+                // ForÃ§ar reflow para garantir que a transiÃ§Ã£o funcione
+                dynastySidebar.offsetHeight;
                 dynastySidebar.classList.add('open');
+                console.log('Sidebar classList after add:', dynastySidebar.classList.toString());
+                console.log('Sidebar computed transform:', window.getComputedStyle(dynastySidebar).transform);
             };
 
             // FunÃ§Ã£o para obter nome do estado
