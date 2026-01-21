@@ -468,8 +468,25 @@
         async function buscarDadosCandidatos() {
             console.log('Buscando dados do Base dos Dados...');
             
+            // Primeiro, tentar carregar dados de um arquivo JSON local (se existir)
+            // Isso permite gerar os dados offline e servir localmente
+            try {
+                const localDataResponse = await fetch('candidatos-dinastias.json');
+                if (localDataResponse.ok) {
+                    const localData = await localDataResponse.json();
+                    console.log('Dados carregados do arquivo local candidatos-dinastias.json');
+                    dinastiasPorEstado = localData;
+                    estadosComDinastias = Object.keys(dinastiasPorEstado);
+                    if (typeof window.atualizarEstadosComDinastias === 'function') {
+                        window.atualizarEstadosComDinastias();
+                    }
+                    return;
+                }
+            } catch (e) {
+                console.log('Arquivo local não encontrado, tentando API...');
+            }
+            
             // Query SQL para buscar candidatos (senadores, deputados federais e estaduais)
-            // Usando a API pública do Base dos Dados via BigQuery
             const sqlQuery = `
 SELECT
     sigla_uf,
@@ -487,43 +504,48 @@ ORDER BY ano DESC, sigla_uf, nome
 LIMIT 5000
             `.trim();
             
-            // API do Base dos Dados (pode ter limitações de CORS)
-            // Tentar usar proxy ou API alternativa
-            const apiUrl = `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`;
+            // Tentar diferentes métodos de acesso à API
+            const apiUrls = [
+                // Método 1: API direta (pode falhar por CORS)
+                `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`,
+                // Método 2: Via proxy CORS público (pode não estar disponível)
+                `https://cors-anywhere.herokuapp.com/https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`
+            ];
             
-            try {
-                // Primeira tentativa: API direta
-                let response = await fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                    mode: 'cors'
-                });
-                
-                // Se falhar por CORS, tentar via proxy ou usar dados estáticos
-                if (!response.ok || response.status === 0) {
-                    console.warn('API direta falhou, tentando alternativa...');
-                    // Usar dados estáticos como fallback por enquanto
-                    // Em produção, você pode configurar um proxy server-side
-                    throw new Error('CORS ou API indisponível');
+            let lastError = null;
+            
+            for (const apiUrl of apiUrls) {
+                try {
+                    console.log(`Tentando: ${apiUrl.substring(0, 50)}...`);
+                    const response = await fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                        },
+                        mode: 'cors'
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Dados recebidos do Base dos Dados:', data);
+                        
+                        if (data && (data.rows || data.data)) {
+                            processarDadosCandidatos(data);
+                            return; // Sucesso!
+                        }
+                    }
+                } catch (error) {
+                    console.warn(`Falha ao acessar ${apiUrl.substring(0, 30)}:`, error.message);
+                    lastError = error;
+                    continue; // Tentar próximo método
                 }
-                
-                const data = await response.json();
-                console.log('Dados recebidos do Base dos Dados:', data);
-                
-                // Processar dados e agrupar por estado e sobrenome
-                if (data && (data.rows || data.data)) {
-                    processarDadosCandidatos(data);
-                } else {
-                    throw new Error('Formato de dados inválido');
-                }
-            } catch (error) {
-                console.error('Erro ao buscar dados do Base dos Dados:', error);
-                console.log('Usando dados estáticos como fallback...');
-                // Usar dados estáticos como fallback
-                usarDadosEstaticos();
             }
+            
+            // Se todos os métodos falharam, usar dados estáticos
+            console.warn('Não foi possível acessar a API do Base dos Dados (CORS bloqueado)');
+            console.warn('Solução: Configure um proxy server-side ou use o arquivo candidatos-dinastias.json');
+            console.log('Usando dados estáticos como fallback...');
+            usarDadosEstaticos();
         }
 
         // Função para processar dados e identificar dinastias
