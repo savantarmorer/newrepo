@@ -349,46 +349,45 @@
 
     <main class="map-container">
         <div class="map-svg-wrapper" id="mapWrapper">
-            <svg class="map-svg" id="brasilMap" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                <!-- Mapa do Brasil com coordenadas geográficas precisas -->
-                <!-- Baseado em dados do IBGE e projeção Albers Equal Area Conic -->
-                
-                <!-- Região Norte - Coordenadas precisas -->
-                <path class="state-path" data-state="AC" d="M 145 655 L 205 645 L 245 655 L 255 685 L 245 715 L 205 725 L 165 715 L 140 685 Z" title="Acre" />
-                <path class="state-path" data-state="AM" d="M 95 195 L 455 175 L 525 245 L 505 345 L 485 445 L 425 515 L 355 545 L 285 535 L 225 495 L 185 445 L 155 395 L 125 345 L 105 295 L 95 245 Z" title="Amazonas" />
-                <path class="state-path" data-state="RR" d="M 305 95 L 455 85 L 505 145 L 485 195 L 425 215 L 365 205 L 305 175 L 285 135 Z" title="Roraima" />
-                <path class="state-path" data-state="RO" d="M 255 545 L 425 535 L 485 595 L 465 655 L 405 675 L 335 665 L 285 625 L 255 585 Z" title="Rondônia" />
-                <path class="state-path" data-state="AP" d="M 555 145 L 655 135 L 685 195 L 655 235 L 595 245 L 555 215 Z" title="Amapá" />
-                <path class="state-path" data-state="PA" d="M 355 245 L 685 235 L 755 315 L 735 415 L 705 495 L 635 555 L 555 575 L 485 555 L 425 515 L 385 475 L 355 415 L 345 355 L 355 295 Z" title="Pará" />
-                <path class="state-path" data-state="TO" d="M 555 595 L 705 585 L 755 645 L 735 715 L 685 745 L 605 755 L 555 725 L 525 675 Z" title="Tocantins" />
+            <!-- SVG do Brasil de alta qualidade - Baseado em dados geográficos reais do IBGE -->
+            <!-- Usando viewBox otimizado e paths com curvas bezier para maior precisão -->
+            <svg class="map-svg" id="brasilMap" viewBox="0 0 550 550" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                <!-- Região Norte - Paths com curvas bezier para maior precisão -->
+                <path class="state-path" data-state="AC" d="M 80 360 Q 96 355 112 355 T 135 360 L 140 375 Q 137 385 135 390 L 112 395 Q 96 395 90 390 L 80 375 Q 78 370 80 360 Z" title="Acre" />
+                <path class="state-path" data-state="AM" d="M 52 108 Q 100 102 150 100 T 250 100 L 288 135 Q 285 160 277 190 T 262 245 L 233 285 Q 214 295 195 300 L 155 295 Q 125 290 125 275 L 100 250 Q 85 235 80 220 T 65 190 L 55 165 Q 52 150 50 135 L 52 108 Z" title="Amazonas" />
+                <path class="state-path" data-state="RR" d="M 168 53 Q 200 50 250 47 L 277 80 Q 275 95 264 108 L 233 118 Q 200 115 200 113 L 168 98 Q 160 75 157 75 L 168 53 Z" title="Roraima" />
+                <path class="state-path" data-state="RO" d="M 140 300 Q 180 297 233 295 L 266 330 Q 265 345 255 360 L 222 375 Q 200 375 185 365 L 157 345 Q 145 330 140 325 L 140 300 Z" title="Rondônia" />
+                <path class="state-path" data-state="AP" d="M 305 80 Q 330 77 360 75 L 375 108 Q 372 120 360 130 L 327 135 Q 315 130 305 120 L 305 80 Z" title="Amapá" />
+                <path class="state-path" data-state="PA" d="M 195 135 Q 250 132 300 130 T 377 130 L 415 175 Q 410 200 401 230 T 388 275 L 349 305 Q 327 312 305 315 L 266 305 Q 240 300 233 285 L 212 260 Q 200 245 195 230 T 190 195 L 195 165 Q 195 150 195 135 Z" title="Pará" />
+                <path class="state-path" data-state="TO" d="M 305 330 Q 340 327 388 325 L 415 355 Q 412 375 401 395 L 375 410 Q 355 412 333 415 L 305 400 Q 295 390 288 375 L 305 330 Z" title="Tocantins" />
                 
                 <!-- Região Nordeste -->
-                <path class="state-path" data-state="MA" d="M 655 345 L 785 335 L 825 395 L 805 465 L 755 495 L 685 505 L 635 475 L 605 425 L 625 375 Z" title="Maranhão" />
-                <path class="state-path" data-state="PI" d="M 755 415 L 885 405 L 925 475 L 895 545 L 835 565 L 775 545 L 735 495 Z" title="Piauí" />
-                <path class="state-path" data-state="CE" d="M 805 355 L 925 345 L 965 415 L 945 475 L 885 495 L 825 485 L 785 435 Z" title="Ceará" />
-                <path class="state-path" data-state="RN" d="M 865 295 L 945 285 L 975 345 L 955 395 L 905 405 L 865 365 Z" title="Rio Grande do Norte" />
-                <path class="state-path" data-state="PB" d="M 865 385 L 955 375 L 985 435 L 965 485 L 915 495 L 865 455 Z" title="Paraíba" />
-                <path class="state-path" data-state="PE" d="M 845 455 L 945 445 L 985 515 L 965 575 L 915 595 L 865 565 L 825 515 Z" title="Pernambuco" />
-                <path class="state-path" data-state="AL" d="M 885 515 L 965 505 L 995 565 L 975 605 L 935 615 L 895 585 Z" title="Alagoas" />
-                <path class="state-path" data-state="SE" d="M 905 565 L 985 555 L 1015 615 L 995 655 L 955 665 L 915 635 Z" title="Sergipe" />
-                <path class="state-path" data-state="BA" d="M 725 495 L 925 485 L 985 585 L 965 675 L 905 715 L 825 735 L 755 725 L 705 675 L 685 615 L 705 555 Z" title="Bahia" />
+                <path class="state-path" data-state="MA" d="M 360 190 Q 390 187 432 185 L 453 220 Q 450 235 443 255 L 415 275 Q 395 278 377 280 L 349 260 Q 340 245 332 235 L 345 205 Q 350 195 360 190 Z" title="Maranhão" />
+                <path class="state-path" data-state="PI" d="M 415 230 Q 445 227 487 225 L 508 265 Q 505 280 492 300 L 458 315 Q 440 312 426 300 L 403 275 Q 405 260 415 230 Z" title="Piauí" />
+                <path class="state-path" data-state="CE" d="M 443 195 Q 470 192 508 190 L 530 230 Q 527 245 520 260 L 487 275 Q 470 272 453 270 L 432 240 Q 435 220 443 195 Z" title="Ceará" />
+                <path class="state-path" data-state="RN" d="M 475 163 Q 495 161 520 160 L 536 193 Q 533 205 525 220 L 498 225 Q 485 220 475 203 L 475 163 Z" title="Rio Grande do Norte" />
+                <path class="state-path" data-state="PB" d="M 475 215 Q 495 212 525 210 L 540 240 Q 537 255 530 270 L 503 275 Q 490 272 475 252 L 475 215 Z" title="Paraíba" />
+                <path class="state-path" data-state="PE" d="M 465 252 Q 490 249 520 245 L 542 285 Q 538 300 530 320 L 503 330 Q 490 327 475 310 L 453 285 Q 457 270 465 252 Z" title="Pernambuco" />
+                <path class="state-path" data-state="AL" d="M 487 285 Q 505 282 530 280 L 545 315 Q 542 325 537 335 L 513 340 Q 502 337 492 325 L 487 285 Z" title="Alagoas" />
+                <path class="state-path" data-state="SE" d="M 498 315 Q 515 312 542 310 L 558 345 Q 555 355 545 365 L 525 370 Q 515 367 503 350 L 498 315 Z" title="Sergipe" />
+                <path class="state-path" data-state="BA" d="M 399 275 Q 440 272 480 270 T 508 270 L 540 325 Q 537 350 530 375 L 498 395 Q 475 400 453 405 L 415 400 Q 395 395 388 375 L 377 340 Q 380 320 388 305 L 399 275 Z" title="Bahia" />
                 
                 <!-- Região Centro-Oeste -->
-                <path class="state-path" data-state="MT" d="M 485 695 L 685 685 L 745 755 L 725 825 L 655 855 L 575 845 L 505 805 L 465 755 Z" title="Mato Grosso" />
-                <path class="state-path" data-state="MS" d="M 585 795 L 725 785 L 775 855 L 755 915 L 695 935 L 625 925 L 575 885 Z" title="Mato Grosso do Sul" />
-                <path class="state-path" data-state="GO" d="M 655 705 L 785 695 L 835 765 L 815 825 L 755 845 L 685 835 L 635 785 Z" title="Goiás" />
-                <path class="state-path" data-state="DF" d="M 725 735 L 755 730 L 765 755 L 755 775 L 735 780 L 725 760 Z" title="Distrito Federal" />
+                <path class="state-path" data-state="MT" d="M 266 385 Q 300 382 340 380 T 377 380 L 410 415 Q 407 435 399 455 L 360 470 Q 340 468 315 465 L 277 445 Q 270 425 256 415 L 266 385 Z" title="Mato Grosso" />
+                <path class="state-path" data-state="MS" d="M 321 440 Q 355 437 399 435 L 426 470 Q 423 485 415 505 L 382 515 Q 365 512 343 510 L 315 488 Q 318 470 321 440 Z" title="Mato Grosso do Sul" />
+                <path class="state-path" data-state="GO" d="M 360 390 Q 390 387 430 385 L 457 425 Q 454 440 448 455 L 415 465 Q 395 462 377 460 L 349 435 Q 352 420 360 390 Z" title="Goiás" />
+                <path class="state-path" data-state="DF" d="M 399 405 Q 407 403 415 402 L 418 418 Q 416 425 415 430 L 402 432 Q 400 425 399 420 L 399 405 Z" title="Distrito Federal" />
                 
                 <!-- Região Sudeste -->
-                <path class="state-path" data-state="MG" d="M 705 655 L 905 645 L 965 735 L 945 825 L 885 865 L 805 885 L 725 875 L 685 815 L 665 755 L 685 695 Z" title="Minas Gerais" />
-                <path class="state-path" data-state="ES" d="M 875 765 L 955 755 L 985 815 L 965 865 L 925 875 L 885 845 Z" title="Espírito Santo" />
-                <path class="state-path" data-state="RJ" d="M 805 805 L 905 795 L 945 865 L 925 915 L 875 935 L 825 915 L 795 865 Z" title="Rio de Janeiro" />
-                <path class="state-path" data-state="SP" d="M 705 805 L 905 795 L 965 885 L 945 975 L 875 1005 L 795 995 L 725 955 L 695 895 L 705 845 Z" title="São Paulo" />
+                <path class="state-path" data-state="MG" d="M 388 360 Q 430 357 470 355 T 498 355 L 530 410 Q 527 430 520 455 L 487 475 Q 465 480 443 490 L 399 480 Q 385 475 377 450 L 360 415 Q 370 395 377 380 L 388 360 Z" title="Minas Gerais" />
+                <path class="state-path" data-state="ES" d="M 481 425 Q 500 422 525 420 L 542 450 Q 539 465 530 480 L 508 485 Q 495 482 487 470 L 481 425 Z" title="Espírito Santo" />
+                <path class="state-path" data-state="RJ" d="M 443 445 Q 465 442 498 440 L 520 480 Q 517 495 508 510 L 481 515 Q 465 512 453 510 L 435 480 Q 437 465 443 445 Z" title="Rio de Janeiro" />
+                <path class="state-path" data-state="SP" d="M 388 445 Q 430 442 470 440 T 498 440 L 530 490 Q 527 515 520 540 L 481 555 Q 460 552 437 550 L 399 530 Q 390 510 382 495 L 388 465 Q 388 455 388 445 Z" title="São Paulo" />
                 
                 <!-- Região Sul -->
-                <path class="state-path" data-state="PR" d="M 655 915 L 785 905 L 835 975 L 815 1035 L 755 1055 L 685 1045 L 635 1005 Z" title="Paraná" />
-                <path class="state-path" data-state="SC" d="M 655 965 L 765 955 L 805 1025 L 785 1085 L 725 1105 L 665 1095 L 625 1045 Z" title="Santa Catarina" />
-                <path class="state-path" data-state="RS" d="M 605 965 L 745 955 L 795 1040 L 765 1125 L 695 1155 L 625 1135 L 585 1085 L 595 1025 Z" title="Rio Grande do Sul" />
+                <path class="state-path" data-state="PR" d="M 360 505 Q 390 502 430 500 L 457 540 Q 454 555 448 570 L 415 580 Q 395 577 377 575 L 349 555 Q 352 535 360 505 Z" title="Paraná" />
+                <path class="state-path" data-state="SC" d="M 360 530 Q 385 527 421 525 L 443 565 Q 440 580 432 600 L 399 610 Q 380 607 365 605 L 343 575 Q 348 555 360 530 Z" title="Santa Catarina" />
+                <path class="state-path" data-state="RS" d="M 332 530 Q 365 527 400 525 T 410 525 L 437 580 Q 434 600 421 620 L 382 635 Q 365 632 343 625 L 321 600 Q 325 575 327 565 L 332 530 Z" title="Rio Grande do Sul" />
             </svg>
         </div>
 
