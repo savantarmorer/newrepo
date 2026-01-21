@@ -461,8 +461,185 @@
 
     <script src="script.js"></script>
     <script>
-        // Dados das dinastias por estado
-        const dinastiasPorEstado = {
+        // Dados das dinastias por estado (será preenchido com dados reais)
+        let dinastiasPorEstado = {};
+
+        // Função para buscar dados do Base dos Dados
+        async function buscarDadosCandidatos() {
+            console.log('Buscando dados do Base dos Dados...');
+            
+            // Query SQL para buscar candidatos (senadores, deputados federais e estaduais)
+            // Usando a API pública do Base dos Dados via BigQuery
+            const sqlQuery = `
+SELECT
+    sigla_uf,
+    nome,
+    nome_urna,
+    sigla_partido,
+    cargo,
+    situacao,
+    ano
+FROM \`basedosdados.br_tse_eleicoes.candidatos\`
+WHERE cargo IN ('SENADOR', 'DEPUTADO FEDERAL', 'DEPUTADO ESTADUAL')
+    AND ano >= 2014
+    AND sigla_uf IS NOT NULL
+ORDER BY ano DESC, sigla_uf, nome
+LIMIT 5000
+            `.trim();
+            
+            // API do Base dos Dados (pode ter limitações de CORS)
+            // Tentar usar proxy ou API alternativa
+            const apiUrl = `https://api.basedosdados.org/api/v1/query?sql=${encodeURIComponent(sqlQuery)}`;
+            
+            try {
+                // Primeira tentativa: API direta
+                let response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    mode: 'cors'
+                });
+                
+                // Se falhar por CORS, tentar via proxy ou usar dados estáticos
+                if (!response.ok || response.status === 0) {
+                    console.warn('API direta falhou, tentando alternativa...');
+                    // Usar dados estáticos como fallback por enquanto
+                    // Em produção, você pode configurar um proxy server-side
+                    throw new Error('CORS ou API indisponível');
+                }
+                
+                const data = await response.json();
+                console.log('Dados recebidos do Base dos Dados:', data);
+                
+                // Processar dados e agrupar por estado e sobrenome
+                if (data && (data.rows || data.data)) {
+                    processarDadosCandidatos(data);
+                } else {
+                    throw new Error('Formato de dados inválido');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do Base dos Dados:', error);
+                console.log('Usando dados estáticos como fallback...');
+                // Usar dados estáticos como fallback
+                usarDadosEstaticos();
+            }
+        }
+
+        // Função para processar dados e identificar dinastias
+        function processarDadosCandidatos(data) {
+            const candidatosPorEstado = {};
+            
+            // Agrupar candidatos por estado
+            // A API pode retornar em formatos diferentes
+            const rows = data.rows || data.data || [];
+            
+            if (rows && rows.length > 0) {
+                rows.forEach(row => {
+                    // Pode ser array ou objeto
+                    const estado = Array.isArray(row) ? row[0] : (row.sigla_uf || row.estado);
+                    const nome = Array.isArray(row) ? row[1] : (row.nome || '');
+                    const nomeUrna = Array.isArray(row) ? row[2] : (row.nome_urna || row.nome || '');
+                    const partido = Array.isArray(row) ? row[3] : (row.sigla_partido || row.partido || '');
+                    const cargo = Array.isArray(row) ? row[4] : (row.cargo || '');
+                    const situacao = Array.isArray(row) ? row[5] : (row.situacao || '');
+                    const ano = Array.isArray(row) ? row[6] : (row.ano || '');
+                    
+                    if (!estado || !nome) return;
+                    
+                    if (!candidatosPorEstado[estado]) {
+                        candidatosPorEstado[estado] = [];
+                    }
+                    
+                    candidatosPorEstado[estado].push({
+                        nome: nome.trim(),
+                        nomeUrna: nomeUrna.trim() || nome.trim(),
+                        partido: partido || 'Sem partido',
+                        cargo: cargo,
+                        situacao: situacao,
+                        ano: ano
+                    });
+                });
+            }
+            
+            // Identificar dinastias (mesmo sobrenome no mesmo estado)
+            Object.keys(candidatosPorEstado).forEach(estado => {
+                const candidatos = candidatosPorEstado[estado];
+                const sobrenomes = {};
+                
+                candidatos.forEach(candidato => {
+                    // Extrair sobrenome (último nome)
+                    const partesNome = candidato.nome.split(' ');
+                    if (partesNome.length < 2) return;
+                    
+                    const sobrenome = partesNome[partesNome.length - 1];
+                    
+                    if (!sobrenomes[sobrenome]) {
+                        sobrenomes[sobrenome] = [];
+                    }
+                    
+                    sobrenomes[sobrenome].push(candidato);
+                });
+                
+                // Criar dinastias (sobrenomes com 2+ membros)
+                const dinastiasEstado = [];
+                Object.keys(sobrenomes).forEach(sobrenome => {
+                    const membros = sobrenomes[sobrenome];
+                    if (membros.length >= 2) {
+                        // Agrupar por cargo
+                        const cargos = [...new Set(membros.map(m => m.cargo))];
+                        const anos = membros.map(m => m.ano);
+                        const anoMin = Math.min(...anos);
+                        const anoMax = Math.max(...anos);
+                        
+                        dinastiasEstado.push({
+                            nome: `Família ${sobrenome}`,
+                            cargos: cargos.join(', '),
+                            decadas: `${anoMin}-${anoMax}`,
+                            membros: membros.map(m => 
+                                `${m.nomeUrna || m.nome} - ${m.cargo} (${m.ano}) - ${m.partido || 'Sem partido'}`
+                            )
+                        });
+                    }
+                });
+                
+                if (dinastiasEstado.length > 0) {
+                    dinastiasPorEstado[estado] = dinastiasEstado;
+                }
+            });
+            
+            console.log('Dinastias processadas:', dinastiasPorEstado);
+            
+            // Atualizar estados com dinastias
+            estadosComDinastias = Object.keys(dinastiasPorEstado);
+            console.log(`Processadas ${estadosComDinastias.length} estados com dinastias`);
+            
+            // Atualizar visualização do mapa
+            if (typeof window.atualizarEstadosComDinastias === 'function') {
+                window.atualizarEstadosComDinastias();
+            } else {
+                atualizarMapaComDinastias();
+            }
+        }
+
+        // Função para atualizar o mapa após carregar dados
+        function atualizarMapaComDinastias() {
+            if (typeof statePaths !== 'undefined' && statePaths) {
+                statePaths.forEach(path => {
+                    const stateCode = path.dataset.state;
+                    if (estadosComDinastias.includes(stateCode)) {
+                        path.classList.add('has-dynasty');
+                    } else {
+                        path.classList.remove('has-dynasty');
+                    }
+                });
+            }
+        }
+
+        // Dados estáticos como fallback
+        function usarDadosEstaticos() {
+            console.log('Usando dados estáticos...');
+            dinastiasPorEstado = {
             'MA': [
                 {
                     nome: 'FamÃ­lia Sarney',
@@ -571,13 +748,28 @@
                 }
             ]
         };
+            
+            // Atualizar estados com dinastias
+            estadosComDinastias = Object.keys(dinastiasPorEstado);
+            
+            // Atualizar visualização do mapa
+            if (typeof window.atualizarEstadosComDinastias === 'function') {
+                window.atualizarEstadosComDinastias();
+            }
+        }
 
         // Estados com dinastias (para destacar no mapa)
-        const estadosComDinastias = Object.keys(dinastiasPorEstado);
+        let estadosComDinastias = [];
 
         // InicializaÃ§Ã£o do mapa
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOMContentLoaded - Iniciando mapa');
+            
+            // Buscar dados do Base dos Dados
+            buscarDadosCandidatos().catch(err => {
+                console.error('Erro ao buscar dados:', err);
+                usarDadosEstaticos();
+            });
             
             const mapSvg = document.getElementById('brasilMap');
             const mapWrapper = document.getElementById('mapWrapper');
