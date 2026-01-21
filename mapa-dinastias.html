@@ -742,6 +742,7 @@
                 path.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const stateCode = path.dataset.state;
+                    console.log('State clicked:', stateCode);
                     zoomToState(stateCode, path);
                 });
             });
