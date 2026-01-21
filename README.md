@@ -143,6 +143,8 @@ Procure por `.price-tag` e modifique os valores.
 ```
 iuri-piragibe-v3/
 ├── index.html       # Página com vídeos + media kit
+├── sobre.html       # Página autoral para rankear 'Piragibe' + livro
+├── mapa-dinastias.html # Mapa interativo das dinastias políticas
 ├── styles.css       # CSS com estilos para vídeos/mediakit
 ├── script.js        # JavaScript
 ├── robots.txt       # SEO
@@ -193,3 +195,7 @@ git branch -M main
 git remote add origin https://github.com/savantarmorer/newrepo.git
 git push -u origin main
 ```
+
+## 🔗 Novas páginas
+- `sobre.html`: foco em SEO para “Piragibe”, inclui CTA para prévia do livro na Amazon.
+- `mapa-dinastias.html`: mapa interativo com dinastias (Sarney, Calheiros, Barbalho, Magalhães, Gomes).

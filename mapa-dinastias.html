@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa das Dinastias Políticas do Brasil | Piragibe</title>
+    <meta name="description" content="Mapa interativo das grandes dinastias políticas do Brasil. Explore famílias, regiões e principais cargos.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://iuripiragibe.net/mapa-dinastias.html">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mapa das Dinastias Políticas do Brasil">
+    <meta property="og:description" content="Navegue pelas dinastias políticas brasileiras em um mapa interativo e intuitivo.">
+    <meta property="og:url" content="https://iuripiragibe.net/mapa-dinastias.html">
+    <meta property="og:image" content="https://iuripiragibe.net/og-image.svg">
+    <meta property="og:locale" content="pt_BR">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mapa das Dinastias Políticas do Brasil">
+    <meta name="twitter:description" content="Visualize dinastias políticas por estado e cargos.">
+    <meta name="twitter:image" content="https://iuripiragibe.net/og-image.svg">
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.svg">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#0a0a0f">
+
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="page">
+    <header class="page-hero">
+        <div class="container">
+            <div class="page-kicker">Mapa das Dinastias</div>
+            <h1 class="page-title">Dinastias políticas do Brasil, visual e interativo</h1>
+            <p class="page-subtitle">
+                Explore as principais famílias políticas por estado, cargos ocupados e décadas de influência. 
+                Clique nos pontos do mapa para ver detalhes e exemplos de mandatos.
+            </p>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div class="container map-section">
+            <section class="map-wrapper">
+                <svg class="brasil-silhouette" viewBox="0 0 500 600" aria-hidden="true">
+                    <path fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" d="M153 37l81 21 55-13 42 28-10 35 28 40 44 30-26 55-7 33 18 38-39 29-17 47-62 20-55-14-41 16-49-13-9-46-31-26-18-66 35-48-6-71 17-38 30-33 20-54z"/>
+                </svg>
+                <div class="map-points" id="mapPoints"></div>
+            </section>
+
+            <aside class="dynasty-panel" id="dynastyPanel">
+                <div class="badge">Dinastias</div>
+                <h3 id="dynastyName">Selecione um ponto no mapa</h3>
+                <small id="dynastyMeta">Estados, cargos e décadas</small>
+                <div class="dynasty-list" id="dynastyList"></div>
+                <div class="legend">
+                    <span class="legend-dot"></span> Estados mapeados | Clique para ver detalhes
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <script src="/script.js"></script>
+</body>
+</html>
