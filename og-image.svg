@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Iuri Piragibe - Jornalista Investigativo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0a0f"/>
+      <stop offset="1" stop-color="#050508"/>
+    </linearGradient>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="980" cy="160" r="180" fill="none" stroke="url(#g)" stroke-width="22" filter="url(#glow)" opacity="0.9"/>
+  <circle cx="220" cy="520" r="220" fill="none" stroke="url(#g)" stroke-width="18" opacity="0.35"/>
+  <text x="90" y="220" fill="#ffffff" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="64" font-weight="800">
+    Iuri Piragibe
+  </text>
+  <text x="90" y="295" fill="#a1a1aa" font-family="Inter, system-ui, -apple-system, Segoe UI, sans-serif" font-size="34" font-weight="500">
+    Jornalismo Investigativo • Urbex • Maçonaria • Mistérios do Brasil
+  </text>
+  <rect x="90" y="345" width="380" height="64" rx="32" fill="rgba(99,102,241,0.16)" stroke="rgba(99,102,241,0.35)"/>
+  <text x="122" y="388" fill="#c7d2fe" font-family="Space Mono, ui-monospace, SFMono-Regular, Menlo, monospace" font-size="26" font-weight="700">
+    iuripiragibe.net
+  </text>
+</svg>
