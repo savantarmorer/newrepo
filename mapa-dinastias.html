@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa das Dinastias Políticas do Brasil | Piragibe</title>
-    <meta name="description" content="Mapa interativo das grandes dinastias políticas do Brasil. Explore famílias, regiões e principais cargos.">
+    <title>Mapa das Dinastias Políticas do Brasil | Iuri Piragibe</title>
+    <meta name="description" content="Mapa interativo das grandes dinastias políticas do Brasil. Explore famílias políticas por estado, cargos ocupados e décadas de influência.">
+    <meta name="keywords" content="dinastias políticas Brasil, famílias políticas, mapa político Brasil, Sarney, Calheiros, Barbalho, Magalhães, Gomes, oligarquias brasileiras">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://iuripiragibe.net/mapa-dinastias.html">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Mapa das Dinastias Políticas do Brasil">
-    <meta property="og:description" content="Navegue pelas dinastias políticas brasileiras em um mapa interativo e intuitivo.">
+    <meta property="og:title" content="Mapa das Dinastias Políticas do Brasil | Iuri Piragibe">
+    <meta property="og:description" content="Navegue pelas dinastias políticas brasileiras em um mapa interativo. Clique nos estados para ver detalhes.">
     <meta property="og:url" content="https://iuripiragibe.net/mapa-dinastias.html">
     <meta property="og:image" content="https://iuripiragibe.net/og-image.svg">
     <meta property="og:locale" content="pt_BR">
@@ -25,41 +26,722 @@
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#0a0a0f">
 
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .map-page {
+            min-height: 100vh;
+            background: var(--color-dark);
+            color: var(--color-text);
+        }
+
+        .map-header {
+            padding: var(--spacing-lg) 0;
+            background: var(--color-darker);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .map-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .map-header h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .map-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .map-header .back-link:hover {
+            color: var(--color-accent);
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 200px);
+            min-height: 600px;
+            background: var(--color-darker);
+            overflow: hidden;
+        }
+
+        .map-svg-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: grab;
+        }
+
+        .map-svg-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .map-svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .state-path {
+            fill: var(--color-surface);
+            stroke: var(--color-border);
+            stroke-width: 1.5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .state-path:hover {
+            fill: var(--color-accent);
+            stroke: var(--color-accent-light);
+            stroke-width: 2;
+            filter: brightness(1.2);
+        }
+
+        .state-path.active {
+            fill: var(--color-accent);
+            stroke: var(--color-accent-light);
+            stroke-width: 2.5;
+            filter: brightness(1.3);
+        }
+
+        .state-path.has-dynasty {
+            fill: rgba(99, 102, 241, 0.3);
+        }
+
+        .state-path.has-dynasty:hover {
+            fill: var(--color-accent);
+        }
+
+        .map-controls {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            z-index: 100;
+        }
+
+        .map-btn {
+            padding: 0.75rem 1rem;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .map-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+
+        .map-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .dynasty-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 400px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--color-surface);
+            border-left: 1px solid var(--color-border);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dynasty-sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--color-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--color-text);
+        }
+
+        .sidebar-content {
+            padding: var(--spacing-lg);
+            flex: 1;
+        }
+
+        .state-info {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .state-name {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-accent);
+        }
+
+        .state-uf {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .dynasty-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .dynasty-card {
+            padding: var(--spacing-md);
+            background: var(--color-surface-light);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+
+        .dynasty-card:hover {
+            border-color: var(--color-accent);
+            transform: translateX(4px);
+        }
+
+        .dynasty-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            color: var(--color-text);
+        }
+
+        .dynasty-meta {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .dynasty-members {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dynasty-members li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .dynasty-members li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--color-text-muted);
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .dynasty-sidebar {
+                width: 100%;
+                max-width: 100vw;
+            }
+
+            .map-controls {
+                top: auto;
+                bottom: var(--spacing-md);
+                right: var(--spacing-md);
+                flex-direction: row;
+            }
+
+            .map-container {
+                height: calc(100vh - 150px);
+                min-height: 400px;
+            }
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+        }
+    </style>
 </head>
-<body class="page">
-    <header class="page-hero">
+<body class="map-page">
+    <header class="map-header">
         <div class="container">
-            <div class="page-kicker">Mapa das Dinastias</div>
-            <h1 class="page-title">Dinastias políticas do Brasil, visual e interativo</h1>
-            <p class="page-subtitle">
-                Explore as principais famílias políticas por estado, cargos ocupados e décadas de influência. 
-                Clique nos pontos do mapa para ver detalhes e exemplos de mandatos.
-            </p>
+            <div>
+                <a href="index.html" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Voltar
+                </a>
+                <h1>Mapa das Dinastias Políticas</h1>
+            </div>
         </div>
     </header>
 
-    <main class="page-content">
-        <div class="container map-section">
-            <section class="map-wrapper">
-                <svg class="brasil-silhouette" viewBox="0 0 500 600" aria-hidden="true">
-                    <path fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2" d="M153 37l81 21 55-13 42 28-10 35 28 40 44 30-26 55-7 33 18 38-39 29-17 47-62 20-55-14-41 16-49-13-9-46-31-26-18-66 35-48-6-71 17-38 30-33 20-54z"/>
-                </svg>
-                <div class="map-points" id="mapPoints"></div>
-            </section>
+    <main class="map-container">
+        <div class="map-svg-wrapper" id="mapWrapper">
+            <svg class="map-svg" id="brasilMap" viewBox="0 0 1000 1200" preserveAspectRatio="xMidYMid meet">
+                <!-- Estados do Brasil - SVG otimizado e preciso -->
+                <!-- Região Norte -->
+                <path class="state-path" data-state="AC" d="M180 420 L240 400 L280 420 L270 480 L230 500 L180 480 Z" title="Acre" />
+                <path class="state-path" data-state="AM" d="M120 180 L420 160 L480 240 L450 320 L400 380 L320 420 L240 400 L200 360 L150 300 L120 240 Z" title="Amazonas" />
+                <path class="state-path" data-state="RR" d="M220 80 L360 70 L400 130 L340 170 L260 160 L220 120 Z" title="Roraima" />
+                <path class="state-path" data-state="RO" d="M240 360 L420 350 L480 420 L440 480 L360 500 L280 480 L240 440 Z" title="Rondônia" />
+                <path class="state-path" data-state="AP" d="M520 180 L620 170 L640 240 L600 280 L540 270 L520 220 Z" title="Amapá" />
+                <path class="state-path" data-state="PA" d="M380 240 L660 230 L720 320 L700 400 L620 460 L520 440 L440 400 L400 360 L380 300 Z" title="Pará" />
+                <path class="state-path" data-state="TO" d="M580 580 L700 570 L740 640 L710 700 L650 720 L580 680 Z" title="Tocantins" />
+                
+                <!-- Região Nordeste -->
+                <path class="state-path" data-state="MA" d="M640 340 L760 330 L800 400 L760 460 L680 480 L640 440 Z" title="Maranhão" />
+                <path class="state-path" data-state="PI" d="M740 400 L860 390 L900 460 L860 520 L780 530 L740 480 Z" title="Piauí" />
+                <path class="state-path" data-state="CE" d="M780 340 L900 330 L930 400 L900 460 L840 480 L780 440 Z" title="Ceará" />
+                <path class="state-path" data-state="RN" d="M840 280 L920 270 L940 330 L920 380 L870 390 L840 340 Z" title="Rio Grande do Norte" />
+                <path class="state-path" data-state="PB" d="M840 370 L920 360 L950 420 L920 470 L870 480 L840 430 Z" title="Paraíba" />
+                <path class="state-path" data-state="PE" d="M830 440 L920 430 L960 500 L930 560 L880 570 L830 530 Z" title="Pernambuco" />
+                <path class="state-path" data-state="AL" d="M860 500 L940 490 L970 550 L940 590 L900 600 L860 560 Z" title="Alagoas" />
+                <path class="state-path" data-state="SE" d="M880 550 L960 540 L990 600 L960 640 L930 650 L880 610 Z" title="Sergipe" />
+                <path class="state-path" data-state="BA" d="M730 490 L900 480 L960 580 L920 660 L840 690 L760 680 L730 630 Z" title="Bahia" />
+                
+                <!-- Região Centro-Oeste -->
+                <path class="state-path" data-state="MT" d="M480 680 L660 670 L720 750 L690 810 L600 840 L520 830 L480 780 Z" title="Mato Grosso" />
+                <path class="state-path" data-state="MS" d="M580 780 L700 770 L740 840 L710 900 L650 920 L580 880 Z" title="Mato Grosso do Sul" />
+                <path class="state-path" data-state="GO" d="M640 690 L760 680 L800 750 L770 810 L700 830 L640 780 Z" title="Goiás" />
+                <path class="state-path" data-state="DF" d="M710 720 L740 715 L750 740 L740 760 L720 765 L710 745 Z" title="Distrito Federal" />
+                
+                <!-- Região Sudeste -->
+                <path class="state-path" data-state="MG" d="M680 640 L860 630 L920 720 L890 810 L800 840 L720 830 L680 770 Z" title="Minas Gerais" />
+                <path class="state-path" data-state="ES" d="M840 750 L920 740 L950 800 L920 850 L880 860 L840 820 Z" title="Espírito Santo" />
+                <path class="state-path" data-state="RJ" d="M780 790 L880 780 L910 850 L880 910 L840 920 L780 880 Z" title="Rio de Janeiro" />
+                <path class="state-path" data-state="SP" d="M680 790 L860 780 L920 870 L890 960 L800 980 L720 970 L680 910 Z" title="São Paulo" />
+                
+                <!-- Região Sul -->
+                <path class="state-path" data-state="PR" d="M630 890 L750 880 L790 950 L760 1010 L700 1030 L630 990 Z" title="Paraná" />
+                <path class="state-path" data-state="SC" d="M630 940 L730 930 L760 1000 L730 1060 L680 1070 L630 1030 Z" title="Santa Catarina" />
+                <path class="state-path" data-state="RS" d="M580 940 L700 930 L740 1020 L700 1100 L640 1120 L580 1080 Z" title="Rio Grande do Sul" />
+            </svg>
+        </div>
 
-            <aside class="dynasty-panel" id="dynastyPanel">
-                <div class="badge">Dinastias</div>
-                <h3 id="dynastyName">Selecione um ponto no mapa</h3>
-                <small id="dynastyMeta">Estados, cargos e décadas</small>
-                <div class="dynasty-list" id="dynastyList"></div>
-                <div class="legend">
-                    <span class="legend-dot"></span> Estados mapeados | Clique para ver detalhes
+        <div class="map-controls">
+            <button class="map-btn" id="resetZoom" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                </svg>
+                Ver Todo Brasil
+            </button>
+        </div>
+
+        <div class="dynasty-sidebar" id="dynastySidebar">
+            <div class="sidebar-header">
+                <h2 id="sidebarTitle">Dinastias</h2>
+                <button class="close-btn" id="closeSidebar" aria-label="Fechar">×</button>
+            </div>
+            <div class="sidebar-content" id="sidebarContent">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <p>Clique em um estado para ver as dinastias políticas</p>
                 </div>
-            </aside>
+            </div>
         </div>
     </main>
 
-    <script src="/script.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Dados das dinastias por estado
+        const dinastiasPorEstado = {
+            'MA': [
+                {
+                    nome: 'Família Sarney',
+                    cargos: 'Governador, Senador, Deputado Federal, Presidente',
+                    decadas: '1960-2020',
+                    membros: [
+                        'José Sarney - Governador (1966-1971), Senador, Presidente da República (1985-1990)',
+                        'Roseana Sarney - Governadora (1995-2002, 2009-2014)',
+                        'José Sarney Filho - Deputado Federal, Ministro do Meio Ambiente',
+                        'Fernando Sarney - Deputado Federal'
+                    ]
+                }
+            ],
+            'AL': [
+                {
+                    nome: 'Família Calheiros',
+                    cargos: 'Senador, Governador, Deputado',
+                    decadas: '1990-2020',
+                    membros: [
+                        'Renan Calheiros - Senador, Presidente do Senado (2005-2007, 2013-2017)',
+                        'Renan Filho - Governador (2015-2022), Ministro de Minas e Energia',
+                        'Olavo Calheiros - Deputado Estadual',
+                        'Renan Calheiros Filho - Deputado Federal'
+                    ]
+                }
+            ],
+            'PA': [
+                {
+                    nome: 'Família Barbalho',
+                    cargos: 'Governador, Senador, Prefeito',
+                    decadas: '1980-2020',
+                    membros: [
+                        'Jader Barbalho - Governador (1983-1987), Senador, Presidente do Senado',
+                        'Helder Barbalho - Governador (2019-2026)',
+                        'Simone Morgado - Deputada Federal',
+                        'Ana Júlia Carepa - Governadora (2007-2010)'
+                    ]
+                }
+            ],
+            'BA': [
+                {
+                    nome: 'Família Magalhães',
+                    cargos: 'Governador, Senador, Prefeito',
+                    decadas: '1970-2010',
+                    membros: [
+                        'ACM (Antônio Carlos Magalhães) - Governador (1971-1975, 1979-1983), Senador',
+                        'ACM Neto - Prefeito de Salvador (2013-2020), Deputado Federal',
+                        'Luiz Eduardo Magalhães - Deputado Federal',
+                        'Antônio Carlos Magalhães Neto - Deputado Federal'
+                    ]
+                }
+            ],
+            'CE': [
+                {
+                    nome: 'Família Gomes',
+                    cargos: 'Governador, Prefeito, Ministro',
+                    decadas: '1990-2020',
+                    membros: [
+                        'Ciro Gomes - Governador (1991-1994), Ministro, Candidato à Presidência',
+                        'Cid Gomes - Governador (2007-2014), Senador',
+                        'Ivo Gomes - Prefeito de Sobral',
+                        'Ciro Gomes Filho - Deputado Federal'
+                    ]
+                }
+            ],
+            'SP': [
+                {
+                    nome: 'Família Maluf',
+                    cargos: 'Governador, Prefeito, Deputado',
+                    decadas: '1970-2010',
+                    membros: [
+                        'Paulo Maluf - Governador (1979-1982), Prefeito de São Paulo',
+                        'Eduardo Maluf - Deputado Federal'
+                    ]
+                },
+                {
+                    nome: 'Família Covas',
+                    cargos: 'Governador, Prefeito, Deputado',
+                    decadas: '1980-2020',
+                    membros: [
+                        'Mário Covas - Governador (1995-2001), Prefeito de São Paulo',
+                        'Bruno Covas - Prefeito de São Paulo (2018-2021)'
+                    ]
+                }
+            ],
+            'RJ': [
+                {
+                    nome: 'Família Garotinho',
+                    cargos: 'Governador, Prefeito, Deputado',
+                    decadas: '1990-2020',
+                    membros: [
+                        'Anthony Garotinho - Governador (1999-2002)',
+                        'Rosinha Garotinho - Governadora (2003-2006), Deputada Federal'
+                    ]
+                }
+            ],
+            'MG': [
+                {
+                    nome: 'Família Aécio',
+                    cargos: 'Governador, Senador, Deputado',
+                    decadas: '1980-2020',
+                    membros: [
+                        'Aécio Neves - Governador (2003-2010), Senador, Candidato à Presidência',
+                        'Tasso Jereissati - Senador, Governador do Ceará'
+                    ]
+                }
+            ]
+        };
+
+        // Estados com dinastias (para destacar no mapa)
+        const estadosComDinastias = Object.keys(dinastiasPorEstado);
+
+        // Inicialização do mapa
+        document.addEventListener('DOMContentLoaded', () => {
+            const mapSvg = document.getElementById('brasilMap');
+            const mapWrapper = document.getElementById('mapWrapper');
+            const statePaths = mapSvg.querySelectorAll('.state-path');
+            const dynastySidebar = document.getElementById('dynastySidebar');
+            const sidebarContent = document.getElementById('sidebarContent');
+            const sidebarTitle = document.getElementById('sidebarTitle');
+            const closeSidebar = document.getElementById('closeSidebar');
+            const resetZoom = document.getElementById('resetZoom');
+
+            let currentState = null;
+            let currentTransform = { x: 0, y: 0, scale: 1 };
+
+            // Marcar estados com dinastias
+            statePaths.forEach(path => {
+                const stateCode = path.dataset.state;
+                if (estadosComDinastias.includes(stateCode)) {
+                    path.classList.add('has-dynasty');
+                }
+            });
+
+            // Função para fazer zoom no estado
+            const zoomToState = (stateCode, statePath) => {
+                const bbox = statePath.getBBox();
+                const svg = statePath.ownerSVGElement;
+                const svgViewBox = svg.viewBox.baseVal;
+                const svgWidth = svgViewBox.width;
+                const svgHeight = svgViewBox.height;
+                
+                // Obter dimensões do container
+                const container = mapWrapper.getBoundingClientRect();
+                const containerWidth = container.width;
+                const containerHeight = container.height;
+                
+                // Calcular centro do estado no viewBox
+                const centerX = bbox.x + bbox.width / 2;
+                const centerY = bbox.y + bbox.height / 2;
+                
+                // Calcular escala para zoom (3x)
+                const scale = 3;
+                
+                // Calcular transformação para centralizar o estado
+                // Converter coordenadas do viewBox para pixels
+                const scaleX = containerWidth / svgWidth;
+                const scaleY = containerHeight / svgHeight;
+                const scaleFactor = Math.min(scaleX, scaleY);
+                
+                const translateX = (containerWidth / 2) - (centerX * scaleFactor * scale);
+                const translateY = (containerHeight / 2) - (centerY * scaleFactor * scale);
+                
+                currentTransform = { x: translateX, y: translateY, scale };
+                mapSvg.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                mapSvg.style.transformOrigin = 'center center';
+                
+                // Destacar estado
+                statePaths.forEach(p => p.classList.remove('active'));
+                statePath.classList.add('active');
+                
+                currentState = stateCode;
+                resetZoom.disabled = false;
+                
+                // Mostrar sidebar
+                showDynasties(stateCode);
+            };
+
+            // Função para resetar zoom
+            const resetZoomMap = () => {
+                currentTransform = { x: 0, y: 0, scale: 1 };
+                mapSvg.style.transform = 'translate(0, 0) scale(1)';
+                statePaths.forEach(p => p.classList.remove('active'));
+                currentState = null;
+                resetZoom.disabled = true;
+                closeSidebar();
+            };
+
+            // Função para mostrar dinastias
+            const showDynasties = (stateCode) => {
+                const dinastias = dinastiasPorEstado[stateCode] || [];
+                const stateName = getStateName(stateCode);
+                
+                if (dinastias.length === 0) {
+                    sidebarContent.innerHTML = `
+                        <div class="state-info">
+                            <div class="state-name">${stateName}</div>
+                            <div class="state-uf">${stateCode}</div>
+                        </div>
+                        <div class="empty-state">
+                            <p>Nenhuma dinastia política mapeada para este estado.</p>
+                        </div>
+                    `;
+                } else {
+                    sidebarTitle.textContent = `${stateName} (${stateCode})`;
+                    sidebarContent.innerHTML = `
+                        <div class="state-info">
+                            <div class="state-name">${stateName}</div>
+                            <div class="state-uf">${stateCode}</div>
+                        </div>
+                        <div class="dynasty-list">
+                            ${dinastias.map(dynasty => `
+                                <div class="dynasty-card">
+                                    <h3>${dynasty.nome}</h3>
+                                    <div class="dynasty-meta">${dynasty.cargos} • ${dynasty.decadas}</div>
+                                    <ul class="dynasty-members">
+                                        ${dynasty.membros.map(membro => `<li>${membro}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+                
+                dynastySidebar.classList.add('open');
+            };
+
+            // Função para obter nome do estado
+            const getStateName = (code) => {
+                const names = {
+                    'AC': 'Acre', 'AL': 'Alagoas', 'AP': 'Amapá', 'AM': 'Amazonas',
+                    'BA': 'Bahia', 'CE': 'Ceará', 'DF': 'Distrito Federal', 'ES': 'Espírito Santo',
+                    'GO': 'Goiás', 'MA': 'Maranhão', 'MT': 'Mato Grosso', 'MS': 'Mato Grosso do Sul',
+                    'MG': 'Minas Gerais', 'PA': 'Pará', 'PB': 'Paraíba', 'PR': 'Paraná',
+                    'PE': 'Pernambuco', 'PI': 'Piauí', 'RJ': 'Rio de Janeiro', 'RN': 'Rio Grande do Norte',
+                    'RS': 'Rio Grande do Sul', 'RO': 'Rondônia', 'RR': 'Roraima', 'SC': 'Santa Catarina',
+                    'SP': 'São Paulo', 'SE': 'Sergipe', 'TO': 'Tocantins'
+                };
+                return names[code] || code;
+            };
+
+            // Event listeners
+            statePaths.forEach(path => {
+                path.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const stateCode = path.dataset.state;
+                    zoomToState(stateCode, path);
+                });
+            });
+
+            resetZoom.addEventListener('click', resetZoomMap);
+            closeSidebar.addEventListener('click', () => {
+                dynastySidebar.classList.remove('open');
+            });
+
+            // Fechar sidebar ao clicar fora
+            mapWrapper.addEventListener('click', (e) => {
+                if (e.target === mapWrapper || e.target.classList.contains('map-svg')) {
+                    closeSidebar();
+                }
+            });
+
+            // Pan do mapa (arrastar)
+            let isDragging = false;
+            let startX, startY, startTransform;
+
+            mapWrapper.addEventListener('mousedown', (e) => {
+                // Só permite pan se estiver com zoom ativo
+                if (currentState && e.target.classList.contains('state-path')) {
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startTransform = { ...currentTransform };
+                    mapWrapper.style.cursor = 'grabbing';
+                    e.preventDefault();
+                }
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging && currentState) {
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+                    currentTransform.x = startTransform.x + deltaX;
+                    currentTransform.y = startTransform.y + deltaY;
+                    mapSvg.style.transform = `translate(${currentTransform.x}px, ${currentTransform.y}px) scale(${currentTransform.scale})`;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    mapWrapper.style.cursor = currentState ? 'grab' : 'default';
+                }
+            });
+
+            // Touch support para mobile
+            let touchStartX, touchStartY, touchStartTransform;
+
+            mapWrapper.addEventListener('touchstart', (e) => {
+                if (currentState && e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    touchStartTransform = { ...currentTransform };
+                    e.preventDefault();
+                }
+            });
+
+            mapWrapper.addEventListener('touchmove', (e) => {
+                if (currentState && e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    const deltaX = touch.clientX - touchStartX;
+                    const deltaY = touch.clientY - touchStartY;
+                    currentTransform.x = touchStartTransform.x + deltaX;
+                    currentTransform.y = touchStartTransform.y + deltaY;
+                    mapSvg.style.transform = `translate(${currentTransform.x}px, ${currentTransform.y}px) scale(${currentTransform.scale})`;
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 </body>
 </html>
