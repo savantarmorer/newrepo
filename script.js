@@ -61,6 +61,74 @@ document.addEventListener('DOMContentLoaded', () => {
     // Video category tabs functionality
     const videoTabs = document.querySelectorAll('.video-tab');
     const videoCards = document.querySelectorAll('.video-card');
+    const expandContainer = document.getElementById('videosExpandContainer');
+    const expandBtn = document.getElementById('expandVideosBtn');
+    const INITIAL_VIDEOS_LIMIT = 4; // Mostrar apenas 4 vídeos inicialmente na aba "Todos"
+    let isExpanded = false;
+
+    // Função para gerenciar a exibição de vídeos
+    function manageVideosDisplay(category) {
+        const visibleCards = Array.from(videoCards).filter(card => {
+            if (category === 'todos') {
+                return !card.classList.contains('hidden');
+            } else {
+                return card.dataset.category === category && !card.classList.contains('hidden');
+            }
+        });
+
+        if (category === 'todos' && visibleCards.length > INITIAL_VIDEOS_LIMIT) {
+            // Mostrar apenas os primeiros vídeos
+            visibleCards.forEach((card, index) => {
+                if (index >= INITIAL_VIDEOS_LIMIT) {
+                    card.classList.add('initially-hidden');
+                } else {
+                    card.classList.remove('initially-hidden');
+                }
+            });
+            expandContainer.style.display = 'block';
+            expandBtn.textContent = 'Ver mais vídeos';
+            expandBtn.classList.remove('expanded');
+            isExpanded = false;
+        } else {
+            // Mostrar todos os vídeos da categoria
+            visibleCards.forEach(card => {
+                card.classList.remove('initially-hidden');
+            });
+            expandContainer.style.display = 'none';
+            isExpanded = false;
+        }
+    }
+
+    // Botão expandir/recolher
+    if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+            const activeTab = document.querySelector('.video-tab.active');
+            if (activeTab && activeTab.dataset.category === 'todos') {
+                const hiddenCards = document.querySelectorAll('.video-card.initially-hidden');
+                
+                if (!isExpanded) {
+                    // Expandir
+                    hiddenCards.forEach(card => {
+                        card.classList.remove('initially-hidden');
+                    });
+                    expandBtn.textContent = 'Ver menos';
+                    expandBtn.classList.add('expanded');
+                    isExpanded = true;
+                } else {
+                    // Recolher
+                    hiddenCards.forEach(card => {
+                        card.classList.add('initially-hidden');
+                    });
+                    expandBtn.textContent = 'Ver mais vídeos';
+                    expandBtn.classList.remove('expanded');
+                    isExpanded = false;
+                    
+                    // Scroll suave para o topo da seção de vídeos
+                    document.getElementById('videos').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        });
+    }
 
     videoTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -70,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.classList.add('active');
 
             const category = tab.dataset.category;
+            isExpanded = false; // Reset expanded state when switching tabs
 
             // Filter videos
             videoCards.forEach(card => {
@@ -83,8 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+
+            // Gerenciar exibição baseado na categoria
+            manageVideosDisplay(category);
         });
     });
+
+    // Inicializar com a aba "Todos" ativa
+    manageVideosDisplay('todos');
 
     // Mapa das Dinastias
     const mapRoot = document.getElementById('mapPoints');

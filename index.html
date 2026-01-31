@@ -7,11 +7,14 @@
     <!-- SEO Meta Tags -->
     <title>Iuri Piragibe - Jornalista Investigativo | Urbex, Maçonaria e Mistérios do Brasil</title>
     <meta name="description" content="Iuri Piragibe é jornalista investigativo e criador de conteúdo brasileiro especializado em urban exploration, Maçonaria, conspirações políticas e mistérios urbanos. 40 mil seguidores.">
+    <meta name="keywords" content="Iuri Piragibe, jornalismo investigativo, urbex, exploração urbana, maçonaria, política brasileira, true crime, filosofia, investigação, São Paulo subterrânea, dinastias políticas">
     <meta name="author" content="Iuri Piragibe">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <link rel="canonical" href="https://iuripiragibe.net">
     <meta name="theme-color" content="#0a0a0f">
     <meta name="color-scheme" content="dark">
+    <meta name="geo.region" content="BR">
+    <meta name="geo.placename" content="Brasil">
     
     <!-- Icons / PWA -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -26,15 +29,20 @@
     <meta property="og:site_name" content="Iuri Piragibe">
     <meta property="og:locale" content="pt_BR">
     <meta property="og:image" content="https://iuripiragibe.net/og-image.svg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Iuri Piragibe - Jornalista Investigativo">
     
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://iuripiragibe.net">
-    <meta property="twitter:title" content="Iuri Piragibe - Jornalista Investigativo">
-    <meta property="twitter:description" content="Investigações sobre urbex, Maçonaria, conspirações políticas e mistérios do Brasil">
-    <meta property="twitter:image" content="https://iuripiragibe.net/og-image.svg">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://iuripiragibe.net">
+    <meta name="twitter:title" content="Iuri Piragibe - Jornalista Investigativo">
+    <meta name="twitter:description" content="Investigações sobre urbex, Maçonaria, conspirações políticas e mistérios do Brasil">
+    <meta name="twitter:image" content="https://iuripiragibe.net/og-image.svg">
+    <meta name="twitter:creator" content="@iuripiragibe">
+    <meta name="twitter:site" content="@iuripiragibe">
     
-    <!-- Schema.org -->
+    <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -44,6 +52,54 @@
         "description": "Jornalista investigativo brasileiro especializado em urban exploration, Maçonaria, conspirações políticas e mistérios urbanos",
         "url": "https://iuripiragibe.net",
         "email": "iuri@piragibe.com.br",
+        "image": "https://iuripiragibe.net/og-image.svg",
+        "sameAs": [
+            "https://www.youtube.com/@iuripiragibe",
+            "https://www.instagram.com/iuripiragibe"
+        ],
+        "knowsAbout": [
+            "Urban Exploration",
+            "Maçonaria",
+            "Jornalismo Investigativo",
+            "Política Brasileira",
+            "True Crime"
+        ],
+        "nationality": {
+            "@type": "Country",
+            "name": "Brasil"
+        }
+    }
+    </script>
+    
+    <!-- Website Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Iuri Piragibe",
+        "url": "https://iuripiragibe.net",
+        "description": "Jornalismo investigativo sobre urbex, Maçonaria, política e mistérios do Brasil",
+        "author": {
+            "@type": "Person",
+            "name": "Iuri Piragibe"
+        },
+        "inLanguage": "pt-BR",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://iuripiragibe.net/?s={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Iuri Piragibe",
+        "url": "https://iuripiragibe.net",
+        "logo": "https://iuripiragibe.net/og-image.svg",
         "sameAs": [
             "https://www.youtube.com/@iuripiragibe",
             "https://www.instagram.com/iuripiragibe"
@@ -67,6 +123,7 @@
                 <a href="#sobre">Sobre</a>
                 <a href="#trabalho">Trabalho</a>
                 <a href="#videos">Vídeos</a>
+                <a href="/blog.html">Blog</a>
                 <a href="#alcance">Alcance</a>
                 <a href="#mediakit">Media Kit</a>
                 <a href="#contato" class="btn-contact">Contato</a>
@@ -443,6 +500,15 @@
                         </a>
                     </div>
                 </div>
+            </div>
+
+            <div class="videos-expand-container" id="videosExpandContainer" style="display: none;">
+                <button class="btn-expand-videos" id="expandVideosBtn">
+                    Ver mais vídeos
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
             </div>
 
             <div class="videos-cta">
@@ -832,6 +898,7 @@
                     <a href="#sobre">Sobre</a>
                     <a href="#trabalho">Trabalho</a>
                     <a href="#videos">Vídeos</a>
+                    <a href="/blog.html">Blog</a>
                     <a href="#alcance">Alcance</a>
                     <a href="#mediakit">Media Kit</a>
                     <a href="#contato">Contato</a>
