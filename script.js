@@ -58,6 +58,34 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(card);
     });
 
+    // Video category tabs functionality
+    const videoTabs = document.querySelectorAll('.video-tab');
+    const videoCards = document.querySelectorAll('.video-card');
+
+    videoTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            videoTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+
+            const category = tab.dataset.category;
+
+            // Filter videos
+            videoCards.forEach(card => {
+                if (category === 'todos') {
+                    card.classList.remove('hidden');
+                } else {
+                    if (card.dataset.category === category) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    });
+
     // Mapa das Dinastias
     const mapRoot = document.getElementById('mapPoints');
     const panelName = document.getElementById('dynastyName');
