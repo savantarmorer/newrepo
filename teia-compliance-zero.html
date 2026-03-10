@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teia — Operação Compliance Zero</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body,html{width:100%;height:100%;overflow:hidden;background:#05050e;font-family:'Courier New',monospace;color:#fff}
+    svg{width:100%;height:100%}
+
+    /* leave room for site navbar */
+    #wrap{width:100vw;height:100vh;position:relative;overflow:hidden;padding-top:72px}
+
+    /* header */
+    #header{position:absolute;top:72px;left:0;right:0;z-index:30;
+      background:linear-gradient(180deg,rgba(5,5,14,0.98) 0%,rgba(5,5,14,0.55) 70%,transparent 100%);
+      padding:11px 18px;border-bottom:1px solid rgba(192,57,43,0.25);
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .htitle{color:#C0392B;font-size:12px;letter-spacing:4px}
+    .hsub{color:#6b7280;font-size:11px;letter-spacing:1.5px}
+    .sep{color:#1a1a1a}
+    .btn{padding:6px 12px;background:transparent;border:1px solid #2a2a38;color:#b4b4c8;
+      font-size:11px;letter-spacing:1px;cursor:pointer;border-radius:6px;font-family:monospace;transition:all .15s}
+    .btn:hover,.btn.on{border-color:#C0392B;color:#ff6b5a;background:rgba(192,57,43,0.08)}
+    .btn.danger:hover,.btn.danger.on{border-color:#8e44ad;color:#d0a7ff;background:rgba(165,105,189,0.08)}
+    input#srch{background:rgba(5,5,14,0.7);border:1px solid #2a2a38;color:#e5e7eb;
+      font-size:12px;padding:7px 10px;font-family:monospace;border-radius:8px;width:220px;outline:none}
+    input#srch:focus{border-color:#C0392B}
+    input#srch::placeholder{color:#6b7280}
+    .sp{flex:1}
+    #hint{color:#9ca3af;font-size:11px;letter-spacing:0.5px}
+
+    /* panels - improve legibility */
+    #legend{position:absolute;bottom:16px;left:14px;z-index:20;
+      background:rgba(5,5,14,0.94);border:1px solid rgba(255,255,255,0.08);
+      padding:12px 14px;border-radius:10px;max-height:55vh;overflow-y:auto;min-width:240px;
+      box-shadow:0 10px 40px rgba(0,0,0,0.55)}
+    #legend::-webkit-scrollbar{width:6px}
+    #legend::-webkit-scrollbar-thumb{background:#222235;border-radius:999px}
+    .leg-item{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .leg-label{color:#e5e7eb;font-size:12px;letter-spacing:0.5px}
+    .leg-item.off .leg-dot{opacity:.25;filter:grayscale(1)}
+    .leg-item.off .leg-label{color:#4b5563;text-decoration:line-through}
+    .leg-item{cursor:pointer;padding:6px 8px;border-radius:8px}
+    .leg-item:hover{background:rgba(255,255,255,0.04)}
+    #leg-title{color:#9ca3af;font-size:11px;letter-spacing:3px;margin-bottom:10px}
+
+    #panel{position:absolute;top:calc(72px + 58px);right:14px;z-index:20;width:380px;
+      background:rgba(5,5,14,0.97);border-radius:12px;overflow:hidden;
+      box-shadow:0 0 50px rgba(0,0,0,0.8);display:none;border:1px solid rgba(255,255,255,0.08)}
+    #panel.show{display:block}
+    #panel-head{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,0.06)}
+    #panel-type{font-size:10px;letter-spacing:3px;margin-bottom:6px;color:#9ca3af}
+    #panel-name{font-size:20px;font-weight:bold;line-height:1.25;color:#fff}
+    #panel-sub{font-size:13px;color:#cbd5e1;margin-top:8px;line-height:1.55}
+    #panel-body{padding:14px 18px;max-height:55vh;overflow-y:auto}
+    #panel-body::-webkit-scrollbar{width:6px}
+    #panel-body::-webkit-scrollbar-thumb{background:#222235;border-radius:999px}
+    .conn-title{color:#9ca3af;font-size:11px;letter-spacing:2px;margin-bottom:10px}
+    .conn-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;cursor:pointer;padding:8px 10px;border-radius:10px;transition:background .1s}
+    .conn-item:hover{background:rgba(255,255,255,0.04)}
+    .conn-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px}
+    .conn-name{color:#e5e7eb;font-size:13px;line-height:1.35}
+    .conn-rel{color:#9ca3af;font-size:12px;line-height:1.35;margin-top:2px}
+    #panel-close{position:absolute;top:14px;right:14px;color:#9ca3af;font-size:12px;cursor:pointer;letter-spacing:1px}
+    #panel-close:hover{color:#ff6b5a}
+
+    #stats{position:absolute;bottom:16px;right:14px;z-index:20;color:#9ca3af;font-size:11px;letter-spacing:2px;text-align:right;
+      background:rgba(5,5,14,0.75);border:1px solid rgba(255,255,255,0.06);padding:8px 10px;border-radius:10px}
+
+    #tooltip{position:absolute;z-index:40;pointer-events:none;display:none;
+      background:rgba(5,5,14,0.96);border:1px solid rgba(255,255,255,0.10);
+      padding:10px 12px;border-radius:10px;box-shadow:0 0 30px rgba(0,0,0,0.7);max-width:360px}
+    #tooltip .t1{color:#fff;font-size:13px;line-height:1.25}
+    #tooltip .t2{color:#cbd5e1;font-size:12px;line-height:1.35;margin-top:6px}
+    #tooltip .t3{color:#9ca3af;font-size:11px;letter-spacing:1px;margin-top:10px}
+
+    /* PIX */
+    #pix-cta{display:flex;align-items:center;gap:10px}
+    #pix-cta .pix-label{font-size:11px;color:#cbd5e1;letter-spacing:0.5px}
+    #pix-modal{position:fixed;inset:0;display:none;z-index:5000;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px)}
+    #pix-modal .box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,92vw);
+      background:rgba(5,5,14,0.98);border:1px solid rgba(255,255,255,0.10);border-radius:14px;padding:18px 18px 16px;
+      box-shadow:0 20px 80px rgba(0,0,0,0.75)}
+    #pix-modal .t{font-size:14px;letter-spacing:1px;color:#ff6b5a;margin-bottom:10px}
+    #pix-modal .k{font-size:20px;color:#fff;letter-spacing:1px;word-break:break-all;margin-bottom:14px}
+    #pix-modal .s{font-size:12px;color:#9ca3af;line-height:1.5;margin-bottom:14px}
+    #pix-modal .row{display:flex;gap:10px;flex-wrap:wrap}
+    #pix-modal .row .btn{font-size:12px;padding:8px 12px;border-radius:10px}
+    #pix-toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:6000;display:none;
+      background:rgba(5,5,14,0.92);border:1px solid rgba(255,255,255,0.12);color:#e5e7eb;font-size:12px;padding:10px 12px;border-radius:12px}
+
+    /* Mobile */
+    #mobile-actions{display:none}
+    @media (max-width: 900px){
+      #panel{width:min(92vw,520px)}
+      #legend{min-width:auto;width:min(92vw,520px)}
+    }
+    @media (max-width: 720px){
+      body,html{overflow:hidden}
+      #wrap{padding-top:64px}
+      #header{top:64px;padding:10px 12px}
+      .htitle{font-size:11px;letter-spacing:3px}
+      .hsub{font-size:10px}
+      .btn{font-size:11px;padding:7px 10px}
+      input#srch{width:100%;flex:1;min-width:180px}
+      #hint{display:none}
+      #stats{display:none}
+
+      /* mobile actions */
+      #mobile-actions{display:flex;gap:8px;width:100%}
+
+      /* legend -> bottom drawer */
+      #legend{position:fixed;left:10px;right:10px;bottom:10px;max-height:42vh;display:none}
+      #legend.show{display:block}
+
+      /* panel -> fullscreen modal */
+      #panel{position:fixed;left:10px;right:10px;top:calc(64px + 58px);bottom:10px;width:auto;max-height:none;display:none}
+      #panel-body{max-height:none;height:calc(100% - 140px)}
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="/" class="logo">IURI<span>PIRAGIBE</span></a>
+      <div class="nav-links">
+        <a href="/#sobre">Sobre</a>
+        <a href="/#trabalho">Trabalho</a>
+        <a href="/#videos">Vídeos</a>
+        <a href="/blog.html">Blog</a>
+        <a href="/#alcance">Alcance</a>
+        <a href="/#mediakit">Media Kit</a>
+        <a href="/#contato" class="btn-contact">Contato</a>
+        <a href="/sobre.html">Autor</a>
+        <a href="/mapa-dinastias.html">Mapa das Dinastias</a>
+        <a href="/mapa-magico.html">Mapa Mágico</a>
+        <a href="/teia-compliance-zero.html">Teia</a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="wrap">
+    <div id="header">
+      <span class="htitle">▶ COMPLIANCE ZERO</span>
+      <span class="sep">|</span>
+      <span class="hsub">MAPA DE CONEXÕES — BANCO MASTER</span>
+      <span class="sep">|</span>
+      <button class="btn on" id="btn-l2" type="button" onclick="toggleL2()">2ª CAMADA ●</button>
+      <button class="btn" id="btn-l3" type="button" onclick="toggleL3()">3ª CAMADA ○</button>
+      <button class="btn" type="button" onclick="fitView()">AJUSTAR</button>
+      <button class="btn" type="button" onclick="resetView()">RESETAR</button>
+      <button class="btn" id="btn-labels" type="button" onclick="toggleEdgeLabels()">RÓTULOS ○</button>
+      <button class="btn danger" id="btn-isolated" type="button" onclick="toggleIsolated()">ISOLADOS ○</button>
+      <input id="srch" placeholder="buscar pessoa... (digite)" oninput="searchNode(this.value)"/>
+
+      <div id="mobile-actions">
+        <button class="btn" type="button" onclick="toggleLegend()">GRUPOS</button>
+        <button class="btn" type="button" onclick="togglePixModal(true)">PIX</button>
+        <button class="btn" type="button" onclick="fitView()">AJUSTAR</button>
+      </div>
+
+      <span class="sp"></span>
+
+      <div id="pix-cta">
+        <span class="pix-label">Contribua com o projeto (PIX): <strong style="color:#fff">31 99875-0008</strong></span>
+        <button class="btn" type="button" onclick="togglePixModal(true)">COPIAR / PIX</button>
+      </div>
+      <span id="hint">scroll · arrasta · clica · Shift/Alt p/ caminho</span>
+    </div>
+
+    <svg id="svg">
+      <defs>
+        <filter id="glow-node" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="g-edges"></g>
+      <g id="g-nodes"></g>
+    </svg>
+
+    <div id="legend"><div id="leg-title">GRUPOS</div></div>
+    <div id="panel">
+      <div id="panel-head">
+        <div id="panel-type"></div>
+        <div id="panel-name"></div>
+        <div id="panel-sub"></div>
+        <span id="panel-close" onclick="closePanel()">✕ FECHAR</span>
+      </div>
+      <div id="panel-body">
+        <div class="conn-title">CONEXÕES DIRETAS</div>
+        <div id="conn-list"></div>
+      </div>
+    </div>
+    <div id="stats"></div>
+    <div id="tooltip"><div class="t1"></div><div class="t2"></div><div class="t3"></div></div>
+  </div>
+
+  <div id="pix-modal" role="dialog" aria-modal="true" aria-label="Contribuição via PIX">
+    <div class="box">
+      <div class="t">CONTRIBUA COM O PROJETO</div>
+      <div class="k" id="pix-key">31 99875-0008</div>
+      <div class="s">Se esse trabalho te ajuda, apoiar via PIX mantém o projeto vivo. Obrigado.</div>
+      <div class="row">
+        <button class="btn on" type="button" onclick="copyPix()">COPIAR CHAVE</button>
+        <button class="btn" type="button" onclick="togglePixModal(false)">FECHAR</button>
+      </div>
+    </div>
+  </div>
+  <div id="pix-toast">Chave PIX copiada.</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script>
+    const TYPES = {
+      center:   {color:'#C0392B',glow:'#ff3333',label:'Centro',r:34},
+      familia:  {color:'#8E44AD',glow:'#c056f5',label:'Família',r:22},
+      igreja:   {color:'#D4AC0D',glow:'#f5c800',label:'Igreja / Religião',r:20},
+      direita:  {color:'#2471A3',glow:'#3498db',label:'Político Direita',r:22},
+      esquerda: {color:'#1E8449',glow:'#27ae60',label:'Político Esquerda',r:22},
+      stf:      {color:'#E67E22',glow:'#f39c12',label:'STF / Judiciário',r:22},
+      bc:       {color:'#717D7E',glow:'#aab7b8',label:'Banco Central',r:20},
+      milicia:  {color:'#922B21',glow:'#e74c3c',label:'Milícia / Crime',r:20},
+      brb:      {color:'#1A5276',glow:'#2980b9',label:'BRB / Gov DF',r:20},
+      mercado:  {color:'#0E6655',glow:'#1abc9c',label:'Mercado Financeiro',r:20},
+      fundo:    {color:'#7D6608',glow:'#d4ac0d',label:'Fundos / Teia',r:18},
+      pessoal:  {color:'#2E4057',glow:'#5d8fbd',label:'Pessoal / Afeto',r:14},
+      pcc:      {color:'#641E16',glow:'#c0392b',label:'Crime Organizado',r:24},
+      congresso:{color:'#5B2C6F',glow:'#a569bd',label:'Congresso',r:20},
+      midialaw: {color:'#4A235A',glow:'#8e44ad',label:'Mídia / Jurídico',r:14},
+    };
+
+    const rawNodes = [
+      {id:'vorcaro',      label:'Daniel Vorcaro',         sub:'Banco Master · preso 2x em 2025/2026',                               type:'center',   layer:1},
+      {id:'henrique',     label:'Henrique Vorcaro',        sub:'Pai · Grupo Multipar · financiou Lagoinha',                          type:'familia',  layer:1},
+      {id:'natalia',      label:'Natália Vorcaro',         sub:'Irmã · Pastora Lagoinha Belvedere',                                  type:'familia',  layer:1},
+      {id:'zettel',       label:'Fabiano Zettel',          sub:'Cunhado · CEO Moriah Asset · preso 04/03/26',                        type:'familia',  layer:1},
+      {id:'martha',       label:'Martha Graeff',           sub:'Ex-namorada · modelo · rompeu no dia da 1ª prisão',                  type:'pessoal',  layer:2},
+      {id:'lagoinha',     label:'Ig. Batista da Lagoinha', sub:'Base social do esquema · BH',                                        type:'igreja',   layer:1},
+      {id:'valadao',      label:'André Valadão',           sub:'Pastor · Clava Forte Bank sem autorização BC',                       type:'igreja',   layer:1},
+      {id:'clava',        label:'Clava Forte Bank',        sub:'Cap. R$100mil · sede na igreja · CNPJ suspenso',                     type:'fundo',    layer:2},
+      {id:'macedo',       label:'Edir Macedo',             sub:'Digimais · R$316mi títulos · R$250mi pessoais',                      type:'igreja',   layer:1},
+      {id:'universal',    label:'Igreja Universal',        sub:'Holding financeira via Digimais',                                    type:'igreja',   layer:3},
+      {id:'bolsonaro',    label:'Jair Bolsonaro',          sub:'R$6mi doações Zettel + R$3mi conta pessoal',                        type:'direita',  layer:1},
+      {id:'tarcisio',     label:'Tarcísio de Freitas',     sub:'R$2mi doações via Zettel · Gov. SP',                                type:'direita',  layer:1},
+      {id:'nikolas',      label:'Nikolas Ferreira',        sub:'Jatinho out/2022 · não declarado TSE',                              type:'direita',  layer:1},
+      {id:'nogueira',     label:'Ciro Nogueira',           sub:'PP-PI · \"grande amigo\" · Emenda Master · bloqueou CPMI',            type:'direita',  layer:1},
+      {id:'valdemar',     label:'Valdemar Costa Neto',     sub:'Presidente PL · confirmou depósito pessoal Bolsonaro',              type:'direita',  layer:1},
+      {id:'flavio',       label:'Flávio Bolsonaro',        sub:'PL-RJ · pré-candidato 2026',                                        type:'direita',  layer:2},
+      {id:'temer',        label:'Michel Temer',            sub:'Tentou destravar veto BC ao negócio BRB',                           type:'brb',      layer:1},
+      {id:'fernandin',    label:'Fernandin OIG',           sub:'7Games.bet · Tigrinho · jatinho Mônaco com Nogueira',               type:'milicia',  layer:2},
+      {id:'linhares',     label:'Victor Linhares',         sub:'Pupilo/compadre Nogueira · R$230k investigado PCC',                 type:'milicia',  layer:2},
+      {id:'joesley',      label:'Joesley Batista',         sub:'JBS · propina PP · interlocutor PT/Mantega',                        type:'mercado',  layer:2},
+      {id:'rueda',        label:'Antônio Rueda',           sub:'Pres. União Brasil · helicóptero VIP com Nogueira',                 type:'congresso',layer:2},
+      {id:'lula',         label:'Lula',                   sub:'Reunião fora agenda dez/2024 · confirmou encontro',                  type:'esquerda', layer:1},
+      {id:'mantega',      label:'Guido Mantega',           sub:'R$1mi/mês · R$16mi total · articulou reunião Lula',                 type:'esquerda', layer:1},
+      {id:'wagner',       label:'Jaques Wagner',           sub:'PT-BA · indicou Mantega e Lewandowski',                             type:'esquerda', layer:1},
+      {id:'lewan',        label:'Ricardo Lewandowski',     sub:'R$250k/mês · contrato ao filho ao virar ministro',                  type:'esquerda', layer:1},
+      {id:'ruicosta',     label:'Rui Costa',               sub:'Casa Civil · privatizou Ebal para Augusto Lima/Bahia',              type:'esquerda', layer:2},
+      {id:'gleisi',       label:'Gleisi Hoffmann',         sub:'PT · defendeu reunião Lula-Vorcaro publicamente',                   type:'esquerda', layer:2},
+      {id:'silveira',     label:'Alexandre Silveira',      sub:'Ministro Minas/Energia · estava na reunião Planalto',              type:'esquerda', layer:2},
+      {id:'augustolima',  label:'Augusto Lima',            sub:'CEO Master · ex-sócio Vorcaro · elo Rui Costa/Bahia',              type:'esquerda', layer:2},
+      {id:'lulinha',      label:'Lulinha',                 sub:'Filho Lula · INSS · R$19,5mi movimentados',                         type:'pessoal',  layer:2},
+      {id:'moraes',       label:'Alexandre de Moraes',     sub:'9 msgs no dia da prisão · \"Conseguiu bloquear?\"',                  type:'stf',      layer:1},
+      {id:'toffoli',      label:'Dias Toffoli',            sub:'Relator · sigilo · resort Tayayá via fundo de Zettel',             type:'stf',      layer:1},
+      {id:'barci',        label:'Viviane Barci',           sub:'Esposa Moraes · contrato R$129mi com Master',                       type:'stf',      layer:1},
+      {id:'gilmar',       label:'Gilmar Mendes',           sub:'STF · suspendeu quebra sigilo empresa de Toffoli',                 type:'stf',      layer:2},
+      {id:'mendonca',     label:'André Mendonça',          sub:'Atual relator caso Master no STF',                                  type:'stf',      layer:2},
+      {id:'irmaostoff',   label:'Irmãos Toffoli',          sub:'Igor + José Eugênio · Maridt · Resort Tayayá',                     type:'stf',      layer:2},
+      {id:'tayaya',       label:'Resort Tayayá',           sub:'Ribeirão Claro/PR · Maridt vendeu ao Arleen 2021',                 type:'fundo',    layer:2},
+      {id:'dgep',         label:'DGEP Empreendimentos',    sub:'Incorporadora · primo de Toffoli sócio',                           type:'fundo',    layer:3},
+      {id:'camposneto',   label:'Roberto Campos Neto',     sub:'Pres. BC gov. Bolsonaro · adiou intervenção 1 ano',                type:'bc',       layer:1},
+      {id:'souza',        label:'Paulo Sérgio de Souza',   sub:'Ex-dir. BC · propina via contratos simulados',                     type:'bc',       layer:1},
+      {id:'santana',      label:'Belline Santana',         sub:'Ex-chefe supervisão BC · vazava alertas internos',                 type:'bc',       layer:1},
+      {id:'galipolo',     label:'Gabriel Galípolo',        sub:'Atual pres. BC · estava na reunião Planalto',                      type:'bc',       layer:2},
+      {id:'fgc',          label:'FGC',                     sub:'30+ alertas ignorados · R$51,8bi · 42% fundo',                     type:'bc',       layer:2},
+      {id:'sicario',      label:'O Sicário',               sub:'Mourão · R$1mi/mês · acesso PF/FBI · morto 04/03/26',              type:'milicia',  layer:1},
+      {id:'marilson',     label:'Marilson Roseno',         sub:'PF aposentado · A Turma · credenciais internas',                   type:'milicia',  layer:1},
+      {id:'pcc',          label:'PCC',                     sub:'Carbono Oculto · Reag · BK Bank · postos HD',                      type:'pcc',      layer:2},
+      {id:'bkbank',       label:'BK Bank',                 sub:'Fintech canal de lavagem PCC',                                     type:'pcc',      layer:3},
+      {id:'haransampaio', label:'Haran Sampaio',           sub:'Postos HD · R$230k a Linhares · Carbono Oculto',                   type:'milicia',  layer:3},
+      {id:'ibaneis',      label:'Ibaneis Rocha',           sub:'Gov. DF · \"dia de festa\" · 3 pedidos impeachment',                 type:'brb',      layer:1},
+      {id:'brb',          label:'Banco de Brasília',       sub:'R$16,7bi transferidos · R$12,2bi fictícios',                       type:'brb',      layer:2},
+      {id:'hugo',         label:'Hugo Motta',              sub:'Pres. Câmara · 6+ reuniões em residências oficiais',               type:'congresso',layer:2},
+      {id:'alcolumbre',   label:'Davi Alcolumbre',         sub:'Pres. Senado · jantares com Vorcaro',                              type:'congresso',layer:2},
+      {id:'xp',           label:'XP Investimentos',        sub:'R$26bi CDBs · comissão 4% · ação judicial',                        type:'mercado',  layer:1},
+      {id:'btg',          label:'BTG Pactual',             sub:'R$6,7bi CDBs Master · até R$335mi comissão',                       type:'mercado',  layer:1},
+      {id:'nubank',       label:'Nubank / Nu Invest',      sub:'R$2,9bi CDBs · parou jul/2024',                                    type:'mercado',  layer:2},
+      {id:'tirreno',      label:'Tirreno Consultoria',     sub:'R$6,7bi carteiras fictícias → BRB R$12,2bi',                       type:'mercado',  layer:2},
+      {id:'reag',         label:'Reag Investimentos',      sub:'Administradora Arleen + fundos Master + PCC',                      type:'fundo',    layer:2},
+      {id:'arleen',       label:'Fundo Arleen',            sub:'Cotista único: Zettel via Fundo Leal · resort Toffoli',            type:'fundo',    layer:2},
+      {id:'fundoleal',    label:'Fundo Leal',              sub:'Intermediário Zettel → Arleen · R$20mi',                           type:'fundo',    layer:2},
+      {id:'maia95',       label:'Fundo Maia 95',           sub:'Um dos 6 fundos fraudulentos apontados pelo BC',                   type:'fundo',    layer:3},
+      {id:'rwmplus',      label:'Fundo RWM Plus',          sub:'Cotista do Arleen · ligado ao Maia 95',                            type:'fundo',    layer:3},
+      {id:'moriah',       label:'Moriah Asset',            sub:'Gestora de Zettel · braço financeiro da família',                  type:'fundo',    layer:2},
+      {id:'willbank',     label:'Will Bank',               sub:'Liquidado jan/2026 · R$6,3bi · mesmo grupo Master',               type:'mercado',  layer:2},
+      {id:'bancopleno',   label:'Banco Pleno',             sub:'Liquidado · R$4,9bi · RPPS desprotegidos',                         type:'mercado',  layer:2},
+      {id:'rioprevidencia',label:'Rioprevidência',         sub:'RPPS RJ · ~R$1bi em LFs sem cobertura FGC',                       type:'bc',       layer:3},
+      {id:'laurojardin',  label:'Lauro Jardim',            sub:'Jornalista O Globo · alvo de ameaça do Sicário',                  type:'midialaw', layer:3},
+      {id:'pgr',          label:'Paulo Gonet (PGR)',       sub:'Lula o chamou após reunião com Vorcaro',                           type:'midialaw', layer:3},
+      {id:'kodiak',       label:'Kodiak Trust Company',    sub:'Alasca · faturou festa 40 anos de Vorcaro nos EUA',               type:'pessoal',  layer:3},
+    ];
+
+    const rawEdges = [
+      {s:'vorcaro',    t:'henrique',     rel:'pai',w:3},
+      {s:'vorcaro',    t:'natalia',      rel:'irmã',w:3},
+      {s:'vorcaro',    t:'zettel',       rel:'cunhado / operador do esquema',w:5},
+      {s:'natalia',    t:'zettel',       rel:'casamento',w:3},
+      {s:'vorcaro',    t:'martha',       rel:'namorada · fotos publicadas',w:1},
+      {s:'martha',     t:'moraes',       rel:'perguntou sobre encontro em Campos do Jordão',w:1},
+      {s:'henrique',   t:'lagoinha',     rel:'financiador histórico Rede Super',w:2},
+      {s:'natalia',    t:'lagoinha',     rel:'pastora Lagoinha Belvedere',w:3},
+      {s:'zettel',     t:'lagoinha',     rel:'pastor + CEO financeiro',w:3},
+      {s:'lagoinha',   t:'valadao',      rel:'pastor fundador Lagoinha USA',w:2},
+      {s:'valadao',    t:'clava',        rel:'fundou Clava Forte Bank',w:2},
+      {s:'vorcaro',    t:'lagoinha',     rel:'base social / cobertura',w:2},
+      {s:'macedo',     t:'universal',    rel:'fundador Igreja Universal',w:2},
+      {s:'macedo',     t:'vorcaro',      rel:'R$316mi títulos · R$250mi pessoais',w:3},
+      {s:'zettel',     t:'bolsonaro',    rel:'R$3mi doação + R$3mi conta pessoal',w:4},
+      {s:'zettel',     t:'tarcisio',     rel:'R$2mi doação 2022',w:3},
+      {s:'zettel',     t:'valdemar',     rel:'depósito confirmado por Valdemar',w:3},
+      {s:'vorcaro',    t:'nikolas',      rel:'jatinho \"Juventude pelo Brasil\" out/2022',w:2},
+      {s:'vorcaro',    t:'nogueira',     rel:'\"grande amigo\" · emenda FGC R$1mi',w:4},
+      {s:'vorcaro',    t:'temer',        rel:'recrutou para destravar veto BC',w:2},
+      {s:'valdemar',   t:'bolsonaro',    rel:'presidente PL',w:2},
+      {s:'bolsonaro',  t:'flavio',       rel:'filho · pré-candidato 2026',w:2},
+      {s:'valdemar',   t:'flavio',       rel:'candidatura presidencial PL',w:2},
+      {s:'camposneto', t:'flavio',       rel:'referência econômica do grupo',w:1},
+      {s:'nogueira',   t:'fernandin',    rel:'jatinho Mônaco · CPI Bets',w:3},
+      {s:'nogueira',   t:'linhares',     rel:'pupilo / compadre',w:3},
+      {s:'linhares',   t:'pcc',          rel:'R$230k de investigado · BK Bank',w:3},
+      {s:'fernandin',  t:'pcc',          rel:'7Games/Tigrinho · Carbono Oculto',w:3},
+      {s:'nogueira',   t:'joesley',      rel:'propina PP R$7mi Lava Jato',w:2},
+      {s:'joesley',    t:'mantega',      rel:'interlocutor PT/JBS por anos',w:2},
+      {s:'nogueira',   t:'rueda',        rel:'helicóptero VIP pós-Interlagos',w:1},
+      {s:'linhares',   t:'haransampaio', rel:'R$230k recebidos',w:2},
+      {s:'haransampaio',t:'pcc',         rel:'postos HD · lavagem',w:3},
+      {s:'haransampaio',t:'bkbank',      rel:'canal financeiro',w:2},
+      {s:'pcc',        t:'bkbank',       rel:'fintech usada para lavagem',w:3},
+      {s:'vorcaro',    t:'ibaneis',      rel:'\"estratégia de guerra\" msg Martha',w:3},
+      {s:'ibaneis',    t:'brb',          rel:'controlador político do BRB',w:4},
+      {s:'ibaneis',    t:'temer',        rel:'recrutou Temer para destravar',w:2},
+      {s:'brb',        t:'vorcaro',      rel:'R$16,7bi transferidos · compra 58%',w:4},
+      {s:'brb',        t:'tirreno',      rel:'comprou R$12,2bi carteiras fictícias',w:3},
+      {s:'wagner',     t:'mantega',      rel:'indicou ao Master',w:3},
+      {s:'wagner',     t:'lewan',        rel:'indicou ao Master',w:3},
+      {s:'vorcaro',    t:'mantega',      rel:'R$1mi/mês · R$16mi total',w:5},
+      {s:'vorcaro',    t:'lewan',        rel:'R$250k/mês · contrato ao filho',w:4},
+      {s:'mantega',    t:'lula',         rel:'articulou reunião Planalto dez/2024',w:4},
+      {s:'mantega',    t:'augustolima',  rel:'articulou operação BRB no governo',w:2},
+      {s:'augustolima',t:'vorcaro',      rel:'CEO Master · ex-sócio',w:4},
+      {s:'augustolima',t:'ruicosta',     rel:'Ebal privatizada para Lima/Bahia',w:3},
+      {s:'ruicosta',   t:'lula',         rel:'ministro Casa Civil',w:2},
+      {s:'lula',       t:'galipolo',     rel:'nomeou · pediu isenção sobre Master',w:3},
+      {s:'lula',       t:'lulinha',      rel:'filho · R$721k transferidos',w:2},
+      {s:'gleisi',     t:'lula',         rel:'presidente PT · defensora pública',w:2},
+      {s:'silveira',   t:'lula',         rel:'ministro · estava na reunião',w:1},
+      {s:'lula',       t:'pgr',          rel:'convocou PGR após reunião Vorcaro',w:1},
+      {s:'vorcaro',    t:'moraes',       rel:'\"Conseguiu bloquear?\" 17/11/25',w:4},
+      {s:'moraes',     t:'barci',        rel:'esposa',w:3},
+      {s:'barci',      t:'vorcaro',      rel:'contrato R$129mi com Master',w:4},
+      {s:'moraes',     t:'toffoli',      rel:'jantar patrocinado nos EUA',w:2},
+      {s:'vorcaro',    t:'toffoli',      rel:'9 msgs · sigilo · relatoria',w:4},
+      {s:'toffoli',    t:'arleen',       rel:'família vendeu cotas ao fundo',w:4},
+      {s:'toffoli',    t:'irmaostoff',   rel:'irmãos · Maridt Participações',w:3},
+      {s:'irmaostoff', t:'tayaya',       rel:'Maridt → cotas ao Arleen 2021',w:3},
+      {s:'toffoli',    t:'mendonca',     rel:'deixou relatoria → Mendonça assumiu',w:2},
+      {s:'gilmar',     t:'toffoli',      rel:'suspendeu quebra sigilo Maridt',w:2},
+      {s:'arleen',     t:'tayaya',       rel:'R$4,3mi investidos no resort',w:3},
+      {s:'arleen',     t:'dgep',         rel:'R$16,1mi incorporadora primo Toffoli',w:2},
+      {s:'arleen',     t:'rwmplus',      rel:'cotista',w:2},
+      {s:'rwmplus',    t:'maia95',       rel:'aportes recebidos',w:2},
+      {s:'maia95',     t:'vorcaro',      rel:'um dos 6 fundos fraudulentos do BC',w:3},
+      {s:'zettel',     t:'fundoleal',    rel:'cotista único Fundo Leal',w:4},
+      {s:'fundoleal',  t:'arleen',       rel:'único cotista do Arleen',w:4},
+      {s:'arleen',     t:'reag',         rel:'administrada pela Reag',w:3},
+      {s:'reag',       t:'pcc',          rel:'Carbono Oculto · lavagem PCC',w:3},
+      {s:'reag',       t:'vorcaro',      rel:'administrou fundos fraudulentos',w:3},
+      {s:'zettel',     t:'moraes',       rel:'pagamentos A Turma',w:0}, /* kept for compatibility; will be ignored below */
+      {s:'zettel',     t:'moriah',       rel:'CEO Moriah Asset Management',w:3},
+      {s:'moriah',     t:'vorcaro',      rel:'braço financeiro do esquema',w:3},
+      {s:'vorcaro',    t:'camposneto',   rel:'sabia · adiou intervenção 1 ano',w:3},
+      {s:'vorcaro',    t:'souza',        rel:'propina via contratos simulados',w:3},
+      {s:'vorcaro',    t:'santana',      rel:'WhatsApp com alertas internos BC',w:3},
+      {s:'fgc',        t:'camposneto',   rel:'30+ alertas ignorados',w:3},
+      {s:'fgc',        t:'vorcaro',      rel:'R$51,8bi acionados',w:4},
+      {s:'galipolo',   t:'fgc',          rel:'supervisor atual',w:1},
+      {s:'fgc',        t:'rioprevidencia',rel:'RPPS sem cobertura R$1bi',w:2},
+      {s:'fgc',        t:'bancopleno',   rel:'R$4,9bi liquidação',w:2},
+      {s:'fgc',        t:'willbank',     rel:'R$6,3bi liquidação jan/2026',w:2},
+      {s:'vorcaro',    t:'sicario',      rel:'R$1mi/mês via Zettel',w:4},
+      {s:'zettel',     t:'sicario',      rel:'pagamentos A Turma',w:3},
+      {s:'sicario',    t:'marilson',     rel:'A Turma · acesso sistemas',w:3},
+      {s:'marilson',   t:'souza',        rel:'ex-PF · acesso sistemas PF',w:2},
+      {s:'sicario',    t:'laurojardin',  rel:'planejou agressão ao jornalista',w:2},
+      {s:'sicario',    t:'pcc',          rel:'Carbono Oculto / conexão',w:2},
+      {s:'vorcaro',    t:'xp',           rel:'R$26bi CDBs · comissão 4%',w:4},
+      {s:'vorcaro',    t:'btg',          rel:'R$6,7bi CDBs',w:3},
+      {s:'vorcaro',    t:'nubank',       rel:'R$2,9bi · parou jul/2024',w:2},
+      {s:'vorcaro',    t:'tirreno',      rel:'comprou R$6,7bi carteiras fictícias',w:4},
+      {s:'xp',         t:'fgc',          rel:'acionou FGC investidores',w:2},
+      {s:'btg',        t:'fgc',          rel:'acionou FGC investidores',w:2},
+      {s:'nubank',     t:'fgc',          rel:'acionou FGC investidores',w:1},
+      {s:'vorcaro',    t:'willbank',     rel:'mesmo grupo · controle',w:3},
+      {s:'vorcaro',    t:'bancopleno',   rel:'mesmo conglomerado',w:2},
+      {s:'vorcaro',    t:'hugo',         rel:'6+ reuniões em residências oficiais',w:3},
+      {s:'vorcaro',    t:'alcolumbre',   rel:'jantares documentados',w:2},
+      {s:'hugo',       t:'nogueira',     rel:'Câmara / Centrão',w:1},
+      {s:'alcolumbre', t:'wagner',       rel:'Senado / PT-BA',w:1},
+      {s:'vorcaro',    t:'kodiak',       rel:'Kodiak Trust faturou festa 40 anos EUA',w:1},
+    ].filter(e=>e.w>0); /* drop accidental zeros */
+
+    let showL2=true, showL3=false, selectedId=null;
+    let showEdgeLabels=false;
+    let hideIsolated=false;
+    let activeTypes=new Set(Object.keys(TYPES));
+    let pathFrom=null, pathTo=null, pathSet=null;
+    let simulation, svgSel, zoomBehavior;
+
+    function getVisibleNodesBase(){
+      if(showL3) return rawNodes;
+      if(showL2) return rawNodes.filter(n=>n.layer<=2);
+      return rawNodes.filter(n=>n.layer===1);
+    }
+    function getVisibleGraph(){
+      let vn=getVisibleNodesBase().filter(n=>activeTypes.has(n.type));
+      const ids0=new Set(vn.map(n=>n.id));
+      let ve=rawEdges.filter(e=>ids0.has(e.s)&&ids0.has(e.t));
+      if(hideIsolated){
+        const deg=new Map();
+        ve.forEach(e=>{
+          deg.set(e.s,(deg.get(e.s)||0)+1);
+          deg.set(e.t,(deg.get(e.t)||0)+1);
+        });
+        vn=vn.filter(n=>(deg.get(n.id)||0)>0);
+        const ids=new Set(vn.map(n=>n.id));
+        ve=ve.filter(e=>ids.has(e.s)&&ids.has(e.t));
+      }
+      return {vn, ve};
+    }
+
+    function init(){
+      svgSel=d3.select('#svg');
+      zoomBehavior=d3.zoom().scaleExtent([0.1,4]).on('zoom',e=>{
+        d3.select('#g-edges').attr('transform',e.transform);
+        d3.select('#g-nodes').attr('transform',e.transform);
+      });
+      svgSel.call(zoomBehavior);
+      svgSel.on('click',()=>{ selectedId=null; clearPath(); update(); closePanel(); hideTooltip(); if(isMobile()) hideLegend(); });
+      buildLegend();
+      buildGraph();
+      window.setTimeout(resetView, 800);
+      bindKeys();
+      if(isMobile()) hideLegend(); else showLegend();
+    }
+
+    function buildGraph(){
+      const {vn, ve}=getVisibleGraph();
+      const w=window.innerWidth, h=window.innerHeight;
+      if(simulation) simulation.stop();
+
+      const prevPos={};
+      if(window._simNodes) window._simNodes.forEach(n=>{ prevPos[n.id]={x:n.x,y:n.y}; });
+
+      const nodes=vn.map(n=>({...n,
+        x: prevPos[n.id]?.x || w/2+(Math.random()-.5)*300,
+        y: prevPos[n.id]?.y || h/2+(Math.random()-.5)*300,
+      }));
+      const edges=ve.map(e=>({...e,source:e.s,target:e.t}));
+
+      simulation=d3.forceSimulation(nodes)
+        .force('link',d3.forceLink(edges).id(d=>d.id)
+          .distance(d=>{
+            if(d.source.type==='center'||d.target.type==='center') return 180;
+            if(d.source.layer===1&&d.target.layer===1) return 130;
+            if(d.source.layer===2||d.target.layer===2) return 160;
+            return 200;
+          }).strength(d=>0.25+d.w*0.05))
+        .force('charge',d3.forceManyBody().strength(d=>
+          d.type==='center'?-1500:d.layer===1?-700:d.layer===2?-400:-250))
+        .force('center',d3.forceCenter(w/2,h/2).strength(0.04))
+        .force('collision',d3.forceCollide().radius(d=>(TYPES[d.type]?.r||18)+30).strength(0.8))
+        .alphaDecay(0.02);
+
+      window._simNodes=nodes;
+      window._simEdges=edges;
+
+      const gE=d3.select('#g-edges');
+      gE.selectAll('*').remove();
+      const edgeSel=gE.selectAll('line').data(edges).join('line')
+        .attr('stroke','#ffffff').attr('stroke-opacity',0.07)
+        .attr('stroke-width',d=>Math.max(0.3,d.w*0.3));
+      const edgeLabelSel=gE.selectAll('text').data(edges).join('text')
+        .attr('fill','#1a1a1a').attr('font-size','10').attr('font-family','monospace')
+        .attr('text-anchor','middle').attr('pointer-events','none')
+        .text(d=>d.rel.length>36?d.rel.slice(0,36)+'…':d.rel);
+
+      const gN=d3.select('#g-nodes');
+      gN.selectAll('*').remove();
+      const nodeSel=gN.selectAll('g.node').data(nodes,d=>d.id).join('g')
+        .attr('class','node').style('cursor','pointer')
+        .on('click',(e,d)=>{
+          e.stopPropagation();
+          if(e.altKey){ pathTo=d.id; recomputePath(); return; }
+          if(e.shiftKey){ pathFrom=d.id; recomputePath(); return; }
+          selectNode(d.id);
+          if(isMobile()) hideLegend();
+        })
+        .on('mousemove',(e,d)=>showTooltip(e,d))
+        .on('mouseleave',()=>hideTooltip())
+        .call(d3.drag()
+          .on('start',(e,d)=>{ if(!e.active) simulation.alphaTarget(0.3).restart(); d.fx=d.x; d.fy=d.y; })
+          .on('drag', (e,d)=>{ d.fx=e.x; d.fy=e.y; })
+          .on('end',  (e,d)=>{ if(!e.active) simulation.alphaTarget(0); d.fx=null; d.fy=null; }));
+
+      nodeSel.append('circle').attr('class','glow-ring')
+        .attr('r',d=>(TYPES[d.type]?.r||18)+10)
+        .attr('fill',d=>TYPES[d.type]?.color||'#fff').attr('opacity',0.06);
+      nodeSel.append('circle').attr('class','node-circle')
+        .attr('r',d=>TYPES[d.type]?.r||18)
+        .attr('fill','#05050e')
+        .attr('stroke',d=>TYPES[d.type]?.color||'#fff')
+        .attr('stroke-width',d=>d.type==='center'?2.5:1.2);
+      nodeSel.filter(d=>d.type==='center').append('circle')
+        .attr('r',54).attr('fill','none').attr('stroke','#C0392B').attr('stroke-width',0.8).attr('opacity',0.25);
+      nodeSel.filter(d=>d.type==='center').append('circle')
+        .attr('r',72).attr('fill','none').attr('stroke','#C0392B').attr('stroke-width',0.6).attr('opacity',0.12);
+      nodeSel.append('circle')
+        .attr('r',d=>d.type==='center'?4:2)
+        .attr('fill',d=>TYPES[d.type]?.color||'#fff').attr('opacity',0.9);
+      nodeSel.append('text').attr('class','lbl-main')
+        .attr('y',d=>(TYPES[d.type]?.r||18)+14).attr('text-anchor','middle')
+        .attr('fill','#cbd5e1').attr('font-size',d=>d.type==='center'?12:11)
+        .attr('font-weight',d=>d.layer===1?'bold':'normal')
+        .attr('font-family','monospace').attr('pointer-events','none')
+        .text(d=>d.label);
+      nodeSel.append('text').attr('class','lbl-sub')
+        .attr('y',d=>(TYPES[d.type]?.r||18)+30).attr('text-anchor','middle')
+        .attr('fill',d=>TYPES[d.type]?.color||'#fff').attr('font-size','10')
+        .attr('font-family','monospace').attr('opacity',0.7).attr('pointer-events','none')
+        .text(d=>d.sub.length>48?d.sub.slice(0,48)+'…':d.sub);
+
+      let tickCount = 0;
+      simulation.on('tick',()=>{
+        tickCount++;
+        edgeSel.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+               .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+        edgeLabelSel.attr('x',d=>(d.source.x+d.target.x)/2).attr('y',d=>(d.source.y+d.target.y)/2-3);
+        nodeSel.attr('transform',d=>`translate(${d.x},${d.y})`);
+        if (tickCount > 260 && simulation.alpha() < 0.12) simulation.stop();
+      });
+
+      window._nodeSel=nodeSel;
+      window._edgeSel=edgeSel;
+      window._edgeLabelSel=edgeLabelSel;
+      document.getElementById('stats').textContent=
+        `${nodes.length} NÓS  ·  ${edges.length} CONEXÕES` +
+        (pathFrom||pathTo?`  ·  CAMINHO: ${pathFrom||'—'} → ${pathTo||'—'}`:'');
+      update();
+    }
+
+    function selectNode(id){ selectedId=id; update(); showPanel(id); }
+
+    function update(){
+      if(!window._nodeSel) return;
+      const connIds=new Set();
+      if(selectedId){
+        window._simEdges.forEach(e=>{
+          if(e.source.id===selectedId||e.target.id===selectedId){
+            connIds.add(e.source.id); connIds.add(e.target.id);
+          }
+        });
+      }
+      const cfg=id=>TYPES[rawNodes.find(n=>n.id===id)?.type]||{color:'#fff'};
+      const inPathNode=(id)=>pathSet?.nodes?.has(id);
+      const inPathEdge=(a,b)=>pathSet?.edges?.has(edgeKey(a,b));
+
+      window._nodeSel.select('.node-circle')
+        .attr('fill',d=>{
+          if(inPathNode(d.id)) return cfg(d.id).color;
+          if(!selectedId) return '#05050e';
+          return d.id===selectedId?cfg(d.id).color:connIds.has(d.id)?cfg(d.id).color+'18':'#05050e';
+        })
+        .attr('opacity',d=>{
+          if(inPathNode(d.id)) return 1;
+          return !selectedId?1:connIds.has(d.id)?1:0.12;
+        });
+      window._nodeSel.select('.glow-ring')
+        .attr('opacity',d=>{
+          if(inPathNode(d.id)) return 0.22;
+          return !selectedId?0.06:d.id===selectedId?0.28:connIds.has(d.id)?0.12:0.01;
+        });
+      window._nodeSel.select('.lbl-main')
+        .attr('fill',d=>!selectedId?'#cbd5e1':d.id===selectedId?'#fff':connIds.has(d.id)?'#fff':'#1a1a1a');
+      window._nodeSel.select('.lbl-sub')
+        .attr('opacity',d=>!selectedId?0.7:connIds.has(d.id)?0.85:0.06);
+
+      const selType=selectedId?cfg(selectedId).color:'#fff';
+      window._edgeSel
+        .attr('stroke',d=>!selectedId?'#fff':
+          (d.source.id===selectedId||d.target.id===selectedId)?selType:'#fff')
+        .attr('stroke-opacity',d=>!selectedId?0.07:
+          (inPathEdge(d.source.id,d.target.id))?0.85:
+          (d.source.id===selectedId||d.target.id===selectedId)?0.75:0.01)
+        .attr('stroke-width',d=>!selectedId?Math.max(0.3,d.w*0.3):
+          (inPathEdge(d.source.id,d.target.id))?Math.max(2.2,d.w*0.6):
+          (d.source.id===selectedId||d.target.id===selectedId)?Math.max(1.2,d.w*0.5):0.2);
+      window._edgeLabelSel
+        .attr('fill',d=>{
+          const onSel=selectedId&&(d.source.id===selectedId||d.target.id===selectedId);
+          const onPath=inPathEdge(d.source.id,d.target.id);
+          if(showEdgeLabels || onSel || onPath) return onPath?'#cbd5e1':onSel?'#9ca3af':'#4b5563';
+          return '#080810';
+        })
+        .attr('opacity',d=>{
+          const onSel=selectedId&&(d.source.id===selectedId||d.target.id===selectedId);
+          const onPath=inPathEdge(d.source.id,d.target.id);
+          if(showEdgeLabels || onSel || onPath) return onPath?0.95:onSel?0.8:0.22;
+          return 0;
+        });
+    }
+
+    function showPanel(id){
+      const node=rawNodes.find(n=>n.id===id); if(!node) return;
+      const cfg=TYPES[node.type]||{color:'#fff',label:'?'};
+      document.getElementById('panel-type').textContent=cfg.label.toUpperCase();
+      document.getElementById('panel-type').style.color=cfg.color;
+      document.getElementById('panel-name').textContent=node.label;
+      document.getElementById('panel-sub').textContent=node.sub;
+      const list=document.getElementById('conn-list'); list.innerHTML='';
+      rawEdges.filter(e=>e.s===id||e.t===id).forEach(e=>{
+        const othId=e.s===id?e.t:e.s;
+        const oth=rawNodes.find(n=>n.id===othId); if(!oth) return;
+        const ocfg=TYPES[oth.type]||{color:'#fff'};
+        const d=document.createElement('div'); d.className='conn-item';
+        d.innerHTML=`<div class="conn-dot" style="background:${ocfg.color}"></div>
+          <div><div class="conn-name">${oth.label}</div><div class="conn-rel">${e.rel}</div></div>`;
+        d.onclick=ev=>{ev.stopPropagation();selectNode(othId);};
+        list.appendChild(d);
+      });
+      const p=document.getElementById('panel');
+      p.style.borderLeft=`4px solid ${cfg.color}`;
+      p.style.boxShadow=`0 0 40px ${cfg.color}18, 0 20px 80px rgba(0,0,0,0.55)`;
+      p.classList.add('show');
+    }
+
+    function closePanel(){ document.getElementById('panel').classList.remove('show'); selectedId=null; update(); }
+
+    function buildLegend(){
+      const leg=document.getElementById('legend');
+      leg.innerHTML='<div id="leg-title">GRUPOS</div>';
+      Object.entries(TYPES).forEach(([type,cfg])=>{
+        const d=document.createElement('div'); d.className='leg-item';
+        d.innerHTML=`<div class="leg-dot" style="background:${cfg.color};box-shadow:0 0 8px ${cfg.glow||cfg.color}55"></div>
+          <span class="leg-label">${cfg.label}</span>`;
+        d.onclick=(ev)=>{ ev.stopPropagation(); toggleType(type); };
+        leg.appendChild(d);
+      });
+      syncLegendState();
+    }
+
+    function toggleL2(){
+      showL2=!showL2;
+      document.getElementById('btn-l2').classList.toggle('on',showL2);
+      document.getElementById('btn-l2').textContent=showL2?'2ª CAMADA ●':'2ª CAMADA ○';
+      buildGraph();
+    }
+    function toggleL3(){
+      showL3=!showL3;
+      if(showL3) showL2=true;
+      document.getElementById('btn-l3').classList.toggle('on',showL3);
+      document.getElementById('btn-l3').textContent=showL3?'3ª CAMADA ●':'3ª CAMADA ○';
+      document.getElementById('btn-l2').classList.toggle('on',showL2);
+      buildGraph();
+    }
+    function resetView(){
+      const w=window.innerWidth,h=window.innerHeight;
+      svgSel.transition().duration(650)
+        .call(zoomBehavior.transform,d3.zoomIdentity.translate(w*0.1,h*0.07).scale(isMobile()?0.62:0.72));
+    }
+    function fitView(){
+      if(!window._simNodes?.length) return resetView();
+      const nodes=window._simNodes;
+      const xs=nodes.map(n=>n.x), ys=nodes.map(n=>n.y);
+      const minX=Math.min(...xs), maxX=Math.max(...xs);
+      const minY=Math.min(...ys), maxY=Math.max(...ys);
+      const pad=isMobile()?170:140;
+      const w=window.innerWidth, h=window.innerHeight;
+      const bw=(maxX-minX)+pad, bh=(maxY-minY)+pad;
+      const s=Math.max(0.10, Math.min(3.2, Math.min(w/bw, h/bh)));
+      const tx=(w/2) - ((minX+maxX)/2)*s;
+      const ty=(h/2) - ((minY+maxY)/2)*s;
+      svgSel.transition().duration(600)
+        .call(zoomBehavior.transform, d3.zoomIdentity.translate(tx,ty).scale(s));
+    }
+    function searchNode(val){
+      if(!window._nodeSel) return;
+      if(!val){ window._nodeSel.select('.node-circle').attr('stroke-width',d=>d.type==='center'?2.5:1.2); return; }
+      const v=val.toLowerCase();
+      window._nodeSel.select('.node-circle').attr('stroke-width',d=>{
+        return(d.label.toLowerCase().includes(v)||d.sub.toLowerCase().includes(v))?5:d.type==='center'?2.5:1.2;
+      });
+    }
+
+    function toggleEdgeLabels(){
+      showEdgeLabels=!showEdgeLabels;
+      document.getElementById('btn-labels').classList.toggle('on',showEdgeLabels);
+      document.getElementById('btn-labels').textContent=showEdgeLabels?'RÓTULOS ●':'RÓTULOS ○';
+      update();
+    }
+    function toggleIsolated(){
+      hideIsolated=!hideIsolated;
+      document.getElementById('btn-isolated').classList.toggle('on',hideIsolated);
+      document.getElementById('btn-isolated').textContent=hideIsolated?'ISOLADOS ●':'ISOLADOS ○';
+      buildGraph();
+    }
+    function toggleType(type){
+      if(activeTypes.has(type)) activeTypes.delete(type);
+      else activeTypes.add(type);
+      if(activeTypes.size===0) activeTypes=new Set(Object.keys(TYPES));
+      syncLegendState();
+      buildGraph();
+    }
+    function syncLegendState(){
+      const items=[...document.querySelectorAll('#legend .leg-item')];
+      items.forEach((el,i)=>{
+        const type=Object.keys(TYPES)[i];
+        el.classList.toggle('off', !activeTypes.has(type));
+      });
+    }
+    function edgeKey(a,b){ return a<b?`${a}→${b}`:`${b}→${a}`; }
+    function recomputePath(){
+      if(!pathFrom && !pathTo){ pathSet=null; buildGraph(); return; }
+      if(!pathFrom || !pathTo){ pathSet=null; update(); return; }
+      const {vn, ve}=getVisibleGraph();
+      const ids=new Set(vn.map(n=>n.id));
+      if(!ids.has(pathFrom) || !ids.has(pathTo)){ pathSet=null; update(); return; }
+      const adj=new Map();
+      vn.forEach(n=>adj.set(n.id,[]));
+      ve.forEach(e=>{ adj.get(e.s).push(e.t); adj.get(e.t).push(e.s); });
+      const q=[pathFrom], prev=new Map([[pathFrom,null]]);
+      while(q.length){
+        const cur=q.shift();
+        if(cur===pathTo) break;
+        for(const nx of adj.get(cur)||[]){
+          if(prev.has(nx)) continue;
+          prev.set(nx,cur); q.push(nx);
+        }
+      }
+      if(!prev.has(pathTo)){ pathSet={nodes:new Set([pathFrom,pathTo]), edges:new Set()}; update(); return; }
+      const nodesSet=new Set();
+      const edgesSet=new Set();
+      let cur=pathTo;
+      while(cur){
+        nodesSet.add(cur);
+        const p=prev.get(cur);
+        if(p){ edgesSet.add(edgeKey(cur,p)); }
+        cur=p;
+      }
+      pathSet={nodes:nodesSet, edges:edgesSet};
+      update();
+    }
+    function clearPath(){ pathFrom=null; pathTo=null; pathSet=null; }
+    function showTooltip(ev, node){
+      const tt=document.getElementById('tooltip');
+      const cfg=TYPES[node.type]||{label:'',color:'#fff'};
+      tt.querySelector('.t1').textContent=node.label;
+      tt.querySelector('.t2').textContent=node.sub;
+      tt.querySelector('.t3').textContent=`${cfg.label.toUpperCase()} · CAMADA ${node.layer}` +
+        (pathFrom||pathTo?` · CAMINHO: ${pathFrom||'—'} → ${pathTo||'—'}`:'');
+      const x=ev.clientX+14, y=ev.clientY+14;
+      tt.style.left=x+'px'; tt.style.top=y+'px';
+      tt.style.display='block';
+    }
+    function hideTooltip(){ document.getElementById('tooltip').style.display='none'; }
+    function bindKeys(){
+      window.addEventListener('keydown',(e)=>{
+        if(e.key==='/'){ e.preventDefault(); document.getElementById('srch')?.focus(); }
+        if(e.key==='Escape'){
+          closePanel(); selectedId=null; clearPath();
+          const s=document.getElementById('srch'); if(s) s.value='';
+          searchNode(''); update(); hideTooltip(); togglePixModal(false); if(isMobile()) hideLegend();
+        }
+        if(e.key==='f' || e.key==='F'){ fitView(); }
+        if(e.key==='l' || e.key==='L'){ toggleEdgeLabels(); }
+      });
+    }
+
+    function isMobile(){ return window.matchMedia && window.matchMedia('(max-width: 720px)').matches; }
+    function toggleLegend(){
+      const leg=document.getElementById('legend');
+      leg.classList.toggle('show');
+    }
+    function showLegend(){ document.getElementById('legend').classList.add('show'); }
+    function hideLegend(){ document.getElementById('legend').classList.remove('show'); }
+
+    function togglePixModal(show){
+      const m=document.getElementById('pix-modal');
+      m.style.display = show ? 'block' : 'none';
+    }
+    async function copyPix(){
+      const key = document.getElementById('pix-key').textContent.trim();
+      try { await navigator.clipboard.writeText(key); } catch {}
+      showToast('Chave PIX copiada: ' + key);
+    }
+    function showToast(txt){
+      const t=document.getElementById('pix-toast');
+      t.textContent = txt;
+      t.style.display='block';
+      clearTimeout(window.__pixToastT);
+      window.__pixToastT = setTimeout(()=>{ t.style.display='none'; }, 2000);
+    }
+    document.getElementById('pix-modal').addEventListener('click', (e)=>{ if(e.target.id==='pix-modal') togglePixModal(false); });
+
+    window.toggleL2=toggleL2;window.toggleL3=toggleL3;
+    window.resetView=resetView;window.fitView=fitView;
+    window.searchNode=searchNode;window.closePanel=closePanel;
+    window.toggleEdgeLabels=toggleEdgeLabels;window.toggleIsolated=toggleIsolated;
+    window.toggleLegend=toggleLegend;window.togglePixModal=togglePixModal;window.copyPix=copyPix;
+
+    window.addEventListener('resize',()=>{
+      if(simulation) simulation.force('center',d3.forceCenter(window.innerWidth/2,window.innerHeight/2)).restart();
+    });
+
+    init();
+  </script>
+</body>
+</html>
+
