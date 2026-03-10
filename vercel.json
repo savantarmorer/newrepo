@@ -8,6 +8,10 @@
   ],
   "routes": [
     {
+      "src": "/master/?$",
+      "dest": "/teia-compliance-zero.html"
+    },
+    {
       "src": "/api/candidatos",
       "dest": "/server.js"
     },
