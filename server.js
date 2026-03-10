@@ -21,6 +21,16 @@ app.use(cors());
 // Servir arquivos estáticos
 app.use(express.static('.'));
 
+// URL curta para a Teia (sem .html)
+app.get(['/master', '/master/'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'teia-compliance-zero.html'));
+});
+
+// Compat: redirecionar URL antiga para /master
+app.get(['/teia-compliance-zero.html', '/teia-compliance-zero'], (req, res) => {
+    res.redirect(301, '/master');
+});
+
 // Rota proxy para Base dos Dados
 app.get('/api/candidatos', async (req, res) => {
     try {
