@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Master — Teia</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta name="robots" content="noindex" />
+  <style>
+    html, body { height: 100%; margin: 0; background: #05050e; color: #fff; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .loading { display:flex; align-items:center; justify-content:center; height:100%; opacity:0.8; font-size:14px; letter-spacing:0.5px; }
+  </style>
+</head>
+<body>
+  <div class="loading">Carregando…</div>
+  <script>
+    // Static-host compatible alias for /master(/) → /teia-compliance-zero.html
+    // Keeps the short URL while rendering the real page.
+    fetch('/teia-compliance-zero.html', { cache: 'no-store' })
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      })
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+        // Ensure internal nav points to /master
+        try {
+          document.querySelectorAll('a[href="/teia-compliance-zero.html"]').forEach(a => a.setAttribute('href','/master'));
+        } catch {}
+      })
+      .catch(() => {
+        document.body.innerHTML = '<div class="loading">Não foi possível carregar. Abra <a href="/teia-compliance-zero.html" style="color:#ff6b5a">/teia-compliance-zero.html</a>.</div>';
+      });
+  </script>
+</body>
+</html>
+
