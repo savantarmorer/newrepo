@@ -6,18 +6,25 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "redirects": [
     {
-      "src": "/master/?$",
-      "dest": "/teia-compliance-zero.html"
+      "source": "/teia-compliance-zero.html",
+      "destination": "/master",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/candidatos",
+      "destination": "/server.js"
     },
     {
-      "src": "/api/candidatos",
-      "dest": "/server.js"
+      "source": "/master",
+      "destination": "/teia-compliance-zero.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/master/",
+      "destination": "/teia-compliance-zero.html"
     }
   ]
 }
