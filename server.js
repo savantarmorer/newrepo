@@ -26,9 +26,19 @@ app.get(['/master', '/master/'], (req, res) => {
     res.sendFile(path.join(__dirname, 'teia-compliance-zero.html'));
 });
 
+// URL curta para a Teia Serra do Curral
+app.get(['/curral', '/curral/'], (req, res) => {
+    res.sendFile(path.join(__dirname, 'teia-serra-curral.html'));
+});
+
 // Compat: redirecionar URL antiga para /master
 app.get(['/teia-compliance-zero.html', '/teia-compliance-zero'], (req, res) => {
     res.redirect(301, '/master');
+});
+
+// Compat: URL longa da página Curral
+app.get(['/teia-serra-curral.html', '/teia-serra-curral'], (req, res) => {
+    res.redirect(301, '/curral');
 });
 
 // Rota proxy para Base dos Dados

@@ -11,6 +11,11 @@
       "source": "/teia-compliance-zero.html",
       "destination": "/master",
       "permanent": true
+    },
+    {
+      "source": "/teia-serra-curral.html",
+      "destination": "/curral",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -25,6 +30,14 @@
     {
       "source": "/master/",
       "destination": "/teia-compliance-zero.html"
+    },
+    {
+      "source": "/curral",
+      "destination": "/teia-serra-curral.html"
+    },
+    {
+      "source": "/curral/",
+      "destination": "/teia-serra-curral.html"
     }
   ]
 }

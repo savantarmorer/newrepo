@@ -226,6 +226,7 @@
         <a href="/mapa-dinastias.html" style="color:#6b7280;text-decoration:none">Mapa das Dinastias</a>
         <a href="/mapa-magico.html" style="color:#6b7280;text-decoration:none">Mapa Mágico</a>
         <a href="/master" style="color:#C0392B;text-decoration:none;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px">◉ TEIA</a>
+        <a href="/curral" style="color:#6b7280;text-decoration:none">Teia Curral</a>
       </div>
     </div>
   </nav>
@@ -280,7 +281,7 @@
       <!-- PIX watermark (desktop only) -->
       <div class="h-pix-tag">
         <span class="h-pix-label">PIX:</span>
-        <span class="h-pix-key">31 99875-0008</span>
+        <span class="h-pix-key">PIX: 31 99875-0008</span>
         <button class="btn btn-pix" type="button" onclick="togglePixModal(true)" title="Contribuir via PIX">↗</button>
       </div>
 
@@ -660,7 +661,9 @@
 
   // PIX popup: show after 3 different node interactions (first time only)
   let interactedNodes = new Set();
+  const PIX_STORAGE_KEY = 'pixPromptShownMaster';
   let pixShown = false;
+  try { pixShown = localStorage.getItem(PIX_STORAGE_KEY) === '1'; } catch {}
   const PIX_THRESHOLD = 3;
 
   function trackInteraction(nodeId) {
@@ -668,6 +671,7 @@
     interactedNodes.add(nodeId);
     if (interactedNodes.size >= PIX_THRESHOLD) {
       pixShown = true;
+      try { localStorage.setItem(PIX_STORAGE_KEY, '1'); } catch {}
       setTimeout(() => togglePixModal(true), 400);
     }
   }
