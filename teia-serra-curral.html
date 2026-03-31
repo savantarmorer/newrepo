@@ -315,16 +315,13 @@ let pathFrom=null, pathTo=null, pathSet=null;
 let simulation, svgSel, zoomBehavior;
 let interactedNodes = new Set();
 const PIX_THRESHOLD = 3;
-const PIX_STORAGE_KEY = 'pixPromptShownCurral';
 let pixShown = false;
-try { pixShown = localStorage.getItem(PIX_STORAGE_KEY) === '1'; } catch {}
 
 function trackInteraction(nodeId){
   if (pixShown) return;
   interactedNodes.add(nodeId);
   if (interactedNodes.size >= PIX_THRESHOLD){
     pixShown = true;
-    try { localStorage.setItem(PIX_STORAGE_KEY, '1'); } catch {}
     setTimeout(() => togglePixModal(true), 350);
   }
 }
