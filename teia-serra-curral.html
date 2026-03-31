@@ -110,6 +110,16 @@
     #tooltip .t1{color:#fff;font-size:13px;font-weight:600;line-height:1.2}
     #tooltip .t2{color:#9ca3af;font-size:11px;line-height:1.4;margin-top:5px}
     #tooltip .t3{color:#4b5563;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.5px;margin-top:8px}
+    #pix-modal{position:fixed;inset:0;display:none;z-index:5000;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px)}
+    #pix-modal .box{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(460px,92vw);background:rgba(8,8,20,0.98);border:1px solid rgba(192,57,43,0.25);border-radius:12px;padding:22px;box-shadow:0 20px 80px rgba(0,0,0,0.75)}
+    #pix-modal .close-x{position:absolute;top:12px;right:12px;color:#6b7280;cursor:pointer;font-size:18px}
+    #pix-modal .close-x:hover{color:#ff6b5a}
+    #pix-modal .top{font-family:'Space Mono',monospace;color:#C0392B;font-size:10px;letter-spacing:3px;margin-bottom:8px}
+    #pix-modal .title{font-size:18px;color:#fff;margin-bottom:8px}
+    #pix-modal .sub{font-size:13px;color:#9ca3af;line-height:1.5;margin-bottom:14px}
+    #pix-modal .key{font-family:'Space Mono',monospace;font-size:18px;color:#fff;background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.22);padding:10px 12px;border-radius:8px}
+    #pix-modal .row{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+    #pix-toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:none;z-index:6000;background:rgba(8,8,20,0.95);border:1px solid rgba(255,255,255,0.1);color:#fff;padding:9px 12px;border-radius:8px;font-family:'Space Mono',monospace;font-size:11px}
     #mobile-actions{display:none}
     @media(max-width:900px){#panel{width:min(90vw,480px)}}
     @media(max-width:768px){
@@ -184,6 +194,20 @@
   <div id="stats"></div>
   <div id="tooltip"><div class="t1"></div><div class="t2"></div><div class="t3"></div></div>
 </div>
+<div id="pix-modal" role="dialog" aria-modal="true" aria-label="Contribuição por PIX">
+  <div class="box">
+    <div class="close-x" onclick="togglePixModal(false)">✕</div>
+    <div class="top">APOIE O PROJETO</div>
+    <div class="title">Contribua via PIX</div>
+    <div class="sub">Se esta teia te ajudou, apoie o trabalho investigativo independente.</div>
+    <div class="key" id="pix-key">(31)998750008</div>
+    <div class="row">
+      <button class="btn on" type="button" onclick="copyPix()">COPIAR CHAVE</button>
+      <button class="btn" type="button" onclick="togglePixModal(false)">FECHAR</button>
+    </div>
+  </div>
+</div>
+<div id="pix-toast">Chave PIX copiada ✓</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
 
@@ -289,6 +313,21 @@ let showEdgeLabels=false, hideIsolated=false;
 let activeTypes=new Set(Object.keys(TYPES));
 let pathFrom=null, pathTo=null, pathSet=null;
 let simulation, svgSel, zoomBehavior;
+let interactedNodes = new Set();
+const PIX_THRESHOLD = 3;
+const PIX_STORAGE_KEY = 'pixPromptShownCurral';
+let pixShown = false;
+try { pixShown = localStorage.getItem(PIX_STORAGE_KEY) === '1'; } catch {}
+
+function trackInteraction(nodeId){
+  if (pixShown) return;
+  interactedNodes.add(nodeId);
+  if (interactedNodes.size >= PIX_THRESHOLD){
+    pixShown = true;
+    try { localStorage.setItem(PIX_STORAGE_KEY, '1'); } catch {}
+    setTimeout(() => togglePixModal(true), 350);
+  }
+}
 
 function getVisibleNodesBase(){
   if(showL3) return rawNodes;
@@ -355,6 +394,7 @@ function buildGraph(){
       e.stopPropagation();
       if(e.altKey){pathTo=d.id;recomputePath();return;}
       if(e.shiftKey){pathFrom=d.id;recomputePath();return;}
+      trackInteraction(d.id);
       selectNode(d.id); if(isMobile()) hideLegend();
     })
     .on('mousemove',(e,d)=>showTooltip(e,d))
@@ -420,7 +460,7 @@ function showPanel(id){
     const ocfg=TYPES[oth.type]||{color:'#fff'};
     const d=document.createElement('div');d.className='conn-item';
     d.innerHTML='<div class="conn-dot" style="background:'+ocfg.color+'"></div><div><div class="conn-name">'+oth.label+'</div><div class="conn-rel">'+e.rel+'</div></div>';
-    d.onclick=ev=>{ev.stopPropagation();selectNode(othId);};
+    d.onclick=ev=>{ev.stopPropagation();trackInteraction(othId);selectNode(othId);};
     list.appendChild(d);
   });
   const p=document.getElementById('panel');
@@ -502,8 +542,24 @@ window.resetView=resetView; window.fitView=fitView;
 window.searchNode=searchNode; window.closePanel=closePanel;
 window.toggleEdgeLabels=toggleEdgeLabels; window.toggleIsolated=toggleIsolated;
 window.toggleLegend=toggleLegend;
+window.togglePixModal=togglePixModal;
+window.copyPix=copyPix;
 
 window.addEventListener('resize',()=>{if(simulation)simulation.force('center',d3.forceCenter(window.innerWidth/2,(window.innerHeight-56)/2)).restart();});
+document.getElementById('pix-modal').addEventListener('click',e=>{if(e.target.id==='pix-modal') togglePixModal(false);});
+
+function togglePixModal(show){
+  const m = document.getElementById('pix-modal');
+  m.style.display = show ? 'block' : 'none';
+}
+async function copyPix(){
+  const key = document.getElementById('pix-key').textContent.trim();
+  try { await navigator.clipboard.writeText(key); } catch {}
+  const t = document.getElementById('pix-toast');
+  t.style.display = 'block';
+  clearTimeout(window.__pixToastTimer);
+  window.__pixToastTimer = setTimeout(()=>{ t.style.display='none'; }, 1800);
+}
 init();
 </script>
 </body>
