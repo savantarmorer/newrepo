@@ -121,6 +121,17 @@ iframe {
     color: var(--color-text);
 }
 
+.nav-links a.nav-with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.nav-links a.nav-with-icon svg {
+    flex-shrink: 0;
+    opacity: 0.88;
+}
+
 .btn-contact {
     background: var(--color-accent);
     color: var(--color-text) !important;
