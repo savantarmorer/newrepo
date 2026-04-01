@@ -16,6 +16,11 @@
       "source": "/teia-serra-curral.html",
       "destination": "/curral",
       "permanent": true
+    },
+    {
+      "source": "/teia-ponte.html",
+      "destination": "/ponte",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -38,6 +43,14 @@
     {
       "source": "/curral/",
       "destination": "/teia-serra-curral.html"
+    },
+    {
+      "source": "/ponte",
+      "destination": "/teia-ponte.html"
+    },
+    {
+      "source": "/ponte/",
+      "destination": "/teia-ponte.html"
     }
   ]
 }

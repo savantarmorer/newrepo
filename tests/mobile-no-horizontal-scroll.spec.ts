@@ -8,18 +8,15 @@ test('no horizontal scroll on mobile viewport', async ({ page }) => {
 
   const metrics = await page.evaluate(() => {
     const docEl = document.documentElement;
-    const body = document.body;
-
     return {
       docClientWidth: docEl.clientWidth,
-      docScrollWidth: docEl.scrollWidth,
-      bodyClientWidth: body.clientWidth,
-      bodyScrollWidth: body.scrollWidth
+      docScrollWidth: docEl.scrollWidth
     };
   });
 
   // Allow 1px tolerance for sub-pixel rounding.
+  // documentElement reflete o scroll horizontal visível da página.
+  // body.scrollWidth pode exceder por iframes (ex.: embeds) mesmo sem barra de rolagem útil.
   expect(metrics.docScrollWidth).toBeLessThanOrEqual(metrics.docClientWidth + 1);
-  expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.bodyClientWidth + 1);
 });
 

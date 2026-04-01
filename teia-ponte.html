@@ -3,8 +3,27 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Teia — Operação Compliance Zero</title>
+  <title>Teia — Ponte Compliance Zero × Serra do Curral</title>
+  <meta name="description" content="Mapa unificado das conexões em comum entre a Operação Compliance Zero (Banco Master) e a ORCRIM Serra do Curral: Zettel, Silveira, Kallas, STF, Planalto e MG.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://iuripiragibe.net/ponte">
+  <meta name="theme-color" content="#05050e">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://iuripiragibe.net/ponte">
+  <meta property="og:title" content="Teia — Ponte Compliance × Curral">
+  <meta property="og:description" content="Grafo investigativo que une os nexos compartilhados entre Master/Vorcaro e a ORCRIM da Serra do Curral.">
+  <meta property="og:image" content="https://iuripiragibe.net/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Teia — Ponte Compliance × Curral">
+  <meta name="twitter:description" content="Conexões em comum entre as duas teias em visualização interativa.">
+  <meta name="twitter:image" content="https://iuripiragibe.net/og-image.svg">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebPage","name":"Teia — Ponte Compliance Zero × Serra do Curral","url":"https://iuripiragibe.net/ponte","inLanguage":"pt-BR","description":"Mapa interativo dos nexos entre Compliance Zero e ORCRIM Serra do Curral.","isPartOf":{"@type":"WebSite","name":"Iuri Piragibe","url":"https://iuripiragibe.net"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Dataset","name":"Teia Ponte Master–Curral","description":"Nós e arestas derivados da interseção documental entre duas teias investigativas.","url":"https://iuripiragibe.net/ponte","creator":{"@type":"Person","name":"Iuri Piragibe"},"inLanguage":"pt-BR"}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -225,9 +244,9 @@
         <a href="/blog.html" style="color:#6b7280;text-decoration:none">Blog</a>
         <a href="/mapa-dinastias.html" style="color:#6b7280;text-decoration:none">Mapa das Dinastias</a>
         <a href="/mapa-magico.html" style="color:#6b7280;text-decoration:none">Mapa Mágico</a>
-        <a href="/master" style="color:#C0392B;text-decoration:none;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px">◉ TEIA</a>
+        <a href="/master" style="color:#6b7280;text-decoration:none">Teia</a>
         <a href="/curral" style="color:#6b7280;text-decoration:none">Teia Curral</a>
-        <a href="/ponte" style="color:#6b7280;text-decoration:none">Teia Ponte</a>
+        <a href="/ponte" style="color:#C0392B;text-decoration:none;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px">◉ PONTE</a>
       </div>
     </div>
   </nav>
@@ -238,8 +257,8 @@
       <!-- Title -->
       <div class="h-title-block">
         <div>
-          <div class="htitle">◉ COMPLIANCE ZERO</div>
-          <div class="hsub">BANCO MASTER · MAPA DE CONEXÕES</div>
+          <div class="htitle">◉ PONTE · MASTER × CURRAL</div>
+          <div class="hsub">NEXOS COMUNS · COMPLIANCE ZERO + SERRA DO CURRAL</div>
         </div>
       </div>
 
@@ -282,7 +301,7 @@
       <!-- PIX watermark (desktop only) -->
       <div class="h-pix-tag">
         <span class="h-pix-label">PIX:</span>
-        <span class="h-pix-key">PIX: 31 99875-0008</span>
+        <span class="h-pix-key">(31)998750008</span>
         <button class="btn btn-pix" type="button" onclick="togglePixModal(true)" title="Contribuir via PIX">↗</button>
       </div>
 
@@ -319,15 +338,15 @@
   </div>
 
   <!-- PIX Modal -->
-  <div id="pix-modal" role="dialog" aria-modal="true">
+  <div id="pix-modal" role="dialog" aria-modal="true" aria-label="Contribuição por PIX">
     <div class="box">
       <div class="close-x" onclick="togglePixModal(false)">✕</div>
       <div class="pix-icon">🔍</div>
       <div class="pix-top">APOIE O PROJETO</div>
-      <div class="pix-title">Compliance Zero precisa de você</div>
-      <div class="pix-sub">Esse mapeamento é feito de forma independente. Se o conteúdo te ajuda a entender a teia, considere contribuir.</div>
+      <div class="pix-title">Apoie o mapeamento unificado</div>
+      <div class="pix-sub">Este grafo cruza as duas teias investigativas. Se o conteúdo ajuda, considere contribuir com o projeto.</div>
       <div class="pix-key-box">
-        <span class="pix-key-val" id="pix-key">31 99875-0008</span>
+        <span class="pix-key-val" id="pix-key">(31)998750008</span>
         <button class="btn on" type="button" onclick="copyPix()">COPIAR</button>
       </div>
       <div class="pix-row">
@@ -342,58 +361,38 @@
   // ═══════════════════════════════════════════════════
   // NODE TYPES
   // ═══════════════════════════════════════════════════
+  // Tipos do grafo unificado: ponte = entidades que aparecem nas duas teias ou fazem o vínculo explícito.
   const TYPES = {
-    center:   {color:'#C0392B',glow:'#ff3333',label:'Centro',r:34},
-    familia:  {color:'#8E44AD',glow:'#c056f5',label:'Família',r:22},
-    igreja:   {color:'#D4AC0D',glow:'#f5c800',label:'Igreja / Religião',r:20},
-    direita:  {color:'#2471A3',glow:'#3498db',label:'Político Direita',r:22},
-    esquerda: {color:'#1E8449',glow:'#27ae60',label:'Político Esquerda',r:22},
-    stf:      {color:'#E67E22',glow:'#f39c12',label:'STF / Judiciário',r:22},
-    bc:       {color:'#717D7E',glow:'#aab7b8',label:'Banco Central',r:20},
-    milicia:  {color:'#922B21',glow:'#e74c3c',label:'Milícia / Crime',r:20},
-    brb:      {color:'#1A5276',glow:'#2980b9',label:'BRB / Gov DF',r:20},
-    mercado:  {color:'#0E6655',glow:'#1abc9c',label:'Mercado Financeiro',r:20},
-    fundo:    {color:'#7D6608',glow:'#d4ac0d',label:'Fundos / Teia',r:18},
-    pessoal:  {color:'#2E4057',glow:'#5d8fbd',label:'Pessoal / Afeto',r:14},
-    pcc:      {color:'#641E16',glow:'#c0392b',label:'Crime Organizado',r:24},
-    congresso:{color:'#5B2C6F',glow:'#a569bd',label:'Congresso',r:20},
-    midialaw: {color:'#4A235A',glow:'#8e44ad',label:'Mídia / Jurídico',r:14},
+    center:      {color:'#f59e0b',glow:'#fbbf24',label:'Hub · Zettel (ponte)',r:34},
+    bridge:      {color:'#f59e0b',glow:'#fbbf24',label:'Ponte / nexo duplo',r:28},
+    compliance:  {color:'#C0392B',glow:'#ff3333',label:'Núcleo Master / Compliance',r:24},
+    curral:      {color:'#7c3aed',glow:'#a855f7',label:'Núcleo Serra do Curral',r:24},
+    stf:         {color:'#E67E22',glow:'#f39c12',label:'STF / Judiciário',r:22},
+    politico:    {color:'#1E8449',glow:'#27ae60',label:'Político / Planalto',r:22},
+    operacional: {color:'#2563eb',glow:'#3b82f6',label:'Operacional MG / PF-ANM',r:20},
+    financeiro:  {color:'#0E6655',glow:'#1abc9c',label:'Financeiro / Cedro',r:20},
   };
 
   // ═══════════════════════════════════════════════════
   // WIKIPEDIA PAGE MAPPING (for node photos)
   // ═══════════════════════════════════════════════════
   const WIKI_MAP = {
-    vorcaro:    'Daniel_Vorcaro',
-    lula:       'Luiz_Inácio_Lula_da_Silva',
-    bolsonaro:  'Jair_Bolsonaro',
-    tarcisio:   'Tarcísio_de_Freitas',
-    nikolas:    'Nikolas_Ferreira',
-    nogueira:   'Ciro_Nogueira',
-    valdemar:   'Valdemar_Costa_Neto',
-    flavio:     'Flávio_Bolsonaro',
-    temer:      'Michel_Temer',
-    moraes:     'Alexandre_de_Moraes',
-    toffoli:    'Dias_Toffoli',
-    gilmar:     'Gilmar_Mendes',
-    mendonca:   'André_Mendonça',
-    camposneto: 'Roberto_Campos_Neto',
-    ibaneis:    'Ibaneis_Rocha',
-    hugo:       'Hugo_Motta',
-    alcolumbre: 'Davi_Alcolumbre',
-    mantega:    'Guido_Mantega',
-    wagner:     'Jaques_Wagner',
-    lewan:      'Ricardo_Lewandowski',
-    gleisi:     'Gleisi_Hoffmann',
-    ruicosta:   'Rui_Costa_(politician)',
-    galipolo:   'Gabriel_Galípolo',
-    macedo:     'Edir_Macedo',
-    joesley:    'Joesley_Batista',
-    rueda:      'Antônio_de_Rueda',
-    valadao:    'André_Valadão',
-    pgr:        'Paulo_Gonet',
-    laurojardin:'Lauro_Jardim',
+    zettel:   'Fabiano_Zettel',
+    vorcaro:  'Daniel_Vorcaro',
+    silveira: 'Alexandre_Silveira',
+    lula:     'Luiz_Inácio_Lula_da_Silva',
+    mantega:  'Guido_Mantega',
+    toffoli:  'Dias_Toffoli',
+    moraes:   'Alexandre_de_Moraes',
+    nikolas:  'Nikolas_Ferreira',
+    kallas:   'Lucas_Kallas',
+    pacheco:  'Rodrigo_Pacheco',
+    galipolo: 'Gabriel_Galípolo',
   };
+
+  function avatarForName(name) {
+    return 'https://ui-avatars.com/api/?name=' + encodeURIComponent(name) + '&background=111827&color=ffffff&size=128&bold=true&format=png';
+  }
 
   // Image cache: nodeId → img URL (populated async)
   const nodeImages = {};
@@ -472,184 +471,70 @@
   // ═══════════════════════════════════════════════════
   // DATA
   // ═══════════════════════════════════════════════════
+  // Grafo reduzido: só entidades que aparecem nas duas teias ou explicam o vínculo explícito Master ↔ Serra do Curral.
   const rawNodes = [
-    {id:'vorcaro',      label:'Daniel Vorcaro',         sub:'Banco Master · preso 2x em 2025/2026',                               type:'center',   layer:1},
-    {id:'henrique',     label:'Henrique Vorcaro',        sub:'Pai · Grupo Multipar · financiou Lagoinha',                          type:'familia',  layer:1},
-    {id:'natalia',      label:'Natália Vorcaro',         sub:'Irmã · Pastora Lagoinha Belvedere',                                  type:'familia',  layer:1},
-    {id:'zettel',       label:'Fabiano Zettel',          sub:'Cunhado · CEO Moriah Asset · preso 04/03/26',                        type:'familia',  layer:1},
-    {id:'martha',       label:'Martha Graeff',           sub:'Ex-namorada · modelo · rompeu no dia da 1ª prisão',                  type:'pessoal',  layer:2},
-    {id:'lagoinha',     label:'Ig. Batista da Lagoinha', sub:'Base social do esquema · BH',                                        type:'igreja',   layer:1},
-    {id:'valadao',      label:'André Valadão',           sub:'Pastor · Clava Forte Bank sem autorização BC',                       type:'igreja',   layer:1},
-    {id:'clava',        label:'Clava Forte Bank',        sub:'Cap. R$100mil · sede na igreja · CNPJ suspenso',                     type:'fundo',    layer:2},
-    {id:'macedo',       label:'Edir Macedo',             sub:'Digimais · R$316mi títulos · R$250mi pessoais',                      type:'igreja',   layer:1},
-    {id:'universal',    label:'Igreja Universal',        sub:'Holding financeira via Digimais',                                    type:'igreja',   layer:3},
-    {id:'bolsonaro',    label:'Jair Bolsonaro',          sub:'R$6mi doações Zettel + R$3mi conta pessoal',                        type:'direita',  layer:1},
-    {id:'tarcisio',     label:'Tarcísio de Freitas',     sub:'R$2mi doações via Zettel · Gov. SP',                                type:'direita',  layer:1},
-    {id:'nikolas',      label:'Nikolas Ferreira',        sub:'Jatinho out/2022 · não declarado TSE',                              type:'direita',  layer:1},
-    {id:'nogueira',     label:'Ciro Nogueira',           sub:'PP-PI · "grande amigo" · Emenda Master · bloqueou CPMI',            type:'direita',  layer:1},
-    {id:'valdemar',     label:'Valdemar Costa Neto',     sub:'Presidente PL · confirmou depósito pessoal Bolsonaro',              type:'direita',  layer:1},
-    {id:'flavio',       label:'Flávio Bolsonaro',        sub:'PL-RJ · pré-candidato 2026',                                        type:'direita',  layer:2},
-    {id:'temer',        label:'Michel Temer',            sub:'Tentou destravar veto BC ao negócio BRB',                           type:'brb',      layer:1},
-    {id:'fernandin',    label:'Fernandin OIG',           sub:'7Games.bet · Tigrinho · jatinho Mônaco com Nogueira',               type:'milicia',  layer:2},
-    {id:'linhares',     label:'Victor Linhares',         sub:'Pupilo/compadre Nogueira · R$230k investigado PCC',                 type:'milicia',  layer:2},
-    {id:'joesley',      label:'Joesley Batista',         sub:'JBS · propina PP · interlocutor PT/Mantega',                        type:'mercado',  layer:2},
-    {id:'rueda',        label:'Antônio Rueda',           sub:'Pres. União Brasil · helicóptero VIP com Nogueira',                 type:'congresso',layer:2},
-    {id:'lula',         label:'Lula',                   sub:'Reunião fora agenda dez/2024 · confirmou encontro',                  type:'esquerda', layer:1},
-    {id:'mantega',      label:'Guido Mantega',           sub:'R$1mi/mês · R$16mi total · articulou reunião Lula',                 type:'esquerda', layer:1},
-    {id:'wagner',       label:'Jaques Wagner',           sub:'PT-BA · indicou Mantega e Lewandowski',                             type:'esquerda', layer:1},
-    {id:'lewan',        label:'Ricardo Lewandowski',     sub:'R$250k/mês · contrato ao filho ao virar ministro',                  type:'esquerda', layer:1},
-    {id:'ruicosta',     label:'Rui Costa',               sub:'Casa Civil · privatizou Ebal para Augusto Lima/Bahia',              type:'esquerda', layer:2},
-    {id:'gleisi',       label:'Gleisi Hoffmann',         sub:'PT · defendeu reunião Lula-Vorcaro publicamente',                   type:'esquerda', layer:2},
-    {id:'silveira',     label:'Alexandre Silveira',      sub:'Ministro Minas/Energia · estava na reunião Planalto',              type:'esquerda', layer:2},
-    {id:'augustolima',  label:'Augusto Lima',            sub:'CEO Master · ex-sócio Vorcaro · elo Rui Costa/Bahia',              type:'esquerda', layer:2},
-    {id:'lulinha',      label:'Lulinha',                 sub:'Filho Lula · INSS · R$19,5mi movimentados',                         type:'pessoal',  layer:2},
-    {id:'moraes',       label:'Alexandre de Moraes',     sub:'9 msgs no dia da prisão · "Conseguiu bloquear?"',                  type:'stf',      layer:1},
-    {id:'toffoli',      label:'Dias Toffoli',            sub:'Relator · sigilo · resort Tayayá via fundo de Zettel',             type:'stf',      layer:1},
-    {id:'barci',        label:'Viviane Barci',           sub:'Esposa Moraes · contrato R$129mi com Master',                       type:'stf',      layer:1},
-    {id:'gilmar',       label:'Gilmar Mendes',           sub:'STF · suspendeu quebra sigilo empresa de Toffoli',                 type:'stf',      layer:2},
-    {id:'mendonca',     label:'André Mendonça',          sub:'Atual relator caso Master no STF',                                  type:'stf',      layer:2},
-    {id:'irmaostoff',   label:'Irmãos Toffoli',          sub:'Igor + José Eugênio · Maridt · Resort Tayayá',                     type:'stf',      layer:2},
-    {id:'tayaya',       label:'Resort Tayayá',           sub:'Ribeirão Claro/PR · Maridt vendeu ao Arleen 2021',                 type:'fundo',    layer:2},
-    {id:'dgep',         label:'DGEP Empreendimentos',    sub:'Incorporadora · primo de Toffoli sócio',                           type:'fundo',    layer:3},
-    {id:'camposneto',   label:'Roberto Campos Neto',     sub:'Pres. BC gov. Bolsonaro · adiou intervenção 1 ano',                type:'bc',       layer:1},
-    {id:'souza',        label:'Paulo Sérgio de Souza',   sub:'Ex-dir. BC · propina via contratos simulados',                     type:'bc',       layer:1},
-    {id:'santana',      label:'Belline Santana',         sub:'Ex-chefe supervisão BC · vazava alertas internos',                 type:'bc',       layer:1},
-    {id:'galipolo',     label:'Gabriel Galípolo',        sub:'Atual pres. BC · estava na reunião Planalto',                      type:'bc',       layer:2},
-    {id:'fgc',          label:'FGC',                     sub:'30+ alertas ignorados · R$51,8bi · 42% fundo',                     type:'bc',       layer:2},
-    {id:'sicario',      label:'O Sicário',               sub:'Mourão · R$1mi/mês · acesso PF/FBI · morto 04/03/26',              type:'milicia',  layer:1},
-    {id:'marilson',     label:'Marilson Roseno',         sub:'PF aposentado · A Turma · credenciais internas',                   type:'milicia',  layer:1},
-    {id:'pcc',          label:'PCC',                     sub:'Carbono Oculto · Reag · BK Bank · postos HD',                      type:'pcc',      layer:2},
-    {id:'bkbank',       label:'BK Bank',                 sub:'Fintech canal de lavagem PCC',                                     type:'pcc',      layer:3},
-    {id:'haransampaio', label:'Haran Sampaio',           sub:'Postos HD · R$230k a Linhares · Carbono Oculto',                   type:'milicia',  layer:3},
-    {id:'ibaneis',      label:'Ibaneis Rocha',           sub:'Gov. DF · "dia de festa" · 3 pedidos impeachment',                 type:'brb',      layer:1},
-    {id:'brb',          label:'Banco de Brasília',       sub:'R$16,7bi transferidos · R$12,2bi fictícios',                       type:'brb',      layer:2},
-    {id:'hugo',         label:'Hugo Motta',              sub:'Pres. Câmara · 6+ reuniões em residências oficiais',               type:'congresso',layer:2},
-    {id:'alcolumbre',   label:'Davi Alcolumbre',         sub:'Pres. Senado · jantares com Vorcaro',                              type:'congresso',layer:2},
-    {id:'xp',           label:'XP Investimentos',        sub:'R$26bi CDBs · comissão 4% · ação judicial',                        type:'mercado',  layer:1},
-    {id:'btg',          label:'BTG Pactual',             sub:'R$6,7bi CDBs Master · até R$335mi comissão',                       type:'mercado',  layer:1},
-    {id:'nubank',       label:'Nubank / Nu Invest',      sub:'R$2,9bi CDBs · parou jul/2024',                                    type:'mercado',  layer:2},
-    {id:'tirreno',      label:'Tirreno Consultoria',     sub:'R$6,7bi carteiras fictícias → BRB R$12,2bi',                       type:'mercado',  layer:2},
-    {id:'reag',         label:'Reag Investimentos',      sub:'Administradora Arleen + fundos Master + PCC',                      type:'fundo',    layer:2},
-    {id:'arleen',       label:'Fundo Arleen',            sub:'Cotista único: Zettel via Fundo Leal · resort Toffoli',            type:'fundo',    layer:2},
-    {id:'fundoleal',    label:'Fundo Leal',              sub:'Intermediário Zettel → Arleen · R$20mi',                           type:'fundo',    layer:2},
-    {id:'maia95',       label:'Fundo Maia 95',           sub:'Um dos 6 fundos fraudulentos apontados pelo BC',                   type:'fundo',    layer:3},
-    {id:'rwmplus',      label:'Fundo RWM Plus',          sub:'Cotista do Arleen · ligado ao Maia 95',                            type:'fundo',    layer:3},
-    {id:'moriah',       label:'Moriah Asset',            sub:'Gestora de Zettel · braço financeiro da família',                  type:'fundo',    layer:2},
-    {id:'willbank',     label:'Will Bank',               sub:'Liquidado jan/2026 · R$6,3bi · mesmo grupo Master',               type:'mercado',  layer:2},
-    {id:'bancopleno',   label:'Banco Pleno',             sub:'Liquidado · R$4,9bi · RPPS desprotegidos',                         type:'mercado',  layer:2},
-    {id:'rioprevidencia',label:'Rioprevidência',         sub:'RPPS RJ · ~R$1bi em LFs sem cobertura FGC',                       type:'bc',       layer:3},
-    {id:'laurojardin',  label:'Lauro Jardim',            sub:'Jornalista O Globo · alvo de ameaça do Sicário',                  type:'midialaw', layer:3},
-    {id:'pgr',          label:'Paulo Gonet (PGR)',       sub:'Lula o chamou após reunião com Vorcaro',                           type:'midialaw', layer:3},
-    {id:'kodiak',       label:'Kodiak Trust Company',    sub:'Alasca · faturou festa 40 anos de Vorcaro nos EUA',               type:'pessoal',  layer:3},
+    {id:'zettel',    label:'Fabiano Zettel',         sub:'Cunhado Vorcaro · Moriah · diagrama PF c/ Alan · nexo Fleurs (Curral)', type:'center',      layer:1},
+    {id:'vorcaro',   label:'Daniel Vorcaro',         sub:'Banco Master · Compliance Zero · co-sócio Biomm com Kallas',            type:'compliance',  layer:1},
+    {id:'silveira',  label:'Alexandre Silveira',     sub:'Min. MME · reunião Planalto (Master) · R$100k Lages · rede c/ Zettel', type:'bridge',      layer:1},
+    {id:'alan',      label:'Alan Cavalcante',        sub:'ORCRIM Fleurs · Zettel no diagrama da PF · decisões Toffoli',         type:'curral',      layer:1},
+    {id:'lages',     label:'João Alberto Lages',     sub:'AMF · doações Pacheco/Silveira · eixo político-mineiro',               type:'curral',      layer:1},
+    {id:'kallas',    label:'Lucas Prado Kallas',     sub:'Cedro · Biomm c/ Vorcaro · Conselhão Lula · Op. Parcours',            type:'bridge',      layer:1},
+    {id:'moriah',    label:'Moriah Asset',           sub:'Gestora Zettel · braço financeiro Master (Compliance)',                 type:'compliance',  layer:2},
+    {id:'fleurs',    label:'Fleurs Global',          sub:'R$4,3bi · Zettel: nexo Master/PCC → Serra (Curral)',                   type:'curral',      layer:2},
+    {id:'lula',      label:'Lula',                   sub:'Reunião Vorcaro (Mantega) · Kallas no conselho · Galípolo na reunião', type:'politico',    layer:2},
+    {id:'mantega',   label:'Guido Mantega',          sub:'R$16mi Master · articulou Lula–Vorcaro (Compliance)',                  type:'compliance',  layer:2},
+    {id:'galipolo',  label:'Gabriel Galípolo',       sub:'Pres. BC · mesma reunião Planalto (Master) · FGC',                      type:'compliance',  layer:3},
+    {id:'toffoli',   label:'Dias Toffoli',           sub:'Arleen/resort/Zettel (Master) + solturas núcleo Curral',               type:'stf',         layer:1},
+    {id:'moraes',    label:'Alexandre de Moraes',    sub:'STF · mensagens Vorcaro · esposa contrato Master',                     type:'stf',         layer:2},
+    {id:'nikolas',   label:'Nikolas Ferreira',       sub:'Jatinho Zettel (Master) · cabo Horta · eixo Gmais/MG (Curral)',       type:'politico',    layer:2},
+    {id:'pacheco',   label:'Rodrigo Pacheco',        sub:'PSD-MG · escritório defende Gute/Alan · doações a Lages',              type:'curral',      layer:2},
+    {id:'helder',    label:'Helder Freitas',         sub:'ORCRIM operacional · R$15mi Cedro · citado c/ Toffoli (Curral)',       type:'operacional', layer:2},
+    {id:'teixeira',  label:'Rodrigo Teixeira (PF)',  sub:'Nomeado por Silveira · Projeto Ferro · Toffoli (Curral)',              type:'operacional', layer:2},
+    {id:'horta',     label:'Gilberto Horta',         sub:'Gmais · contrato ligado a assessor Nikolas · Op. Rejeito',             type:'curral',      layer:3},
+    {id:'gmais',     label:'Gmais Ambiental',        sub:'Horta+Teixeira · lavra Ouro Preto · eixo Nikolas',                     type:'operacional', layer:3},
+    {id:'extrativa', label:'Extrativa Mineral',      sub:'Mina Gama (Kallas) · alvo Parcours · R$832mi prejuízo',                 type:'financeiro',  layer:3},
+    {id:'grimaldi',  label:'Grimaldi e Rodrigues',   sub:'Escritório Pacheco · defende Gute (Curral) · elo político-jurídico',   type:'curral',      layer:3},
   ];
 
   const rawEdges = [
-    {s:'vorcaro',    t:'henrique',     rel:'pai',w:3},
-    {s:'vorcaro',    t:'natalia',      rel:'irmã',w:3},
-    {s:'vorcaro',    t:'zettel',       rel:'cunhado / operador do esquema',w:5},
-    {s:'natalia',    t:'zettel',       rel:'casamento',w:3},
-    {s:'vorcaro',    t:'martha',       rel:'namorada · fotos publicadas',w:1},
-    {s:'martha',     t:'moraes',       rel:'perguntou sobre encontro em Campos do Jordão',w:1},
-    {s:'henrique',   t:'lagoinha',     rel:'financiador histórico Rede Super',w:2},
-    {s:'natalia',    t:'lagoinha',     rel:'pastora Lagoinha Belvedere',w:3},
-    {s:'zettel',     t:'lagoinha',     rel:'pastor + CEO financeiro',w:3},
-    {s:'lagoinha',   t:'valadao',      rel:'pastor fundador Lagoinha USA',w:2},
-    {s:'valadao',    t:'clava',        rel:'fundou Clava Forte Bank',w:2},
-    {s:'vorcaro',    t:'lagoinha',     rel:'base social / cobertura',w:2},
-    {s:'macedo',     t:'universal',    rel:'fundador Igreja Universal',w:2},
-    {s:'macedo',     t:'vorcaro',      rel:'R$316mi títulos · R$250mi pessoais',w:3},
-    {s:'zettel',     t:'bolsonaro',    rel:'R$3mi doação + R$3mi conta pessoal',w:4},
-    {s:'zettel',     t:'tarcisio',     rel:'R$2mi doação 2022',w:3},
-    {s:'zettel',     t:'valdemar',     rel:'depósito confirmado por Valdemar',w:3},
-    {s:'vorcaro',    t:'nikolas',      rel:'jatinho "Juventude pelo Brasil" out/2022',w:2},
-    {s:'vorcaro',    t:'nogueira',     rel:'"grande amigo" · emenda FGC R$1mi',w:4},
-    {s:'vorcaro',    t:'temer',        rel:'recrutou para destravar veto BC',w:2},
-    {s:'valdemar',   t:'bolsonaro',    rel:'presidente PL',w:2},
-    {s:'bolsonaro',  t:'flavio',       rel:'filho · pré-candidato 2026',w:2},
-    {s:'valdemar',   t:'flavio',       rel:'candidatura presidencial PL',w:2},
-    {s:'camposneto', t:'flavio',       rel:'referência econômica do grupo',w:1},
-    {s:'nogueira',   t:'fernandin',    rel:'jatinho Mônaco · CPI Bets',w:3},
-    {s:'nogueira',   t:'linhares',     rel:'pupilo / compadre',w:3},
-    {s:'linhares',   t:'pcc',          rel:'R$230k de investigado · BK Bank',w:3},
-    {s:'fernandin',  t:'pcc',          rel:'7Games/Tigrinho · Carbono Oculto',w:3},
-    {s:'nogueira',   t:'joesley',      rel:'propina PP R$7mi Lava Jato',w:2},
-    {s:'joesley',    t:'mantega',      rel:'interlocutor PT/JBS por anos',w:2},
-    {s:'nogueira',   t:'rueda',        rel:'helicóptero VIP pós-Interlagos',w:1},
-    {s:'linhares',   t:'haransampaio', rel:'R$230k recebidos',w:2},
-    {s:'haransampaio',t:'pcc',         rel:'postos HD · lavagem',w:3},
-    {s:'haransampaio',t:'bkbank',      rel:'canal financeiro',w:2},
-    {s:'pcc',        t:'bkbank',       rel:'fintech usada para lavagem',w:3},
-    {s:'vorcaro',    t:'ibaneis',      rel:'"estratégia de guerra" msg Martha',w:3},
-    {s:'ibaneis',    t:'brb',          rel:'controlador político do BRB',w:4},
-    {s:'ibaneis',    t:'temer',        rel:'recrutou Temer para destravar',w:2},
-    {s:'brb',        t:'vorcaro',      rel:'R$16,7bi transferidos · compra 58%',w:4},
-    {s:'brb',        t:'tirreno',      rel:'comprou R$12,2bi carteiras fictícias',w:3},
-    {s:'wagner',     t:'mantega',      rel:'indicou ao Master',w:3},
-    {s:'wagner',     t:'lewan',        rel:'indicou ao Master',w:3},
-    {s:'vorcaro',    t:'mantega',      rel:'R$1mi/mês · R$16mi total',w:5},
-    {s:'vorcaro',    t:'lewan',        rel:'R$250k/mês · contrato ao filho',w:4},
-    {s:'mantega',    t:'lula',         rel:'articulou reunião Planalto dez/2024',w:4},
-    {s:'mantega',    t:'augustolima',  rel:'articulou operação BRB no governo',w:2},
-    {s:'augustolima',t:'vorcaro',      rel:'CEO Master · ex-sócio',w:4},
-    {s:'augustolima',t:'ruicosta',     rel:'Ebal privatizada para Lima/Bahia',w:3},
-    {s:'ruicosta',   t:'lula',         rel:'ministro Casa Civil',w:2},
-    {s:'lula',       t:'galipolo',     rel:'nomeou · pediu isenção sobre Master',w:3},
-    {s:'lula',       t:'lulinha',      rel:'filho · R$721k transferidos',w:2},
-    {s:'gleisi',     t:'lula',         rel:'presidente PT · defensora pública',w:2},
-    {s:'silveira',   t:'lula',         rel:'ministro · estava na reunião',w:1},
-    {s:'lula',       t:'pgr',          rel:'convocou PGR após reunião Vorcaro',w:1},
-    {s:'vorcaro',    t:'moraes',       rel:'"Conseguiu bloquear?" 17/11/25',w:4},
-    {s:'moraes',     t:'barci',        rel:'esposa',w:3},
-    {s:'barci',      t:'vorcaro',      rel:'contrato R$129mi com Master',w:4},
-    {s:'moraes',     t:'toffoli',      rel:'jantar patrocinado nos EUA',w:2},
-    {s:'vorcaro',    t:'toffoli',      rel:'9 msgs · sigilo · relatoria',w:4},
-    {s:'toffoli',    t:'arleen',       rel:'família vendeu cotas ao fundo',w:4},
-    {s:'toffoli',    t:'irmaostoff',   rel:'irmãos · Maridt Participações',w:3},
-    {s:'irmaostoff', t:'tayaya',       rel:'Maridt → cotas ao Arleen 2021',w:3},
-    {s:'toffoli',    t:'mendonca',     rel:'deixou relatoria → Mendonça assumiu',w:2},
-    {s:'gilmar',     t:'toffoli',      rel:'suspendeu quebra sigilo Maridt',w:2},
-    {s:'arleen',     t:'tayaya',       rel:'R$4,3mi investidos no resort',w:3},
-    {s:'arleen',     t:'dgep',         rel:'R$16,1mi incorporadora primo Toffoli',w:2},
-    {s:'arleen',     t:'rwmplus',      rel:'cotista',w:2},
-    {s:'rwmplus',    t:'maia95',       rel:'aportes recebidos',w:2},
-    {s:'maia95',     t:'vorcaro',      rel:'um dos 6 fundos fraudulentos do BC',w:3},
-    {s:'zettel',     t:'fundoleal',    rel:'cotista único Fundo Leal',w:4},
-    {s:'fundoleal',  t:'arleen',       rel:'único cotista do Arleen',w:4},
-    {s:'arleen',     t:'reag',         rel:'administrada pela Reag',w:3},
-    {s:'reag',       t:'pcc',          rel:'Carbono Oculto · lavagem PCC',w:3},
-    {s:'reag',       t:'vorcaro',      rel:'administrou fundos fraudulentos',w:3},
-    {s:'zettel',     t:'moriah',       rel:'CEO Moriah Asset Management',w:3},
-    {s:'moriah',     t:'vorcaro',      rel:'braço financeiro do esquema',w:3},
-    {s:'vorcaro',    t:'camposneto',   rel:'sabia · adiou intervenção 1 ano',w:3},
-    {s:'vorcaro',    t:'souza',        rel:'propina via contratos simulados',w:3},
-    {s:'vorcaro',    t:'santana',      rel:'WhatsApp com alertas internos BC',w:3},
-    {s:'fgc',        t:'camposneto',   rel:'30+ alertas ignorados',w:3},
-    {s:'fgc',        t:'vorcaro',      rel:'R$51,8bi acionados',w:4},
-    {s:'galipolo',   t:'fgc',          rel:'supervisor atual',w:1},
-    {s:'fgc',        t:'rioprevidencia',rel:'RPPS sem cobertura R$1bi',w:2},
-    {s:'fgc',        t:'bancopleno',   rel:'R$4,9bi liquidação',w:2},
-    {s:'fgc',        t:'willbank',     rel:'R$6,3bi liquidação jan/2026',w:2},
-    {s:'vorcaro',    t:'sicario',      rel:'R$1mi/mês via Zettel',w:4},
-    {s:'zettel',     t:'sicario',      rel:'pagamentos A Turma',w:3},
-    {s:'sicario',    t:'marilson',     rel:'A Turma · acesso sistemas',w:3},
-    {s:'marilson',   t:'souza',        rel:'ex-PF · acesso sistemas PF',w:2},
-    {s:'sicario',    t:'laurojardin',  rel:'planejou agressão ao jornalista',w:2},
-    {s:'sicario',    t:'pcc',          rel:'Carbono Oculto / conexão',w:2},
-    {s:'vorcaro',    t:'xp',           rel:'R$26bi CDBs · comissão 4%',w:4},
-    {s:'vorcaro',    t:'btg',          rel:'R$6,7bi CDBs',w:3},
-    {s:'vorcaro',    t:'nubank',       rel:'R$2,9bi · parou jul/2024',w:2},
-    {s:'vorcaro',    t:'tirreno',      rel:'comprou R$6,7bi carteiras fictícias',w:4},
-    {s:'xp',         t:'fgc',          rel:'acionou FGC investidores',w:2},
-    {s:'btg',        t:'fgc',          rel:'acionou FGC investidores',w:2},
-    {s:'nubank',     t:'fgc',          rel:'acionou FGC investidores',w:1},
-    {s:'vorcaro',    t:'willbank',     rel:'mesmo grupo · controle',w:3},
-    {s:'vorcaro',    t:'bancopleno',   rel:'mesmo conglomerado',w:2},
-    {s:'vorcaro',    t:'hugo',         rel:'6+ reuniões em residências oficiais',w:3},
-    {s:'vorcaro',    t:'alcolumbre',   rel:'jantares documentados',w:2},
-    {s:'hugo',       t:'nogueira',     rel:'Câmara / Centrão',w:1},
-    {s:'alcolumbre', t:'wagner',       rel:'Senado / PT-BA',w:1},
-    {s:'vorcaro',    t:'kodiak',       rel:'Kodiak Trust faturou festa 40 anos EUA',w:1},
+    {s:'zettel',    t:'vorcaro',   rel:'cunhado · CEO Moriah · operador Master', w:5},
+    {s:'zettel',    t:'moriah',    rel:'gestora · braço financeiro', w:4},
+    {s:'moriah',    t:'vorcaro',   rel:'mesmo núcleo Compliance Zero', w:4},
+    {s:'zettel',    t:'alan',      rel:'diagrama PF · elo Vorcaro–ORCRIM', w:5},
+    {s:'zettel',    t:'fleurs',    rel:'nexo Master/PCC → Serra do Curral', w:4},
+    {s:'alan',      t:'fleurs',    rel:'controlador Fleurs (Curral)', w:4},
+    {s:'zettel',    t:'kallas',    rel:'co-sócios Biomm · mesmo ecossistema Vorcaro', w:4},
+    {s:'kallas',    t:'vorcaro',   rel:'Biomm · Parcours / Master', w:4},
+    {s:'kallas',    t:'extrativa', rel:'Mina do Gama · Cedro', w:3},
+    {s:'kallas',    t:'lula',      rel:'Conselhão · citado na teia Curral', w:3},
+    {s:'silveira',  t:'zettel',    rel:'mesma rede política e financeira (Curral)', w:4},
+    {s:'silveira',  t:'lages',     rel:'doação R$100k campanha Senado', w:4},
+    {s:'silveira',  t:'lula',      rel:'ministro · reunião Planalto c/ Vorcaro', w:4},
+    {s:'silveira',  t:'teixeira',  rel:'indicou diretorias PF/CPRM', w:4},
+    {s:'vorcaro',   t:'mantega',   rel:'R$16mi · articulação política', w:5},
+    {s:'mantega',   t:'lula',      rel:'reunião dez/2024 Vorcaro–Planalto', w:5},
+    {s:'lula',      t:'galipolo',  rel:'BC · reunião após encontro Master', w:3},
+    {s:'vorcaro',   t:'toffoli',   rel:'sigilo · Arleen · mensagens (Compliance)', w:4},
+    {s:'zettel',    t:'toffoli',   rel:'Fundo Leal → Arleen · resort família', w:3},
+    {s:'toffoli',   t:'alan',      rel:'decisões sobre núcleo Curral (citado nos autos)', w:3},
+    {s:'toffoli',   t:'helder',    rel:'liberações citadas na teia Curral', w:2},
+    {s:'toffoli',   t:'teixeira',  rel:'mesmo contexto STF (Curral)', w:2},
+    {s:'vorcaro',   t:'moraes',    rel:'mensagens · bloqueios (Compliance)', w:3},
+    {s:'vorcaro',   t:'nikolas',   rel:'jatinho / doações via Zettel', w:3},
+    {s:'zettel',    t:'nikolas',   rel:'financiamento campanha (Master)', w:3},
+    {s:'nikolas',   t:'horta',     rel:'cabo eleitoral · rede MG (Curral)', w:3},
+    {s:'horta',     t:'gmais',     rel:'co-fundador Gmais Ambiental', w:3},
+    {s:'teixeira',  t:'gmais',     rel:'co-fundador · Projeto Ferro', w:3},
+    {s:'gmais',     t:'nikolas',   rel:'contrato lavra · assessor Nikolas (Curral)', w:3},
+    {s:'pacheco',   t:'lages',     rel:'doador · cliente político MG', w:4},
+    {s:'pacheco',   t:'grimaldi',  rel:'escritório do senador', w:3},
+    {s:'grimaldi',  t:'alan',      rel:'defesa criminal / Gute (Curral)', w:3},
+    {s:'helder',    t:'kallas',    rel:'R$15mi Cedro Extrativa (Curral)', w:3},
+    {s:'lages',     t:'alan',      rel:'núcleo ORCRIM · WhatsApp 3 Amigos', w:4},
   ].filter(e=>e.w>0);
+
+  // Avatares gerados para nós sem foto na Wikipedia (mesmo padrão da teia Curral).
+  rawNodes.forEach(n => { if (!nodeImages[n.id]) nodeImages[n.id] = avatarForName(n.label); });
 
   // ═══════════════════════════════════════════════════
   // STATE
@@ -660,11 +545,9 @@
   let pathFrom=null, pathTo=null, pathSet=null;
   let simulation, svgSel, zoomBehavior;
 
-  // PIX popup: show after 3 different node interactions (first time only)
+  // PIX após 3 cliques em nós distintos; reinicia a cada reload (sem localStorage).
   let interactedNodes = new Set();
-  const PIX_STORAGE_KEY = 'pixPromptShownMaster';
   let pixShown = false;
-  try { pixShown = localStorage.getItem(PIX_STORAGE_KEY) === '1'; } catch {}
   const PIX_THRESHOLD = 3;
 
   function trackInteraction(nodeId) {
@@ -672,7 +555,6 @@
     interactedNodes.add(nodeId);
     if (interactedNodes.size >= PIX_THRESHOLD) {
       pixShown = true;
-      try { localStorage.setItem(PIX_STORAGE_KEY, '1'); } catch {}
       setTimeout(() => togglePixModal(true), 400);
     }
   }

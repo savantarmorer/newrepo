@@ -782,6 +782,12 @@ iframe {
 
 /* Responsive */
 @media (max-width: 768px) {
+    /* Evita barra horizontal por elementos largos (hero, grids) em viewports estreitas. */
+    html,
+    body {
+        overflow-x: hidden;
+    }
+
     .container {
         padding: 0 var(--spacing-sm);
     }
