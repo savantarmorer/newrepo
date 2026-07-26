@@ -32,17 +32,22 @@ export async function handler(event, context) {
             <p>Olá! Este é um e-mail de teste de confirmação de entrega do sistema.</p>
             
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">📘 1. Seu E-book Oficial</h3>
+                <h3 style="color: #e2c04a; margin-top: 0;">📘 1. O Livro dos Iniciados (PDF)</h3>
                 <a href="https://iuripiragibe.net/downloads/O-Livro-dos-Iniciados-Iuri-Piragibe.pdf" style="display: inline-block; background: #c9a227; color: #000; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📥 Baixar O Livro dos Iniciados (PDF)</a>
             </div>
 
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">📂 2. Bônus — Acervo com +20.000 Documentos Vazados</h3>
+                <h3 style="color: #e2c04a; margin-top: 0;">📖 2. Deusa da Discórdia: Livro I (PDF)</h3>
+                <a href="https://iuripiragibe.net/downloads/Deusa-da-Discordia-Iuri-Piragibe.pdf" style="display: inline-block; background: #c9a227; color: #000; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📥 Baixar Deusa da Discórdia (PDF)</a>
+            </div>
+
+            <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
+                <h3 style="color: #e2c04a; margin-top: 0;">📂 3. Bônus — Acervo com +20.000 Documentos Vazados</h3>
                 <a href="https://drive.google.com/drive/folders/1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52?hl=pt-br" style="display: inline-block; background: #3b82f6; color: #fff; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📂 Acessar Acervo Secreto no Google Drive</a>
             </div>
 
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">💬 3. Convite para a Comunidade no Discord</h3>
+                <h3 style="color: #e2c04a; margin-top: 0;">💬 4. Convite para a Comunidade no Discord</h3>
                 <a href="https://discord.com/invite/agoraobscur" style="display: inline-block; background: #5865F2; color: #fff; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">💬 Entrar na Comunidade Discord</a>
             </div>
         </div>
