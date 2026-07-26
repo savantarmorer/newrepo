@@ -152,7 +152,7 @@ iframe {
     background-size: 200% 100% !important;
     color: #ffffff !important;
     font-weight: 800 !important;
-    padding: 0.55rem 1.1rem !important;
+    padding: 0.5rem 0.9rem !important;
     border-radius: var(--radius-sm);
     transition: all 0.3s ease;
     overflow: hidden;
@@ -161,9 +161,11 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.2);
     animation: material-oculto-pulse 2.5s ease-in-out infinite;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
 }
 
 .btn-material-oculto::before {
@@ -193,13 +195,18 @@ iframe {
     background-size: 200% 100% !important;
     color: #0a0a0f !important;
     font-weight: 700 !important;
-    padding: 0.55rem 1.1rem !important;
+    padding: 0.5rem 0.9rem !important;
     border-radius: var(--radius-sm);
     transition: all 0.3s ease;
     overflow: hidden;
     letter-spacing: 0.02em;
     box-shadow: 0 0 12px rgba(201,162,39,0.35), 0 2px 8px rgba(0,0,0,0.4);
     animation: biblioteca-pulse 3s ease-in-out infinite;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
 }
 
 .btn-biblioteca::before {
@@ -255,6 +262,7 @@ iframe {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
+    flex-shrink: 0;
 }
 
 .mobile-nav-toggle {
