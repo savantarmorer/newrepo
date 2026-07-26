@@ -49,7 +49,7 @@
         "description": "Livro investigativo escrito por Iuri Piragibe sobre 18 organizações secretas, seitas e fraternidades no Brasil e no mundo. Análise fundamentada em documentos primários, manuais rituais internos e processos judiciais.",
         "offers": {
             "@type": "Offer",
-            "price": "99.90",
+            "price": "1.00",
             "priceCurrency": "BRL",
             "availability": "https://schema.org/InStock",
             "url": "https://iuripiragibe.net/material-oculto.html"
@@ -623,7 +623,7 @@
                             </p>
 
                             <div style="background: rgba(201, 162, 39, 0.15); border: 1px solid rgba(201, 162, 39, 0.4); padding: 0.9rem 1.2rem; border-radius: 8px; color: #facc15; font-weight: 700; font-size: 0.95rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.4rem;">
-                                <div>🎁 INCLUÍDO NO PACOTE DE R$ 99,90:</div>
+                                <div>🎁 INCLUÍDO NO PACOTE DE TESTE (R$ 1,00):</div>
                                 <div style="font-size: 0.85rem; color: #e4e4e7; font-weight: 400;">
                                     • 📘 <strong>O Livro dos Iniciados</strong> (PDF Apuração Jornalística)<br>
                                     • 📖 <strong>Deusa da Discórdia: Livro I</strong> (PDF Sci-Fi & Thriller - 538 pgs)<br>
@@ -634,8 +634,8 @@
 
                             <div class="price-card">
                                 <div class="price-value-box">
-                                    <span class="de">De R$ 297,00</span>
-                                    <div class="por">R$ 99<small>,90</small></div>
+                                    <span class="de">De R$ 99,90</span>
+                                    <div class="por">R$ 1<small>,00</small></div>
                                     <span style="color: #4ade80; font-size: 0.85rem; font-weight: 600;">✓ Acesso Imediato + 2 Livros em PDF + Bônus</span>
                                 </div>
                                 <a href="#checkout" class="btn-gold-buy">
@@ -771,7 +771,7 @@
                 <div style="text-align: center; margin-bottom: 2rem;">
                     <span style="color: var(--gold-light); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.08em;">ADQUIRIR PACOTE 2-EM-1 (OS 2 LIVROS + BÔNUS)</span>
                     <h2 style="font-size: 2rem; font-weight: 900; margin: 0.4rem 0;">Adquira o Seu Acesso Completo</h2>
-                    <p style="color: var(--color-text-muted); font-size: 0.95rem;">Valor promocional: <strong>R$ 99,90</strong> • Acesso vitalício imediato</p>
+                    <p style="color: var(--color-text-muted); font-size: 0.95rem;">Valor promocional de teste: <strong>R$ 1,00</strong> • Acesso vitalício imediato</p>
                 </div>
 
                 <!-- Tabs de Pagamento -->
@@ -807,7 +807,7 @@
                     </div>
 
                     <button type="submit" class="btn-checkout-submit" id="btnPixSubmit">
-                        ⚡ Gerar PIX de R$ 99,90 Agora
+                        ⚡ Gerar PIX de R$ 1,00 Agora
                     </button>
                 </form>
 
@@ -850,7 +850,7 @@
                     </div>
 
                     <button type="submit" class="btn-checkout-submit" id="btnCardSubmit">
-                        🔒 Pagar R$ 99,90 via Mercado Pago Seguro
+                        🔒 Pagar R$ 1,00 via Mercado Pago Seguro
                     </button>
                 </form>
 
@@ -919,7 +919,7 @@
             if (!cpf || cpf.length !== 11) {
                 alert('Por favor, informe um CPF válido com 11 números.');
                 btn.disabled = false;
-                btn.innerText = '⚡ Gerar PIX de R$ 99,90 Agora';
+                btn.innerText = '⚡ Gerar PIX de R$ 1,00 Agora';
                 return;
             }
 
@@ -937,7 +937,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             title: 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
-                            price: 99.90,
+                            price: 1.00,
                             email: email,
                             name: name,
                             cpf: cpf
@@ -973,7 +973,7 @@
             // Fallback infalível: Se a geração direta do PIX falhar, vai direto para o Checkout Pro oficial do Mercado Pago
             await redirectToMercadoPago(name, email);
             btn.disabled = false;
-            btn.innerText = '⚡ Gerar PIX de R$ 99,90 Agora';
+            btn.innerText = '⚡ Gerar PIX de R$ 1,00 Agora';
         }
 
         let pixPollInterval = null;
@@ -1039,7 +1039,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             title: 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
-                            price: 99.90,
+                            price: 1.00,
                             email: email,
                             name: name
                         })
@@ -1065,7 +1065,7 @@
                     body: JSON.stringify({
                         items: [{
                             title: 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
-                            unit_price: 99.90,
+                            unit_price: 1.00,
                             quantity: 1,
                             currency_id: 'BRL'
                         }],

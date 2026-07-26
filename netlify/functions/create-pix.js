@@ -31,10 +31,15 @@ export async function handler(event, context) {
         'X-Idempotency-Key': 'pix-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
       },
       body: JSON.stringify({
-        transaction_amount: Number(bodyData.price || 99.90),
-        description: bodyData.title || 'O Livro dos Iniciados - Iuri Piragibe',
+        transaction_amount: Number(bodyData.price || 1.00),
+        description: bodyData.title || 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
         payment_method_id: 'pix',
         notification_url: 'https://iuripiragibe.net/api/webhook',
+        metadata: {
+          payer_email: bodyData.email,
+          payer_name: bodyData.name
+        },
+        external_reference: bodyData.email,
         payer: {
           email: bodyData.email || 'cliente@exemplo.com',
           first_name: firstName,

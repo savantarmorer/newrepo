@@ -23,8 +23,8 @@ export async function handler(event, context) {
       body: JSON.stringify({
         items: [
           {
-            title: bodyData.title || 'O Livro dos Iniciados - Iuri Piragibe',
-            unit_price: Number(bodyData.price || 99.90),
+            title: bodyData.title || 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
+            unit_price: Number(bodyData.price || 1.00),
             quantity: 1,
             currency_id: 'BRL'
           }
@@ -33,6 +33,12 @@ export async function handler(event, context) {
           email: bodyData.email || 'cliente@exemplo.com',
           name: bodyData.name || 'Cliente'
         },
+        metadata: {
+          payer_email: bodyData.email,
+          payer_name: bodyData.name
+        },
+        external_reference: bodyData.email,
+        notification_url: 'https://iuripiragibe.net/api/webhook',
         back_urls: {
           success: 'https://iuripiragibe.net/material-oculto.html?status=success',
           failure: 'https://iuripiragibe.net/material-oculto.html?status=failure'

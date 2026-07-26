@@ -51,9 +51,12 @@ export async function handler(event, context) {
 
         if (mpRes.ok) {
           const paymentData = await mpRes.json();
-          if (paymentData.status === 'approved' && paymentData.payer?.email) {
-            const payerName = paymentData.payer?.first_name || 'Cliente';
-            await sendAccessEmail(paymentData.payer.email, payerName);
+          const targetEmail = paymentData.metadata?.payer_email || paymentData.external_reference || paymentData.payer?.email || paymentData.additional_info?.payer?.email;
+          const targetName = paymentData.metadata?.payer_name || paymentData.payer?.first_name || paymentData.additional_info?.payer?.first_name || 'Cliente';
+
+          if (paymentData.status === 'approved' && targetEmail) {
+            console.log(`[IPN / Webhook] Pagamento ${paymentId} aprovado! Enviando acesso para ${targetEmail}...`);
+            await sendAccessEmail(targetEmail, targetName);
           }
         }
       } catch (err) {

@@ -30,10 +30,13 @@ export async function handler(event, context) {
 
     const data = await mpRes.json();
 
-    // Se aprovado, garante o envio de e-mail se houver chave Resend
-    if (data.status === 'approved' && data.payer?.email) {
+    const targetEmail = data.metadata?.payer_email || data.external_reference || data.payer?.email || data.additional_info?.payer?.email;
+    const targetName = data.metadata?.payer_name || data.payer?.first_name || 'Cliente';
+
+    // Se aprovado, garante o envio de e-mail de acesso e notificação ao vendedor
+    if (data.status === 'approved' && targetEmail) {
       try {
-        await sendAccessEmail(data.payer.email, data.payer.first_name || 'Cliente');
+        await sendAccessEmail(targetEmail, targetName);
       } catch (e) {}
     }
 
@@ -43,7 +46,7 @@ export async function handler(event, context) {
       body: JSON.stringify({
         status: data.status,
         status_detail: data.status_detail,
-        payer_email: data.payer?.email
+        payer_email: targetEmail
       })
     };
   } catch (error) {
@@ -58,34 +61,42 @@ export async function handler(event, context) {
 async function sendAccessEmail(toEmail, name) {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    console.log(`[Email Simulation] Enviando acesso para ${toEmail}`);
+    console.log(`[Email Simulation] RESEND_API_KEY ausente. Não foi possível enviar para ${toEmail}`);
     return;
   }
 
-  const htmlContent = `
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+  const buyerHtml = `
     <!DOCTYPE html>
     <html>
     <head><meta charset="utf-8"></head>
     <body style="font-family: Arial, sans-serif; background-color: #0d0d12; color: #e4e4e7; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background: #18181b; border: 1px solid #c9a227; border-radius: 12px; padding: 30px;">
-            <h1 style="color: #f59e0b; font-size: 24px; margin-top: 0;">O Livro dos Iniciados</h1>
+            <h1 style="color: #f59e0b; font-size: 24px; margin-top: 0;">O Livro dos Iniciados + Deusa da Discórdia</h1>
             <p>Olá, <strong>${name}</strong>!</p>
-            <p>Seu pagamento foi confirmado com sucesso! Abaixo estão os links para download do livro e acesso aos seus bônus exclusivos:</p>
+            <p>Seu pagamento foi confirmado com sucesso! Abaixo estão seus links de download e acesso imediato:</p>
             
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">📘 1. Seu E-book Oficial</h3>
-                <p style="font-size: 0.9rem;">Baixe o livro digital em PDF:</p>
+                <h3 style="color: #e2c04a; margin-top: 0;">📘 1. O Livro dos Iniciados (PDF)</h3>
+                <p style="font-size: 0.9rem;">Seitas, Ordens Secretas e os Ritos que Ninguém Deveria Ver:</p>
                 <a href="https://iuripiragibe.net/downloads/O-Livro-dos-Iniciados-Iuri-Piragibe.pdf" style="display: inline-block; background: #c9a227; color: #000; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📥 Baixar O Livro dos Iniciados (PDF)</a>
             </div>
 
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">📂 2. Bônus — Acervo com +20.000 Documentos Vazados</h3>
+                <h3 style="color: #e2c04a; margin-top: 0;">📖 2. Deusa da Discórdia: Livro I (PDF)</h3>
+                <p style="font-size: 0.9rem;">Obra de ficção científica especulativa, thriller psicológico e filosofia existencial de Iuri Tato Piragibe:</p>
+                <a href="https://iuripiragibe.net/downloads/Deusa-da-Discordia-Iuri-Piragibe.pdf" style="display: inline-block; background: #c9a227; color: #000; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📥 Baixar Deusa da Discórdia (PDF)</a>
+            </div>
+
+            <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
+                <h3 style="color: #e2c04a; margin-top: 0;">📂 3. Bônus — Acervo com +20.000 Documentos Vazados</h3>
                 <p style="font-size: 0.9rem;">Acesse a pasta restrita no Google Drive com manuais rituais internos, sentenças e relatórios sigilosos:</p>
                 <a href="https://drive.google.com/drive/folders/1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52?hl=pt-br" style="display: inline-block; background: #3b82f6; color: #fff; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">📂 Acessar Acervo Secreto no Google Drive</a>
             </div>
 
             <div style="background: #27272a; border-radius: 8px; padding: 18px; margin: 15px 0;">
-                <h3 style="color: #e2c04a; margin-top: 0;">💬 3. Convite para a Comunidade no Discord</h3>
+                <h3 style="color: #e2c04a; margin-top: 0;">💬 4. Convite para a Comunidade no Discord</h3>
                 <p style="font-size: 0.9rem;">Entre na nossa comunidade exclusiva de Urbex & Sociedades Secretas:</p>
                 <a href="https://discord.com/invite/agoraobscur" style="display: inline-block; background: #5865F2; color: #fff; font-weight: bold; text-decoration: none; padding: 10px 18px; border-radius: 6px;">💬 Entrar na Comunidade Discord</a>
             </div>
@@ -96,17 +107,56 @@ async function sendAccessEmail(toEmail, name) {
     </html>
   `;
 
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${resendApiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: 'Iuri Piragibe <vendas@iuripiragibe.net>',
-      to: [toEmail],
-      subject: '📘 Seu Acesso: O Livro dos Iniciados + Acervo Secreto de Documentos',
-      html: htmlContent
-    })
-  });
+  const sellerHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head><meta charset="utf-8"></head>
+    <body style="font-family: Arial, sans-serif; background-color: #0d0d12; color: #e4e4e7; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: #18181b; border: 1px solid #4ade80; border-radius: 12px; padding: 30px;">
+            <h1 style="color: #4ade80; font-size: 24px; margin-top: 0;">🎉 Nova Venda Confirmada</h1>
+            <p>Parabéns, Iuri! Uma nova compra foi realizada e aprovada no seu site:</p>
+            <ul style="background: #27272a; padding: 15px 25px; border-radius: 8px; line-height: 1.8;">
+                <li><strong>Cliente:</strong> ${name}</li>
+                <li><strong>E-mail:</strong> ${toEmail}</li>
+                <li><strong>Produto:</strong> O Livro dos Iniciados + Deusa da Discórdia + Acervo 20k Docs</li>
+            </ul>
+            <p style="font-size: 0.85rem; color: #a1a1aa;">Os e-mails de acesso contendo os 2 livros em PDF, o link do Google Drive e a comunidade do Discord já foram entregues ao comprador automaticamente.</p>
+        </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    // 1. Envia e-mail de acesso para o comprador
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [toEmail],
+        subject: '📘 Seu Acesso: O Livro dos Iniciados + Deusa da Discórdia + Acervo Secreto',
+        html: buyerHtml
+      })
+    });
+
+    // 2. Notifica o vendedor (iuri@piragibe.com.br)
+    if (toEmail !== 'iuri@piragibe.com.br') {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendApiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: fromEmail,
+          to: ['iuri@piragibe.com.br'],
+          subject: `🚨 NOVA VENDA CONFIRMADA: ${name} (${toEmail})`,
+          html: sellerHtml
+        })
+      }).catch(() => {});
+    }
+  } catch (err) {}
 }
