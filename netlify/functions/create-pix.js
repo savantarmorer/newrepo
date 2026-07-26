@@ -34,6 +34,7 @@ export async function handler(event, context) {
         transaction_amount: Number(bodyData.price || 47.00),
         description: bodyData.title || 'O Livro dos Iniciados - Iuri Piragibe',
         payment_method_id: 'pix',
+        notification_url: 'https://iuripiragibe.net/api/webhook',
         payer: {
           email: bodyData.email || 'cliente@exemplo.com',
           first_name: firstName,

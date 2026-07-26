@@ -16,3 +16,9 @@
   to = "/.netlify/functions/webhook"
   status = 200
 
+[[redirects]]
+  from = "/api/check-payment"
+  to = "/.netlify/functions/check-payment"
+  status = 200
+
+

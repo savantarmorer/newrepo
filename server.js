@@ -216,6 +216,7 @@ app.post('/api/create-pix', async (req, res) => {
         transaction_amount: Number(price),
         description: title,
         payment_method_id: 'pix',
+        notification_url: 'https://iuripiragibe.net/api/webhook',
         payer: {
           email: email || 'cliente@exemplo.com',
           first_name: firstName,
@@ -233,6 +234,27 @@ app.post('/api/create-pix', async (req, res) => {
   } catch (error) {
     console.error('[MercadoPago PIX Error]', error);
     res.status(500).json({ error: 'Erro ao gerar PIX no Mercado Pago' });
+  }
+});
+
+// ── Mercado Pago API: Checagem em Tempo Real do Pagamento PIX ─────────────
+app.get('/api/check-payment', async (req, res) => {
+  try {
+    const paymentId = req.query.id;
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+
+    if (!paymentId) return res.status(400).json({ error: 'ID ausente' });
+
+    const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+
+    if (!mpRes.ok) return res.json({ status: 'pending' });
+
+    const data = await mpRes.json();
+    res.json({ status: data.status, status_detail: data.status_detail, payer_email: data.payer?.email });
+  } catch (error) {
+    res.json({ status: 'pending' });
   }
 });
 

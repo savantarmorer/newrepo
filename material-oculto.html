@@ -794,7 +794,13 @@
                         00020126580014br.gov.bcb.pix0136iuri@piragibe.com.br520400005303986540547.005802BR5913IURI PIRAGIBE6009SAO PAULO62070503***6304E8A9
                     </div>
                     <button class="btn-ghost" onclick="copyPixCode()" style="border-color: #4ade80; color: #4ade80;">Copiar Código PIX (Copia e Cola)</button>
-                    <p style="margin-top: 1rem; font-size: 0.85rem; color: #a1a1aa;">Após a confirmação do pagamento pelo banco, o PDF do livro é enviado imediatamente para o seu e-mail!</p>
+
+                    <div id="pixStatusBadge" style="margin: 1.25rem 0 0.5rem 0; padding: 0.75rem 1.25rem; background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 8px; color: #facc15; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.6rem;">
+                        <span class="spinner" style="display: inline-block; width: 14px; height: 14px; border: 2px solid #facc15; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></span>
+                        Aguardando confirmação do pagamento no app do seu banco...
+                    </div>
+
+                    <p style="margin-top: 1rem; font-size: 0.85rem; color: #a1a1aa;">Assim que o pagamento for detectado pelo banco, esta tela é atualizada automaticamente e o acesso é liberado!</p>
                 </div>
 
                 <!-- Form Cartão -->
@@ -975,6 +981,10 @@
                 document.getElementById('pixCodeDisplay').innerText = txData.qr_code;
                 btn.style.display = 'none';
                 document.getElementById('pixResultContainer').style.display = 'block';
+
+                if (data.id) {
+                    startPixPolling(data.id);
+                }
                 return;
             }
 
@@ -982,6 +992,30 @@
             await redirectToMercadoPago();
             btn.disabled = false;
             btn.innerText = 'Gerar PIX de R$ 47,00 Mercado Pago';
+        }
+
+        let pixPollInterval = null;
+
+        function startPixPolling(paymentId) {
+            if (pixPollInterval) clearInterval(pixPollInterval);
+            
+            pixPollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch('/api/check-payment?id=' + paymentId);
+                    if (res.ok) {
+                        const checkData = await res.json();
+                        if (checkData.status === 'approved') {
+                            clearInterval(pixPollInterval);
+                            document.getElementById('pixResultContainer').style.display = 'none';
+                            const successBox = document.getElementById('paymentSuccessContainer');
+                            if (successBox) {
+                                successBox.style.display = 'block';
+                                successBox.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }
+                    }
+                } catch(e) {}
+            }, 3000);
         }
 
         // Submissão do Formulário de Cartão de Crédito
