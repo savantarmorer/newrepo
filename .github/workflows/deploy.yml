@@ -1,0 +1,38 @@
+name: Deploy para iuripiragibe.net
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_DIR }}
+          # Exclui arquivos que não devem ir pro servidor
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            **/.env.*
+            **/test-results/**
+            **/tests/**
+            **/scripts/**
+            **/lib/**
+            **/server.js
+            **/package*.json
+            **/vercel.json
+            **/playwright*.ts
+            **/*.md
+            **/DEPLOY.md
+            **/README*
+            **/newrepo-0.md

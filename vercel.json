@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "env": {
+    "GOOGLE_API_KEY": "@google_api_key",
+    "DRIVE_FOLDER_1": "1EEi7bB3L2TIshhTOI-HJzQ4mgQ8F2k5i",
+    "DRIVE_FOLDER_2": "18bq6fy8-n8IP8rhYRjXLNdvn7rrhR27Q",
+    "DRIVE_FOLDER_3": "1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52"
+  },
+  "redirects": [
+    {
+      "source": "/teia-compliance-zero.html",
+      "destination": "/master",
+      "permanent": true
+    },
+    {
+      "source": "/teia-serra-curral.html",
+      "destination": "/curral",
+      "permanent": true
+    },
+    {
+      "source": "/teia-ponte.html",
+      "destination": "/ponte",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    { "source": "/api/candidatos",           "destination": "/server.js" },
+    { "source": "/api/civic/:path*",         "destination": "/server.js" },
+    { "source": "/api/drive/:path*",         "destination": "/server.js" },
+    { "source": "/api/auth/:path*",          "destination": "/server.js" },
+    { "source": "/login",                    "destination": "/server.js" },
+    { "source": "/login/",                   "destination": "/server.js" },
+    { "source": "/master",                   "destination": "/teia-compliance-zero.html" },
+    { "source": "/master/",                  "destination": "/teia-compliance-zero.html" },
+    { "source": "/curral",                   "destination": "/teia-serra-curral.html" },
+    { "source": "/curral/",                  "destination": "/teia-serra-curral.html" },
+    { "source": "/ponte",                    "destination": "/teia-ponte.html" },
+    { "source": "/ponte/",                   "destination": "/teia-ponte.html" },
+    { "source": "/biblioteca",               "destination": "/biblioteca.html" },
+    { "source": "/biblioteca/",              "destination": "/biblioteca.html" },
+    { "source": "/participacao",             "destination": "/participacao-civica.html" },
+    { "source": "/participacao/",            "destination": "/participacao-civica.html" },
+    { "source": "/blog",                     "destination": "/blog.html" },
+    { "source": "/sobre",                    "destination": "/sobre.html" },
+    { "source": "/mapa-dinastias",           "destination": "/mapa-dinastias.html" },
+    { "source": "/mapa-magico",              "destination": "/mapa-magico.html" },
+    { "source": "/investigacao-hub",         "destination": "/investigacao-hub.html" }
+  ]
+}

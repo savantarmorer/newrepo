@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Participação cívica — Deputados federais</title>
+  <meta name="description" content="Localize deputados federais (API da Câmara), modele mensagens, acompanhe notícias RSS e envie e-mail ao gabinete (app de e-mail ou servidor com .env).">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://iuripiragibe.net/participacao">
+  <meta name="theme-color" content="#0a1628">
+  <link rel="icon" href="/civic-favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a1628;
+      --panel: #0f2138;
+      --border: rgba(255,255,255,0.08);
+      --text: #e8eef5;
+      --muted: #8b9cb3;
+      --accent: #3d8bfd;
+      --ok: #3ecf8e;
+      --err: #f87171;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 24px 18px 64px; }
+    h1 {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.15rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .lede { color: var(--muted); font-size: 0.95rem; margin-bottom: 24px; max-width: 62ch; }
+    .grid { display: grid; gap: 20px; }
+    @media (min-width: 840px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; align-items: start; }
+    }
+    section.panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    section.panel h2 {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+    input[type="text"],
+    input[type="email"],
+    select,
+    textarea {
+      width: 100%;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    textarea { min-height: 160px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .row > * { flex: 1 1 140px; }
+    button, .btn-link {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(61,139,253,0.12);
+      color: var(--accent);
+      cursor: pointer;
+    }
+    button:hover, .btn-link:hover { background: rgba(61,139,253,0.22); }
+    button.secondary { background: transparent; color: var(--muted); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .templates { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .templates button { padding: 8px 12px; font-size: 0.65rem; }
+    .msg { font-size: 0.85rem; margin-top: 10px; padding: 10px; border-radius: 8px; display: none; }
+    .msg.on { display: block; }
+    .msg.ok { background: rgba(62,207,142,0.12); border: 1px solid rgba(62,207,142,0.25); color: var(--ok); }
+    .msg.err { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.25); color: var(--err); }
+    .feed-list { list-style: none; max-height: 420px; overflow-y: auto; }
+    .feed-list li { border-bottom: 1px solid var(--border); padding: 12px 0; }
+    .feed-list a { color: var(--text); text-decoration: none; font-weight: 500; }
+    .feed-list a:hover { color: var(--accent); text-decoration: underline; }
+    .feed-meta { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+    .legal {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .site-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 18px;
+      background: rgba(0,0,0,0.35);
+      border-bottom: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .site-top a { color: var(--accent); text-decoration: none; }
+    .site-top a:hover { text-decoration: underline; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; align-items: center; }
+    button.btn-mailto {
+      background: rgba(62,207,142,0.15);
+      border-color: rgba(62,207,142,0.35);
+      color: var(--ok);
+    }
+    button.btn-mailto:hover { background: rgba(62,207,142,0.25); }
+    .mail-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.45;
+      max-width: 52ch;
+    }
+    .mail-hint strong { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header class="site-top">
+    <a href="/">← Iuri Piragibe</a>
+    <span style="color:var(--muted)">/participacao</span>
+  </header>
+  <div class="wrap">
+    <h1>Participação cívica</h1>
+    <p class="lede">
+      Lista <strong>deputados federais</strong> (dados abertos da Câmara), modelos de texto e notícias por RSS.
+      O destino é sempre um e-mail <strong>@camara.leg.br</strong> oficial. Pode enviar pelo <strong>seu programa de e-mail</strong> (sem configurar nada no servidor) ou, se existir <code style="font-size:0.85em">.env</code> com Resend/SMTP, também pelo site.
+    </p>
+
+    <div class="grid grid-2">
+      <section class="panel" aria-labelledby="filtros-title">
+        <h2 id="filtros-title">Deputado(a)</h2>
+        <div class="row">
+          <div>
+            <label for="uf">UF</label>
+            <select id="uf" name="uf" aria-label="Filtrar por unidade federativa">
+              <option value="">Todas</option>
+              <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option>
+              <option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option>
+              <option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option>
+              <option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+              <option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option>
+              <option>SE</option><option>TO</option>
+            </select>
+          </div>
+          <div>
+            <label for="partido">Partido (sigla)</label>
+            <input type="text" id="partido" name="partido" maxlength="12" placeholder="ex.: PSOL" autocomplete="organization-title" aria-label="Sigla do partido">
+          </div>
+        </div>
+        <div class="row">
+          <div style="flex:2 1 220px">
+            <label for="buscaNome">Nome</label>
+            <input type="text" id="buscaNome" name="buscaNome" placeholder="Parte do nome" autocomplete="off" aria-label="Buscar por nome do deputado">
+          </div>
+        </div>
+        <button type="button" id="btnCarregarLista">Carregar lista</button>
+
+        <div style="margin-top:16px">
+          <label for="deputado">Selecionar deputado(a)</label>
+          <select id="deputado" name="deputado" size="8" style="min-height:200px" aria-label="Lista de deputados federais" aria-required="true"></select>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="email-title">
+        <h2 id="email-title">Mensagem ao gabinete</h2>
+        <p class="lede" style="margin-bottom:12px;font-size:0.85rem">Modelos (edite antes de enviar):</p>
+        <div class="templates" role="group" aria-label="Modelos de texto">
+          <button type="button" data-template="saude">Saúde pública</button>
+          <button type="button" data-template="clima">Clima / ambiental</button>
+          <button type="button" data-template="trans">Transparência</button>
+          <button type="button" data-template="direitos">Direitos humanos</button>
+        </div>
+        <form id="formEmail" novalidate>
+          <label for="remNome">O seu nome</label>
+          <input type="text" id="remNome" name="remNome" required maxlength="200" autocomplete="name" aria-required="true">
+
+          <label for="remEmail" style="margin-top:12px">O seu e-mail</label>
+          <input type="email" id="remEmail" name="remEmail" required maxlength="320" autocomplete="email" aria-required="true">
+
+          <label for="assunto" style="margin-top:12px">Assunto</label>
+          <input type="text" id="assunto" name="assunto" required maxlength="200" aria-required="true">
+
+          <label for="corpo" style="margin-top:12px">Mensagem</label>
+          <textarea id="corpo" name="corpo" required maxlength="8000" aria-required="true"></textarea>
+
+          <input type="hidden" id="deputadoId" name="deputadoId" value="">
+
+          <div class="btn-row">
+            <button type="button" class="btn-mailto" id="btnMailto" title="Abre Gmail, Outlook ou outro cliente com a mensagem pronta">
+              Abrir no meu e-mail
+            </button>
+            <button type="submit" id="btnEnviar">Enviar pelo site</button>
+          </div>
+          <p id="mailHint" class="mail-hint" hidden>
+            <strong>Envio pelo site</strong> está desligado. Crie <code>.env</code> na raiz com <code>RESEND_API_KEY</code> e <code>CIVIC_MAIL_FROM</code> (ver <code>.env.example</code>) ou use SMTP. Até lá, use <strong>Abrir no meu e-mail</strong>.
+          </p>
+          <div id="formMsg" class="msg" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+    </div>
+
+    <section class="panel" style="margin-top:20px" aria-labelledby="feed-title">
+      <h2 id="feed-title">Notícias (RSS)</h2>
+      <p class="lede" style="margin-bottom:12px;font-size:0.85rem">
+        Filtra títulos e resumos que contenham o termo (por exemplo o nome eleitoral do deputado).
+      </p>
+      <div class="row">
+        <div style="flex:2 1 240px">
+          <label for="feedQ">Palavra-chave</label>
+          <input type="text" id="feedQ" placeholder="Nome ou tema" aria-label="Palavra-chave para o feed">
+        </div>
+      </div>
+      <button type="button" id="btnFeed" class="secondary">Atualizar feed</button>
+      <ul id="feedList" class="feed-list" aria-label="Lista de notícias"></ul>
+    </section>
+
+    <p class="legal">
+      Uso responsável: mensagens claras e respeitosas. Quem opera o servidor responde pela configuração de e-mail, limites e LGPD.
+      O conteúdo não é guardado para além do necessário ao envio imediato pela rota <code>/api/civic/enviar</code>.
+    </p>
+  </div>
+
+  <script>
+    const TEMPLATES = {
+      saude: {
+        assunto: 'Prioridade à saúde pública na base do meu círculo eleitoral',
+        corpo: 'Prezado(a) deputado(a),\n\nEscrevo como cidadã(o) para solicitar que o(a) senhor(a) apoie medidas que fortaleçam o SUS, reduzam filas e garantam insumos nas unidades da minha região.\n\nPeço resposta sobre as ações que pretende empreender nesta legislatura.\n\nAtenciosamente,'
+      },
+      clima: {
+        assunto: 'Ação legislativa em clima e meio ambiente',
+        corpo: 'Prezado(a) deputado(a),\n\nGostaria de conhecer a sua posição e votos sobre políticas de mitigação climática e fiscalização ambiental, com impacto concreto no Brasil.\n\nAtenciosamente,'
+      },
+      trans: {
+        assunto: 'Transparência e prestação de contas',
+        corpo: 'Prezado(a) deputado(a),\n\nSolicito informações sobre como o(a) senhor(a) divulga emendas, agendas e relatórios de atividade, para facilitar o escrutínio democrático.\n\nAtenciosamente,'
+      },
+      direitos: {
+        assunto: 'Direitos humanos e políticas de igualdade',
+        corpo: 'Prezado(a) deputado(a),\n\nEscrevo para manifestar preocupação com [descreva o tema] e pedir que considere apoiar iniciativas alinhadas aos direitos fundamentais.\n\nAtenciosamente,'
+      }
+    };
+
+    const selDeputado = document.getElementById('deputado');
+    const hidId = document.getElementById('deputadoId');
+    const formMsg = document.getElementById('formMsg');
+
+    function showMsg(text, ok) {
+      formMsg.textContent = text;
+      formMsg.className = 'msg on ' + (ok ? 'ok' : 'err');
+    }
+    function hideMsg() {
+      formMsg.className = 'msg';
+      formMsg.textContent = '';
+    }
+
+    async function carregarDeputados() {
+      const params = new URLSearchParams();
+      const uf = document.getElementById('uf').value;
+      const partido = document.getElementById('partido').value.trim();
+      const nome = document.getElementById('buscaNome').value.trim();
+      if (uf) params.set('siglaUf', uf);
+      if (partido) params.set('siglaPartido', partido);
+      if (nome) params.set('nome', nome);
+      params.set('itens', '100');
+      params.set('pagina', '1');
+
+      selDeputado.innerHTML = '';
+      const opt0 = document.createElement('option');
+      opt0.value = '';
+      opt0.textContent = 'A carregar…';
+      selDeputado.appendChild(opt0);
+
+      const res = await fetch('/api/civic/deputados?' + params.toString());
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        selDeputado.innerHTML = '';
+        const o = document.createElement('option');
+        o.textContent = data.error || 'Erro ao carregar';
+        selDeputado.appendChild(o);
+        return;
+      }
+      selDeputado.innerHTML = '';
+      const deps = data.deputados || [];
+      if (!deps.length) {
+        const o = document.createElement('option');
+        o.value = '';
+        o.textContent = 'Nenhum resultado';
+        selDeputado.appendChild(o);
+        return;
+      }
+      for (const d of deps) {
+        const o = document.createElement('option');
+        o.value = String(d.id);
+        o.dataset.email = d.email ? String(d.email) : '';
+        const mail = d.email ? ' — ' + d.email : '';
+        o.textContent = `${d.nome} (${d.siglaPartido}/${d.siglaUf})${mail}`;
+        selDeputado.appendChild(o);
+      }
+      selDeputado.size = Math.min(12, Math.max(6, deps.length));
+    }
+
+    selDeputado.addEventListener('change', () => {
+      hidId.value = selDeputado.value || '';
+      hideMsg();
+    });
+
+    document.getElementById('btnCarregarLista').addEventListener('click', () => {
+      hideMsg();
+      carregarDeputados();
+    });
+
+    document.querySelectorAll('[data-template]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const t = TEMPLATES[btn.getAttribute('data-template')];
+        if (!t) return;
+        document.getElementById('assunto').value = t.assunto;
+        document.getElementById('corpo').value = t.corpo;
+      });
+    });
+
+    function getSelectedDeputyEmail() {
+      const opt = selDeputado.options[selDeputado.selectedIndex];
+      if (!opt || !opt.value) return '';
+      return (opt.dataset.email || '').trim();
+    }
+
+    function buildMailtoUrl() {
+      const to = getSelectedDeputyEmail();
+      const nome = document.getElementById('remNome').value.trim();
+      const email = document.getElementById('remEmail').value.trim();
+      const assunto = document.getElementById('assunto').value.trim();
+      const corpo = document.getElementById('corpo').value.trim();
+      if (!to || !to.includes('@camara.leg.br')) {
+        showMsg('Escolha um deputado com e-mail @camara.leg.br na lista (carregue a lista outra vez se estiver vazio).', false);
+        return null;
+      }
+      if (!nome || !email || !assunto || !corpo) {
+        showMsg('Preencha nome, e-mail, assunto e mensagem antes de abrir o cliente de e-mail.', false);
+        return null;
+      }
+      const rodape = `\n\n---\n${nome} <${email}>`;
+      const full = corpo + rodape;
+      const subj = encodeURIComponent(`[Participação] ${assunto}`);
+      const body = encodeURIComponent(full);
+      const href = `mailto:${encodeURIComponent(to)}?subject=${subj}&body=${body}`;
+      if (href.length > 1900) {
+        showMsg('Texto longo demais para mailto: encurte a mensagem ou use «Enviar pelo site» com o servidor configurado.', false);
+        return null;
+      }
+      return href;
+    }
+
+    document.getElementById('btnMailto').addEventListener('click', () => {
+      hideMsg();
+      const href = buildMailtoUrl();
+      if (href) window.location.href = href;
+    });
+
+    fetch('/api/civic/config')
+      .then((r) => r.json())
+      .then((c) => {
+        const hint = document.getElementById('mailHint');
+        const btn = document.getElementById('btnEnviar');
+        if (!c || !c.sendEnabled) {
+          hint.hidden = false;
+          btn.disabled = true;
+          btn.setAttribute('aria-disabled', 'true');
+          btn.title = 'Ative RESEND_API_KEY + CIVIC_MAIL_FROM ou SMTP no .env';
+        } else {
+          hint.hidden = true;
+          btn.disabled = false;
+          btn.removeAttribute('aria-disabled');
+          btn.title = '';
+        }
+      })
+      .catch(() => {
+        document.getElementById('mailHint').hidden = false;
+        const btn = document.getElementById('btnEnviar');
+        btn.disabled = true;
+        btn.title = 'API indisponível — use Abrir no meu e-mail ou o servidor Express';
+      });
+
+    document.getElementById('formEmail').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideMsg();
+      const deputadoId = Number(hidId.value || selDeputado.value);
+      if (!deputadoId) {
+        showMsg('Escolha um deputado na lista.', false);
+        return;
+      }
+      const body = {
+        deputadoId,
+        remetenteNome: document.getElementById('remNome').value.trim(),
+        remetenteEmail: document.getElementById('remEmail').value.trim(),
+        assunto: document.getElementById('assunto').value.trim(),
+        corpo: document.getElementById('corpo').value.trim()
+      };
+      const btn = document.getElementById('btnEnviar');
+      btn.disabled = true;
+      try {
+        const res = await fetch('/api/civic/enviar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          showMsg(data.error + (data.hint ? ' — ' + data.hint : '') + (data.message ? ' (' + data.message + ')' : ''), false);
+          return;
+        }
+        showMsg('Enviado para ' + (data.para || 'gabinete') + ' (' + (data.deputado || '') + ').', true);
+      } catch (err) {
+        showMsg('Falha de rede ou servidor: ' + err.message, false);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    async function carregarFeed() {
+      const q = document.getElementById('feedQ').value.trim();
+      const list = document.getElementById('feedList');
+      list.innerHTML = '';
+      const li0 = document.createElement('li');
+      li0.textContent = 'A carregar…';
+      list.appendChild(li0);
+      const res = await fetch('/api/civic/feed?' + new URLSearchParams({ q, limit: '30' }));
+      const data = await res.json().catch(() => ({}));
+      list.innerHTML = '';
+      if (!res.ok) {
+        const li = document.createElement('li');
+        li.textContent = data.error || 'Erro ao carregar feed';
+        list.appendChild(li);
+        return;
+      }
+      const items = data.items || [];
+      if (!items.length) {
+        const li = document.createElement('li');
+        li.textContent = 'Sem resultados para este termo. Experimente outro nome ou deixe vazio para ver notícias gerais.';
+        list.appendChild(li);
+        return;
+      }
+      for (const it of items) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = it.link || '#';
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.textContent = it.title;
+        li.appendChild(a);
+        const meta = document.createElement('div');
+        meta.className = 'feed-meta';
+        meta.textContent = [it.source, it.isoDate].filter(Boolean).join(' · ');
+        li.appendChild(meta);
+        list.appendChild(li);
+      }
+    }
+
+    document.getElementById('btnFeed').addEventListener('click', carregarFeed);
+
+    carregarDeputados();
+    carregarFeed();
+  </script>
+</body>
+</html>

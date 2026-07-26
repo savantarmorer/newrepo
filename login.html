@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acesso — A.M.O.Q.</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg0:#05050a;--bg1:#08080f;--bg2:#0d0d1a;
+      --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+      --fg1:#f0eef8;--fg2:#9993b8;--fg3:#5f5b7a;
+      --gold:#c9a227;--goldg:rgba(201,162,39,.18);
+      --t:200ms cubic-bezier(.4,0,.2,1);
+    }
+    html,body{height:100%}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--bg0);
+      color:var(--fg1);
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;
+      overflow:hidden;
+    }
+    /* Radial glow */
+    body::before{
+      content:'';position:fixed;inset:0;
+      background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,162,39,.06) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    /* Subtle grid */
+    body::after{
+      content:'';position:fixed;inset:0;
+      background-image:
+        linear-gradient(rgba(201,162,39,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(201,162,39,.025) 1px,transparent 1px);
+      background-size:60px 60px;
+      pointer-events:none;
+    }
+    .card{
+      position:relative;z-index:1;
+      width:min(400px,92vw);
+      background:rgba(8,8,15,.95);
+      border:1px solid var(--border2);
+      border-radius:20px;
+      padding:44px 40px 36px;
+      text-align:center;
+      backdrop-filter:blur(20px);
+      box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(201,162,39,.06);
+    }
+    /* Seal */
+    .seal-wrap{
+      width:84px;height:84px;margin:0 auto 26px;
+      animation:sealFloat 6s ease-in-out infinite;
+    }
+    @keyframes sealFloat{
+      0%,100%{transform:translateY(0);filter:drop-shadow(0 0 10px rgba(201,162,39,.35))}
+      50%{transform:translateY(-5px);filter:drop-shadow(0 0 20px rgba(201,162,39,.6))}
+    }
+    .title{
+      font-family:'Cinzel',serif;
+      font-size:26px;font-weight:700;
+      color:var(--gold);letter-spacing:5px;
+      margin-bottom:4px;
+    }
+    .subtitle{
+      font-size:10px;letter-spacing:3px;
+      color:var(--fg3);text-transform:uppercase;
+      margin-bottom:10px;
+    }
+    .mode-label{
+      font-size:12px;color:var(--fg2);
+      margin-bottom:28px;
+      min-height:16px;
+    }
+    /* Form */
+    .form{display:flex;flex-direction:column;gap:14px;text-align:left}
+    .field label{
+      display:block;font-size:10px;color:var(--fg3);
+      letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;
+    }
+    .field input{
+      width:100%;background:rgba(255,255,255,.04);
+      border:1px solid var(--border2);border-radius:8px;
+      color:var(--fg1);font-family:'Inter',sans-serif;font-size:14px;
+      outline:none;padding:11px 14px;transition:var(--t);
+    }
+    .field input:focus{
+      border-color:var(--gold);
+      background:rgba(201,162,39,.05);
+      box-shadow:0 0 0 3px var(--goldg);
+    }
+    .field input::placeholder{color:var(--fg3)}
+    .btn{
+      width:100%;background:var(--gold);
+      border:none;border-radius:8px;
+      color:#070703;cursor:pointer;
+      font-family:'Cinzel',serif;font-size:12px;font-weight:700;
+      letter-spacing:2.5px;margin-top:4px;
+      padding:13px 24px;transition:var(--t);
+      text-transform:uppercase;
+    }
+    .btn:hover{background:#d4aa28;box-shadow:0 0 24px rgba(201,162,39,.4)}
+    .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+    /* Message */
+    .msg{
+      font-size:12.5px;padding:10px 14px;
+      border-radius:8px;margin-top:16px;
+      display:none;text-align:left;line-height:1.5;
+    }
+    .msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171}
+    .msg.ok{background:rgba(201,162,39,.1);border:1px solid rgba(201,162,39,.25);color:var(--gold)}
+    /* Divider + toggle */
+    .orn{
+      display:flex;align-items:center;gap:10px;
+      margin:22px 0 16px;
+    }
+    .orn::before,.orn::after{content:'';flex:1;height:1px;background:var(--border)}
+    .orn span{font-size:14px;color:var(--fg3)}
+    .toggle{font-size:13px;color:var(--fg3)}
+    .toggle a{color:var(--fg2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:var(--t)}
+    .toggle a:hover{color:var(--gold)}
+    .back-link{
+      display:inline-flex;align-items:center;gap:5px;
+      margin-top:20px;font-size:12px;color:var(--fg3);
+      text-decoration:none;transition:var(--t);
+    }
+    .back-link:hover{color:var(--fg2)}
+  </style>
+</head>
+<body>
+<div class="card">
+  <!-- Pentagram seal -->
+  <div class="seal-wrap">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="93" stroke="#c9a227" stroke-width="1.5"/>
+      <circle cx="100" cy="100" r="86" stroke="#c9a227" stroke-width="0.5" opacity="0.35"/>
+      <!-- Pentagram: connect every other vertex of regular pentagon -->
+      <polygon points="100,20 147,165 24,75 176,75 53,165"
+        fill="none" stroke="#c9a227" stroke-width="1.5" stroke-linejoin="round"/>
+      <!-- Inner pentagon -->
+      <polygon points="100,59 134,84 121,122 79,122 66,84"
+        fill="none" stroke="#c9a227" stroke-width="0.7" opacity="0.45"/>
+      <!-- Center -->
+      <circle cx="100" cy="100" r="6" fill="#c9a227" opacity="0.9"/>
+      <circle cx="100" cy="100" r="14" fill="none" stroke="#c9a227" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="title">A.M.O.Q.</div>
+  <div class="subtitle">Arquivo Místico</div>
+  <div class="mode-label" id="modeLabel">Acesso ao Grimório</div>
+
+  <!-- Login Form -->
+  <form id="loginForm" class="form">
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+    </div>
+    <button type="submit" class="btn" id="loginBtn">Invocar Acesso</button>
+  </form>
+
+  <!-- Register Form (hidden) -->
+  <form id="regForm" class="form" style="display:none">
+    <div class="field">
+      <label>E-mail</label>
+      <input type="email" id="regEmail" placeholder="seu@email.com" autocomplete="email" required>
+    </div>
+    <div class="field">
+      <label>Senha (mín. 8 caracteres)</label>
+      <input type="password" id="regPass" placeholder="••••••••" autocomplete="new-password" required minlength="8">
+    </div>
+    <div class="field">
+      <label>Confirmar Senha</label>
+      <input type="password" id="regPass2" placeholder="••••••••" autocomplete="new-password" required>
+    </div>
+    <button type="submit" class="btn" id="regBtn">Iniciar Iniciação</button>
+  </form>
+
+  <div class="msg" id="msgBox"></div>
+
+  <div class="orn"><span>∴</span></div>
+  <div class="toggle" id="toggleArea">
+    Ainda não é iniciado?
+    <a id="toggleLink" onclick="toggleMode()">Solicitar Acesso</a>
+  </div>
+
+  <a href="/" class="back-link">← Voltar ao início</a>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://fveslvzjjixzpwiqcydz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tUHMDyn291B9RBJ10tlXJQ_aPJkHKxX';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const params = new URLSearchParams(window.location.search);
+const redirect = params.get('redirect') || '/biblioteca';
+
+let mode = 'login';
+
+// Redireciona se já estiver autenticado
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) window.location = redirect;
+});
+
+function toggleMode() {
+  mode = mode === 'login' ? 'register' : 'login';
+  clearMsg();
+  document.getElementById('loginForm').style.display = mode === 'login' ? 'flex' : 'none';
+  document.getElementById('regForm').style.display   = mode === 'register' ? 'flex' : 'none';
+  document.getElementById('modeLabel').textContent   = mode === 'login' ? 'Acesso ao Grimório' : 'Iniciar a Iniciação';
+  document.getElementById('toggleArea').innerHTML    = mode === 'login'
+    ? 'Ainda não é iniciado? <a onclick="toggleMode()">Solicitar Acesso</a>'
+    : 'Já tem acesso? <a onclick="toggleMode()">Entrar</a>';
+}
+
+function showMsg(txt, type) {
+  const el = document.getElementById('msgBox');
+  el.textContent = txt;
+  el.className = `msg ${type}`;
+  el.style.display = 'block';
+}
+function clearMsg() {
+  document.getElementById('msgBox').style.display = 'none';
+}
+
+// ── Login ──────────────────────────────────────────────────────────
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPass').value;
+  const btn      = document.getElementById('loginBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Invocando...';
+  clearMsg();
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    const msg = error.message.includes('Invalid login')
+      ? 'E-mail ou senha incorretos.'
+      : error.message;
+    showMsg(msg, 'err');
+    btn.disabled = false;
+    btn.textContent = 'Invocar Acesso';
+    return;
+  }
+
+  showMsg('Acesso concedido. Redirecionando...', 'ok');
+  setTimeout(() => { window.location = redirect; }, 700);
+});
+
+// ── Registro ───────────────────────────────────────────────────────
+document.getElementById('regForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPass2').value;
+  const btn   = document.getElementById('regBtn');
+
+  if (pass !== pass2) { showMsg('As senhas não coincidem.', 'err'); return; }
+  if (pass.length < 8) { showMsg('Senha deve ter ao menos 8 caracteres.', 'err'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Iniciando ritual...';
+  clearMsg();
+
+  const origin = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? window.location.origin
+    : 'https://iuripiragibe.net';
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: { emailRedirectTo: origin + '/biblioteca' },
+  });
+
+  if (error) {
+    showMsg(error.message, 'err');
+    btn.disabled = false;
+    btn.textContent = 'Iniciar Iniciação';
+    return;
+  }
+
+  if (data.session) {
+    // Confirmação de e-mail desativada — já autenticado
+    showMsg('Bem-vindo(a) à Ordem! Redirecionando...', 'ok');
+    setTimeout(() => { window.location = redirect; }, 1000);
+  } else {
+    // Confirmação de e-mail necessária
+    showMsg('Verifique sua caixa de entrada para confirmar o registro e ativar o acesso.', 'ok');
+    btn.disabled = false;
+    btn.textContent = 'Iniciar Iniciação';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serra do Curral — Investigação Nueva Acrópolis</title>
+<style>
+:root {
+  --bg:      #040404;
+  --bg1:     #080808;
+  --bg2:     #0d0d0d;
+  --bg3:     #111;
+  --border:  #1c1c1c;
+  --dim:     #444;
+  --gray:    #777;
+  --light:   #bbb;
+  --white:   #eee;
+  --gold:    #d4af37;
+  --gold2:   #b8960b;
+  --gold3:   #f0d060;
+  --red:     #c41e3a;
+  --red2:    #8b0000;
+  --red3:    #ff4466;
+  --blue:    #4a9eff;
+  --green:   #3a8a5a;
+  --sidebar: 220px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--light);
+  font-family:'Courier New',Courier,monospace;
+  font-size:13px;
+  display:flex;
+  min-height:100vh;
+}
+
+/* scan lines */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);
+  pointer-events:none;z-index:9998;
+}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+#sidebar{
+  width:var(--sidebar);
+  min-height:100vh;
+  background:var(--bg1);
+  border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;
+  overflow-y:auto;
+  z-index:100;
+  display:flex;flex-direction:column;
+}
+
+.sb-logo{
+  padding:20px 16px 14px;
+  border-bottom:1px solid var(--border);
+}
+.sb-logo .org{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);margin-bottom:6px;
+}
+.sb-logo .proj{
+  font-size:12px;font-weight:bold;color:var(--gold);
+  letter-spacing:1px;line-height:1.3;
+}
+
+nav{flex:1;padding:10px 0;}
+.nav-section{
+  font-size:8px;letter-spacing:3px;color:var(--dim);
+  text-transform:uppercase;padding:14px 16px 4px;
+}
+nav a{
+  display:block;padding:7px 16px;
+  color:var(--gray);text-decoration:none;
+  font-size:11px;letter-spacing:.5px;
+  border-left:2px solid transparent;
+  transition:all .15s;
+}
+nav a:hover,nav a.active{
+  color:var(--white);
+  border-left-color:var(--gold);
+  background:rgba(212,175,55,.06);
+}
+nav a.red-link{color:var(--red);}
+nav a.red-link:hover{border-left-color:var(--red);background:rgba(196,30,58,.06);}
+
+.sb-footer{
+  padding:14px 16px;border-top:1px solid var(--border);
+  font-size:9px;color:var(--dim);letter-spacing:1px;line-height:1.8;
+}
+
+/* ─── MAIN ────────────────────────────────── */
+#main{
+  margin-left:var(--sidebar);
+  flex:1;
+  width:calc(100% - var(--sidebar));
+  min-width:0;
+  padding:0 48px 80px;
+}
+
+/* ─── SECTIONS ────────────────────────────── */
+.section{
+  padding:50px 0 30px;
+  border-bottom:1px solid var(--border);
+}
+.section:last-child{border-bottom:none;}
+
+.section-tag{
+  font-size:9px;letter-spacing:5px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:10px;
+}
+.section-title{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:28px;font-weight:900;
+  color:var(--gold);letter-spacing:2px;
+  line-height:1.2;margin-bottom:6px;
+}
+.section-sub{
+  font-size:11px;color:var(--gray);
+  letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.hairline{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:20px 0;}
+.hairline-gold{height:1px;background:linear-gradient(to right,transparent,var(--gold2) 30%,var(--gold2) 70%,transparent);margin:20px 0;}
+
+/* ─── HERO ─────────────────────────────────── */
+#hero{
+  padding:60px 0 40px;
+  border-bottom:1px solid var(--border);
+}
+.stamp{
+  display:inline-block;border:2px solid var(--red2);
+  color:var(--red2);font-size:10px;letter-spacing:6px;
+  padding:4px 16px;transform:rotate(-1deg);
+  margin-bottom:24px;font-weight:bold;
+}
+.hero-title{
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:40px;font-weight:900;color:var(--gold);
+  letter-spacing:4px;text-transform:uppercase;
+  line-height:1.1;text-shadow:0 0 40px rgba(212,175,55,.2);
+}
+.hero-sub{
+  font-size:12px;color:var(--gray);letter-spacing:4px;
+  text-transform:uppercase;margin-top:8px;
+}
+.hero-meta{
+  display:flex;gap:30px;margin-top:28px;flex-wrap:wrap;
+}
+.meta-item{
+  font-size:10px;letter-spacing:1px;
+}
+.meta-label{color:var(--dim);text-transform:uppercase;margin-bottom:3px;}
+.meta-value{color:var(--white);}
+.meta-value.danger{color:var(--red);}
+.meta-value.warn{color:var(--gold);}
+
+/* ─── GRID LAYOUTS ───────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+/* ─── CARDS ───────────────────────────────── */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  padding:18px;
+}
+.card-title{
+  font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:10px;
+}
+.card-body{font-size:12px;color:var(--light);line-height:1.7;}
+.card.gold{border-left:3px solid var(--gold2);}
+.card.red{border-left:3px solid var(--red2);background:#0c0303;}
+.card.blue{border-left:3px solid #2a5a8a;background:#03050c;}
+.card.green{border-left:3px solid var(--green);background:#030c05;}
+
+/* ─── QUOTES ──────────────────────────────── */
+.quote{
+  border:1px solid var(--border);
+  border-left:4px solid var(--red2);
+  padding:20px 26px;margin:16px 0;
+  background:var(--bg2);position:relative;
+}
+.quote-label{
+  position:absolute;top:-8px;left:14px;
+  background:var(--bg);padding:0 8px;
+  font-size:8px;letter-spacing:3px;color:var(--red2);text-transform:uppercase;
+}
+.quote-text{
+  font-style:italic;font-size:13px;line-height:1.9;color:var(--light);
+}
+.quote-text mark{background:transparent;color:var(--red3);font-style:normal;font-weight:bold;}
+.quote-src{
+  margin-top:10px;font-size:9px;color:var(--dim);
+  letter-spacing:2px;text-align:right;text-transform:uppercase;
+}
+.quote.gold-q{border-left-color:var(--gold2);}
+.quote.gold-q .quote-label{color:var(--gold2);}
+
+/* ─── BITE PANELS ─────────────────────────── */
+.bite-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;margin-top:16px;}
+.bite-panel{padding:20px;position:relative;}
+.bite-b{background:#090c09;border-top:3px solid #2a7a2a;}
+.bite-i{background:#09090c;border-top:3px solid #2a4a8a;}
+.bite-t{background:#0c0c09;border-top:3px solid #7a6a20;}
+.bite-e{background:#0c0909;border-top:3px solid #7a1a2a;}
+.bite-letter{
+  font-family:Georgia,serif;font-size:48px;font-weight:900;
+  position:absolute;top:12px;right:16px;opacity:.08;
+  line-height:1;
+}
+.bite-b .bite-letter{color:#3a9a3a;}
+.bite-i .bite-letter{color:#3a6aba;}
+.bite-t .bite-letter{color:#ba9a30;}
+.bite-e .bite-letter{color:#ba2a3a;}
+.bite-title{
+  font-size:11px;font-weight:bold;letter-spacing:3px;
+  text-transform:uppercase;margin-bottom:12px;
+}
+.bite-b .bite-title{color:#4a9a4a;}
+.bite-i .bite-title{color:#4a7aba;}
+.bite-t .bite-title{color:#ba9a30;}
+.bite-e .bite-title{color:#ba3a4a;}
+.bite-items{list-style:none;padding:0;}
+.bite-items li{
+  font-size:11px;color:var(--light);line-height:1.6;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  padding-left:14px;position:relative;
+}
+.bite-items li::before{content:'›';position:absolute;left:0;color:var(--dim);}
+.bite-items li span{color:var(--white);font-weight:bold;}
+.bite-items li em{font-style:normal;font-size:10px;color:var(--gray);}
+
+/* ─── EVIDENCE TABLE ─────────────────────── */
+table{width:100%;border-collapse:collapse;margin:14px 0;}
+th{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);padding:8px 12px;text-align:left;
+  border-bottom:1px solid var(--border);
+}
+td{
+  padding:9px 12px;font-size:11px;color:var(--light);
+  border-bottom:1px solid var(--border);vertical-align:top;
+  line-height:1.5;
+}
+tr:hover td{background:rgba(255,255,255,.02);}
+.tag{
+  display:inline-block;font-size:8px;letter-spacing:1px;
+  padding:2px 6px;border-radius:1px;text-transform:uppercase;
+  font-weight:bold;margin:1px;
+}
+.tag-b{background:#1a3a1a;color:#5aba5a;}
+.tag-i{background:#1a1a3a;color:#5a7aba;}
+.tag-t{background:#2a2a10;color:#baa030;}
+.tag-e{background:#2a1010;color:#ba4050;}
+.tag-ok{background:#0d2a1a;color:#3a8a5a;}
+.tag-pending{background:#1a1a0d;color:#8a7a30;}
+.tag-red{background:#2a0808;color:#c41e3a;}
+
+/* ─── TIMELINE ────────────────────────────── */
+.timeline{position:relative;padding-left:24px;margin:16px 0;}
+.timeline::before{
+  content:'';position:absolute;left:8px;top:0;bottom:0;
+  width:1px;background:linear-gradient(to bottom,var(--red2),transparent);
+}
+.tl-item{
+  position:relative;margin-bottom:18px;
+}
+.tl-dot{
+  position:absolute;left:-20px;top:3px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--red2);border:1px solid var(--red3);
+}
+.tl-dot.gold{background:var(--gold2);border-color:var(--gold);}
+.tl-year{
+  font-size:10px;font-weight:bold;color:var(--red);
+  letter-spacing:2px;margin-bottom:3px;
+}
+.tl-year.gold-y{color:var(--gold2);}
+.tl-doc{font-size:10px;color:var(--dim);}
+.tl-text{font-size:11px;color:var(--light);line-height:1.6;}
+.tl-quote{
+  font-size:10px;color:var(--gray);font-style:italic;
+  margin-top:4px;padding-left:8px;border-left:2px solid var(--red2);
+}
+
+/* ─── PYRAMID MINI ───────────────────────── */
+.pyramid-mini{display:flex;flex-direction:column;align-items:center;gap:2px;margin:16px 0;}
+.pm-row{display:flex;align-items:stretch;}
+.pm-cell{
+  padding:8px 12px;font-size:10px;letter-spacing:1px;
+  display:flex;align-items:center;gap:8px;
+}
+.pm-num{font-size:9px;color:var(--dim);min-width:14px;}
+.pm-name{font-weight:bold;}
+
+/* ─── NETWORK DIAGRAM ────────────────────── */
+.network{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0;align-items:flex-start;}
+.net-node{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:14px;font-size:10px;text-align:center;min-width:120px;
+}
+.net-node.center{
+  background:#0d0303;border-color:var(--red2);
+  border-width:2px;font-weight:bold;color:var(--red3);
+}
+.net-node.gold-n{border-color:var(--gold2);background:#0c0b03;}
+.net-arrow{color:var(--dim);align-self:center;font-size:18px;}
+
+/* ─── FIGURE CARDS ───────────────────────── */
+.figure-card{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:24px;
+}
+.fig-name{
+  font-family:Georgia,serif;font-size:20px;
+  color:var(--gold);margin-bottom:4px;
+}
+.fig-role{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:14px;
+}
+.fig-timeline{font-size:11px;color:var(--gray);margin-bottom:12px;}
+.fig-docs{font-size:10px;color:var(--dim);}
+
+/* ─── STATUS PANEL ───────────────────────── */
+.status-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0;}
+.status-card{
+  background:var(--bg2);border:1px solid var(--border);
+  padding:16px;
+}
+.status-icon{font-size:20px;margin-bottom:6px;}
+.status-title{font-size:11px;font-weight:bold;color:var(--white);margin-bottom:4px;}
+.status-body{font-size:10px;color:var(--gray);line-height:1.6;}
+.status-card.active{border-color:var(--red2);background:#0b0203;}
+.status-card.done{border-color:var(--green);background:#030c05;}
+.status-card.partial{border-color:var(--gold2);background:#0c0b03;}
+
+/* ─── COLLAPSIBLE ────────────────────────── */
+details{margin-bottom:8px;}
+summary{
+  padding:10px 14px;background:var(--bg2);
+  border:1px solid var(--border);cursor:pointer;
+  font-size:11px;color:var(--light);letter-spacing:.5px;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;
+}
+summary::after{content:'▸';color:var(--dim);}
+details[open] summary::after{content:'▾';}
+summary:hover{background:var(--bg3);color:var(--white);}
+details .detail-body{
+  padding:16px;background:var(--bg1);
+  border:1px solid var(--border);border-top:none;
+}
+
+/* ─── MISC ────────────────────────────────── */
+strong{color:var(--white);}
+.text-red{color:var(--red);}
+.text-gold{color:var(--gold);}
+.text-dim{color:var(--dim);}
+.text-gray{color:var(--gray);}
+.mb8{margin-bottom:8px;}
+.mb16{margin-bottom:16px;}
+.mb24{margin-bottom:24px;}
+.mt16{margin-top:16px;}
+
+.label{
+  font-size:9px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:6px;display:block;
+}
+.pill{
+  display:inline-block;font-size:9px;letter-spacing:1px;
+  padding:2px 8px;border-radius:10px;margin:2px;
+  text-transform:uppercase;
+}
+.pill-red{background:rgba(196,30,58,.15);border:1px solid var(--red2);color:var(--red3);}
+.pill-gold{background:rgba(184,150,11,.15);border:1px solid var(--gold2);color:var(--gold);}
+.pill-gray{background:rgba(100,100,100,.15);border:1px solid #333;color:var(--gray);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+
+/* ─── SCROLLBAR ───────────────────────────── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg1);}
+::-webkit-scrollbar-thumb{background:var(--border);}
+
+/* ─── RESPONSIVE WIDE ─────────────────────── */
+@media(min-width:1400px){
+  .bite-grid{grid-template-columns:1fr 1fr 1fr 1fr;}
+  .grid3{grid-template-columns:repeat(3,1fr);}
+  .grid4{grid-template-columns:repeat(5,1fr);}
+  .status-grid{grid-template-columns:repeat(4,1fr);}
+}
+@media(min-width:1700px){
+  .two-col{grid-template-columns:520px 1fr;}
+  .three-col{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside id="sidebar">
+  <div class="sb-logo">
+    <div class="org">⚠ Arquivo Confidencial</div>
+    <div class="proj">Serra do Curral<br>Investigação NA</div>
+  </div>
+  <nav>
+    <div class="nav-section">Visão Geral</div>
+    <a href="#hero" class="active">◉ O Caso</a>
+    <a href="#hierarquia">◈ Hierarquia</a>
+    <a href="#figuras">◎ Figuras</a>
+
+    <div class="nav-section">Análise</div>
+    <a href="#bite">▣ Modelo BITE</a>
+    <a href="#psicologia">◇ Controle Psicológico</a>
+    <a href="#silencio">◈ Rede do Silêncio</a>
+    <a href="#homofobia" class="red-link">⊗ Homofobia Institucional</a>
+    <a href="#financeiro">$ Controle Financeiro</a>
+
+    <div class="nav-section">Fontes</div>
+    <a href="#documentos">☰ Documentos Lidos</a>
+    <a href="#cronologia">⋮ Cronologia</a>
+
+    <div class="nav-section">Status</div>
+    <a href="#angulos">◎ 5 Ângulos</a>
+    <a href="#pendentes">… Pendentes</a>
+  </nav>
+  <div class="sb-footer">
+    Fundada 1957 · 60+ países<br>
+    Docs: 1976–2018<br>
+    Framework: BITE (Hassan)<br>
+    Atualizado: 2026-05-10
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main id="main">
+
+<!-- ══════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="stamp">⚠ &nbsp; DOCUMENTOS INTERNOS VAZADOS — RECOPILADORES &nbsp; ⚠</div>
+  <h1 class="hero-title">Nueva Acrópolis<br>Internacional</h1>
+  <p class="hero-sub">Investigação jornalística baseada em documentos internos (1976–2018)</p>
+  <div class="hairline-gold"></div>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <div class="meta-label">Fundação</div>
+      <div class="meta-value">Buenos Aires, 1957</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Fundador</div>
+      <div class="meta-value">Jorge Angel Livraga Richter</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Presidenta atual</div>
+      <div class="meta-value">Delia Steinberg Guez</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Presença</div>
+      <div class="meta-value">60+ países</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Classificação oficial</div>
+      <div class="meta-value danger">Seita · França · Bélgica · Alemanha</div>
+    </div>
+    <div class="meta-item">
+      <div class="meta-label">Docs no vault</div>
+      <div class="meta-value warn">1976–2018 · Bastiones + Almenas + Decretos</div>
+    </div>
+  </div>
+  <div class="hairline"></div>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card gold">
+      <div class="card-title">Classificações Governamentais</div>
+      <div class="card-body">
+        <strong style="color:var(--red)">França</strong> — MIVILUDES: lista de seitas<br>
+        <strong style="color:var(--red)">Bélgica</strong> — CIAOSN: "associação com caráter sectário"<br>
+        <strong style="color:var(--red)">Alemanha</strong> — BfV: sob vigilância<br>
+        <strong style="color:var(--gold2)">Espanha, Portugal, Brasil</strong> — sem classificação
+      </div>
+    </div>
+    <div class="card gold">
+      <div class="card-title">Perfil Público vs. Realidade</div>
+      <div class="card-body">
+        <strong>Público:</strong> Escola de filosofia, cultura, artes<br>
+        <strong>Real:</strong> 9 níveis hierárquicos (2 ocultos), aparato de inteligência, corpo de segurança, controle de informação global
+      </div>
+    </div>
+    <div class="card red">
+      <div class="card-title">Achados Mais Graves</div>
+      <div class="card-body">
+        <span class="text-red">►</span> DECR.1987/9: exclusão LGBTQ+ por decreto<br>
+        <span class="text-red">►</span> Cessão legal obrigatória de bens para líderes<br>
+        <span class="text-red">►</span> C.S.: iniciação com espada — "rito de conversão"<br>
+        <span class="text-red">►</span> G.I.D.I.: grupo secreto de intervenção desde 1976<br>
+        <span class="text-red">►</span> DSG abdica em 2005 mas mantém poder vitalício<br>
+        <span class="text-red">►</span> Maat = "Red holding" de escritórios de advocacia a serviço dos MMs<br>
+        <span class="text-red">►</span> JAL funda NA com pistola Luger + Platão — missão da "6ª Subraza"
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- HIERARQUIA -->
+<!-- ══════════════════════════════════════════ -->
+<section id="hierarquia" class="section">
+  <div class="section-tag">Estrutura</div>
+  <h2 class="section-title">A Pirâmide dos 9 Níveis</h2>
+  <p class="section-sub">Hierarquia real vs. hierarquia declarada publicamente</p>
+
+  <div class="two-col">
+    <div>
+      <div class="pyramid-mini">
+        <!-- TIP = ocultos -->
+        <div class="pm-row" style="width:170px">
+          <div class="pm-cell" style="flex:1;background:#1a0000;border-left:4px solid var(--red);border-top:1px solid #3a0000;">
+            <span class="pm-num" style="color:var(--red)">9</span>
+            <div>
+              <div class="pm-name" style="color:var(--red3);font-size:9px">[Escola de Mistérios]</div>
+              <div style="font-size:8px;color:#5a1515">Iniciação — não anunciada</div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:240px">
+          <div class="pm-cell" style="flex:1;background:#140303;border-left:3px solid var(--red2);border-top:1px solid #2a0505;">
+            <span class="pm-num" style="color:var(--red2)">8</span>
+            <div>
+              <div class="pm-name" style="color:var(--red);font-size:9px">[Escola Esotérica]</div>
+              <div style="font-size:8px;color:#4a1010">Não anunciada publicamente</div>
+            </div>
+          </div>
+        </div>
+        <!-- separator -->
+        <div style="width:320px;text-align:center;padding:4px 0;">
+          <div style="height:1px;background:linear-gradient(to right,transparent,var(--red2),transparent)"></div>
+          <div style="font-size:7px;letter-spacing:2px;color:var(--red2);padding:2px 0">▲ limite do que existe oficialmente ▲</div>
+          <div style="height:1px;background:linear-gradient(to right,transparent,var(--red2),transparent)"></div>
+        </div>
+        <div class="pm-row" style="width:320px">
+          <div class="pm-cell" style="flex:1;background:#1c1608;border-left:3px solid #d0c040">
+            <span class="pm-num" style="color:#d0c040">7</span>
+            <div>
+              <div class="pm-name" style="color:#d0c040;font-size:9px">Escola do Discipulado (ED)</div>
+              <div style="font-size:8px;color:#706020">"Pequeños Misterios" · topo <em style="color:var(--dim);font-style:normal">declarado</em></div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:390px">
+          <div class="pm-cell" style="flex:1;background:#1a1508;border-left:3px solid var(--gold)">
+            <span class="pm-num" style="color:var(--gold)">6</span>
+            <div><div class="pm-name" style="color:var(--gold);font-size:9px">Bastión</div></div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:450px">
+          <div class="pm-cell" style="flex:1;background:#181408;border-left:3px solid var(--gold2)">
+            <span class="pm-num" style="color:var(--gold2)">5</span>
+            <div><div class="pm-name" style="color:var(--gold2);font-size:9px">Mando</div></div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:500px">
+          <div class="pm-cell" style="flex:1;background:#161208;border-left:3px solid #c09010">
+            <span class="pm-num" style="color:#c09010">4</span>
+            <div>
+              <div class="pm-name" style="color:#c09010;font-size:9px">Almena</div>
+              <div style="font-size:8px;color:#706010">Mantra 3×/dia · autopunição · juramento</div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:540px">
+          <div class="pm-cell" style="flex:1;background:#141008;border-left:3px solid #a07808">
+            <span class="pm-num" style="color:#a07808">3</span>
+            <div>
+              <div class="pm-name" style="color:#a07808;font-size:9px">Fuerzas Vivas (FFVV)</div>
+              <div style="font-size:8px;color:#605008">Cerimônia de juramento · C.S. (segurança)</div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:570px">
+          <div class="pm-cell" style="flex:1;background:#111;border-left:3px solid #888">
+            <span class="pm-num" style="color:#888">2</span>
+            <div><div class="pm-name" style="color:#aaa;font-size:9px">Instrutor</div></div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:600px">
+          <div class="pm-cell" style="flex:1;background:#0e0e0e;border-left:3px solid #555">
+            <span class="pm-num" style="color:#555">1</span>
+            <div><div class="pm-name" style="color:#888;font-size:9px">Membro Comum</div></div>
+          </div>
+        </div>
+        <div class="pm-row" style="width:630px">
+          <div class="pm-cell" style="flex:1;background:#0a0a0a;border-left:3px solid #333">
+            <span class="pm-num" style="color:#333">0</span>
+            <div><div class="pm-name" style="color:#555;font-size:9px">Público</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="quote" style="margin-top:0">
+        <div class="quote-label">Fonte — La Pirámide del Programa de Estudios (doc. interno)</div>
+        <div class="quote-text">"Aún hay <mark>dos Escuelas más, que en este momento no están abiertas</mark>: la Escola Esotérica, y finalmente [...] la <mark>Escola de Mistérios</mark>, para aquellos que están en condiciones de alcanzar la <mark>Iniciación</mark>."</div>
+        <div class="quote-src">LA PIRÁMIDE DEL PROGRAMA DE ESTUDIOS.docx</div>
+      </div>
+      <div style="margin-top:14px">
+        <span class="label">Pontos de controle por nível</span>
+        <table>
+          <tr><th>Nível</th><th>Mecanismo</th><th>Eixo BITE</th></tr>
+          <tr><td style="color:var(--gold2)">FFVV (3)</td><td>Juramento + carta manuscrita</td><td><span class="tag tag-b">B</span><span class="tag tag-e">E</span></td></tr>
+          <tr><td style="color:var(--gold2)">Almena (4)</td><td>Mantra 3×/dia + autopunição</td><td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td></tr>
+          <tr><td style="color:var(--gold)">Mando (5)</td><td>Circulares restritas + viagens limitadas</td><td><span class="tag tag-i">I</span></td></tr>
+          <tr><td style="color:var(--gold)">Bastión (6)</td><td>Acesso ao compêndio de decretos</td><td><span class="tag tag-i">I</span><span class="tag tag-b">B</span></td></tr>
+          <tr><td style="color:var(--gold3)">ED (7)</td><td>"Pequenos Mistérios" — rituais esotéricos</td><td><span class="tag tag-e">E</span><span class="tag tag-t">T</span></td></tr>
+          <tr><td style="color:var(--red)">Esotérica (8)</td><td>Não documentada publicamente</td><td><span class="tag tag-red">???</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <p style="margin-top:12px;font-size:10px;color:var(--dim)">
+    ◉ Ver infográfico completo: <a href="piramide-9niveis.html" style="color:var(--gold)" target="_blank">piramide-9niveis.html</a>
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- FIGURAS -->
+<!-- ══════════════════════════════════════════ -->
+<section id="figuras" class="section">
+  <div class="section-tag">Figuras Centrais</div>
+  <h2 class="section-title">Livraga & Steinberg</h2>
+  <p class="section-sub">Dois períodos — uma mesma estrutura</p>
+  <div class="two-col">
+    <div class="figure-card">
+      <div class="fig-name">Jorge Angel Livraga Richter</div>
+      <div class="fig-role">Fundador · 1º Mando Máximo · "JAL"</div>
+      <div class="fig-timeline">Buenos Aires, 1930 — Madrid, 2000</div>
+      <div class="hairline"></div>
+      <div class="card-body" style="font-size:11px;line-height:1.8">
+        <strong>Bastiones:</strong> 001–167 (jul/1976 – out/1991)<br>
+        <strong>Almenas:</strong> A001–A108<br>
+        <strong>Mandos (JAL):</strong> 0001–0074<br>
+        <strong>Manual del Dirigente:</strong> 1976 (Granada)<br>
+        <strong>Ejercicios Almena:</strong> autor original<br>
+        <strong>Práticas de Psicologia:</strong> fonte das práticas egípcias/tibetanas
+      </div>
+      <div class="hairline"></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:8px">
+        Pós-morte: elevado a figura quasi-divina nas FFVV —<br>
+        <em style="color:var(--red)">"JAL, desde su Cielo, espera algo de nosotros"</em>
+      </div>
+    </div>
+    <div class="figure-card">
+      <div class="fig-name">Delia Steinberg Guez</div>
+      <div class="fig-role">2ª Presidenta · "DSG" · Mando Máximo</div>
+      <div class="fig-timeline">Buenos Aires, 1945 — presente</div>
+      <div class="hairline"></div>
+      <div class="card-body" style="font-size:11px;line-height:1.8">
+        <strong>Bastiones:</strong> 168–314 (nov/1991 – fev/2005+)<br>
+        <strong>Mandos (DSG):</strong> 0075–0310<br>
+        <strong>COPROCON 2015:</strong> doutrina de controle de informação<br>
+        <strong>Mando 95:</strong> exclusão de LGBTQ+ (pré-2015)<br>
+        <strong>Practicas Psicología:</strong> curso Brasília 2002<br>
+        <strong>Personalidad Instructor:</strong> curso completo
+      </div>
+      <div class="hairline"></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:8px">
+        Duplo papel: <span style="color:var(--red)">legisladora interna</span> (decretos, exclusão LGBTQ+) + <span style="color:var(--red)">arquiteta pública</span> (astroturfing, remoção de críticas)<br>
+        <span style="color:var(--gold2)">Abdicação formal 2005</span> → MM Rector com poder vitalício de destituir o sucessor · Modelo faraônico declarado: <em>"como en el Antiguo Egipto"</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- BITE -->
+<!-- ══════════════════════════════════════════ -->
+<section id="bite" class="section">
+  <div class="section-tag">Framework Analítico Principal</div>
+  <h2 class="section-title">Modelo BITE</h2>
+  <p class="section-sub">Steven Hassan (2018) — Controle coercitivo em 4 dimensões</p>
+
+  <div class="bite-grid">
+
+    <!-- B -->
+    <div class="bite-panel bite-b">
+      <div class="bite-letter">B</div>
+      <div class="bite-title">Controle de Comportamento</div>
+      <ul class="bite-items">
+        <li><span>Mantra "SOY UN HACHADO" 3×/dia</span> com punição por esquecimento <em>· Ejercicios Almena</em></li>
+        <li><span>Autopunição obrigatória</span>: "¿qué castigo debo imponerme?... ha de ser bien duro" <em>· Almena</em></li>
+        <li><span>Cerimônia de juramento</span> nas FFVV — custo ritual de saída <em>· Probacionismo</em></li>
+        <li><span>Carta manuscrita</span> obrigatória de ingresso — autonarração comprometedora <em>· FFVV</em></li>
+        <li><span>DECR.1981/8: doação de bens à OINA</span> para receber "proteção" após 30 anos <em>· Decretos I</em></li>
+        <li><span>Corpo de Segurança (C.S.)</span>: "custodia de personas y bienes" + defesa pessoal <em>· FFVV</em></li>
+        <li><span>Monitoramento de redes sociais</span> pela Secretaria ARIADNA <em>· Secretarias</em></li>
+        <li><span>Materiais internos não saem das sedes</span> (DECR.1985/10) <em>· Decretos I</em></li>
+        <li><span>Aparato de inteligência interna</span> desde 1985: "sistemas de Inteligencia e Información" <em>· Decretos I</em></li>
+        <li><span>Seminários de líderes em "lugares alejados con disciplina militar"</span> <em>· Manual Dirigente</em></li>
+        <li><span>"Entrega al Ideal debe ser total"</span> — apagar vida pessoal <em>· Manual Dirigente</em></li>
+        <li><span>Práticas físicas rituais</span> (Hatha Yoga Tibetano) desde o Probacionismo <em>· Prácticas Psicología</em></li>
+        <li><span>C.S. — treinamento paramilitar a cada 15 dias</span>: artes marciais, defesa pessoal, proteção de bens (homens); comunicações, resgate de informação (mulheres) <em>· Decretos II</em></li>
+        <li><span>Cessão legal obrigatória de bens</span> para líderes nomeados — prazo de 1 ano; gerido pelo Instituto Maat <em>· Decretos II</em></li>
+        <li><span>Cerimônia C.S. com espada</span>: 3 perguntas rituais pela porta fechada (Serviço / Silêncio / Secreto) + unção no ombro direito com espadim <em>· Manual FFVV</em></li>
+        <li><span>5 graus internos nas FFVV</span>: pirâmide dentro da pirâmide — renovação do compromisso no 4º grau; 5º sem prazo; Hacha "inoperacional" sem completar ED <em>· Escuela ED</em></li>
+        <li><span>"Retiro Ativo"</span>: ex-líderes mantidos vinculados após saída — a saída nunca é total <em>· Decretos III</em></li>
+        <li><span>Instituto Maat — advogados FFVV + Hachados</span>: todos os membros do escritório devem ser do núcleo duro — identidade profissional fundida com obediência hierárquica; renda retorna à "colmena" OINA <em>· Instituto-Maat</em></li>
+        <li><span>Ritual de iniciação Maat com vendas e desorientação</span>: candidato vendado, girado para desorientar, responde "ofrezco mi corazón", balança mostra coração "mais pesado" — culpa estrutural como condição de entrada <em>· Instituto-Maat</em></li>
+        <li><span>JAL funda NA com pistola Luger Parabellum</span>: arma militar alemã como companheira diária ao fundar a organização em 1957 — militarização constitutiva desde o início <em>· Autobiografia-JAL</em></li>
+      </ul>
+    </div>
+
+    <!-- I -->
+    <div class="bite-panel bite-i">
+      <div class="bite-letter">I</div>
+      <div class="bite-title">Controle de Informação</div>
+      <ul class="bite-items">
+        <li><span>"Nosotros decidimos la cantidad de información que damos"</span> — Steinberg 2015 <em>· COPROCON</em></li>
+        <li><span>COPROCON</span>: secretaria para filtrar informação externa <em>· COPROCON</em></li>
+        <li><span>Instituto Maat — "Red holding"</span>: rede de escritórios de advocacia ("Maat Abogados y Asociados") que serve <strong>exclusivamente os MMs</strong> + módulo 9.5 "lucha en Internet" no currículo + "Círculo de Amigos" externo que infiltra personalidades jurídicas sem revelar a OINA <em>· Instituto-Maat</em></li>
+        <li><span>Secretaria INTERNET</span>: astroturfing com roteiros prontos <em>· Secretarias</em></li>
+        <li><span>Secretaria INTERNET</span>: remoção ativa de críticas + ameaça jurídica <em>· Secretarias</em></li>
+        <li><span>Secretaria ARIADNA</span>: busca de "material difamatorio" + limpeza de dispositivos <em>· Secretarias</em></li>
+        <li><span>2 níveis ocultos</span> acima da ED — a pirâmide tem 9 andares, não 7 <em>· Pirâmide</em></li>
+        <li><span>Hierarquia de documentos</span>: Bastiones/Almenas/Mandos inacessíveis a membros externos <em>· Estrutura</em></li>
+        <li><span>Fase 2 gerida por assimetria</span>: membro em crise "não pode ter ideia clara" sem acesso ao topo <em>· Manual Dirigente</em></li>
+        <li><span>DECR.1985/10</span>: gravações inventariadas em locais conhecidos só por responsáveis <em>· Decretos I</em></li>
+        <li><span>Proibição de imprensa nas sedes</span> (DECR.1985/10) <em>· Decretos I</em></li>
+        <li><span>Substitutos terapêuticos patologizados</span>: qualquer alternativa externa é "perigosa" <em>· Prácticas</em></li>
+        <li><span>GEA — fachada de voluntariado ecológico</span>: associação criada por decreto, controlada pelo Maat; todas as GEA nacionais = OINA <em>· Decretos II</em></li>
+        <li><span>Instrução oral substitui escrita</span>: "reemplazando paulatinamente la instrucción escrita por la oral" — apagamento deliberado de rastros das FFVV <em>· Decretos II</em></li>
+        <li><span>Rebranding Institutos → Secretarias</span> (2012): mudança cosmética para suprimir associações negativas <em>· Decretos III</em></li>
+        <li><span>Operadores da vigilância identificados</span>: ARIADNA = Pierre Poulain (Israel, €2.250/ano); INTERNET = Juan Carlos del Río (Espanha, €1.200/ano) <em>· Decretos III</em></li>
+      </ul>
+    </div>
+
+    <!-- T -->
+    <div class="bite-panel bite-t">
+      <div class="bite-letter">T</div>
+      <div class="bite-title">Controle do Pensamento</div>
+      <ul class="bite-items">
+        <li><span>"Debe abstenerse de juzgar, incluso en el fondo de su corazón"</span> — Livraga <em>· Manual Dirigente</em></li>
+        <li><span>"Las lamentaciones de la personalidad deben ser aplastadas sin piedad"</span> <em>· Manual Dirigente</em></li>
+        <li><span>Identidade coletiva prescrita</span>: "SOY UN HACHADO" como âncora cognitiva <em>· Almena</em></li>
+        <li><span>Visualizações diárias dirigidas</span> (linhas, triângulos, pontos) — controle do conteúdo mental <em>· Almena</em></li>
+        <li><span>Toda crítica = obra de inimigos externos</span> (marxistas, Igreja, maçons) — torna crítica legítima inprocessável <em>· Decretos</em></li>
+        <li><span>"Para el MM nada es superior a la OINA en lo material"</span> (DECR.1979/2) <em>· Decretos I</em></li>
+        <li><span>"Fuerzas del mal encarnadas en fanáticos"</span> — linguagem de cerco (DECR.1989/2) <em>· Decretos I</em></li>
+        <li><span>Fase 2 patologizada</span>: dúvidas = "pubertad de caracteres", não maturidade <em>· Manual Dirigente</em></li>
+        <li><span>Roteiro pronto de descarte de críticas</span>: "información muy antigua y tergiversada" <em>· Secretarias</em></li>
+        <li><span>Personalidade deve ser "dócil ao Eu Superior"</span> — objetivo das Práticas <em>· Prácticas Psicología</em></li>
+        <li><span>"Alma prisioneira"</span> — só a NA liberta: narrativa de salvação que justifica qualquer método <em>· Prácticas</em></li>
+        <li><span>Cosmologia dualista</span>: Luz vs. Trevas — crítico externo = trevas por definição <em>· Estrutura</em></li>
+        <li><span>Técnica "antihipnótica"</span>: DSG usa o próprio vocabulário da hipnose — confirma que o quadro de intervenção é hipnótico <em>· Personalidad Instructor</em></li>
+        <li><span>Bypass racional via "astral"</span>: "que la gente intuya cosas aunque no lo entienda bien [...] no a través de un razonamiento" — influência pré-racional ensinada como técnica <em>· Personalidad Instructor</em></li>
+        <li><span>Modelo faraônico declarado</span>: corregência baseada no "Antiguo Egipto" — poder absoluto legitimado por referência histórica <em>· Decretos III</em></li>
+        <li><span>"6ª Subraza de la 5ª Raza" — missão messiânica</span>: JAL declara na autobiografia que devia "dar o impulso inicial ao nascimento da 6ª sub-raça" — cosmologia racial de Blavatsky como fundamento doutrinário desde a fundação <em>· Autobiografia-JAL</em></li>
+        <li><span>Raízes em organizações juvenis <strong>nacionalistas</strong></span>: JAL ativo em movimentos nacionalistas argentinos + fundador do CADEL ("millares de personas") antes de criar a NA <em>· Autobiografia-JAL</em></li>
+        <li><span>Identidade do Maat = Serviço jurídico eterno a JAL</span>: ritual diário "Yo sirvo al Maestro Jurídico se encuentre donde se encuentre" — aniversário de JAL (3/set) = feriado oficial do instituto; culto ao fundador integrado na ética profissional <em>· Instituto-Maat</em></li>
+      </ul>
+    </div>
+
+    <!-- E -->
+    <div class="bite-panel bite-e">
+      <div class="bite-letter">E</div>
+      <div class="bite-title">Controle Emocional</div>
+      <ul class="bite-items">
+        <li><span>"JAL, desde su Cielo, espera algo de nosotros"</span> — fundador morto como autoridade sobrenatural <em>· FFVV</em></li>
+        <li><span>Oração ao fundador</span>: "Oración de un Discípulo a su Maestro (JAL)" <em>· FFVV</em></li>
+        <li><span>Culpa programada</span>: "No estoy dando de mí todo lo que puedo dar. No debo autodisculparme." <em>· Almena</em></li>
+        <li><span>Obediência como prática espiritual</span>: "Seré más obediente [...] Dios, mi Señor, apiádate de mí" <em>· Almena</em></li>
+        <li><span>Promessa de Iniciação sempre adiada</span> — motivação mantida em suspensão permanente <em>· Pirâmide</em></li>
+        <li><span>"Locos y traidores"</span> — saída ativada por vergonha e medo <em>· Decretos Difamação</em></li>
+        <li><span>Saída = "mar lodoso da massa vulgar"</span> — medo existencial de abandono <em>· Manual Dirigente</em></li>
+        <li><span>Consultar superior = perder autonomia</span>: "perdió el derecho moral de decidir por sí mismo" <em>· Manual Dirigente</em></li>
+        <li><span>DECR.1987/9: exclusão LGBTQ+ por decreto</span> — culpa sobre identidade sexual <em>· Decretos I</em></li>
+        <li><span>Narrativa de perseguição</span>: orgulho de ser atacado como Sócrates, Bruno, HPB <em>· Estrutura</em></li>
+        <li><span>Identidade pessoal = identidade da organização</span>: sair = perder a si mesmo <em>· FFVV</em></li>
+        <li><span>Manipulação emocional via "astral" do instrutor</span> — intuição pré-racional cultivada <em>· Personalidad Instructor</em></li>
+        <li><span>Vigilância forçada de identidade sexual</span>: LGBTQ+ nas FFVV devem se identificar por escrito ao Mando + assinar que orientação "não é fator primordial" + 3 infrações = expulsão <em>· Decretos II</em></li>
+        <li><span>Compromisso como "rito de conversão"</span>: Manual FFVV define explicitamente a cerimônia como conversão de "mulher/homem" em "Dama/Cavaleiro" <em>· Manual FFVV</em></li>
+        <li><span>DSG — poder vitalício disfarçado de transição</span>: abdica formalmente mas retém direito de destituir o sucessor indefinidamente <em>· Decretos III</em></li>
+        <li><span>JAL: "gritan mi Nombre" — autodescrição messiânica</span>: autobiografia encerra com "miles de jóvenes trabajan por el Ideal y gritan mi Nombre" + "soy un Hijo del Secreto" — culto ao líder auto-construído <em>· Autobiografia-JAL</em></li>
+        <li><span>"Soledad del Mando" como doutrina fundacional</span>: expressão criada por JAL para justificar inacessibilidade do líder — sofrimento do fundador como legitimação do poder absoluto <em>· Autobiografia-JAL</em></li>
+        <li><span>Cripta esotérica de 4 anos — template de condicionamento</span>: JAL dormiu 3h/dia com substâncias alquímicas antes de fundar a NA — depois prescreveu exatamente os mesmos padrões de privação nas Práticas de Psicologia e Ejercicios Almena <em>· Autobiografia-JAL</em></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="quote" style="margin-top:20px">
+    <div class="quote-label">Conclusão analítica</div>
+    <div class="quote-text">A Nueva Acrópolis demonstra controle coercitivo em <mark>todas as dimensões do modelo BITE</mark>. A estrutura não é acidental — é <mark>documentada institucionalmente</mark> em decretos, manuais e circulares internas datados de 1970 a 2015, assinados pelos dois líderes máximos.</div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CONTROLE PSICOLÓGICO -->
+<!-- ══════════════════════════════════════════ -->
+<section id="psicologia" class="section">
+  <div class="section-tag">Análise Especializada</div>
+  <h2 class="section-title">Controle e Manipulação Psicológica</h2>
+  <p class="section-sub">Sistema de condicionamento progressivo documentado internamente</p>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="card red">
+      <div class="card-title">Técnica "Antihipnótica" (DSG)</div>
+      <div class="card-body">"que espere un poco y ya veremos que <strong>estilo de antihipnótico vamos a utilizar</strong>" — DSG usa o próprio vocabulário da hipnose para descrever o condicionamento de membros.</div>
+    </div>
+    <div class="card red">
+      <div class="card-title">Script de Mentira (DSG)</div>
+      <div class="card-body">Para alunos difíceis: "le decimos que hemos tenido una revelación y que <strong>astrológicamente no es el momento esperado</strong>. Que espere a que Saturno..." — instrução literal de fabricar pretextos falsos.</div>
+    </div>
+    <div class="card red">
+      <div class="card-title">Manipulação Pré-racional</div>
+      <div class="card-body">"el astral del instructor tiene que conseguir que la gente <strong>intuya cosas aunque no lo entienda bien</strong>" — o objetivo explícito é contornar o pensamento crítico via estado emocional.</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <span class="label">Mecanismo de condicionamento progressivo</span>
+      <table>
+        <tr><th>Fase</th><th>Conteúdo</th><th>Função</th></tr>
+        <tr><td><span class="tag tag-ok">Probacionismo</span></td><td>Práticas físicas, filosofia básica</td><td>Captura emocional inicial</td></tr>
+        <tr><td><span class="tag tag-ok">Membro (1–2)</span></td><td>Psicologia I e II, visualizações</td><td>Substituição de identidade</td></tr>
+        <tr><td><span class="tag tag-pending">FFVV (3)</span></td><td>Juramento + rituais + Práticas</td><td>Vinculação formal</td></tr>
+        <tr><td><span class="tag tag-pending">Almena (4)</span></td><td>Mantra 3×/dia + autopunição</td><td>Condicionamento diário total</td></tr>
+        <tr><td><span class="tag tag-red">ED+ (7+)</span><td>Rituais esotéricos "ceremonial y mágico"</td><td>Iniciação — custo de saída máximo</td></tr>
+      </table>
+    </div>
+    <div>
+      <span class="label">Finalidade declarada das Práticas de Psicologia (DSG, Brasília 2002)</span>
+      <div class="quote" style="margin-top:6px">
+        <div class="quote-label">Prácticas de Psicología · Anexo DSG</div>
+        <div class="quote-text">"Lo que nosotros buscamos es <mark>armonizar la personalidad para que sea dócil al Yo Superior</mark>. Estaremos a gusto cuando la personalidad se halle armonizada y actúe como vehículo del Yo Superior."</div>
+      </div>
+      <div class="quote gold-q" style="margin-top:8px">
+        <div class="quote-label">Mecanismo declarado</div>
+        <div class="quote-text">"La finalidad de nuestros ejercicios está en una <mark>ejercitación continuada</mark>, pues si se hacen de vez en cuando, dan poco resultado."</div>
+      </div>
+    </div>
+  </div>
+
+  <details style="margin-top:16px">
+    <summary>◈ "Alma Prisioneira" — narrativa de salvação que justifica o sistema</summary>
+    <div class="detail-body">
+      <p style="font-size:11px;line-height:1.8;color:var(--light)">
+        DSG posiciona a personalidade autônoma do membro como o <strong style="color:var(--red)">"carcereiro"</strong> da alma.
+        A narrativa: <em>"O alma está prisioneira. A personalidade (= seu eu cotidiano) a aprisiona. Nossas práticas libertam a alma."</em><br><br>
+        Implicação prática: qualquer resistência, dúvida ou recusa é a "personalidade aprisionando a alma".
+        A supressão da autonomia individual é recodificada como <strong>libertação espiritual</strong>.<br><br>
+        <span style="color:var(--gold2)">Paralelo com outras técnicas de controle coercitivo:</span> a mesma estrutura narrativa (eu "falso" vs. eu "verdadeiro" que só o grupo pode revelar) aparece em grupos documentados por Hassan, Lalich e outros especialistas em controle coercitivo.
+      </p>
+    </div>
+  </details>
+
+  <details style="margin-top:6px">
+    <summary>◈ Cerimônia de Iniciação do C.S. — "rito de conversão" com espada</summary>
+    <div class="detail-body">
+      <p style="font-size:11px;line-height:1.8;color:var(--light)">
+        O ingresso no Cuerpo de Seguridad segue estrutura de iniciação militar medieval, documentada no <strong>Manual de FFVV (1994)</strong>:<br><br>
+        1. Candidato espera <strong>isolado fora do recinto</strong>, em silêncio e concentração<br>
+        2. Mestre de Cerimônia faz <strong>3 perguntas rituais pela porta fechada</strong>: disposto a entrar no Templo do <span style="color:var(--red)">Serviço</span>? Do <span style="color:var(--red)">Silêncio</span>? Do <span style="color:var(--red)">Secreto</span>?<br>
+        3. Apenas após 3 respostas afirmativas o candidato entra<br>
+        4. <strong>De joelhos, diante do Estandarte e do Fogo</strong>, presta o Compromisso em voz alta<br>
+        5. O chefe do C.S. <strong>unge o candidato tocando o ombro direito com uma espada ou espadim</strong><br>
+        6. Saúda todos os chefes em ordem crescente de hierarquia<br><br>
+        O Manual declara: <em style="color:var(--gold)">"não é uma fórmula vazia nem um requisito burocrático, mas um rito de vital importância na Cerimônia geral da <strong>conversão</strong> de mulheres e homens em Damas e Cavaleiros."</em><br><br>
+        O C.S. existe com armas desde a fundação (1957): Livraga descreve a guarda da primeira sede com <strong>carabina calibre 22</strong>.
+      </p>
+    </div>
+  </details>
+
+  <details style="margin-top:6px">
+    <summary>◈ Exercício de "Ressurreição" (Hatha Yoga Tibetano DSG)</summary>
+    <div class="detail-body">
+      <p style="font-size:11px;line-height:1.8;color:var(--light)">
+        Exercício físico com corpo caído e sem ar ("corpo morto"), seguido de levantamento progressivo.
+        DSG instrui: <em style="color:var(--gold)">"destacar el sentido del ejercicio: la resurrección a partir del 'cuerpo muerto', caído y sin aire, <strong>renaciendo otra vez</strong> a medida que se eleva y recupera la respiración."</em><br><br>
+        Técnica de quebra e reconstrução de identidade via simbolismo ritual de morte e renascimento.
+        Presente desde o nível de Probacionismo — nível 1 da hierarquia.
+      </p>
+    </div>
+  </details>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- REDE DO SILÊNCIO -->
+<!-- ══════════════════════════════════════════ -->
+<section id="silencio" class="section">
+  <div class="section-tag">Estrutura de Controle de Informação</div>
+  <h2 class="section-title">A Rede do Silêncio</h2>
+  <p class="section-sub">COPROCON · INTERNET · ARIADNA · MAAT — sistema integrado de supressão</p>
+
+  <div class="network">
+    <div class="net-node gold-n" style="text-align:center">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:4px">TOPO</div>
+      <div style="font-weight:bold;color:var(--gold)">COPROCON</div>
+      <div style="font-size:9px;color:var(--gray);margin-top:4px">Coordenação central<br>Steinberg 2015</div>
+    </div>
+    <div class="net-arrow">→</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="net-node">
+        <div style="font-size:9px;color:var(--dim)">Secretaria · Espanha</div>
+        <div style="font-weight:bold;color:var(--light)">INTERNET</div>
+        <div style="font-size:9px;color:var(--gray);margin-top:3px">Astroturfing<br>Remoção de críticas<br>Ameaças jurídicas</div>
+        <div style="font-size:8px;color:var(--red2);margin-top:4px">Juan Carlos del Río · €1.200/ano</div>
+      </div>
+      <div class="net-node">
+        <div style="font-size:9px;color:var(--dim)">Secretaria · Israel</div>
+        <div style="font-weight:bold;color:var(--light)">ARIADNA</div>
+        <div style="font-size:9px;color:var(--gray);margin-top:3px">Monitora redes sociais<br>Busca material crítico<br>Limpa dispositivos</div>
+        <div style="font-size:8px;color:var(--red2);margin-top:4px">Pierre Poulain · €2.250/ano</div>
+      </div>
+      <div class="net-node">
+        <div style="font-size:9px;color:var(--dim)">Secretaria</div>
+        <div style="font-weight:bold;color:var(--light)">MIDAS</div>
+        <div style="font-size:9px;color:var(--gray);margin-top:3px">Catálogo de empresas<br>Rede patrimonial global</div>
+      </div>
+    </div>
+    <div class="net-arrow">→</div>
+    <div class="net-node center">
+      <div style="font-size:9px;color:var(--red2);margin-bottom:4px">Braço jurídico</div>
+      <div>INSTITUTO MAAT</div>
+      <div style="font-size:9px;color:var(--red2);margin-top:4px">Ações legais<br>2% royalties publicações<br>Remove conteúdo crítico<br>Criado: DECR.1987/4</div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:16px">
+    <div class="quote">
+      <div class="quote-label">INTERNET — Astroturfing (roteiro literal)</div>
+      <div class="quote-text">"Expresar experiencias positivas... <mark>sinceras... desgarradas</mark> ('me duelen las críticas de sectarismo...')"</div>
+      <div class="quote-src">Funciones Secretarías Internacionales</div>
+    </div>
+    <div class="quote">
+      <div class="quote-label">INTERNET — Supressão ativa</div>
+      <div class="quote-text">"Replicar de forma <mark>implacable</mark> todos los ataques [...] advertir de una apertura de <mark>acciones legales</mark>."</div>
+      <div class="quote-src">Funciones Secretarías Internacionales</div>
+    </div>
+    <div class="quote">
+      <div class="quote-label">ARIADNA — Vigilância de membros</div>
+      <div class="quote-text">"Verificación de las páginas de redes sociales (Facebook...) en cuanto a <mark>normas de seguridad de la OINA</mark>."</div>
+      <div class="quote-src">Funciones Secretarías Internacionales</div>
+    </div>
+    <div class="quote gold-q">
+      <div class="quote-label">COPROCON — Doutrina central (Steinberg 2015)</div>
+      <div class="quote-text">"Ser claros no significa decir todo — <mark>nosotros decidimos la cantidad de información que damos</mark>."</div>
+      <div class="quote-src">COPROCON · 12ª Reunião · 2015</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- HOMOFOBIA INSTITUCIONAL -->
+<!-- ══════════════════════════════════════════ -->
+<section id="homofobia" class="section">
+  <div class="section-tag">Tema Investigativo</div>
+  <h2 class="section-title" style="color:var(--red)">Homofobia Institucional</h2>
+  <p class="section-sub">Cronologia 1978–2015 · 12 documentos · 37 anos de política</p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1978 · Bastión 23</div>
+      <div class="tl-doc">Autor: Jorge Angel Livraga</div>
+      <div class="tl-quote">"Los invertidos y las lesbianas proclaman su condición con grandes pancartas"</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1986 · Bastión 106</div>
+      <div class="tl-doc">"EL CÁNCER ROSA" — Autor: Jorge Angel Livraga</div>
+      <div class="tl-quote">"relaciones sexuales contra naturaleza" — AIDS como argumento anti-gay</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1987 · DECR. 1987/9 — ⚠ DECRETO OFICIAL</div>
+      <div class="tl-doc">Autor: Jorge Angel Livraga · Compêndio de Decretos I</div>
+      <div class="tl-quote">"Evitar el ingreso en la OINA de las personas pertenecientes a los mencionados grupos de alto riesgo [homosexuales, bisexuales...]" — pedido de exames de sangue às custas do membro</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1987 · Bastión 117</div>
+      <div class="tl-doc">Autor: Jorge Angel Livraga</div>
+      <div class="tl-quote">"dejan pasar los de lesbianas y terroristas" — lésbicas = terroristas na narrativa de perseguição</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1990 · Bastión 154</div>
+      <div class="tl-doc">Autor: Jorge Angel Livraga</div>
+      <div class="tl-quote">"drogados, beodos, homosexuales y cobardes egoísmos"</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">s/d · Almena 53</div>
+      <div class="tl-doc">Autor: Jorge Angel Livraga</div>
+      <div class="tl-quote">"Lo opuesto está en contra de la Naturaleza y nos emparenta con el submundo de los homosexuales y las lesbianas."</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">pré-2015 · Mando 95</div>
+      <div class="tl-doc">Autora: Delia Steinberg Guez</div>
+      <div class="tl-quote">"costumbres inmorales (drogadicción, alcoholismo, homosexualidad...) no caben en nuestras filas"</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2000s · Decretos II — "Abertura" vigiada</div>
+      <div class="tl-doc">Autora: Delia Steinberg Guez</div>
+      <div class="tl-quote">"Dar una posibilidad de ingreso" — mas: devem confessar orientação ao Mando por escrito, assinar que homossexualidade "não é fator primordial", não falar sobre o tema. 3 infrações = expulsão. Ainda equipara a "drogadictos y prostituidos"</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot gold"></div>
+      <div class="tl-year gold-y">2015 · "Revisão" — Decretos Homossexualidade</div>
+      <div class="tl-doc">Autora: Delia Steinberg Guez (mesma autora do Mando 95)</div>
+      <div class="tl-quote">"puede reorientarse" — terapia de conversão apresentada como abertura; a mesma DSG que escreveu "no caben en nuestras filas" agora escreve sobre "reorientação"</div>
+    </div>
+  </div>
+
+  <div class="card red" style="margin-top:14px">
+    <div class="card-title">Análise: Política de exclusão com fundamento jurídico</div>
+    <div class="card-body">
+      O DECR.1987/9 — assinado por Livraga — <strong>institucionaliza a exclusão de pessoas LGBTQ+</strong> como política oficial da OINA. Não é posição cultural informal: é decreto vigente, compilado na 50ª RIMM de 2013. A "revisão" de 2015 por Steinberg (que escreveu "no caben en nuestras filas" no Mando 95) introduz "reorientação" — linguagem de terapia de conversão — sem revogar o decreto base. Padrão documentado em 7 documentos primários ao longo de 37 anos.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CONTROLE FINANCEIRO -->
+<!-- ══════════════════════════════════════════ -->
+<section id="financeiro" class="section">
+  <div class="section-tag">Tema Investigativo</div>
+  <h2 class="section-title">Controle Financeiro e Patrimonial</h2>
+  <p class="section-sub">Estrutura de dependência econômica documentada nos decretos</p>
+
+  <div class="grid3">
+    <div class="card red">
+      <div class="card-title">DECR.1981/8 — Voto de pobreza</div>
+      <div class="card-body">
+        Proteção após 30 anos de serviço exige: <strong>não ter bens próprios</strong> OU ter <strong>doado todos os bens à OINA</strong>. Cria dependência financeira total e irreversível.
+      </div>
+    </div>
+    <div class="card red">
+      <div class="card-title">DECR.1981/8 — Custódia de crianças</div>
+      <div class="card-body">
+        Filhos órfãos de dois membros podem ter seus <strong>bens administrados pela OINA</strong> até os 21 anos. Perdem direitos aos 14 se se declararem "não acropolitanos".
+      </div>
+    </div>
+    <div class="card gold">
+      <div class="card-title">Instituto Maat — "Red holding" Internacional</div>
+      <div class="card-body">
+        Rede de escritórios de advocacia ("Maat Abogados y Asociados") que o documento chama explicitamente de <strong>"holding"</strong>. Serve <strong>exclusivamente os MMs</strong> por decreto: "Está al servicio de los MM MM, de quienes recibe sus indicaciones de misiones de apoyo a la OINA." Módulo curricular 9.5: <strong>"lucha en Internet"</strong>. Fundado por JAL em 22/jan/1987. Aniversário de JAL (3/set) = feriado oficial do instituto. Todos os membros devem ser FFVV + Hachados. 2% de royalties sobre publicações acropolitanas. "Círculo de Amigos" para infiltrar personalidades jurídicas externas sem revelar a OINA.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">DECR.1986/7 — Legalização e Patrimônio</div>
+      <div class="card-body">
+        Formulário obrigatório assinado por Diretores de Filial e Secretários de Institutos — <strong>registro de patrimônio</strong> em todos os países.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">DECR.1991/5 — Quotas mensais</div>
+      <div class="card-body">
+        Sistema de <strong>quotas mensais obrigatórias</strong> para membros — grau de comprometimento financeiro proporcional ao nível hierárquico.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Trabalho voluntário (6h+/semana)</div>
+      <div class="card-body">
+        DSG instrui instrutores a apresentar o trabalho voluntário como "prova de devoção" — secretarias, manutenção, produção — sem remuneração.
+      </div>
+    </div>
+    <div class="card red">
+      <div class="card-title">Decretos II — Cessão obrigatória para líderes</div>
+      <div class="card-body">
+        Dirigentes nomeados (Coord., Dir. Institutos, Mandos Nacionais) têm <strong>1 ano</strong> para ceder legalmente à OINA todos os bens acropolitanos sob seus nomes. Instituto Maat administra o processo. Membros comuns podem "voluntariamente" ceder bens adicionais.
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">GEA — Fachada de voluntariado ecológico</div>
+      <div class="card-body">
+        Associação criada por decreto; controlada juridicamente pelo Instituto Maat. Toda GEA nacional deve se filiar à "GEA Internacional = OINA". Estratégia de imagem positiva que oculta o vínculo sectário.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- DOCUMENTOS LIDOS -->
+<!-- ══════════════════════════════════════════ -->
+<section id="documentos" class="section">
+  <div class="section-tag">Base Documental</div>
+  <h2 class="section-title">Documentos Lidos e Analisados</h2>
+  <p class="section-sub">Vault: Serra-do-Curral · Documentos internos 1976–2018</p>
+
+  <table>
+    <tr>
+      <th>Documento</th>
+      <th>Tipo</th>
+      <th>Autor / Data</th>
+      <th>Achado Principal</th>
+      <th>BITE</th>
+    </tr>
+    <tr>
+      <td><strong>Manual del Dirigente</strong></td>
+      <td>Manual de liderança</td>
+      <td>Livraga · 1976</td>
+      <td>"Entrega total"; proibição de julgamento interno; saída = "mar lodoso"</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bastión 23</strong></td>
+      <td>Circular interna</td>
+      <td>Livraga · 1978</td>
+      <td>"invertidos y lesbianas" desde a fundação</td>
+      <td><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Decretos I (1970–1999)</strong></td>
+      <td>Compêndio jurídico</td>
+      <td>Livraga · 50ª RIMM 2013</td>
+      <td>DECR.1987/9: exclusão LGBTQ+; DECR.1981/8: doação bens; DECR.1985/10: inteligência</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-i">I</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bastión 106</strong></td>
+      <td>Circular interna</td>
+      <td>Livraga · 1986</td>
+      <td>"El Cáncer Rosa" — AIDS como argumento anti-gay</td>
+      <td><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>Decreto Difamação 1986/18</strong></td>
+      <td>Decreto</td>
+      <td>Livraga · 1986</td>
+      <td>"locos y traidores" — criminaliza dissidência</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bastión 117</strong></td>
+      <td>Circular interna</td>
+      <td>Livraga · 1987</td>
+      <td>"lesbianas y terroristas" — narrativa de perseguição</td>
+      <td><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>Ejercicios Almena</strong></td>
+      <td>Manual nível 4</td>
+      <td>Livraga</td>
+      <td>Mantra 3×/dia + autopunição + obediência como prática espiritual</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Bastión 154</strong></td>
+      <td>Circular interna</td>
+      <td>Livraga · 1990</td>
+      <td>"drogados, beodos, homosexuales y cobardes"</td>
+      <td><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>La Pirámide del Programa</strong></td>
+      <td>Documento curricular</td>
+      <td>OINA</td>
+      <td>2 níveis ocultos acima da ED (Escola Esotérica + Escola de Mistérios)</td>
+      <td><span class="tag tag-i">I</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Almena 53</strong></td>
+      <td>Circular Almena</td>
+      <td>Livraga</td>
+      <td>"submundo de los homosexuales y las lesbianas"</td>
+      <td><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mando 95</strong></td>
+      <td>Circular Mando</td>
+      <td>Steinberg · pré-2015</td>
+      <td>"homosexualidad no cabe en nuestras filas" — mesma autora da "revisão" de 2015</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Probacionismo FFVV</strong></td>
+      <td>Manual FFVV</td>
+      <td>OINA</td>
+      <td>Cerimônia de compromisso = custo psicológico de saída</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Funciones Secretarías Internac.</strong></td>
+      <td>Manual operacional</td>
+      <td>Steinberg · 2015</td>
+      <td>ARIADNA + INTERNET (astroturfing, remoção) + MIDAS</td>
+      <td><span class="tag tag-i">I</span><span class="tag tag-b">B</span></td>
+    </tr>
+    <tr>
+      <td><strong>COPROCON 2015</strong></td>
+      <td>Reunião interna</td>
+      <td>Steinberg · 2015</td>
+      <td>"nosotros decidimos la cantidad de información que damos"</td>
+      <td><span class="tag tag-i">I</span></td>
+    </tr>
+    <tr>
+      <td><strong>Decretos Homossexualidade 2015</strong></td>
+      <td>Decreto</td>
+      <td>Steinberg · 2015</td>
+      <td>"puede reorientarse" — terapia de conversão</td>
+      <td><span class="tag tag-e">E</span><span class="tag tag-b">B</span></td>
+    </tr>
+    <tr>
+      <td><strong>Finalidades FFVV</strong></td>
+      <td>Manual FFVV cap.14</td>
+      <td>Steinberg</td>
+      <td>JAL venerado pós-morte + C.S. paramilitar + identidade = organização</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-e">E</span><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>Prácticas de Psicología (Anexo DSG)</strong></td>
+      <td>Aula MM · Brasília 2002</td>
+      <td>Steinberg · 2002</td>
+      <td>Personalidade deve ser "dócil"; alma prisioneira; práticas egípcias/tibetanas; script de mentira</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Personalidad del Instructor</strong></td>
+      <td>Curso completo DSG</td>
+      <td>Steinberg</td>
+      <td>"antihipnótico"; manipulação pré-racional; scripts de recrutamento; voz superior</td>
+      <td><span class="tag tag-i">I</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Decretos II (2000–2009)</strong></td>
+      <td>Compêndio jurídico</td>
+      <td>Steinberg · 50ª RIMM 2013</td>
+      <td>LGBTQ+ devem confessar ao Mando · C.S. treino paramilitar bianual · G.I.D.I. secreto · Cessão obrigatória de bens · GEA fachada · Instrução oral apaga rastros</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-i">I</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Decretos III (2010–2013)</strong></td>
+      <td>Compêndio jurídico</td>
+      <td>Steinberg · 50ª RIMM 2013</td>
+      <td>DSG poder vitalício pós-abdicação · Modelo faraônico declarado · Operadores ARIADNA/INTERNET nomeados · Rebranding institutos</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-i">I</span><span class="tag tag-t">T</span></td>
+    </tr>
+    <tr>
+      <td><strong>Reglamentos Institutos</strong></td>
+      <td>Regulamento interno</td>
+      <td>OINA · 2013</td>
+      <td>3 graus internos por instituto · "Círculo de Amigos" = funil de recrutamento de não-membros</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-i">I</span></td>
+    </tr>
+    <tr>
+      <td><strong>Escuela de Discipulado (cap.15)</strong></td>
+      <td>Manual FFVV</td>
+      <td>Steinberg · 2000–2002</td>
+      <td>5 graus internos nas FFVV · "Transformação da personalidade" declarada · Hacha inoperacional sem completar ED</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Manual General FFVV (1994)</strong></td>
+      <td>Manual completo FFVV</td>
+      <td>Steinberg · RIMM Viena 1994</td>
+      <td>Cerimônia C.S. com espada · 3 perguntas rituais · C.S. armado desde 1957 · Compromisso = "rito de conversão"</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Instituto Maat — Reglamento General</strong></td>
+      <td>Reglamento Instituto</td>
+      <td>SI-Maat (JMF) · 1987/rev.2013</td>
+      <td>"Red holding" de advocacia a serviço dos MMs · Módulo 9.5 "lucha en Internet" · "Círculo de Amigos" para infiltrar judiciário · Ritual de iniciação com vendas e desorientação · Aniversário JAL = feriado oficial</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-i">I</span><span class="tag tag-e">E</span></td>
+    </tr>
+    <tr>
+      <td><strong>Autobiografia JAL</strong></td>
+      <td>Autobiografia interna</td>
+      <td>Livraga · ~1981</td>
+      <td>Missão "6ª Subraza da 5ª Raça" · Funda NA com pistola Luger + Platão · Raízes em organizações juvenis <strong>nacionalistas</strong> + CADEL · 4 anos em cripta esotérica (3h/dia de sono) · "Soledad del Mando" · Sri Ram ordena fundação · "gritan mi Nombre"</td>
+      <td><span class="tag tag-b">B</span><span class="tag tag-t">T</span><span class="tag tag-e">E</span></td>
+    </tr>
+  </table>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CRONOLOGIA -->
+<!-- ══════════════════════════════════════════ -->
+<section id="cronologia" class="section">
+  <div class="section-tag">Linha do Tempo</div>
+  <h2 class="section-title">Cronologia da Organização</h2>
+  <p class="section-sub">Eventos, documentos e decretos em ordem</p>
+
+  <div class="two-col">
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1957 — Fundação</div>
+        <div class="tl-text">Buenos Aires. JAL funda a Nova Acrópole.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1969 — Manual del Dirigente (1ª versão)</div>
+        <div class="tl-text">Uruguai. Primeira doutrina de liderança documentada.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1976 — Manual del Dirigente (2ª versão)</div>
+        <div class="tl-text">Granada, Espanha. Versão definitiva: "entrega total", proibição de julgamento.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1976 — Bastiones começam (001)</div>
+        <div class="tl-text">Início das circulares internas de JAL. Bastión 001–167 até 1991.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1978 — Bastión 23</div>
+        <div class="tl-text">Primeira referência documentada a LGBTQ+ — "invertidos y lesbianas".</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1979 — DECR. 1979/2</div>
+        <div class="tl-text">"Para el MM nada es superior a la OINA en lo material." Exclusividade de obediência.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1981 — DECR. 1981/5 · 1981/8</div>
+        <div class="tl-text">Sucessão monárquica. "Proteção do Império" via doação de bens.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1985 — DECR. 1985/10</div>
+        <div class="tl-text">Aparato de inteligência interna. Proibição de imprensa nas sedes.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1986 — Bastión 106 · DECR. 1986/18</div>
+        <div class="tl-text">"El Cáncer Rosa" (AIDS anti-gay). Decreto de difamação.</div>
+      </div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1987 — DECR. 1987/4 · 1987/9</div>
+        <div class="tl-text">Criação formal do Instituto Maat. <strong style="color:var(--red)">DECR.1987/9: exclusão oficial LGBTQ+</strong> — exames de sangue.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1989 — DECR. 1989/2</div>
+        <div class="tl-text">"Alerta Amarela". "Forças do mal" coligadas contra a OINA.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">1990 — Bastión 154 · DECR. COPROCON</div>
+        <div class="tl-text">Fundação da COPROCON (estado provisional 2006).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">1991 — Steinberg assume como MM</div>
+        <div class="tl-text">Após morte de JAL. Bastión 168 em diante. Mandos 0075+.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2000 — Morte de Livraga</div>
+        <div class="tl-text">JAL morre em Madrid. Steinberg consolida o poder. Veneração de JAL começa.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2002 — Curso Brasília (DSG)</div>
+        <div class="tl-text">Prácticas de Psicología: "personalidade dócil ao Eu Superior". Script de mentira.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2000 — G.I.D.I. formalizado</div>
+        <div class="tl-text">Grupo secreto de intervenção previsto desde 1976, finalmente formalizado em decreto. Componentes classificados.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2005 — DSG abdica formalmente</div>
+        <div class="tl-text">Steinberg torna-se "MM Rector" — mantém poder de destituir o sucessor. 1ª Corregente: Beatriz Diez Canseco (Peru).</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2011 — 2º MM Corregente</div>
+        <div class="tl-text">DSG demite Diez Canseco e nomeia Jorge Alvarado Planas (DONAHE). Corregência 2011–2016.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2012 — Rebranding institucional</div>
+        <div class="tl-text">Institutos (Maat, Seraphis...) rebatizados como "Secretarias Internacionais". Mudança cosmética para evitar associações negativas.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot gold"></div>
+        <div class="tl-year gold-y">2013 — 50ª RIMM · Israel</div>
+        <div class="tl-text">Compilação dos 3 volumes de Decretos (1970–2013). Reafirmação de todo o quadro normativo.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2015 — COPROCON · Secretarias · Decretos Homoss.</div>
+        <div class="tl-text">Atualização global: ARIADNA, INTERNET, MIDAS ativados. "Revisão" LGBTQ+ com terapia de conversão.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 5 ÂNGULOS INVESTIGATIVOS -->
+<!-- ══════════════════════════════════════════ -->
+<section id="angulos" class="section">
+  <div class="section-tag">Estratégia Jornalística</div>
+  <h2 class="section-title">5 Ângulos Investigativos</h2>
+  <p class="section-sub">Status de apuração por linha</p>
+
+  <div class="status-grid">
+    <div class="status-card active">
+      <div class="status-icon">🔴</div>
+      <div class="status-title">1. Rede de Takedowns — Instituto Maat</div>
+      <div class="status-body">Lumen Database: identificar notificações de remoção enviadas pelo Maat. Google Transparency Report. Cruzar com ex-membros afetados. <strong style="color:var(--red)">Pendente: pesquisa externa</strong></div>
+    </div>
+    <div class="status-card active">
+      <div class="status-icon">🔴</div>
+      <div class="status-title">2. Rede Internacional da COPROCON</div>
+      <div class="status-body">Mapear estrutura da COPROCON por país. Cruzar com documentos de 2015. Buscar ex-membros da COPROCON. <strong style="color:var(--red)">Pendente: fontes externas</strong></div>
+    </div>
+    <div class="status-card partial">
+      <div class="status-icon">🟡</div>
+      <div class="status-title">3. Testemunhos LGBTQ+</div>
+      <div class="status-body">Base documental sólida (8 documentos, 1978–2015). <strong style="color:var(--gold2)">Falta: contato com ex-membros LGBTQ+</strong> para testemunhos pessoais. Fóruns de ex-membros, redes.</div>
+    </div>
+    <div class="status-card partial">
+      <div class="status-icon">🟡</div>
+      <div class="status-title">4. Estrutura Patrimonial e Financeira</div>
+      <div class="status-body">DECR.1981/8 (doação de bens), MIDAS, royalties Maat documentados. <strong style="color:var(--gold2)">Falta: registros públicos</strong> (cartórios, CNPJ, marcas registradas).</div>
+    </div>
+    <div class="status-card partial">
+      <div class="status-icon">🟡</div>
+      <div class="status-title">5. Documentos vs. Relatórios Governamentais</div>
+      <div class="status-body">Docs internos confirmam classificações da MIVILUDES/CIAOSN/BfV. <strong style="color:var(--gold2)">Falta: cruzamento sistemático</strong> dos relatórios oficiais com os documentos do vault.</div>
+    </div>
+    <div class="status-card done">
+      <div class="status-icon">🟢</div>
+      <div class="status-title">6. Análise BITE (novo)</div>
+      <div class="status-body">85+ evidências mapeadas nas 4 dimensões. Todos os 4 eixos documentados com citações primárias de 26+ fontes. <strong style="color:var(--green)">Base sólida para publicação</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- PENDENTES -->
+<!-- ══════════════════════════════════════════ -->
+<section id="pendentes" class="section">
+  <div class="section-tag">Próximos Passos</div>
+  <h2 class="section-title">Documentos e Pesquisa Pendentes</h2>
+
+  <div class="two-col">
+    <div>
+      <span class="label">Vault — Documentos não lidos / parciais</span>
+      <table>
+        <tr><th>Arquivo</th><th>Prioridade</th><th>Por que importa</th></tr>
+        <tr>
+          <td>Perseus (jeunesse) 2018.pdf</td>
+          <td><span class="tag tag-pending">Média</span></td>
+          <td>Programa de formação infantil/juvenil — versão 2018</td>
+        </tr>
+        <tr>
+          <td>PROGRAMME 1ER CYCLE 2018.pdf</td>
+          <td><span class="tag tag-pending">Média</span></td>
+          <td>Currículo completo do 1º ciclo — versão mais recente (2018)</td>
+        </tr>
+        <tr>
+          <td>JAL-Mi vida.doc · JAL-Mi vida (B).doc</td>
+          <td><span class="tag tag-pending">Média</span></td>
+          <td>280 KB — versão expandida da autobiografia; conteúdo adicional ao já lido</td>
+        </tr>
+        <tr>
+          <td>Bastión 302 (jan/2004)</td>
+          <td><span class="tag tag-pending">Média</span></td>
+          <td>238 KB — o maior de todos os Bastiones; anomalia que merece leitura</td>
+        </tr>
+        <tr>
+          <td>ANEXOS (2013).doc</td>
+          <td><span class="tag tag-pending">Média</span></td>
+          <td>1.1 MB — grandes anexos aos decretos; possíveis normas adicionais</td>
+        </tr>
+        <tr>
+          <td>NA_Reglamento_Miembros.pdf</td>
+          <td><span class="tag tag-pending">Baixa</span></td>
+          <td>PDF protegido — tentar OCR ou outro método</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <span class="label">Pesquisa Externa Pendente</span>
+      <table>
+        <tr><th>Fonte</th><th>Objetivo</th></tr>
+        <tr>
+          <td>Lumen Database</td>
+          <td>Notificações de remoção enviadas pelo Instituto Maat (ângulo 1)</td>
+        </tr>
+        <tr>
+          <td>Google Transparency Report</td>
+          <td>Takedowns por OINA/Maat</td>
+        </tr>
+        <tr>
+          <td>MIVILUDES (França)</td>
+          <td>Relatório completo — cruzamento com vault</td>
+        </tr>
+        <tr>
+          <td>CIAOSN (Bélgica)</td>
+          <td>Relatório completo</td>
+        </tr>
+        <tr>
+          <td>Registros de marcas (INPI, EUIPO)</td>
+          <td>Rede MIDAS — marcas acropolitanas registradas</td>
+        </tr>
+        <tr>
+          <td>Fóruns ex-membros</td>
+          <td>Testemunhos LGBTQ+ — ângulo 3</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div style="padding:40px 0 20px;border-top:1px solid var(--border);text-align:center;color:var(--dim);font-size:9px;letter-spacing:2px;line-height:2">
+  INVESTIGAÇÃO JORNALÍSTICA · DOCUMENTOS INTERNOS VAZADOS POR EX-MEMBROS ("RECOPILADORES") · 1976–2018<br>
+  NUEVA ACRÓPOLIS INTERNACIONAL (OINA) · FUNDADA BUENOS AIRES 1957 · 60+ PAÍSES<br>
+  CLASSIFICADA COMO SEITA: FRANÇA (MIVILUDES) · BÉLGICA (CIAOSN) · ALEMANHA (BfV)<br>
+  <span style="color:var(--border)">──────────────────────────────────────────────────────</span><br>
+  Framework analítico: BITE Model · Steven Hassan (2018) · <a href="piramide-9niveis.html" style="color:var(--dim)" target="_blank">Pirâmide HTML</a>
+</div>
+
+</main>
+
+<script>
+// Nav active state on scroll
+const sections = document.querySelectorAll('section[id], div[id="hero"]');
+const navLinks = document.querySelectorAll('nav a');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+      });
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-100px 0px -60% 0px' });
+
+document.querySelectorAll('[id]').forEach(el => {
+  if (document.querySelector('nav a[href="#' + el.id + '"]')) {
+    observer.observe(el);
+  }
+});
+</script>
+</body>
+</html>

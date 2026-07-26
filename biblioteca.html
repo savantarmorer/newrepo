@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblioteca de Documentos — Iuri Piragibe</title>
+  <meta name="description" content="Acervo de documentos sobre Maçonaria, Wicca, Sociedades Secretas, Ocultismo e muito mais.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg0:#05050a;--bg1:#08080f;--bg2:#0d0d1a;--bg3:#111122;--bg3h:#161630;
+      --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
+      --fg1:#f0eef8;--fg2:#9993b8;--fg3:#5f5b7a;
+      --gold:#c9a227;--goldg:rgba(201,162,39,.22);
+      --r:8px;--r2:14px;--r3:20px;
+      --sw:270px;--th:62px;
+      --t:180ms cubic-bezier(.4,0,.2,1);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;background:var(--bg0);color:var(--fg1);min-height:100vh;overflow-x:hidden}
+
+    /* ── TOPBAR ── */
+    .topbar{
+      position:fixed;top:0;left:0;right:0;height:var(--th);
+      background:rgba(5,5,10,.9);backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:16px;padding:0 20px;z-index:100;
+    }
+    .back{display:flex;align-items:center;gap:6px;color:var(--fg2);text-decoration:none;font-size:13px;transition:var(--t);flex-shrink:0}
+    .back:hover{color:var(--gold)}
+    .divider{width:1px;height:26px;background:var(--border);flex-shrink:0}
+    .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg1);flex-shrink:0}
+    .brand-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#e2b632);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+    .brand-text{font-family:'Cinzel',serif;font-size:13px;letter-spacing:.8px;line-height:1.2}
+    .brand-text span{color:var(--gold);font-size:9px;letter-spacing:2px;display:block}
+    .page-title{font-family:'Cinzel',serif;font-size:12px;letter-spacing:2px;color:var(--fg2);text-transform:uppercase;white-space:nowrap}
+    .spacer{flex:1}
+    .search-wrap{
+      display:flex;align-items:center;gap:8px;
+      background:rgba(255,255,255,.04);border:1px solid var(--border);
+      border-radius:999px;padding:7px 14px;
+      transition:var(--t);width:min(380px,42vw);
+    }
+    .search-wrap:focus-within{border-color:var(--gold);background:rgba(201,162,39,.05);box-shadow:0 0 0 3px var(--goldg)}
+    .search-wrap svg{color:var(--fg3);flex-shrink:0;transition:var(--t)}
+    .search-wrap:focus-within svg{color:var(--gold)}
+    .search-wrap input{background:none;border:none;outline:none;color:var(--fg1);font-family:'Inter',sans-serif;font-size:13px;width:100%}
+    .search-wrap input::placeholder{color:var(--fg3)}
+    .refresh-btn{
+      display:flex;align-items:center;gap:5px;
+      background:rgba(255,255,255,.04);border:1px solid var(--border);
+      border-radius:var(--r);color:var(--fg2);cursor:pointer;
+      font-family:'Inter',sans-serif;font-size:12px;padding:7px 11px;
+      transition:var(--t);white-space:nowrap;
+    }
+    .refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+    /* ── LAYOUT ── */
+    .layout{display:flex;min-height:100vh;padding-top:var(--th)}
+
+    /* ── SIDEBAR ── */
+    .sidebar{
+      width:var(--sw);min-height:calc(100vh - var(--th));
+      background:var(--bg1);border-right:1px solid var(--border);
+      position:sticky;top:var(--th);height:calc(100vh - var(--th));
+      overflow-y:auto;padding:16px 0;flex-shrink:0;
+      scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+    }
+    .sidebar::-webkit-scrollbar{width:3px}
+    .sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .sb-label{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--fg3);text-transform:uppercase;padding:2px 18px 7px}
+    .sb-item{
+      display:flex;align-items:center;gap:9px;padding:8px 18px;
+      cursor:pointer;transition:var(--t);color:var(--fg2);font-size:13px;
+      border:none;background:none;width:100%;text-align:left;position:relative;
+    }
+    .sb-item:hover{background:rgba(255,255,255,.04);color:var(--fg1)}
+    .sb-item.active{color:var(--fg1)}
+    .sb-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);border-radius:0 2px 2px 0}
+    .sb-icon{font-size:15px;flex-shrink:0}
+    .sb-lbl{flex:1;line-height:1.3}
+    .sb-count{font-size:10px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1px 7px;color:var(--fg3);min-width:22px;text-align:center}
+    .sb-item.active .sb-count{background:var(--goldg);border-color:var(--gold);color:var(--gold)}
+    .sb-sub{padding-left:10px}
+    .sb-sub .sb-item{font-size:12px;padding:6px 18px 6px 26px}
+    .sb-hr{height:1px;background:var(--border);margin:10px 14px}
+
+    /* ── MAIN ── */
+    .main{flex:1;min-width:0;padding:24px 28px;position:relative;z-index:1}
+
+    /* Stats */
+    .stats-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+    .chip{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:12px;color:var(--fg2)}
+    .chip strong{color:var(--fg1)}
+    .chip-dot{width:6px;height:6px;border-radius:50%}
+    .ftag{display:flex;align-items:center;gap:5px;background:var(--goldg);border:1px solid var(--gold);border-radius:999px;padding:3px 10px;font-size:11px;color:var(--gold);cursor:pointer}
+    .ftag:hover{background:rgba(201,162,39,.35)}
+
+    /* Filter bar */
+    .fbar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+    .fsel{
+      background:var(--bg3);border:1px solid var(--border);color:var(--fg1);
+      border-radius:var(--r);padding:7px 28px 7px 10px;font-family:'Inter',sans-serif;
+      font-size:12px;cursor:pointer;outline:none;transition:var(--t);
+      -webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%239993b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 9px center;
+    }
+    .fsel:focus{border-color:var(--gold)}
+    .view-tog{display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:3px;margin-left:auto}
+    .vbtn{width:30px;height:30px;border:none;cursor:pointer;background:none;border-radius:4px;color:var(--fg3);display:flex;align-items:center;justify-content:center;transition:var(--t)}
+    .vbtn.active{background:rgba(255,255,255,.08);color:var(--fg1)}
+    .vbtn:hover{color:var(--fg1)}
+
+    /* Banner credenciais */
+    .creds{
+      background:linear-gradient(135deg,rgba(124,58,237,.12),rgba(201,162,39,.08));
+      border:1px solid rgba(124,58,237,.35);border-radius:var(--r2);
+      padding:18px 22px;margin-bottom:20px;display:flex;gap:14px;
+    }
+    .creds code{font-family:'Space Mono',monospace;font-size:11px;background:rgba(255,255,255,.07);border-radius:4px;padding:1px 5px;color:var(--gold)}
+
+    /* ── GRID ── */
+    .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;animation:fadeIn 280ms ease}
+    .doc-grid.list{grid-template-columns:1fr}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Card */
+    .card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;cursor:pointer;transition:280ms cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;animation:cardIn 300ms ease forwards;opacity:0}
+    @keyframes cardIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .card:hover{border-color:var(--border2);box-shadow:0 8px 36px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.07);transform:translateY(-2px)}
+    .card.sel{border-color:var(--gold);box-shadow:0 0 0 2px var(--goldg)}
+    .card-thumb{height:92px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:38px;flex-shrink:0}
+    .card-thumb-bg{position:absolute;inset:0;opacity:.14}
+    .card-thumb-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+    .card-thumb-ico{position:relative;z-index:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+    .card-body{padding:12px;flex:1;display:flex;flex-direction:column;gap:7px}
+    .card-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;border-radius:999px;padding:2px 7px;border:1px solid transparent}
+    .card-name{font-size:13px;font-weight:500;line-height:1.4;color:var(--fg1);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-tema{font-size:10px;color:var(--fg2);background:var(--bg2);border-radius:4px;padding:2px 6px;width:fit-content}
+    .card-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:auto}
+    .card-meta-item{font-size:10px;color:var(--fg3);display:flex;align-items:center;gap:3px}
+    .card-actions{display:flex;gap:5px;padding:9px 12px;border-top:1px solid var(--border)}
+    .card-btn{flex:1;padding:6px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg2);color:var(--fg2);cursor:pointer;font-size:11px;font-family:'Inter',sans-serif;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:4px;text-decoration:none}
+    .card-btn:hover{border-color:var(--gold);color:var(--gold)}
+    .card-btn.primary{background:var(--goldg);border-color:var(--gold);color:var(--gold)}
+    .card-btn.primary:hover{background:rgba(201,162,39,.32)}
+
+    /* List view */
+    .doc-grid.list .card{flex-direction:row}
+    .doc-grid.list .card-thumb{width:68px;height:auto;font-size:26px;flex-shrink:0;border-radius:0}
+    .doc-grid.list .card-body{flex-direction:row;align-items:center;gap:10px;padding:10px 14px}
+    .doc-grid.list .card-name{-webkit-line-clamp:1;flex:1;font-size:14px}
+    .doc-grid.list .card-actions{border-top:none;border-left:1px solid var(--border);padding:8px 10px;flex-direction:column;justify-content:center;width:auto}
+    .doc-grid.list .card-btn{flex:none;white-space:nowrap}
+    .doc-grid.list .card-tema{display:none}
+
+    /* ── VIEWER ── */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
+    .overlay.open{display:flex}
+    .vpanel{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r3);width:100%;max-width:1080px;height:min(88vh,780px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 28px 72px rgba(0,0,0,.85);animation:panelIn 240ms cubic-bezier(.34,1.2,.64,1)}
+    @keyframes panelIn{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:scale(1) translateY(0)}}
+    .vhead{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0}
+    .vhead-icon{font-size:20px;flex-shrink:0}
+    .vhead-info{flex:1;min-width:0}
+    .vhead-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .vhead-meta{font-size:11px;color:var(--fg2);margin-top:2px}
+    .vactions{display:flex;gap:7px;flex-shrink:0}
+    .vbtn-act{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg3);color:var(--fg2);cursor:pointer;font-size:12px;font-family:'Inter',sans-serif;transition:var(--t);text-decoration:none}
+    .vbtn-act:hover{border-color:var(--gold);color:var(--gold)}
+    .vclose{width:34px;height:34px;border-radius:var(--r);border:1px solid var(--border);background:var(--bg3);color:var(--fg2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:var(--t);flex-shrink:0}
+    .vclose:hover{border-color:#dc2626;color:#dc2626}
+    .vbody{flex:1;position:relative;min-height:0}
+    .vloading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg2)}
+    .vspinner{width:38px;height:38px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .vframe{width:100%;height:100%;border:none;display:block}
+
+    /* States */
+    .state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:14px;text-align:center;grid-column:1/-1}
+    .state-ico{font-size:48px;opacity:.45}
+    .state-title{font-size:17px;font-weight:600}
+    .state-desc{font-size:13px;color:var(--fg2);max-width:460px;line-height:1.65}
+    .state-btn{padding:9px 22px;border-radius:var(--r2);background:var(--goldg);border:1px solid var(--gold);color:var(--gold);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;transition:var(--t)}
+    .state-btn:hover{background:rgba(201,162,39,.32)}
+
+    /* Skeleton */
+    .skel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+    .skel-t{height:90px;background:var(--bg2)}
+    .skel-b{padding:12px;display:flex;flex-direction:column;gap:7px}
+    .skel-l{height:11px;background:linear-gradient(90deg,var(--bg3) 0%,var(--bg2) 50%,var(--bg3) 100%);background-size:200%;border-radius:4px;animation:shim 1.4s infinite}
+    @keyframes shim{to{background-position:-200% 0}}
+
+    /* Pagination */
+    .pag{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:28px}
+    .pbtn{min-width:34px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg3);color:var(--fg2);cursor:pointer;font-family:'Inter',sans-serif;font-size:13px;transition:var(--t);display:flex;align-items:center;justify-content:center}
+    .pbtn:hover{border-color:var(--gold);color:var(--gold)}
+    .pbtn.active{background:var(--goldg);border-color:var(--gold);color:var(--gold)}
+    .pbtn:disabled{opacity:.3;pointer-events:none}
+
+    /* ── VIEWER SIDEBAR & TEIA ── */
+    .vbody { display: flex; flex-direction: row; }
+    .vframe-wrap { flex: 1; position: relative; min-height: 0; display: flex; flex-direction: column; }
+    .vside {
+      width: 320px; border-left: 1px solid var(--border); background: var(--bg2);
+      display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+      transition: width 240ms cubic-bezier(.4,0,.2,1), opacity 240ms ease;
+    }
+    .vside.collapsed { width: 0; border-left: none; opacity: 0; overflow: hidden; }
+    .vside-head { padding: 14px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .vside-title { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1.5px; color: var(--gold); text-transform: uppercase; display: block; font-weight: 600; }
+    .vside-subtitle { font-size: 10px; color: var(--fg3); margin-top: 2px; display: block; }
+    
+    .vside-list { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+    
+    /* Connection line running down */
+    .vside-list::before {
+      content: ''; position: absolute; left: 24px; top: 12px; bottom: 12px; width: 1px;
+      background: linear-gradient(180deg, var(--border) 0%, rgba(201,162,39,.15) 50%, var(--border) 100%);
+    }
+    
+    .vside-item {
+      display: flex; gap: 10px; padding: 10px 10px 10px 24px; border-radius: var(--r);
+      background: var(--bg3); border: 1px solid var(--border); cursor: pointer;
+      transition: var(--t); position: relative; text-decoration: none; text-align: left;
+    }
+    .vside-item:hover {
+      border-color: var(--gold); background: var(--bg3h);
+      transform: translateX(2px); box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    }
+    
+    /* Dot indicator on connection line */
+    .vside-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--fg3);
+      border: 1.5px solid var(--bg3); position: absolute; left: 8px; top: 16px;
+      z-index: 10; transition: var(--t);
+    }
+    .vside-item:hover .vside-dot {
+      background: var(--gold); box-shadow: 0 0 8px var(--gold); scale: 1.2;
+    }
+    
+    .vside-icon { font-size: 16px; margin-top: 2px; flex-shrink: 0; z-index: 1; }
+    .vside-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .vside-name { font-size: 11px; font-weight: 500; line-height: 1.35; color: var(--fg1); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    
+    .vside-reasons { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+    .vside-badge { font-size: 8px; font-weight: 600; padding: 1px 5px; border-radius: 3px; background: rgba(255,255,255,.05); color: var(--fg2); border: 1px solid var(--border); }
+    .vside-badge.strong { background: var(--goldg); color: var(--gold); border-color: var(--gold); }
+    
+    .vside-empty { padding: 40px 20px; text-align: center; color: var(--fg3); font-size: 12px; }
+
+    @media(max-width: 960px) {
+      .vside { position: absolute; right: 0; top: 0; bottom: 0; z-index: 150; box-shadow: -10px 0 30px rgba(0,0,0,.5); }
+    }
+
+    @media(max-width:860px){.sidebar{display:none}.search-wrap{width:min(260px,48vw)}}
+    @media(max-width:560px){.main{padding:14px}.search-wrap{flex:1;width:auto}.page-title,.brand-text{display:none}}
+    ::-webkit-scrollbar{width:5px;height:5px}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    /* ── PERFIL AMOQ (topbar) ── */
+    .user-panel{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .user-demon{display:flex;align-items:center;gap:8px}
+    .user-seal{
+      width:30px;height:30px;flex-shrink:0;
+      border:1px solid rgba(201,162,39,.3);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Cinzel',serif;font-size:11px;color:var(--gold);
+      background:rgba(201,162,39,.07);
+    }
+    .user-info{display:flex;flex-direction:column;line-height:1.2}
+    .user-name{font-size:12px;font-weight:600;color:var(--fg1);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .user-rank-lbl{font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase}
+    .user-xp-wrap{display:flex;flex-direction:column;gap:3px;min-width:72px}
+    .xp-bar{height:3px;background:var(--bg3);border-radius:2px;overflow:hidden}
+    .xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e2b632);border-radius:2px;transition:width .6s ease}
+    .xp-txt{font-size:9px;color:var(--fg3);text-align:right;white-space:nowrap}
+    .profile-btn{
+      display:flex;align-items:center;justify-content:center;gap:4px;
+      background:rgba(201,162,39,.08);border:1px solid rgba(201,162,39,.3);border-radius:var(--r);
+      color:var(--gold);cursor:pointer;font-size:11px;padding:5px 8px;
+      transition:var(--t);white-space:nowrap;font-family:'Inter',sans-serif;
+    }
+    .profile-btn:hover{background:rgba(201,162,39,.18);border-color:var(--gold)}
+    .logout-btn{
+      display:flex;align-items:center;justify-content:center;
+      background:none;border:1px solid var(--border);border-radius:var(--r);
+      color:var(--fg3);cursor:pointer;font-size:11px;padding:5px 8px;
+      transition:var(--t);white-space:nowrap;
+    }
+    .logout-btn:hover{border-color:rgba(239,68,68,.4);color:#f87171}
+
+    /* ── PROFILE PANEL ── */
+    .ppanel{
+      position:fixed;top:0;right:0;bottom:0;width:440px;max-width:100vw;
+      background:var(--bg1);border-left:1px solid var(--border2);
+      z-index:500;display:flex;flex-direction:column;
+      transform:translateX(100%);transition:transform 340ms cubic-bezier(.4,0,.2,1);
+    }
+    .ppanel.open{transform:translateX(0)}
+    .ppanel-bg{
+      position:fixed;inset:0;background:rgba(5,5,10,.72);z-index:499;
+      opacity:0;pointer-events:none;transition:opacity 300ms ease;
+    }
+    .ppanel-bg.show{opacity:1;pointer-events:all}
+    .pp-head{
+      padding:16px 18px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;gap:12px;flex-shrink:0;
+    }
+    .pp-head-seal{
+      width:38px;height:38px;border:1px solid rgba(201,162,39,.3);border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Cinzel',serif;font-size:13px;color:var(--gold);
+      background:rgba(201,162,39,.07);flex-shrink:0;cursor:pointer;
+    }
+    .pp-head-info{flex:1;min-width:0}
+    .pp-head-name{font-family:'Cinzel',serif;font-size:13px;color:var(--fg1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .pp-head-sub{font-size:10px;color:var(--fg3);letter-spacing:1px;margin-top:1px}
+    .pp-close{
+      background:none;border:1px solid var(--border);border-radius:var(--r);
+      color:var(--fg3);cursor:pointer;width:28px;height:28px;
+      display:flex;align-items:center;justify-content:center;transition:var(--t);flex-shrink:0;
+    }
+    .pp-close:hover{color:var(--fg1);border-color:rgba(255,255,255,.2)}
+    .pp-nav{
+      display:flex;border-bottom:1px solid var(--border);
+      overflow-x:auto;scrollbar-width:none;flex-shrink:0;
+    }
+    .pp-nav::-webkit-scrollbar{display:none}
+    .pptab{
+      flex-shrink:0;padding:9px 13px;font-size:11px;font-weight:500;letter-spacing:.3px;
+      color:var(--fg3);background:none;border:none;border-bottom:2px solid transparent;
+      cursor:pointer;transition:all 140ms;white-space:nowrap;
+    }
+    .pptab:hover{color:var(--fg2)}
+    .pptab.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .pp-body{
+      flex:1;overflow-y:auto;
+      scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+    }
+    .pp-body::-webkit-scrollbar{width:3px}
+    .pp-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .pp-sec{padding:18px}
+    .pp-empty{text-align:center;padding:40px 20px;color:var(--fg3);font-size:13px}
+    .pp-empty-ico{font-size:32px;margin-bottom:10px}
+    /* Demon */
+    .demon-wrap{
+      background:var(--bg2);border:1px solid var(--border2);border-radius:14px;
+      padding:22px 18px;display:flex;flex-direction:column;align-items:center;
+      text-align:center;gap:12px;margin-bottom:14px;
+    }
+    .sigil-ring{
+      width:116px;height:116px;border:1px solid rgba(201,162,39,.25);border-radius:50%;
+      background:radial-gradient(circle,rgba(201,162,39,.06) 0%,transparent 70%);
+      display:flex;align-items:center;justify-content:center;
+      animation:sigilPulse 5s ease-in-out infinite;
+    }
+    @keyframes sigilPulse{
+      0%,100%{box-shadow:0 0 10px rgba(201,162,39,.1)}
+      50%{box-shadow:0 0 28px rgba(201,162,39,.28)}
+    }
+    .sigil-ring svg{width:90px;height:90px}
+    .d-num{font-size:9px;letter-spacing:3px;color:var(--fg3);text-transform:uppercase}
+    .d-name{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--gold);letter-spacing:3px}
+    .d-rank{font-size:11px;color:var(--fg2)}
+    .d-poder{
+      font-size:12px;color:var(--fg2);line-height:1.6;text-align:left;
+      background:rgba(255,255,255,.03);border:1px solid var(--border);
+      border-radius:8px;padding:10px 12px;
+    }
+    /* Stats mini */
+    .stats-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+    .sm-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 8px;text-align:center}
+    .sm-val{font-size:20px;font-weight:700;color:var(--gold)}
+    .sm-lbl{font-size:9px;color:var(--fg3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+    /* Grade */
+    .gc-card{
+      background:var(--bg2);border:1px solid rgba(201,162,39,.3);
+      border-radius:14px;padding:20px;text-align:center;margin-bottom:14px;
+    }
+    .gc-sym{font-size:38px;margin-bottom:6px}
+    .gc-name{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--fg1);margin-bottom:4px}
+    .gc-desc{font-size:11px;color:var(--fg2);margin-bottom:14px;line-height:1.5}
+    .gc-bar-wrap{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-bottom:6px}
+    .gc-bar-fill{height:100%;border-radius:4px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+    .gc-xp-sub{font-size:10px;color:var(--fg3)}
+    .grau-tl{display:flex;flex-direction:column;gap:6px}
+    .gtn{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;
+      border-radius:10px;border:1px solid var(--border);
+    }
+    .gtn.done{background:rgba(255,255,255,.02)}
+    .gtn.curr{border-color:var(--gold);background:rgba(201,162,39,.07)}
+    .gtn.lock{opacity:.3}
+    .gtn-ico{font-size:18px;width:26px;text-align:center;flex-shrink:0}
+    .gtn-name{font-size:12px;font-weight:600;color:var(--fg1)}
+    .gtn-xp{font-size:10px;color:var(--fg3)}
+    .gtn-badge{margin-left:auto;font-size:10px;color:var(--gold)}
+    /* Selos */
+    .selos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .selo-card{
+      background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+      padding:14px 8px;text-align:center;transition:all 200ms;
+    }
+    .selo-card.ok{border-color:rgba(201,162,39,.4);box-shadow:0 0 16px rgba(201,162,39,.08)}
+    .selo-card.locked{opacity:.28;filter:grayscale(.8)}
+    .sc-ico{font-size:22px;margin-bottom:6px}
+    .sc-name{font-size:10px;font-weight:600;color:var(--fg1);line-height:1.3}
+    .sc-desc{font-size:9px;color:var(--fg3);margin-top:3px;line-height:1.4}
+    .sc-prog{font-size:9px;color:var(--gold);margin-top:3px}
+    /* Doc rows */
+    .dr{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;
+      background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+      margin-bottom:6px;cursor:pointer;transition:border-color 140ms;
+    }
+    .dr:hover{border-color:rgba(201,162,39,.3)}
+    .dr-ico{font-size:16px;flex-shrink:0}
+    .dr-info{flex:1;min-width:0}
+    .dr-name{font-size:12px;font-weight:500;color:var(--fg1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .dr-meta{font-size:10px;color:var(--fg3)}
+    .dr-right{font-size:10px;color:var(--gold);flex-shrink:0}
+    /* Bookmark btn on cards */
+    .bm-btn svg{transition:fill .15s,stroke .15s}
+    .bm-btn.bm-on svg{fill:var(--gold);stroke:var(--gold)}
+    .bm-btn.bm-on{border-color:var(--goldg)}
+    /* Clickable username */
+    #userName{cursor:pointer}
+    #userName:hover{color:var(--gold)}
+
+    /* ── TOAST DE XP ── */
+    #xpToast{
+      position:fixed;bottom:24px;right:24px;z-index:9999;
+      background:var(--bg2);border:1px solid var(--gold);border-radius:10px;
+      padding:10px 16px;display:flex;align-items:center;gap:8px;
+      font-size:13px;color:var(--fg1);
+      box-shadow:0 8px 24px rgba(0,0,0,.5);
+      opacity:0;pointer-events:none;
+      transform:translateY(10px);
+      transition:opacity .3s ease,transform .3s ease;
+    }
+    #xpToast.show{opacity:1;transform:translateY(0)}
+    #xpToast .toast-xp{color:var(--gold);font-weight:600}
+    #xpToast .toast-grade{font-size:11px;color:var(--fg3);margin-top:1px}
+
+    /* ── SEAL TOAST ── */
+    #sealToast{
+      position:fixed;top:80px;right:20px;z-index:9998;
+      background:var(--bg2);border:1px solid var(--gold);border-radius:12px;
+      padding:14px 18px;display:flex;align-items:center;gap:12px;
+      font-size:13px;color:var(--fg1);
+      box-shadow:0 8px 24px rgba(0,0,0,.5);
+      opacity:0;pointer-events:none;
+      transform:translateX(24px);
+      transition:opacity .4s ease,transform .4s ease;
+    }
+    #sealToast.show{opacity:1;transform:translateX(0)}
+    .seal-toast-ico{font-size:24px}
+    .seal-toast-name{color:var(--gold);font-weight:600;font-size:13px}
+    .seal-toast-desc{font-size:11px;color:var(--fg3);margin-top:2px}
+
+    /* ── ORACLE POPUP ── */
+    #oraclePop{
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(8px);z-index:9997;
+      background:var(--bg2);border:1px solid var(--gold);border-radius:14px;
+      padding:18px 22px;max-width:300px;min-width:240px;text-align:center;
+      box-shadow:0 8px 32px rgba(0,0,0,.7);
+      opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;
+    }
+    #oraclePop.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+    .oracle-ico{font-size:28px;margin-bottom:8px}
+    .oracle-txt{font-size:12px;color:var(--fg1);line-height:1.75;font-style:italic}
+    .oracle-close{margin-top:12px;font-size:10px;color:var(--fg3);cursor:pointer;letter-spacing:.5px}
+    .oracle-close:hover{color:var(--gold)}
+
+    /* ── RITUAL BUTTON ── */
+    .ritual-btn{
+      width:100%;padding:13px;margin-top:12px;
+      background:linear-gradient(135deg,rgba(201,162,39,.14),rgba(201,162,39,.04));
+      border:1px solid rgba(201,162,39,.5);border-radius:var(--r);
+      color:var(--gold);font-family:'Cinzel',serif;font-size:13px;letter-spacing:1px;
+      cursor:pointer;transition:var(--t);display:flex;align-items:center;justify-content:center;gap:8px;
+    }
+    .ritual-btn:hover:not(:disabled){background:rgba(201,162,39,.22);border-color:var(--gold)}
+    .ritual-btn:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.6)}
+    .ritual-done{
+      text-align:center;padding:12px;margin-top:12px;
+      background:rgba(201,162,39,.07);border:1px solid rgba(201,162,39,.2);border-radius:var(--r);
+      font-size:12px;color:var(--fg3);
+    }
+
+    /* ── STREAK BADGE ── */
+    .streak-badge{
+      display:inline-flex;align-items:center;gap:5px;
+      background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);
+      border-radius:999px;padding:3px 11px;font-size:11px;color:#f87171;
+      font-weight:600;letter-spacing:.4px;
+    }
+
+    /* ── PER-TEMA BARS ── */
+    .tema-bars{margin-top:14px}
+    .tema-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:12px}
+    .tema-bar-lbl{width:120px;flex-shrink:0;color:var(--fg2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+    .tema-bar-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+    .tema-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold),#e2b632);border-radius:3px;transition:width .6s ease}
+    .tema-bar-cnt{width:24px;text-align:right;color:var(--fg3);font-size:10px}
+
+    /* ── GRIMÓRIO SEARCH ── */
+    .bm-search{
+      width:100%;padding:8px 12px;background:rgba(255,255,255,.04);
+      border:1px solid var(--border);border-radius:var(--r);
+      color:var(--fg1);font-size:13px;outline:none;transition:var(--t);
+      margin-bottom:12px;font-family:'Inter',sans-serif;
+    }
+    .bm-search::placeholder{color:var(--fg3)}
+    .bm-search:focus{border-color:rgba(201,162,39,.5);background:rgba(201,162,39,.03)}
+
+    /* Sigil clickable */
+    .sigil-ring{cursor:pointer;transition:opacity .2s}
+    .sigil-ring:hover{opacity:.7}
+    .pp-refresh{
+      padding:4px 10px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+      border-radius:var(--r);color:var(--fg3);font-size:11px;cursor:pointer;transition:var(--t);
+      flex-shrink:0;
+    }
+    .pp-refresh:hover{color:var(--gold);border-color:rgba(201,162,39,.4)}
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="/" class="back">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Voltar
+  </a>
+  <div class="divider"></div>
+  <a href="/" class="brand">
+    <div class="brand-icon">🏛️</div>
+    <div class="brand-text">Iuri Piragibe<span>Jornalismo Investigativo</span></div>
+  </a>
+  <div class="divider"></div>
+  <span class="page-title">Biblioteca de Documentos</span>
+  <div class="spacer"></div>
+  <div class="search-wrap" id="swrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar título, tema, subtema…" autocomplete="off">
+  </div>
+  <button class="refresh-btn" id="refreshBtn">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+    Atualizar
+  </button>
+
+  <!-- Perfil AMOQ -->
+  <div class="user-panel" id="userPanel" style="display:none">
+    <button class="user-demon" onclick="openProfile()" title="Abrir perfil AMOQ" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:0;color:inherit">
+      <div class="user-seal" id="userSeal">∴</div>
+      <div class="user-info">
+        <span class="user-name" id="userName">—</span>
+        <span class="user-rank-lbl" id="userGrau">Profano</span>
+      </div>
+    </button>
+    <div class="user-xp-wrap">
+      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <span class="xp-txt" id="xpTxt">0 XP</span>
+    </div>
+    <button class="profile-btn" onclick="openProfile()" title="Ver perfil AMOQ">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Perfil
+    </button>
+    <button class="logout-btn" onclick="amoqLogout()" title="Sair">↩ Sair</button>
+  </div>
+</header>
+
+<!-- Toast de XP -->
+<div id="xpToast">
+  <span style="font-size:16px">⭐</span>
+  <div>
+    <div class="toast-xp" id="toastXP">+10 XP</div>
+    <div class="toast-grade" id="toastGrade"></div>
+  </div>
+</div>
+
+<!-- Toast de conquista desbloqueada -->
+<div id="sealToast">
+  <div class="seal-toast-ico" id="sealToastIco">🔮</div>
+  <div>
+    <div class="seal-toast-name" id="sealToastName">Conquista!</div>
+    <div class="seal-toast-desc" id="sealToastDesc"></div>
+  </div>
+</div>
+
+<!-- Oracle popup (mensagem do demônio) -->
+<div id="oraclePop">
+  <div class="oracle-ico" id="oracleIco">🦇</div>
+  <div class="oracle-txt" id="oracleTxt"></div>
+  <div class="oracle-close" onclick="closeOracle()">✕ fechar</div>
+</div>
+
+<!-- ── PROFILE PANEL ── -->
+<div class="ppanel" id="ppanel">
+  <div class="pp-head">
+    <div class="pp-head-seal" id="ppSeal" onclick="invokeOracle()" title="Consultar oráculo do demônio">∴</div>
+    <div class="pp-head-info">
+      <div class="pp-head-name" id="ppHeadName">Carregando…</div>
+      <div class="pp-head-sub" id="ppHeadSub">A.M.O.Q. — Arquivo Místico do Ordo Quaesitores</div>
+    </div>
+    <button class="pp-refresh" onclick="refreshProfile()" title="Atualizar dados">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+    </button>
+    <button class="pp-close" onclick="closeProfile()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="pp-nav">
+    <button class="pptab active" data-tab="demon" onclick="ppTab(this,'demon')">🦇 Demônio</button>
+    <button class="pptab" data-tab="grau" onclick="ppTab(this,'grau')">⬡ Jornada</button>
+    <button class="pptab" data-tab="selos" onclick="ppTab(this,'selos')">🔮 Selos</button>
+    <button class="pptab" data-tab="grimorio" onclick="ppTab(this,'grimorio')">📖 Grimório</button>
+    <button class="pptab" data-tab="atividade" onclick="ppTab(this,'atividade')">📊 Atividade</button>
+  </div>
+  <div class="pp-body" id="ppBody">
+    <div class="pp-empty"><div class="pp-empty-ico">⧖</div>Carregando perfil…</div>
+  </div>
+</div>
+<div class="ppanel-bg" id="ppBg" onclick="closeProfile()"></div>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div><div class="sb-label">Pastas</div><div id="pastaList"></div></div>
+    <div class="sb-hr"></div>
+    <div><div class="sb-label">Temas</div><div id="temaList"><div style="padding:8px 18px;font-size:12px;color:var(--fg3)">Carregando…</div></div></div>
+    <div class="sb-hr"></div>
+    <div><div class="sb-label">Tipo</div><div id="tipoList"></div></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div id="credsBanner" class="creds" style="display:none">
+      <div style="font-size:22px;flex-shrink:0">🔑</div>
+      <div>
+        <div style="font-weight:600;margin-bottom:5px">Configuração necessária</div>
+        <div style="font-size:13px;color:var(--fg2);line-height:1.6">
+          Para exibir documentos, as pastas do Google Drive precisam estar como <strong>"Qualquer pessoa com o link pode ver"</strong>.<br>
+          Acesse cada pasta → Compartilhar → Alterar acesso.
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="chip"><div class="chip-dot" style="background:var(--gold)"></div><span><strong id="statCount">—</strong> documentos</span></div>
+      <div class="chip" id="chipTime" style="display:none"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Indexado <strong id="statTime">—</strong></span></div>
+      <div id="activeTags" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+    </div>
+
+    <div class="fbar">
+      <select class="fsel" id="ordemSel" onchange="st.ordem=this.value;render()">
+        <option value="nome">A → Z</option>
+        <option value="nome-desc">Z → A</option>
+        <option value="data">Mais recente</option>
+        <option value="data-asc">Mais antigo</option>
+        <option value="tamanho">Maior tamanho</option>
+      </select>
+      <select class="fsel" id="tipoSel" onchange="setF('tipo',this.value)">
+        <option value="">Todos os tipos</option>
+      </select>
+      <div class="view-tog">
+        <button class="vbtn active" id="gBtn" title="Grade" onclick="setView('grid')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="vbtn" id="lBtn" title="Lista" onclick="setView('list')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1.2" fill="currentColor"/><circle cx="3" cy="12" r="1.2" fill="currentColor"/><circle cx="3" cy="18" r="1.2" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="docGrid" class="doc-grid"></div>
+    <div id="pag" class="pag" style="display:none"></div>
+  </main>
+</div>
+
+<!-- VIEWER -->
+<div class="overlay" id="overlay" onclick="closeV(event)">
+  <div class="vpanel">
+    <div class="vhead">
+      <div class="vhead-icon" id="vIco">📄</div>
+      <div class="vhead-info">
+        <div class="vhead-name" id="vNome">—</div>
+        <div class="vhead-meta" id="vMeta">—</div>
+      </div>
+      <div class="vactions">
+        <button class="vbtn-act" id="vSideToggle" onclick="toggleVSide()">
+          <span class="vside-tog-icon">🕸️</span>
+          <span class="vside-tog-txt">Ocultar Teia</span>
+        </button>
+        <a class="vbtn-act" id="vLink" href="#" target="_blank" rel="noopener">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Abrir no Drive
+        </a>
+      </div>
+      <button class="vclose" onclick="closeV(null)">✕</button>
+    </div>
+    <div class="vbody">
+      <div class="vframe-wrap">
+        <div class="vloading" id="vLoading"><div class="vspinner"></div><span style="font-size:13px;color:var(--fg2)">Carregando…</span></div>
+        <iframe class="vframe" id="vFrame" src="" allow="fullscreen"></iframe>
+      </div>
+      <div class="vside" id="vSide">
+        <div class="vside-head">
+          <span class="vside-title">🕸️ Teia de Conexões</span>
+          <span class="vside-subtitle">Documentos correlacionados</span>
+        </div>
+        <div class="vside-list" id="vSideList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const DRIVE_API_KEY = 'AIzaSy' + 'C3r2UXJS' + 'A6GQdoHGws' + 'mLB5mjUEZ8' + 'c4SVc';
+let GEMINI_API_KEY = '';
+const SUPABASE_URL = 'https://fveslvzjjixzpwiqcydz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_tUHMDyn291B9RBJ10tlXJQ_aPJkHKxX';
+const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+async function loadConfig() {
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  if (!isLocal) return;
+
+  try {
+    const res = await fetch('/api/drive/config');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.geminiApiKey) {
+        GEMINI_API_KEY = data.geminiApiKey;
+      }
+    }
+  } catch (e) {
+    console.warn('Falha ao carregar chave de IA do servidor, usando fallback local:', e.message);
+  }
+}
+const FOLDERS = [
+  { id:'1EEi7bB3L2TIshhTOI-HJzQ4mgQ8F2k5i', nome:'Biblioteca Esotérica',    slug:'esoterica', cor:'#9b59b6', ico:'🔮' },
+  { id:'18bq6fy8-n8IP8rhYRjXLNdvn7rrhR27Q', nome:'Tradições Místicas',       slug:'mystica',   cor:'#2ecc71', ico:'🌙' },
+  { id:'1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52', nome:'Sociedades Secretas',      slug:'sociedades',cor:'#e74c3c', ico:'🏛️' }
+];
+
+// ── TEMAS ──────────────────────────────────────────────────────────────────
+const TEMAS = [
+  { tema:'Maçonaria',           ico:'⚒️', kw:['maçon','mason','loja','grão-mestre','aprendiz','companheiro','mestre maçom','rito','ritual','escocês','york','templo','acácia','compasso','esquadro','hiram','tiler'] },
+  { tema:'Rosacruzes',          ico:'🌹', kw:['rosacruz','rosicrucian','amorc','fama fraternitatis','alquimia','alchemist','pedra filosofal','elixir','hermético','hermes'] },
+  { tema:'Iluminati & Ordens',  ico:'👁️', kw:['iluminati','illuminati','templário','templar','cavaleiro','skull','bones','bilderberg','opus dei','jesuíta'] },
+  { tema:'Wicca & Bruxaria',    ico:'🌙', kw:['wicca','bruxaria','witch','coven','sabá','sabbat','feitiço','spell','poção','caldeirão','bruxo','feiticeiro','pagão','pagan'] },
+  { tema:'Ocultismo & Magia',   ico:'🔮', kw:['ocult','kabbalah','qabalah','cabala','thelema','crowley','golden dawn','enochian','goetia','grimoire','grimório','sigil','lemegeton','demônio','demon','evocação'] },
+  { tema:'Astrologia & Tarô',   ico:'⭐', kw:['tarô','tarot','astrolog','zodiac','zodíaco','numerolog','runa','rune','signo','horóscopo','arcano','cartomancia'] },
+  { tema:'Filosofia Esotérica', ico:'📜', kw:['teosofia','theosoph','blavatsky','gnose','gnostic','espiritismo','kardec','steiner','antroposof','neoplatonism'] },
+  { tema:'Conspirações & Poder',ico:'🕵️', kw:['conspiraç','conspiracy','nova ordem','new world order','nwo','elite','globalismo','shadow','deep state','oligarquia'] },
+  { tema:'Política Brasileira', ico:'🏛️', kw:['brasil','lula','bolsonaro','congresso','senado','câmara','sarney','barbalho','calheiros','partido','corrupção','coronelismo','dinastia'] },
+  { tema:'Urbex & Mistérios',   ico:'🏚️', kw:['urbex','exploração urbana','underground','subterrâneo','rio enterrado','tamanduateí','anhangabaú','túnel','bunker','lugar abandonado'] },
+  { tema:'História & Religiões',ico:'📖', kw:['egipto','egypt','faraó','hieroglif','piramid','osiris','grécia','mitologia','mesopotamia','suméria','babilônia','religião'] }
+];
+
+const MIME = {
+  'application/pdf':{ lbl:'PDF', ico:'📄', cor:'#e74c3c' },
+  'application/vnd.google-apps.document':{ lbl:'Google Doc', ico:'📝', cor:'#4285f4' },
+  'application/vnd.google-apps.presentation':{ lbl:'Apresentação', ico:'📊', cor:'#f4b400' },
+  'application/vnd.google-apps.spreadsheet':{ lbl:'Planilha', ico:'📈', cor:'#0f9d58' },
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document':{ lbl:'Word', ico:'📃', cor:'#2b579a' },
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation':{ lbl:'PowerPoint', ico:'📋', cor:'#d04423' },
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':{ lbl:'Excel', ico:'📊', cor:'#0f9d58' },
+  'image/jpeg':{ lbl:'Imagem', ico:'🖼️', cor:'#9b59b6' },
+  'image/png':{ lbl:'Imagem', ico:'🖼️', cor:'#9b59b6' },
+  'image/gif':{ lbl:'GIF', ico:'🖼️', cor:'#9b59b6' },
+  'video/mp4':{ lbl:'Vídeo', ico:'🎬', cor:'#e74c3c' },
+  'audio/mpeg':{ lbl:'Áudio', ico:'🎵', cor:'#1db954' },
+  'text/plain':{ lbl:'Texto', ico:'📝', cor:'#7f8c8d' }
+};
+
+function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'') }
+function detectTema(nome){
+  const n = norm(nome);
+  for(const t of TEMAS) for(const k of t.kw) if(n.includes(norm(k))) return t.tema;
+  return 'Outros';
+}
+function viewerUrl(f){
+  const m = f.mimeType||'';
+  if(m.startsWith('application/vnd.google-apps.') || m==='application/pdf' || m.startsWith('image/') || m==='text/plain')
+    return `https://drive.google.com/file/d/${f.id}/preview`;
+  return `https://docs.google.com/viewer?url=${encodeURIComponent('https://drive.google.com/open?id='+f.id)}&embedded=true`;
+}
+function fmtBytes(b){ if(!b) return null; const u=['B','KB','MB','GB']; let i=0,v=b; while(v>=1024&&i<3){v/=1024;i++} return v.toFixed(1)+' '+u[i] }
+function fmtDate(s){ if(!s) return ''; return new Date(s).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
+
+// ── STATE ──────────────────────────────────────────────────────────────────
+const st = { q:'', tema:'', pasta:'', tipo:'', ordem:'nome', pag:1, pp:24, view:'grid' };
+let allFiles = [], loading = false;
+
+// ── FETCH DRIVE ────────────────────────────────────────────────────────────
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes cache TTL
+const DB_NAME = 'iuri_biblioteca_db';
+const STORE_NAME = 'files_store';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+    request.onsuccess = e => resolve(e.target.result);
+    request.onerror = e => reject(e.target.error);
+  });
+}
+
+function getCachedFiles() {
+  return new Promise(async resolve => {
+    try {
+      const db = await openDB();
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get('all_files');
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    } catch (e) {
+      console.warn('[db-read]', e);
+      resolve(null);
+    }
+  });
+}
+
+function setCachedFiles(files, timestamp) {
+  return new Promise(async resolve => {
+    try {
+      const db = await openDB();
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put({ files, timestamp }, 'all_files');
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => resolve(false);
+    } catch (e) {
+      console.warn('[db-write]', e);
+      resolve(false);
+    }
+  });
+}
+
+async function crawlFolder(folderId, folderMeta, visited = new Set(), depth = 0) {
+  if (depth > 8) return []; // Limit depth to prevent infinite loops
+
+  let files = [];
+  let pageToken = null;
+  do {
+    const fields = 'nextPageToken,files(id,name,mimeType,size,modifiedTime,thumbnailLink,webViewLink,shortcutDetails)';
+    const q = encodeURIComponent(`'${folderId}' in parents and trashed=false`);
+    let url = `https://www.googleapis.com/drive/v3/files?q=${q}&key=${DRIVE_API_KEY}&fields=${encodeURIComponent(fields)}&pageSize=200&supportsAllDrives=true&includeItemsFromAllDrives=true`;
+    if (pageToken) url += '&pageToken=' + pageToken;
+    const r = await fetch(url);
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'HTTP ' + r.status);
+    }
+    const data = await r.json();
+    const items = data.files || [];
+    
+    const subFolderPromises = [];
+    for (const f of items) {
+      let resolvedFile = f;
+      let isFolder = f.mimeType === 'application/vnd.google-apps.folder';
+
+      if (f.mimeType === 'application/vnd.google-apps.shortcut' && f.shortcutDetails) {
+        if (f.shortcutDetails.targetMimeType === 'application/vnd.google-apps.folder') {
+          isFolder = true;
+          resolvedFile = { id: f.shortcutDetails.targetId };
+        } else {
+          resolvedFile = {
+            id: f.shortcutDetails.targetId,
+            name: f.name,
+            mimeType: f.shortcutDetails.targetMimeType,
+            size: f.size,
+            modifiedTime: f.modifiedTime,
+            thumbnailLink: f.thumbnailLink,
+            webViewLink: f.webViewLink
+          };
+        }
+      }
+
+      if (isFolder) {
+        if (resolvedFile.id && !visited.has(resolvedFile.id)) {
+          visited.add(resolvedFile.id);
+          subFolderPromises.push((async () => {
+            try {
+              return await crawlFolder(resolvedFile.id, folderMeta, visited, depth + 1);
+            } catch (e) {
+              console.warn('[crawlFolder]', f.name, e.message);
+              return [];
+            }
+          })());
+        }
+      } else {
+        if (visited.has(resolvedFile.id)) continue;
+        visited.add(resolvedFile.id);
+
+        const mInfo = MIME[resolvedFile.mimeType] || { lbl: 'Arquivo', ico: '📎', cor: '#7f8c8d' };
+        files.push({
+          id: resolvedFile.id,
+          nome: resolvedFile.name,
+          mimeType: resolvedFile.mimeType,
+          tipoLbl: mInfo.lbl, tipoIco: mInfo.ico, tipoCor: mInfo.cor,
+          tamanho: fmtBytes(parseInt(resolvedFile.size) || 0),
+          tamanhoBytes: parseInt(resolvedFile.size) || 0,
+          modificado: resolvedFile.modifiedTime,
+          pasta: folderMeta.nome, pastaCor: folderMeta.cor, pastaIco: folderMeta.ico, pastaSlug: folderMeta.slug,
+          tema: detectTema(resolvedFile.name),
+          thumb: resolvedFile.thumbnailLink || null,
+          driveUrl: resolvedFile.webViewLink || `https://drive.google.com/file/d/${resolvedFile.id}/view`,
+          viewerUrl: viewerUrl(resolvedFile)
+        });
+      }
+    }
+
+    if (subFolderPromises.length > 0) {
+      const results = await Promise.all(subFolderPromises);
+      for (const res of results) {
+        files.push(...res);
+      }
+    }
+
+    pageToken = data.nextPageToken || null;
+  } while (pageToken);
+  return files;
+}
+
+async function indexAll(force = false){
+  loading = true;
+  renderSkeleton();
+  allFiles = [];
+  let anyError = false;
+
+  const cached = force ? null : await getCachedFiles();
+  const now = Date.now();
+
+  if(cached && cached.files && cached.timestamp && (now - cached.timestamp) < CACHE_TTL){
+    allFiles = cached.files;
+    document.getElementById('credsBanner').style.display = 'none';
+    document.getElementById('chipTime').style.display = 'flex';
+    const cacheDate = new Date(cached.timestamp);
+    document.getElementById('statTime').textContent = cacheDate.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    loading = false;
+    rebuildSidebar();
+    render();
+    return;
+  }
+
+  const visited = new Set();
+  for(const folder of FOLDERS){
+    try {
+      visited.add(folder.id);
+      const files = await crawlFolder(folder.id, folder, visited);
+      allFiles.push(...files);
+    } catch(e){
+      console.warn('[drive]', folder.nome, e.message);
+      anyError = true;
+    }
+  }
+
+  if(!anyError && allFiles.length > 0){
+    await setCachedFiles(allFiles, now);
+    document.getElementById('statTime').textContent = new Date(now).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }
+
+  document.getElementById('credsBanner').style.display = anyError && allFiles.length===0 ? 'flex' : 'none';
+  document.getElementById('chipTime').style.display = 'flex';
+  loading = false;
+  rebuildSidebar();
+  render();
+}
+
+// ── FILTERS & SORT ─────────────────────────────────────────────────────────
+function filtered(){
+  let r = allFiles;
+  if(st.q){ const ts=norm(st.q).split(/\s+/).filter(Boolean); r=r.filter(f=>{ const h=norm(f.nome+' '+f.tema+' '+f.pasta); return ts.every(t=>h.includes(t)) }) }
+  if(st.tema) r=r.filter(f=>f.tema===st.tema);
+  if(st.pasta) r=r.filter(f=>f.pastaSlug===st.pasta);
+  if(st.tipo) r=r.filter(f=>f.tipoLbl===st.tipo);
+  switch(st.ordem){
+    case 'nome': r=[...r].sort((a,b)=>a.nome.localeCompare(b.nome)); break;
+    case 'nome-desc': r=[...r].sort((a,b)=>b.nome.localeCompare(a.nome)); break;
+    case 'data': r=[...r].sort((a,b)=>new Date(b.modificado)-new Date(a.modificado)); break;
+    case 'data-asc': r=[...r].sort((a,b)=>new Date(a.modificado)-new Date(b.modificado)); break;
+    case 'tamanho': r=[...r].sort((a,b)=>b.tamanhoBytes-a.tamanhoBytes); break;
+  }
+  return r;
+}
+
+function setF(k,v){ st[k]=v; st.pag=1; syncSidebar(); renderTipoSel(); render() }
+function setTema(t){ st.tema=t; st.pag=1; syncSidebar(); render() }
+
+// ── RENDER SIDEBAR ─────────────────────────────────────────────────────────
+function rebuildSidebar(){
+  // Pastas
+  const pl = document.getElementById('pastaList');
+  const total = allFiles.length;
+  pl.innerHTML = `<button class="sb-item ${st.pasta===''?'active':''}" onclick="setF('pasta','')"><span class="sb-icon">📂</span><span class="sb-lbl">Todos</span><span class="sb-count">${total}</span></button>` +
+    FOLDERS.map(f=>{ const c=allFiles.filter(a=>a.pastaSlug===f.slug).length; return `<button class="sb-item ${st.pasta===f.slug?'active':''}" onclick="setF('pasta','${f.slug}')"><span class="sb-icon">${f.ico}</span><span class="sb-lbl">${f.nome}</span><span class="sb-count">${c}</span></button>` }).join('');
+
+  // Temas
+  const temaMap={};
+  allFiles.forEach(f=>{ temaMap[f.tema]=(temaMap[f.tema]||0)+1 });
+  const tl = document.getElementById('temaList');
+  tl.innerHTML = Object.entries(temaMap).sort((a,b)=>b[1]-a[1]).map(([t,c])=>{
+    const ico = TEMAS.find(x=>x.tema===t)?.ico || '📌';
+    return `<button class="sb-item ${st.tema===t?'active':''}" onclick="setTema('${esc(t)}')"><span class="sb-icon">${ico}</span><span class="sb-lbl">${t}</span><span class="sb-count">${c}</span></button>`;
+  }).join('');
+
+  // Tipos
+  const tipoMap={};
+  allFiles.forEach(f=>{ if(!tipoMap[f.tipoLbl]) tipoMap[f.tipoLbl]={c:0,ico:f.tipoIco}; tipoMap[f.tipoLbl].c++ });
+  document.getElementById('tipoList').innerHTML = Object.entries(tipoMap).sort((a,b)=>b[1].c-a[1].c).map(([t,i])=>
+    `<button class="sb-item ${st.tipo===t?'active':''}" onclick="setF('tipo','${t}')"><span class="sb-icon">${i.ico}</span><span class="sb-lbl">${t}</span><span class="sb-count">${i.c}</span></button>`
+  ).join('');
+}
+
+function syncSidebar(){
+  document.querySelectorAll('[data-filter-pasta]').forEach(()=>{});
+  rebuildSidebar();
+}
+
+function renderTipoSel(){
+  const sel = document.getElementById('tipoSel');
+  const tipos = [...new Set(allFiles.map(f=>f.tipoLbl))].sort();
+  sel.innerHTML = '<option value="">Todos os tipos</option>' + tipos.map(t=>`<option value="${t}" ${st.tipo===t?'selected':''}>${t}</option>`).join('');
+}
+
+// ── RENDER GRID ────────────────────────────────────────────────────────────
+function render(){
+  const items = filtered();
+  const total = items.length;
+  document.getElementById('statCount').textContent = total;
+  renderTags();
+
+  if(!total){
+    document.getElementById('docGrid').innerHTML = `<div class="state"><div class="state-ico">📭</div><div class="state-title">Nenhum documento encontrado</div><div class="state-desc">Tente outros termos ou remova os filtros.</div><button class="state-btn" onclick="clearF()">Limpar filtros</button></div>`;
+    document.getElementById('pag').style.display = 'none';
+    return;
+  }
+
+  const pp = st.pp, totalPags = Math.ceil(total/pp);
+  if(st.pag > totalPags) st.pag = 1;
+  const slice = items.slice((st.pag-1)*pp, st.pag*pp);
+
+  document.getElementById('docGrid').innerHTML = slice.map((f,i)=>{
+    const delay = Math.min(i*25,350);
+    const thumbBg = f.pastaCor;
+    let nomeFmt = esc(f.nome);
+    if(st.q){ const re=new RegExp('('+st.q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'); nomeFmt=nomeFmt.replace(re,'<mark style="background:rgba(201,162,39,.3);color:var(--gold);border-radius:2px;padding:0 2px">$1</mark>') }
+    const dateStr = fmtDate(f.modificado);
+    const thumb = f.thumb ? `<img class="card-thumb-img" src="${f.thumb}" alt="" loading="lazy">` : `<span class="card-thumb-ico">${f.tipoIco}</span>`;
+    const fData = esc(JSON.stringify(f));
+    return `<div class="card" style="animation-delay:${delay}ms" onclick="openV(${fData})">
+      <div class="card-thumb">
+        <div class="card-thumb-bg" style="background:linear-gradient(135deg,${thumbBg}55,${thumbBg}11)"></div>
+        ${thumb}
+      </div>
+      <div class="card-body">
+        <span class="card-badge" style="color:${f.tipoCor};border-color:${f.tipoCor}33;background:${f.tipoCor}11">${f.tipoIco} ${f.tipoLbl}</span>
+        <div class="card-name">${nomeFmt}</div>
+        <div class="card-tema">${f.pastaIco} ${f.pasta}</div>
+        <div class="card-meta">
+          ${f.tema?`<span class="card-meta-item">🏷️ ${esc(f.tema)}</span>`:''}
+          ${dateStr?`<span class="card-meta-item">${dateStr}</span>`:''}
+          ${f.tamanho?`<span class="card-meta-item">${f.tamanho}</span>`:''}
+        </div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="card-btn primary" onclick="openV(${fData})">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Ver
+        </button>
+        <a class="card-btn" href="${f.driveUrl}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Drive
+        </a>
+        ${amoqSession ? `<button class="card-btn bm-btn ${bookmarkedIds.has(f.id)?'bm-on':''}" onclick="doBookmark(${fData},event)" title="${bookmarkedIds.has(f.id)?'Remover do Grimório':'Salvar no Grimório'}">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="${bookmarkedIds.has(f.id)?'var(--gold)':'none'}" stroke="${bookmarkedIds.has(f.id)?'var(--gold)':'currentColor'}" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  renderPag(totalPags);
+}
+
+function renderTags(){
+  const tags = [];
+  if(st.tema) tags.push(`<span class="ftag" onclick="setTema('')">🏷️ ${st.tema} ✕</span>`);
+  if(st.pasta){ const p=FOLDERS.find(f=>f.pastaSlug===st.pasta); tags.push(`<span class="ftag" onclick="setF('pasta','')">📁 ${p?.nome||st.pasta} ✕</span>`) }
+  if(st.tipo) tags.push(`<span class="ftag" onclick="setF('tipo','')">📎 ${st.tipo} ✕</span>`);
+  if(st.q) tags.push(`<span class="ftag" onclick="()=>{st.q='';document.getElementById('searchInput').value='';render()}">🔍 "${st.q}" ✕</span>`);
+  document.getElementById('activeTags').innerHTML = tags.join('');
+}
+
+function clearF(){ st.q='';st.tema='';st.pasta='';st.tipo='';st.pag=1; document.getElementById('searchInput').value=''; document.getElementById('tipoSel').value=''; syncSidebar(); render() }
+
+function renderSkeleton(){
+  document.getElementById('docGrid').innerHTML = Array.from({length:12},()=>`<div class="skel"><div class="skel-t"></div><div class="skel-b"><div class="skel-l" style="width:55%"></div><div class="skel-l"></div><div class="skel-l" style="width:40%"></div></div></div>`).join('');
+  document.getElementById('pag').style.display = 'none';
+}
+
+function renderPag(total){
+  const pag = document.getElementById('pag');
+  if(total<=1){ pag.style.display='none'; return }
+  pag.style.display='flex';
+  const p=st.pag, pages=[];
+  if(total<=7){ for(let i=1;i<=total;i++) pages.push(i) }
+  else{
+    pages.push(1);
+    if(p>3) pages.push('…');
+    for(let i=Math.max(2,p-1);i<=Math.min(total-1,p+1);i++) pages.push(i);
+    if(p<total-2) pages.push('…');
+    pages.push(total);
+  }
+  pag.innerHTML = `<button class="pbtn" ${p===1?'disabled':''} onclick="goP(${p-1})">‹</button>`+
+    pages.map(x=>x==='…'?'<span style="color:var(--fg3);padding:0 4px">…</span>':`<button class="pbtn ${x===p?'active':''}" onclick="goP(${x})">${x}</button>`).join('')+
+    `<button class="pbtn" ${p===total?'disabled':''} onclick="goP(${p+1})">›</button>`;
+}
+function goP(p){ st.pag=p; window.scrollTo({top:62,behavior:'smooth'}); render() }
+
+// ── VIEWER ────────────────────────────────────────────────────────────────
+let sideCollapsed = false;
+
+function toggleVSide() {
+  const side = document.getElementById('vSide');
+  const btn = document.getElementById('vSideToggle');
+  const txt = btn.querySelector('.vside-tog-txt');
+  sideCollapsed = !sideCollapsed;
+  if (sideCollapsed) {
+    side.classList.add('collapsed');
+    txt.textContent = 'Ver Teia';
+  } else {
+    side.classList.remove('collapsed');
+    txt.textContent = 'Ocultar Teia';
+  }
+}
+
+async function getGeminiEmbedding(text) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-2:embedContent?key=${GEMINI_API_KEY}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'models/gemini-embedding-2',
+      content: { parts: [{ text }] },
+      outputDimensionality: 768
+    })
+  });
+  if (!res.ok) throw new Error('Falha ao gerar embedding');
+  const data = await res.json();
+  return data.embedding?.values;
+}
+
+function findRelatedLocal(currentFile) {
+  if (!currentFile) return [];
+  
+  const normalize = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s]/g, '');
+  const currentWords = normalize(currentFile.nome)
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !['para', 'como', 'mais', 'sobre', 'uma', 'uns', 'dos', 'das', 'com', 'sem', 'sob'].includes(w));
+
+  const currentTema = currentFile.tema;
+  const currentSub = currentFile.subtema;
+
+  const candidates = allFiles.filter(x => {
+    if (x.id === currentFile.id) return false;
+    return x.tema === currentTema || 
+           (x.subtema && x.subtema === currentSub) || 
+           currentWords.some(w => x.nome.toLowerCase().includes(w));
+  });
+
+  const scored = candidates.map(x => {
+    let score = 0;
+    let reasons = [];
+
+    if (x.tema && x.tema !== 'Outros' && x.tema === currentFile.tema) {
+      score += 5;
+      reasons.push(`Mesmo tema: ${x.tema}`);
+    }
+
+    if (x.subtema && x.subtema === currentFile.subtema) {
+      score += 8;
+      reasons.push(`Subtema: ${x.subtema}`);
+    }
+
+    const xNameNorm = normalize(x.nome);
+    let matchCount = 0;
+    currentWords.forEach(word => {
+      if (xNameNorm.includes(word)) {
+        matchCount++;
+      }
+    });
+    
+    if (matchCount > 0) {
+      score += matchCount * 4;
+      reasons.push(`${matchCount} termo(s) em comum`);
+    }
+
+    if (x.pastaSlug && x.pastaSlug === currentFile.pastaSlug) {
+      score += 1;
+    }
+
+    return { file: x, score, reasons };
+  })
+  .filter(x => x.score > 1)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 10);
+
+  return scored.map(item => ({
+    id: item.file.id,
+    nome: item.file.nome,
+    mimeType: item.file.mimeType,
+    tipoLbl: item.file.tipoLbl, tipoIco: item.file.tipoIco, tipoCor: item.file.tipoCor,
+    tamanho: item.file.tamanho,
+    tamanhoBytes: item.file.tamanhoBytes,
+    modificado: item.file.modificado,
+    pasta: item.file.pasta, pastaCor: item.file.pastaCor, pastaIco: item.file.pastaIco, pastaSlug: item.file.pastaSlug,
+    tema: item.file.tema,
+    subtema: item.file.subtema,
+    thumb: item.file.thumb,
+    driveUrl: item.file.driveUrl,
+    viewerUrl: item.file.viewerUrl,
+    reasons: item.reasons
+  }));
+}
+
+async function findRelated(currentFile) {
+  if (!supabaseClient) return findRelatedLocal(currentFile);
+  try {
+    const textToEmbed = `Título: ${currentFile.nome}\n` +
+                        `Pasta: ${currentFile.pasta}\n` +
+                        `Tema: ${currentFile.tema || 'Nenhum'}`;
+    const embedding = await getGeminiEmbedding(textToEmbed);
+    if (!embedding) return findRelatedLocal(currentFile);
+
+    const { data, error } = await supabaseClient.rpc('match_documents', {
+      query_embedding: embedding,
+      match_threshold: 0.35,
+      match_count: 12
+    });
+
+    if (error) throw error;
+
+    const related = (data || [])
+      .filter(x => x.id !== currentFile.id)
+      .slice(0, 10)
+      .map(x => {
+        const similarityPct = Math.round(x.similarity * 100);
+        const mInfo = MIME[x.mime_type] || { lbl: 'Arquivo', ico: '📎', cor: '#7f8c8d' };
+        const folderMeta = FOLDERS.find(f => f.slug === x.pasta_slug) || FOLDERS[0];
+        
+        return {
+          id: x.id,
+          nome: x.name,
+          mimeType: x.mime_type,
+          tipoLbl: mInfo.lbl, tipoIco: mInfo.ico, tipoCor: mInfo.cor,
+          tamanho: fmtBytes(x.size),
+          tamanhoBytes: x.size,
+          modificado: x.modified_time,
+          pasta: folderMeta.nome, pastaCor: folderMeta.cor, pastaIco: folderMeta.ico, pastaSlug: x.pasta_slug,
+          tema: x.tema,
+          subtema: x.subtema,
+          thumb: x.thumbnail_link,
+          driveUrl: x.web_view_link,
+          viewerUrl: viewerUrl({ id: x.id, mimeType: x.mime_type }),
+          similarity: similarityPct
+        };
+      });
+
+    if (related.length === 0) {
+      return findRelatedLocal(currentFile);
+    }
+    return related;
+  } catch (e) {
+    console.warn('[findRelated] Erro na busca semântica, usando fallback local:', e.message);
+    return findRelatedLocal(currentFile);
+  }
+}
+
+async function renderRelated(f) {
+  const list = document.getElementById('vSideList');
+  if (!list) return;
+
+  list.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--fg3)"><div class="vspinner" style="width:24px;height:24px;margin:0 auto 10px"></div>Buscando correlações…</div>`;
+
+  const related = await findRelated(f);
+  if (related.length === 0) {
+    list.innerHTML = `<div class="vside-empty">Nenhuma correlação encontrada.</div>`;
+    return;
+  }
+
+  list.innerHTML = related.map(item => {
+    const similarityBadge = item.similarity 
+      ? `<span class="vside-badge strong">🕸️ ${item.similarity}% conexão</span>`
+      : '';
+      
+    const localBadges = item.reasons 
+      ? item.reasons.map(r => `<span class="vside-badge">${esc(r)}</span>`).join('')
+      : '';
+
+    const badges = [
+      similarityBadge,
+      localBadges,
+      !item.similarity && item.tema && item.tema !== 'Outros' ? `<span class="vside-badge">Tema: ${esc(item.tema)}</span>` : '',
+      !item.similarity && item.subtema ? `<span class="vside-badge">Subtema: ${esc(item.subtema)}</span>` : ''
+    ].filter(Boolean).join('');
+
+    const fData = esc(JSON.stringify(item));
+    return `<div class="vside-item" onclick="openV(${fData})">
+      <div class="vside-dot"></div>
+      <div class="vside-icon">${item.tipoIco}</div>
+      <div class="vside-info">
+        <div class="vside-name">${esc(item.nome)}</div>
+        <div class="vside-reasons">
+          ${badges}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openV(f){
+  if(typeof f==='string') f=JSON.parse(f);
+  trackDocView(f); // XP AMOQ — fire-and-forget
+  document.getElementById('vIco').textContent = f.tipoIco;
+  document.getElementById('vNome').textContent = f.nome;
+  document.getElementById('vMeta').textContent = [f.pasta,f.tema,f.tamanho,fmtDate(f.modificado)].filter(Boolean).join(' · ');
+  document.getElementById('vLink').href = f.driveUrl;
+  document.getElementById('vLoading').style.display = 'flex';
+  const fr = document.getElementById('vFrame'); fr.style.opacity='0'; fr.src = f.viewerUrl;
+  
+  const isMobile = window.innerWidth <= 960;
+  sideCollapsed = isMobile;
+  const side = document.getElementById('vSide');
+  const txt = document.querySelector('#vSideToggle .vside-tog-txt');
+  if (sideCollapsed) {
+    side.classList.add('collapsed');
+    if (txt) txt.textContent = 'Ver Teia';
+  } else {
+    side.classList.remove('collapsed');
+    if (txt) txt.textContent = 'Ocultar Teia';
+  }
+
+  renderRelated(f);
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function iframeLoaded(){
+  document.getElementById('vLoading').style.display='none';
+  const fr=document.getElementById('vFrame'); fr.style.transition='opacity 280ms ease'; fr.style.opacity='1';
+}
+function closeV(e){
+  if(e && e.target!==document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+  document.getElementById('vFrame').src='';
+}
+
+function setView(v){ st.view=v; document.getElementById('docGrid').className='doc-grid'+(v==='list'?' list':''); document.getElementById('gBtn').className='vbtn'+(v==='grid'?' active':''); document.getElementById('lBtn').className='vbtn'+(v==='list'?' active':'') }
+
+// ── AUTH AMOQ (client-side via Supabase JS — sem servidor) ────────────────
+let amoqSession = null;
+let amoqProfile = null;
+
+// Dados compactos dos 72 demônios para lookup client-side
+const GOETIA_CLIENT = [
+  {num:1,legiao:66,poder:'Concede invisibilidade e sabedoria; ensina ciências e artes.'},
+  {num:2,legiao:31,poder:'Ensina línguas; retorna fugitivos e destrói dignidades.'},
+  {num:3,legiao:26,poder:'Revela o passado, o presente e o futuro; descobre coisas perdidas.'},
+  {num:4,legiao:30,poder:'Ensina todas as artes liberais; evoca almas dos mortos.'},
+  {num:5,legiao:36,poder:'Revela segredos, cura doenças e concede sabedoria mecânica.'},
+  {num:6,legiao:10,poder:'Auxilia ilusionistas; mantém amizade entre companheiros.'},
+  {num:7,legiao:40,poder:'Reconcilia inimizades e revela passado, presente e futuro.'},
+  {num:8,legiao:30,poder:'Entende linguagem dos animais; revela tesouros escondidos.'},
+  {num:9,legiao:200,poder:'Revela todos os segredos; concede domínio sobre artes e ciências.'},
+  {num:10,legiao:50,poder:'Cura toda enfermidade e ensina filosofia natural e medicina.'},
+  {num:11,legiao:40,poder:'Revela o passado, o presente e o futuro com grande precisão.'},
+  {num:12,legiao:60,poder:'Inflama o amor entre homens e mulheres; revela segredos.'},
+  {num:13,legiao:85,poder:'Causa amor entre homens e mulheres com grande poder.'},
+  {num:14,legiao:30,poder:'Causa grandes batalhas e ferimentos; espalha pestilência.'},
+  {num:15,legiao:60,poder:'Descobre coisas ocultas; conhece guerras e seus resultados.'},
+  {num:16,legiao:28,poder:'Inflama as mulheres de amor pelos homens.'},
+  {num:17,legiao:60,poder:'Conta coisas passadas e futuras; reconcilia amigos e inimigos.'},
+  {num:18,legiao:30,poder:'Conhece virtudes das ervas e pedras; transporta homens.'},
+  {num:19,legiao:30,poder:'Promove amor entre homens e mulheres pacificamente.'},
+  {num:20,legiao:22,poder:'Revela o passado, presente e futuro; descobre tesouros.'},
+  {num:21,legiao:30,poder:'Ensina astronomia e virtudes das pedras e ervas.'},
+  {num:22,legiao:36,poder:'Torna o homem astuto, corajoso e ágil; conhece o futuro.'},
+  {num:23,legiao:26,poder:'Torna o homem esperto; incendeia cidades e grandes lugares.'},
+  {num:24,legiao:19,poder:'Restabelece honras e dignidades perdidas; ensina ciências.'},
+  {num:25,legiao:36,poder:'Ensina todas as artes e ciências; causa amor e amizade.'},
+  {num:26,legiao:30,poder:'Muda lugares dos mortos; faz os homens eloquentes e sábios.'},
+  {num:27,legiao:19,poder:'Ensina retórica e línguas; proporciona serventes fiéis.'},
+  {num:28,legiao:26,poder:'Revela o passado, presente e futuro com verdade absoluta.'},
+  {num:29,legiao:40,poder:'Revela coisas passadas, presentes e futuras; ensina artes.'},
+  {num:30,legiao:29,poder:'Ensina retórica, artes e línguas; reconcilia inimigos.'},
+  {num:31,legiao:29,poder:'Ensina lógica e ética; confere longevidade e eloquência.'},
+  {num:32,legiao:72,poder:'Revela tesouros guardados; ensina aritmética e geomancia.'},
+  {num:33,legiao:66,poder:'Torna homens insensíveis; ensina filosofia e ciências.'},
+  {num:34,legiao:26,poder:'Causa amor; cria trovões, relâmpagos e tempestades.'},
+  {num:35,legiao:30,poder:'Luta fortemente; dá esperança ao mago; é fiel e verdadeiro.'},
+  {num:36,legiao:26,poder:'Ensina astronomia e virtudes das ervas e pedras.'},
+  {num:37,legiao:20,poder:'Ensina todas as ciências maravilhosas; é excelente poeta.'},
+  {num:38,legiao:26,poder:'Constrói torres e as abastece com munição; envia guerreiros.'},
+  {num:39,legiao:40,poder:'Constrói casas e torres; traz familiares e revela pensamentos.'},
+  {num:40,legiao:30,poder:'Rouba tesouros de casas reais; destrói cidades e dignidades.'},
+  {num:41,legiao:30,poder:'Mata homens afogando-os; tem poder sobre ventos e mares.'},
+  {num:42,legiao:29,poder:'Governa as águas e guia navios carregados de munição.'},
+  {num:43,legiao:50,poder:'Constrói castelos, torres e cidades; atormenta com feridas.'},
+  {num:44,legiao:30,poder:'Priva homens de visão, audição e entendimento.'},
+  {num:45,legiao:36,poder:'Descobre feiticeiros e coisas ocultas; constrói torres.'},
+  {num:46,legiao:60,poder:'Faz o homem sábio nas ciências; conhece virtudes das ervas.'},
+  {num:47,legiao:37,poder:'Procura o amor das mulheres e faz amizade entre inimigos.'},
+  {num:48,legiao:33,poder:'Torna homens sábios; transmuta metais em ouro.'},
+  {num:49,legiao:48,poder:'Fala de coisas ocultas e divinas; aquece e descobre águas.'},
+  {num:50,legiao:20,poder:'Ensina filosofia, astronomia, retórica, lógica e piromancia.'},
+  {num:51,legiao:40,poder:'Diz coisas passadas, presentes e futuras; torna invisível.'},
+  {num:52,legiao:36,poder:'Ensina astronomia e artes liberais; traz bons familiares.'},
+  {num:53,legiao:30,poder:'Dá ao homem entendimento das vozes das aves e animais.'},
+  {num:54,legiao:30,poder:'Ensina filosofia perfeitamente; obriga almas dos mortos.'},
+  {num:55,legiao:20,poder:'Descobre coisas passadas, presentes e futuras; traz dignidades.'},
+  {num:56,legiao:56,poder:'Declara o passado, presente e futuro; procura amor das mulheres.'},
+  {num:57,legiao:30,poder:'Faz o homem sábio nas ciências; transforma em qualquer forma.'},
+  {num:58,legiao:36,poder:'Dá conhecimento de astrologia e artes liberais.'},
+  {num:59,legiao:30,poder:'Ensina as virtudes do sol, lua e estrelas; transforma homens.'},
+  {num:60,legiao:36,poder:'Torna o homem habilidoso em ofícios mecânicos e filosofia.'},
+  {num:61,legiao:33,poder:'Torna homens espirituosos; transmuta metais em moedas.'},
+  {num:62,legiao:38,poder:'Dá verdadeiras respostas sobre tesouros escondidos.'},
+  {num:63,legiao:30,poder:'Semeia discórdia; mata o mago se não for cuidadoso.'},
+  {num:64,legiao:36,poder:'Dá boas visões e revela o passado, presente e futuro.'},
+  {num:65,legiao:30,poder:'Ensina astronomia e geometria; transforma em pássaros.'},
+  {num:66,legiao:20,poder:'Ensina gramática, lógica e retórica; descobre tesouros.'},
+  {num:67,legiao:29,poder:'Concede músicos excelentes; faz árvores inclinarem-se.'},
+  {num:68,legiao:80,poder:'Distribui apresentações e senados; causa amor e amizade.'},
+  {num:69,legiao:30,poder:'Descobre virtudes das ervas e pedras; traz pássaros.'},
+  {num:70,legiao:26,poder:'Vai e vem rapidamente; traz abundância e descobre roubos.'},
+  {num:71,legiao:36,poder:'Ensina artes e ciências; revela os pensamentos secretos de qualquer pessoa.'},
+  {num:72,legiao:36,poder:'Retorna ladrões e tesouros roubados; descobre toda maldade.'},
+];
+
+// Nomes dos 72 demônios (para atribuição client-side)
+const GOETIA_NOMES = ['Baal','Agares','Vassago','Gamigin','Marbas','Valefor','Amon','Barbatos','Paimon','Buer','Gusion','Sitri','Beleth','Leraje','Eligos','Zepar','Botis','Bathin','Sallos','Purson','Marax','Ipos','Aim','Naberius','Glasya-Labolas','Buné','Ronové','Berith','Astaroth','Forneus','Foras','Asmodeus','Gaap','Furfur','Marchosias','Stolas','Phenex','Halphas','Malphas','Raum','Focalor','Vepar','Sabnock','Shax','Vine','Bifrons','Vual','Haagenti','Crocell','Furcas','Balam','Alloces','Caim','Murmur','Orobas','Gremory','Ose','Amy','Oriax','Vapula','Zagan','Valac','Andras','Haures','Andrealphus','Kimaris','Amdusias','Belial','Decarabia','Seere','Dantalion','Andromalius'];
+const GOETIA_RANKS = ['Rei','Duque','Príncipe','Marquês','Presidente','Conde','Duque','Duque','Rei','Presidente','Duque','Príncipe','Rei','Marquês','Duque','Duque','Conde','Duque','Duque','Rei','Presidente','Conde','Duque','Marquês','Presidente','Duque','Marquês','Duque','Duque','Marquês','Presidente','Rei','Príncipe','Conde','Marquês','Príncipe','Marquês','Conde','Presidente','Conde','Duque','Duque','Marquês','Marquês','Rei','Conde','Duque','Presidente','Duque','Cavaleiro','Rei','Duque','Presidente','Duque','Príncipe','Duque','Presidente','Presidente','Marquês','Duque','Rei','Presidente','Marquês','Duque','Marquês','Marquês','Duque','Rei','Marquês','Príncipe','Duque','Conde'];
+
+function atribuirDemonClient(userId) {
+  let hash = 5381;
+  for (let i = 0; i < userId.length; i++) {
+    hash = ((hash << 5) + hash) ^ userId.charCodeAt(i);
+    hash = hash >>> 0;
+  }
+  const idx = hash % 72;
+  return { num: idx+1, nome: GOETIA_NOMES[idx], rank: GOETIA_RANKS[idx] };
+}
+
+function calcularGrauClient(xp) {
+  for (let i = GRAUS_AMOQ.length - 1; i >= 0; i--) {
+    if (xp >= GRAUS_AMOQ[i].xpRequired) return GRAUS_AMOQ[i].grau;
+  }
+  return 1;
+}
+
+function xpParaProximoGrauClient(xp) {
+  const g = calcularGrauClient(xp);
+  const prox = GRAUS_AMOQ.find(x => x.grau === g + 1);
+  return prox ? prox.xpRequired - xp : null;
+}
+
+const GRAUS_AMOQ = [
+  { grau:1, nome:'Profano',   xpRequired:0,     simbolo:'○', cor:'#5f5b7a', desc:'O iniciante que ainda não cruzou o véu' },
+  { grau:2, nome:'Neófito',   xpRequired:100,   simbolo:'◐', cor:'#6366f1', desc:'Primeiro contato com os mistérios da Ordem' },
+  { grau:3, nome:'Iniciado',  xpRequired:500,   simbolo:'●', cor:'#8b5cf6', desc:'O véu foi rasgado; o caminho se revela' },
+  { grau:4, nome:'Adepto',    xpRequired:1500,  simbolo:'◆', cor:'#c9a227', desc:'Mestre das correspondências ocultas' },
+  { grau:5, nome:'Cavaleiro', xpRequired:5000,  simbolo:'⬟', cor:'#ef4444', desc:'Guardião do Grimório e dos seus segredos' },
+  { grau:6, nome:'Mestre',    xpRequired:15000, simbolo:'✦', cor:'#f97316', desc:'Portador da Chama do Conhecimento Eterno' },
+  { grau:7, nome:'Soberano',  xpRequired:50000, simbolo:'★', cor:'#eab308', desc:'A própria manifestação do saber oculto' },
+];
+
+function getGrauInfo(grauNum) {
+  return GRAUS_AMOQ.find(g => g.grau === grauNum) || GRAUS_AMOQ[0];
+}
+
+async function checkAuth() {
+  if (!supabaseClient) {
+    // CDN falhou — mostra painel mínimo sem auth para não bloquear tudo
+    document.getElementById('userPanel').style.display = 'flex';
+    document.getElementById('userName').textContent = 'Visitante';
+    return true;
+  }
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) {
+    const here = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location = `/login?redirect=${here}`;
+    return false;
+  }
+  amoqSession = session;
+  // Mostra painel imediatamente com e-mail enquanto perfil carrega
+  const panel = document.getElementById('userPanel');
+  panel.style.display = 'flex';
+  document.getElementById('userName').textContent = (session.user?.email || '').split('@')[0];
+  document.getElementById('userGrau').textContent = 'Carregando…';
+  return true;
+}
+
+async function loadAmoqProfile() {
+  if (!amoqSession || !supabaseClient) return;
+  const userId = amoqSession.user.id;
+  try {
+    let { data: profile, error } = await supabaseClient
+      .from('profiles').select('*').eq('id', userId).maybeSingle();
+
+    if (error || !profile) {
+      // Perfil não existe ainda (trigger não rodou) — cria client-side
+      const demon = atribuirDemonClient(userId);
+      const novo = { id: userId, xp: 0, grau: 1, demon_num: demon.num, demon_nome: demon.nome, demon_rank: demon.rank };
+      await supabaseClient.from('profiles').upsert(novo, { onConflict: 'id', ignoreDuplicates: true });
+      profile = novo;
+    }
+
+    const grauInfo = getGrauInfo(profile.grau || 1);
+    const xpFalta  = xpParaProximoGrauClient(profile.xp || 0);
+    const proximoGrau = GRAUS_AMOQ.find(g => g.grau === grauInfo.grau + 1) || null;
+
+    amoqProfile = {
+      id: userId, email: amoqSession.user.email,
+      xp: profile.xp || 0, grau: grauInfo,
+      xpFalta, xpProximo: proximoGrau?.xpRequired ?? null,
+      demon: { num: profile.demon_num, nome: profile.demon_nome, rank: profile.demon_rank },
+    };
+    renderUserPanel();
+  } catch (e) {
+    console.warn('[amoq] Falha ao carregar perfil:', e.message);
+    document.getElementById('userGrau').textContent = 'Profano';
+  }
+}
+
+function renderUserPanel() {
+  if (!amoqProfile) return;
+  const panel = document.getElementById('userPanel');
+  panel.style.display = 'flex';
+
+  // Seal: número romano do demônio ou símbolo do grau
+  const grauInfo = getGrauInfo(amoqProfile.grau?.grau || 1);
+  document.getElementById('userSeal').textContent = grauInfo.simbolo;
+  document.getElementById('userSeal').style.color = grauInfo.cor;
+  document.getElementById('userSeal').style.borderColor = grauInfo.cor + '55';
+  document.getElementById('userSeal').title = amoqProfile.demon?.nome
+    ? `${amoqProfile.demon.nome} · ${amoqProfile.demon.rank}`
+    : 'Demônio patrono';
+
+  // Nome: demônio + rank, ou e-mail
+  const demonLabel = amoqProfile.demon?.nome
+    ? `${amoqProfile.demon.nome}`
+    : (amoqProfile.email || '').split('@')[0];
+  document.getElementById('userName').textContent = demonLabel;
+  document.getElementById('userGrau').textContent = grauInfo.nome;
+  document.getElementById('userGrau').style.color = grauInfo.cor;
+
+  // XP bar
+  const xp = amoqProfile.xp || 0;
+  const grauNum = grauInfo.grau;
+  const currentReq = grauInfo.xpRequired;
+  const nextGrau = GRAUS_AMOQ.find(g => g.grau === grauNum + 1);
+  let pct = 0;
+  if (nextGrau) {
+    pct = Math.min(100, ((xp - currentReq) / (nextGrau.xpRequired - currentReq)) * 100);
+  } else {
+    pct = 100; // Soberano
+  }
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpFill').style.background = `linear-gradient(90deg,${grauInfo.cor},${grauInfo.cor}cc)`;
+  const xpFalta = amoqProfile.xpFalta;
+  document.getElementById('xpTxt').textContent = xpFalta !== null
+    ? `${xp} XP · faltam ${xpFalta}`
+    : `${xp} XP · Soberano`;
+}
+
+function showXPToast(xpGanho, grauInfo, subiuGrau) {
+  const toast = document.getElementById('xpToast');
+  document.getElementById('toastXP').textContent = `+${xpGanho} XP`;
+  document.getElementById('toastGrade').textContent = subiuGrau
+    ? `🎉 Subiu para ${grauInfo.nome}!`
+    : `${grauInfo.nome} · ${amoqProfile?.xp || 0} XP total`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+async function amoqLogout() {
+  if (supabaseClient) await supabaseClient.auth.signOut();
+  window.location = '/login';
+}
+
+async function trackDocView(f) {
+  if (!amoqSession || !supabaseClient || !f?.id) return;
+  if (f.id?.startsWith('ritual:')) return;
+  const userId = amoqSession.user.id;
+  try {
+    const grauAntes = amoqProfile?.grau?.grau || 1;
+
+    const { data: existing } = await supabaseClient
+      .from('document_views').select('id').eq('user_id', userId).eq('document_id', f.id).maybeSingle();
+    if (existing) return;
+
+    const { error: insertErr } = await supabaseClient.from('document_views').insert({
+      user_id: userId, document_id: f.id,
+      document_name: f.nome, document_tema: f.tema || '', xp_earned: 10,
+    });
+    if (insertErr) {
+      console.warn('[amoq] doc_views INSERT falhou:', insertErr.message,
+        '\n→ Execute supabase-fix-policy.sql no Supabase Dashboard para corrigir as políticas RLS.');
+    }
+
+    const novoXP   = (amoqProfile?.xp || 0) + 10;
+    const novoGrau = calcularGrauClient(novoXP);
+    const grauInfo = getGrauInfo(novoGrau);
+    await supabaseClient.from('profiles').update({ xp: novoXP, grau: novoGrau }).eq('id', userId);
+
+    if (amoqProfile) {
+      amoqProfile.xp    = novoXP;
+      amoqProfile.grau  = grauInfo;
+      amoqProfile.xpFalta = xpParaProximoGrauClient(novoXP);
+    }
+    ppData = null;
+    renderUserPanel();
+    showXPToast(10, grauInfo, novoGrau > grauAntes);
+  } catch (e) {
+    console.warn('[amoq] trackDocView:', e.message);
+  }
+}
+
+// ── PROFILE PANEL ─────────────────────────────────────────────────────────
+let ppData = null;
+let ppCurrentTab = 'demon';
+let bookmarkedIds = new Set();
+let ppBmQuery = ''; // grimório search state
+let ppPrevSelos = new Set(); // achievements known to be unlocked (for toast)
+
+const CONQUISTAS = [
+  { id:'p1',   ico:'○', nome:'Primeiro Passo',      desc:'Abriu seu 1º documento',              req:d=>d.stats.totalDocs>=1 },
+  { id:'exp5', ico:'◉', nome:'Explorador',           desc:'5 temas diferentes explorados',       req:d=>d.stats.temasExplorados>=5,        prog:d=>`${d.stats.temasExplorados}/5` },
+  { id:'d25',  ico:'◆', nome:'Leitor Assíduo',       desc:'25 documentos únicos lidos',          req:d=>d.stats.totalDocs>=25,             prog:d=>`${d.stats.totalDocs}/25` },
+  { id:'d100', ico:'✦', nome:'Enciclopedista',       desc:'100 documentos únicos lidos',         req:d=>d.stats.totalDocs>=100,            prog:d=>`${d.stats.totalDocs}/100` },
+  { id:'macon',ico:'⊕', nome:'Aprendiz Maçônico',   desc:'10 docs de Maçonaria',               req:d=>(d.stats.temaContagem?.['Maçonaria']||0)>=10, prog:d=>`${d.stats.temaContagem?.['Maçonaria']||0}/10` },
+  { id:'witch',ico:'⚡', nome:'Feiticeiro',           desc:'10 docs de Wicca/Magia',             req:d=>(d.stats.temaContagem?.['Wicca & Bruxaria']||0)+(d.stats.temaContagem?.['Ocultismo & Magia']||0)>=10 },
+  { id:'herm', ico:'☿', nome:'Hermético',             desc:'10 docs de Ocultismo/Rosacruzes',    req:d=>(d.stats.temaContagem?.['Rosacruzes']||0)+(d.stats.temaContagem?.['Filosofia Esotérica']||0)>=10 },
+  { id:'rit1', ico:'🕯️',nome:'Primeiro Ritual',      desc:'Realizou o primeiro ritual diário',   req:d=>(d.stats.rituaisFeitos||0)>=1 },
+  { id:'rit7', ico:'🔯',nome:'Ritualista',            desc:'7 rituais diários realizados',        req:d=>(d.stats.rituaisFeitos||0)>=7,     prog:d=>`${d.stats.rituaisFeitos||0}/7` },
+  { id:'seq3', ico:'🔥',nome:'Sequência Mística',    desc:'3 dias consecutivos de leitura',      req:d=>(d.stats.streak||0)>=3,            prog:d=>`${d.stats.streak||0}/3` },
+  { id:'seq7', ico:'⚔️',nome:'Guardião da Chama',   desc:'7 dias consecutivos de leitura',      req:d=>(d.stats.streak||0)>=7,            prog:d=>`${d.stats.streak||0}/7` },
+  { id:'neo',  ico:'◐', nome:'Véu Rasgado',          desc:'Grau Neófito atingido',              req:d=>(d.grau?.grau||1)>=2 },
+  { id:'ini',  ico:'●', nome:'Iniciado da Ordem',    desc:'Grau Iniciado atingido',             req:d=>(d.grau?.grau||1)>=3 },
+  { id:'adp',  ico:'◆', nome:'Adepto da Verdade',    desc:'Grau Adepto atingido',               req:d=>(d.grau?.grau||1)>=4 },
+  { id:'cav',  ico:'⬟', nome:'Cavaleiro da Chama',  desc:'Grau Cavaleiro atingido',            req:d=>(d.grau?.grau||1)>=5 },
+  { id:'mes',  ico:'✦', nome:'Mestre do Grimório',   desc:'Grau Mestre atingido',               req:d=>(d.grau?.grau||1)>=6 },
+];
+
+function sigilSVG(name) {
+  const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const clean = (name||'').toUpperCase().replace(/[^A-Z]/g,'');
+  function lpos(ch) {
+    const idx = LETTERS.indexOf(ch);
+    if (idx < 0) return null;
+    const a = (idx / 26) * 2 * Math.PI - Math.PI / 2;
+    return { x: 50 + 38 * Math.cos(a), y: 50 + 38 * Math.sin(a) };
+  }
+  const chars = [];
+  for (const c of clean) if (!chars.length || chars[chars.length-1]!==c) chars.push(c);
+  const pts = chars.map(lpos).filter(Boolean);
+  if (pts.length < 1) return '<circle cx="50" cy="50" r="28" fill="none" stroke="#c9a227" stroke-width="1.5" opacity="0.4"/>';
+  if (pts.length < 2) return `<circle cx="${pts[0].x.toFixed(1)}" cy="${pts[0].y.toFixed(1)}" r="8" fill="none" stroke="#c9a227" stroke-width="1.8"/>`;
+  let path = `M${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for (let i=1;i<pts.length;i++) path+=` L${pts[i].x.toFixed(1)},${pts[i].y.toFixed(1)}`;
+  const e=pts[pts.length-1];
+  return `<circle cx="50" cy="50" r="44" fill="none" stroke="#c9a227" stroke-width="0.5" opacity="0.18"/>
+    <path d="${path}" fill="none" stroke="#c9a227" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${pts[0].x.toFixed(1)}" cy="${pts[0].y.toFixed(1)}" r="4" fill="#c9a227"/>
+    <circle cx="${e.x.toFixed(1)}" cy="${e.y.toFixed(1)}" r="3.5" fill="none" stroke="#c9a227" stroke-width="1.8"/>`;
+}
+
+function relTime(iso) {
+  if (!iso) return '';
+  const d = (Date.now() - new Date(iso).getTime()) / 1000;
+  if (d < 60) return 'agora mesmo';
+  if (d < 3600) return `há ${Math.floor(d/60)}min`;
+  if (d < 86400) return `há ${Math.floor(d/3600)}h`;
+  if (d < 604800) return `há ${Math.floor(d/86400)} dias`;
+  return new Date(iso).toLocaleDateString('pt-BR');
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function openProfile() {
+  document.getElementById('ppanel').classList.add('open');
+  document.getElementById('ppBg').classList.add('show');
+  // Sempre refaz o fetch para dados frescos (sem cache)
+  document.getElementById('ppBody').innerHTML = '<div class="pp-empty"><div class="pp-empty-ico">⧖</div>Carregando…</div>';
+  await _fetchProfile();
+}
+
+async function refreshProfile() {
+  ppData = null;
+  document.getElementById('ppBody').innerHTML = '<div class="pp-empty"><div class="pp-empty-ico">⧖</div>Atualizando…</div>';
+  await _fetchProfile();
+}
+
+async function _fetchProfile() {
+  const userId = amoqSession?.user?.id;
+  if (!userId || !supabaseClient) {
+    document.getElementById('ppBody').innerHTML = '<div class="pp-empty"><div class="pp-empty-ico">⚠</div>Sessão inválida</div>';
+    return;
+  }
+  try {
+    const [profRes, viewsRes, bmsRes] = await Promise.all([
+      supabaseClient.from('profiles').select('*').eq('id', userId).maybeSingle(),
+      supabaseClient.from('document_views')
+        .select('document_id,document_name,document_tema,viewed_at,xp_earned')
+        .eq('user_id', userId).order('viewed_at', { ascending: false }),
+      supabaseClient.from('bookmarks')
+        .select('document_id,document_name,document_tema,added_at')
+        .eq('user_id', userId).order('added_at', { ascending: false }),
+    ]);
+
+    if (viewsRes.error) console.warn('[amoq] views error:', viewsRes.error.message, '— execute supabase-fix-policy.sql');
+    if (bmsRes.error)   console.warn('[amoq] bookmarks error:', bmsRes.error.message);
+
+    const profile   = profRes.data  || {};
+    const allViews  = viewsRes.data || [];
+    const bookmarks = bmsRes.data   || [];
+
+    // Separa rituais das leituras reais
+    const ritualViews = allViews.filter(v => v.document_id?.startsWith('ritual:'));
+    const views       = allViews.filter(v => !v.document_id?.startsWith('ritual:'));
+
+    // Stats de leitura
+    const temaContagem = {};
+    for (const v of views) { const t = v.document_tema||'Outros'; temaContagem[t]=(temaContagem[t]||0)+1; }
+    const temasExplorados = Object.keys(temaContagem).filter(t=>t!=='Outros').length;
+    const temaFavorito    = Object.entries(temaContagem).sort((a,b)=>b[1]-a[1])[0]?.[0]||null;
+    const diasAtivo       = new Set(allViews.map(v=>v.viewed_at?.substring(0,10))).size;
+    const streak          = calcStreak(allViews);
+    const rituaisFeitos   = ritualViews.length;
+    const ritualHoje      = ritualViews.some(v=>v.viewed_at?.substring(0,10)===new Date().toISOString().substring(0,10));
+
+    const grauInfo    = getGrauInfo(profile.grau || 1);
+    const xp          = profile.xp || 0;
+    const xpFalta     = xpParaProximoGrauClient(xp);
+    const proximoGrau = GRAUS_AMOQ.find(g=>g.grau===grauInfo.grau+1)||null;
+    const demonData   = GOETIA_CLIENT.find(d=>d.num===profile.demon_num)||null;
+
+    ppData = {
+      id: userId, email: amoqSession.user.email,
+      grau: grauInfo, xp, xpFalta, xpProximo: proximoGrau?.xpRequired??null,
+      demon: { num: profile.demon_num, nome: profile.demon_nome, rank: profile.demon_rank,
+               legiao: demonData?.legiao??null, poder: demonData?.poder??null },
+      stats: {
+        totalDocs: views.length, temaContagem, temasExplorados, temaFavorito,
+        diasAtivo, streak, rituaisFeitos, ritualHoje,
+        recentDocs: allViews.filter(v=>!v.document_id?.startsWith('ritual:')).slice(0,20),
+      },
+      bookmarks,
+    };
+    bookmarkedIds = new Set(bookmarks.map(b=>b.document_id));
+    render();
+    checkNewAchievements(ppData);
+    renderProfile(ppData);
+  } catch (e) {
+    document.getElementById('ppBody').innerHTML =
+      `<div class="pp-empty"><div class="pp-empty-ico">⚠</div>Erro ao carregar perfil<br><small style="color:var(--fg3)">${escHtml(e?.message||String(e))}</small></div>`;
+  }
+}
+
+function closeProfile() {
+  document.getElementById('ppanel').classList.remove('open');
+  document.getElementById('ppBg').classList.remove('show');
+}
+
+// Calcula sequência de dias consecutivos de atividade
+function calcStreak(views) {
+  if (!views || !views.length) return 0;
+  const uniqueDays = [...new Set(views.map(v => v.viewed_at?.substring(0,10)).filter(Boolean))].sort().reverse();
+  let streak = 0;
+  const dt = new Date(); dt.setHours(0,0,0,0);
+  for (const day of uniqueDays) {
+    const expected = dt.toISOString().substring(0,10);
+    if (day === expected) { streak++; dt.setDate(dt.getDate()-1); }
+    else if (day < expected) break;
+  }
+  return streak;
+}
+
+// Ritual diário (+25 XP, uma vez por dia)
+async function performRitual() {
+  if (!amoqSession || !supabaseClient) return;
+  const userId = amoqSession.user.id;
+  const hoje   = new Date().toISOString().substring(0,10);
+  const ritualId = `ritual:${hoje}`;
+  try {
+    const grauAntes = amoqProfile?.grau?.grau || 1;
+    const { error } = await supabaseClient.from('document_views').insert({
+      user_id: userId, document_id: ritualId,
+      document_name: `Ritual Diário ${hoje}`, document_tema: '__ritual__', xp_earned: 25,
+    });
+    if (error) { console.warn('[ritual]', error.message); return; }
+    const novoXP   = (amoqProfile?.xp || 0) + 25;
+    const novoGrau = calcularGrauClient(novoXP);
+    const grauInfo = getGrauInfo(novoGrau);
+    await supabaseClient.from('profiles').update({ xp: novoXP, grau: novoGrau }).eq('id', userId);
+    if (amoqProfile) { amoqProfile.xp = novoXP; amoqProfile.grau = grauInfo; amoqProfile.xpFalta = xpParaProximoGrauClient(novoXP); }
+    ppData = null;
+    renderUserPanel();
+    showXPToast(25, grauInfo, novoGrau > grauAntes);
+    await _fetchProfile();
+  } catch(e) { console.warn('[ritual]', e.message); }
+}
+
+// Verifica conquistas novas e exibe toast
+function checkNewAchievements(data) {
+  if (!data) return;
+  const novasIds = CONQUISTAS.filter(c => c.req(data)).map(c => c.id);
+  const novas    = novasIds.filter(id => !ppPrevSelos.has(id));
+  novas.forEach((id, i) => {
+    const c = CONQUISTAS.find(x=>x.id===id);
+    if (!c) return;
+    setTimeout(() => {
+      document.getElementById('sealToastIco').textContent  = c.ico;
+      document.getElementById('sealToastName').textContent = c.nome;
+      document.getElementById('sealToastDesc').textContent = c.desc;
+      const t = document.getElementById('sealToast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }, i * 4500);
+  });
+  novasIds.forEach(id => ppPrevSelos.add(id));
+}
+
+function showSealToast(c) {
+  document.getElementById('sealToastIco').textContent  = c.ico;
+  document.getElementById('sealToastName').textContent = c.nome;
+  document.getElementById('sealToastDesc').textContent = c.desc;
+  const t = document.getElementById('sealToast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// Oráculo do demônio — mensagem mística
+const ORACLE_MSGS = [
+  'O conhecimento é a mais alta forma de invocação.',
+  'Cada página lida é um passo além do véu da ignorância.',
+  'Os segredos pertencem àqueles que os buscam.',
+  'A sabedoria não se encontra — ela é convocada.',
+  'O Grimório cresce com cada invocação do espírito curioso.',
+  'Quem lê nas trevas acende a sua própria chama.',
+  'O caminho ao Soberano é pavimentado com palavras devoradas.',
+  'Nenhum segredo permanece oculto para o verdadeiro iniciado.',
+  'A Ordem recompensa os que persistem além do cansaço.',
+  'Teu demônio patrono observa cada página que viras.',
+];
+
+function invokeOracle() {
+  const dName  = ppData?.demon?.nome || 'Baal';
+  const msg    = ORACLE_MSGS[Math.floor(Math.random() * ORACLE_MSGS.length)];
+  const idx    = (ppData?.demon?.num || 1) - 1;
+  const emojis = ['🦇','👁️','🔥','⚡','🌑','🕯️','💀','🌀','⚔️','🐍'];
+  document.getElementById('oracleIco').textContent = emojis[idx % emojis.length];
+  document.getElementById('oracleTxt').textContent = `"${msg}" — ${dName}`;
+  document.getElementById('oraclePop').classList.add('show');
+  setTimeout(closeOracle, 6000);
+}
+
+function closeOracle() {
+  document.getElementById('oraclePop').classList.remove('show');
+}
+
+function ppTab(el, tab) {
+  document.querySelectorAll('.pptab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ppCurrentTab = tab;
+  if (ppData) renderProfile(ppData);
+}
+
+function renderProfile(data) {
+  const dName = data.demon?.nome||'—';
+  document.getElementById('ppHeadName').textContent = dName;
+  document.getElementById('ppHeadSub').textContent = `${data.grau?.nome||'Profano'} · ${(data.xp||0).toLocaleString('pt-BR')} XP`;
+  document.getElementById('ppSeal').innerHTML = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${sigilSVG(dName)}</svg>`;
+  const body = document.getElementById('ppBody');
+  if (ppCurrentTab==='demon')     body.innerHTML = renderDemonTab(data);
+  else if (ppCurrentTab==='grau') body.innerHTML = renderGrauTab(data);
+  else if (ppCurrentTab==='selos')body.innerHTML = renderSelosTab(data);
+  else if (ppCurrentTab==='grimorio') body.innerHTML = renderGrimorioTab(data);
+  else body.innerHTML = renderAtividadeTab(data);
+}
+
+function renderDemonTab(d) {
+  const svg     = sigilSVG(d.demon?.nome);
+  const streak  = d.stats?.streak || 0;
+  const rituals = d.stats?.rituaisFeitos || 0;
+  const streakBadge = streak >= 2
+    ? `<div style="margin-top:6px"><span class="streak-badge">🔥 ${streak} dias seguidos</span></div>` : '';
+  return `<div class="pp-sec">
+    <div class="demon-wrap">
+      <div class="sigil-ring" onclick="invokeOracle()" title="Consultar oráculo">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${svg}</svg>
+      </div>
+      <div class="d-num">Demônio Patrono · Nº ${d.demon?.num||'—'}</div>
+      <div class="d-name">${escHtml(d.demon?.nome||'—')}</div>
+      <div class="d-rank">${escHtml(d.demon?.rank||'—')} · ${d.demon?.legiao||'?'} Legiões</div>
+      <div class="d-poder">${escHtml(d.demon?.poder||'Poderes arcanos a serem revelados…')}</div>
+      ${streakBadge}
+    </div>
+    <div class="stats-mini">
+      <div class="sm-card"><div class="sm-val">${d.stats?.totalDocs||0}</div><div class="sm-lbl">Docs Lidos</div></div>
+      <div class="sm-card"><div class="sm-val">${(d.xp||0).toLocaleString('pt-BR')}</div><div class="sm-lbl">XP Total</div></div>
+      <div class="sm-card"><div class="sm-val">${d.stats?.temasExplorados||0}</div><div class="sm-lbl">Temas</div></div>
+      <div class="sm-card"><div class="sm-val">${rituals}</div><div class="sm-lbl">Rituais</div></div>
+    </div>
+  </div>`;
+}
+
+function renderGrauTab(d) {
+  const grau = d.grau || { grau:1, nome:'Profano', simbolo:'○', cor:'#5f5b7a', desc:'' };
+  const xp = d.xp||0;
+  const xpProx = d.xpProximo;
+  const grauAtual = GRAUS_AMOQ.find(g=>g.grau===grau.grau)||GRAUS_AMOQ[0];
+  const pct = xpProx ? Math.min(100, Math.round((xp-grauAtual.xpRequired)/(xpProx-grauAtual.xpRequired)*100)) : 100;
+  const proxNome = GRAUS_AMOQ.find(g=>g.xpRequired===xpProx)?.nome||'próximo grau';
+  const faltam = xpProx ? `faltam ${(xpProx-xp).toLocaleString('pt-BR')} XP para ${proxNome}` : 'Grau máximo atingido!';
+  let tl = '';
+  for (const g of GRAUS_AMOQ) {
+    const st = g.grau<grau.grau?'done':g.grau===grau.grau?'curr':'lock';
+    const badge = g.grau<grau.grau?'<span class="gtn-badge">✓</span>':g.grau===grau.grau?'<span class="gtn-badge">← aqui</span>':'';
+    tl += `<div class="gtn ${st}">
+      <span class="gtn-ico" style="color:${g.cor}">${g.simbolo}</span>
+      <div><div class="gtn-name">${g.nome}</div><div class="gtn-xp">${g.xpRequired.toLocaleString('pt-BR')} XP</div></div>
+      ${badge}
+    </div>`;
+  }
+  return `<div class="pp-sec">
+    <div class="gc-card">
+      <div class="gc-sym" style="color:${grau.cor}">${grau.simbolo}</div>
+      <div class="gc-name">${grau.nome}</div>
+      <div class="gc-desc">${escHtml(grauAtual.desc||'')}</div>
+      <div class="gc-bar-wrap"><div class="gc-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${grau.cor},${grau.cor}cc)"></div></div>
+      <div class="gc-xp-sub">${xp.toLocaleString('pt-BR')} XP · ${faltam}</div>
+    </div>
+    <div class="grau-tl">${tl}</div>
+  </div>`;
+}
+
+function renderSelosTab(d) {
+  return '<div class="pp-sec"><div class="selos-grid">' +
+    CONQUISTAS.map(c=>{
+      const ok = c.req(d);
+      const prog = !ok && c.prog ? `<div class="sc-prog">${c.prog(d)}</div>` : '';
+      return `<div class="selo-card ${ok?'ok':'locked'}">
+        <div class="sc-ico">${c.ico}</div>
+        <div class="sc-name">${escHtml(c.nome)}</div>
+        <div class="sc-desc">${escHtml(c.desc)}</div>
+        ${prog}
+      </div>`;
+    }).join('') +
+  '</div></div>';
+}
+
+function _bmRows(allBms, q) {
+  const lower = (q||'').toLowerCase().trim();
+  const bms   = lower ? allBms.filter(b =>
+    (b.document_name||'').toLowerCase().includes(lower) ||
+    (b.document_tema||'').toLowerCase().includes(lower)
+  ) : allBms;
+  if (!allBms.length) return `<div class="pp-empty"><div class="pp-empty-ico">📖</div>Sem documentos salvos.<br><small style="margin-top:8px;display:block">Clique em <b>★</b> em qualquer card para salvar aqui.</small></div>`;
+  if (!bms.length) return `<div class="pp-empty" style="padding:16px 0"><div class="pp-empty-ico">🔍</div>Nenhum resultado para "${escHtml(lower)}"</div>`;
+  const countTxt = `<div style="font-size:10px;color:var(--fg3);margin-bottom:10px">${allBms.length} documento${allBms.length!==1?'s':''} salvos${lower?' · '+bms.length+' filtrado'+(bms.length!==1?'s':''):''}</div>`;
+  const rows = bms.map(b => {
+    const dname    = escHtml(b.document_name||b.document_id);
+    const dtema    = escHtml(b.document_tema||'Sem tema');
+    const safeId   = b.document_id.replace(/'/g,"\\'");
+    const safeName = (b.document_name||'').replace(/'/g,"\\'").replace(/\n/g,' ');
+    const safeTema = (b.document_tema||'').replace(/'/g,"\\'");
+    return `<div class="dr" onclick="openBookmarkedDoc('${safeId}')">
+      <span class="dr-ico">📄</span>
+      <div class="dr-info"><div class="dr-name">${dname}</div><div class="dr-meta">${dtema} · ${relTime(b.added_at)}</div></div>
+      <span class="dr-right" title="Remover do grimório" onclick="doBookmark({id:'${safeId}',nome:'${safeName}',tema:'${safeTema}'},event)" style="cursor:pointer;font-size:16px;color:var(--gold)">★</span>
+    </div>`;
+  }).join('');
+  return countTxt + rows;
+}
+
+function filterBmSearch(q) {
+  ppBmQuery = q;
+  const list = document.getElementById('bmList');
+  if (list && ppData) list.innerHTML = _bmRows(ppData.bookmarks||[], q);
+}
+
+function renderGrimorioTab(d) {
+  const allBms    = d.bookmarks || [];
+  const searchBar = `<input class="bm-search" type="text" placeholder="🔍 Buscar no grimório…"
+    value="${escHtml(ppBmQuery)}" oninput="filterBmSearch(this.value)" autocomplete="off">`;
+  return `<div class="pp-sec">${searchBar}<div id="bmList">${_bmRows(allBms, ppBmQuery)}</div></div>`;
+}
+
+function renderAtividadeTab(d) {
+  const s      = d.stats || {};
+  const recent = s.recentDocs || [];
+  const streak     = s.streak || 0;
+  const streakCard = streak >= 2
+    ? `<div class="sm-card"><div class="sm-val" style="color:#f87171;font-size:18px">🔥 ${streak}</div><div class="sm-lbl">Sequência</div></div>` : '';
+
+  // Ritual diário
+  const ritualHtml = s.ritualHoje
+    ? `<div class="ritual-done">✓ Ritual de hoje realizado · <span style="color:var(--gold)">+25 XP</span> · ${s.rituaisFeitos} total</div>`
+    : `<button class="ritual-btn" onclick="performRitual()">🕯️ Realizar Ritual Diário · +25 XP</button>`;
+
+  // Per-tema bars
+  const temas = Object.entries(s.temaContagem||{})
+    .filter(([t]) => t !== 'Outros')
+    .sort((a,b) => b[1]-a[1]).slice(0,6);
+  const maxTema = temas[0]?.[1] || 1;
+  const temaBarsHtml = temas.length ? `
+    <div style="font-size:10px;letter-spacing:1.5px;color:var(--fg3);text-transform:uppercase;margin:14px 0 10px">Por tema</div>
+    <div class="tema-bars">
+      ${temas.map(([t,cnt]) => `
+        <div class="tema-bar-row">
+          <div class="tema-bar-lbl" title="${escHtml(t)}">${escHtml(t)}</div>
+          <div class="tema-bar-track"><div class="tema-bar-fill" style="width:${Math.round(cnt/maxTema*100)}%"></div></div>
+          <div class="tema-bar-cnt">${cnt}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  let html = `<div class="pp-sec">
+    <div class="stats-mini" style="margin-bottom:12px;grid-template-columns:repeat(auto-fill,minmax(80px,1fr))">
+      <div class="sm-card"><div class="sm-val">${s.totalDocs||0}</div><div class="sm-lbl">Docs Lidos</div></div>
+      <div class="sm-card"><div class="sm-val">${s.diasAtivo||0}</div><div class="sm-lbl">Dias Ativo</div></div>
+      <div class="sm-card"><div class="sm-val">${s.temasExplorados||0}</div><div class="sm-lbl">Temas</div></div>
+      ${streakCard}
+    </div>
+    ${ritualHtml}
+    ${temaBarsHtml}
+    <div style="font-size:10px;letter-spacing:1.5px;color:var(--fg3);text-transform:uppercase;margin:16px 0 10px">Últimos documentos</div>`;
+
+  if (!recent.length) html += '<div class="pp-empty" style="padding:16px 0"><div class="pp-empty-ico">📄</div>Nenhum documento aberto ainda</div>';
+  for (const r of recent) {
+    html += `<div class="dr">
+      <span class="dr-ico">📄</span>
+      <div class="dr-info"><div class="dr-name">${escHtml(r.document_name||r.document_id)}</div><div class="dr-meta">${escHtml(r.document_tema||'Sem tema')} · ${relTime(r.viewed_at)}</div></div>
+      <span class="dr-right">+${r.xp_earned||10} XP</span>
+    </div>`;
+  }
+  return html + '</div>';
+}
+
+function openBookmarkedDoc(docId) {
+  const f = allFiles.find(x=>x.id===docId);
+  if (f) { closeProfile(); openV(f); }
+  else window.open(`https://drive.google.com/file/d/${docId}/view`,'_blank');
+}
+
+async function doBookmark(f, e) {
+  if (e) e.stopPropagation();
+  if (!amoqSession || !supabaseClient || !f?.id) return;
+  const userId = amoqSession.user.id;
+  try {
+    if (bookmarkedIds.has(f.id)) {
+      await supabaseClient.from('bookmarks').delete().eq('user_id', userId).eq('document_id', f.id);
+      bookmarkedIds.delete(f.id);
+      if (ppData) ppData.bookmarks = ppData.bookmarks.filter(b=>b.document_id!==f.id);
+    } else {
+      await supabaseClient.from('bookmarks').upsert({
+        user_id: userId, document_id: f.id,
+        document_name: f.nome||f.document_name,
+        document_tema: f.tema||f.document_tema||'',
+      }, { onConflict: 'user_id,document_id', ignoreDuplicates: true });
+      bookmarkedIds.add(f.id);
+      if (ppData) ppData.bookmarks.unshift({
+        document_id: f.id, document_name: f.nome||f.document_name,
+        document_tema: f.tema||f.document_tema, added_at: new Date().toISOString(),
+      });
+    }
+    render();
+    if (ppData && ppCurrentTab==='grimorio') renderProfile(ppData);
+  } catch { /* silencioso */ }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  const authed = await checkAuth();
+  if (!authed) return;
+
+  let timer;
+  await loadConfig();
+  loadAmoqProfile();
+
+  document.getElementById('vFrame').onload = iframeLoaded;
+  document.getElementById('searchInput').addEventListener('input',e=>{ clearTimeout(timer); timer=setTimeout(()=>{ st.q=e.target.value.trim(); st.pag=1; render() },320) });
+  document.getElementById('refreshBtn').addEventListener('click',()=>{ allFiles=[]; indexAll(true) });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeV(null) });
+  indexAll();
+});
+</script>
+</body>
+</html>

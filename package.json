@@ -1,0 +1,30 @@
+{
+  "name": "iuri-piragibe-v3",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "http-server . -p 4173 -c-1",
+    "server": "node server.js",
+    "start": "node server.js",
+    "test": "playwright test",
+    "test:civic": "playwright test -c playwright.civic.config.ts",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.0",
+    "express": "^4.22.1",
+    "express-rate-limit": "^8.3.2",
+    "googleapis": "^173.0.0",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^8.0.4",
+    "rss-parser": "^3.13.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "http-server": "^14.1.1"
+  }
+}

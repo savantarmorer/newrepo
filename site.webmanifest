@@ -1,0 +1,17 @@
+{
+  "name": "Iuri Piragibe",
+  "short_name": "Iuri",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#0a0a0f",
+  "description": "Jornalismo investigativo e conteúdo sobre urbex, Maçonaria e mistérios do Brasil.",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

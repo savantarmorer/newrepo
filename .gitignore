@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+yarn.lock
+
+# Playwright
+test-results/
+playwright-report/
+
+# Environment
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# History
+.history/
+
+# Build
+dist/
+build/
+
+# Candidatos dados
+candidatos-dinastias.json
