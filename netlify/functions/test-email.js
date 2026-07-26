@@ -20,7 +20,7 @@ export async function handler(event, context) {
     };
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'Iuri Piragibe <vendas@iuripiragibe.net>';
 
   const htmlContent = `
     <!DOCTYPE html>
