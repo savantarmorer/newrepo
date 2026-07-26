@@ -37,7 +37,11 @@ export async function handler(event, context) {
     }
 
     // Se for um ID real e não o teste genérico '123456'
-    if (paymentId && paymentId !== '123456') {
+    // Se for simulação de teste direto do site
+    if (paymentId === 'test_approved_simulation') {
+      const simEmail = query.email || 'iuri@piragibe.com.br';
+      await sendAccessEmail(simEmail, 'Cliente Teste');
+    } else if (paymentId && paymentId !== '123456') {
       try {
         const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
           headers: {

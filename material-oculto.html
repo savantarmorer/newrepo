@@ -800,6 +800,12 @@
                         Aguardando confirmação do pagamento no app do seu banco...
                     </div>
 
+                    <div style="margin-top: 1rem;">
+                        <button type="button" onclick="simulateTestApproval()" class="btn-ghost" style="width: 100%; border-color: #3b82f6; color: #60a5fa; font-weight: 700; font-size: 0.85rem; justify-content: center;">
+                            🧪 Simular Aprovação Instantânea (Modo de Teste)
+                        </button>
+                    </div>
+
                     <p style="margin-top: 1rem; font-size: 0.85rem; color: #a1a1aa;">Assim que o pagamento for detectado pelo banco, esta tela é atualizada automaticamente e o acesso é liberado!</p>
                 </div>
 
@@ -1016,6 +1022,22 @@
                     }
                 } catch(e) {}
             }, 3000);
+        }
+
+        // Função de Teste para Simulação Instantânea da Aprovação de Pagamento
+        function simulateTestApproval() {
+            if (pixPollInterval) clearInterval(pixPollInterval);
+            const pixBox = document.getElementById('pixResultContainer');
+            if (pixBox) pixBox.style.display = 'none';
+
+            const successBox = document.getElementById('paymentSuccessContainer');
+            if (successBox) {
+                successBox.style.display = 'block';
+                successBox.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            const email = document.getElementById('pixEmail')?.value || 'iuri@piragibe.com.br';
+            fetch('/api/webhook?id=test_approved_simulation&email=' + encodeURIComponent(email), { method: 'POST' }).catch(() => {});
         }
 
         // Submissão do Formulário de Cartão de Crédito
