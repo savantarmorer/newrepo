@@ -146,7 +146,7 @@ app.post('/api/auth/bookmark', requireAuth, async (req, res) => {
 // ── Mercado Pago API: Endpoint de Preferência de Pagamento ─────────────────
 app.post('/api/create-preference', async (req, res) => {
   try {
-    const { title = 'Material Oculto - Iuri Piragibe', price = 47.00, email, name } = req.body || {};
+    const { title = 'Material Oculto - Iuri Piragibe', price = 99.90, email, name } = req.body || {};
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN;
 
     if (!accessToken) {
@@ -197,7 +197,7 @@ app.post('/api/create-preference', async (req, res) => {
 // ── Mercado Pago API: Endpoint de Geração de PIX ───────────────────────────
 app.post('/api/create-pix', async (req, res) => {
   try {
-    const { title = 'O Livro dos Iniciados - Iuri Piragibe', price = 47.00, email, name, cpf } = req.body || {};
+    const { title = 'O Livro dos Iniciados - Iuri Piragibe', price = 99.90, email, name, cpf } = req.body || {};
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
 
     const nameParts = (name || 'Cliente Leitor').trim().split(' ');
