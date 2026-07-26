@@ -21,4 +21,10 @@
   to = "/.netlify/functions/check-payment"
   status = 200
 
+[[redirects]]
+  from = "/api/oauth/callback"
+  to = "/.netlify/functions/oauth-callback"
+  status = 200
+
+
 

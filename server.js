@@ -258,6 +258,29 @@ app.get('/api/check-payment', async (req, res) => {
   }
 });
 
+// ── Mercado Pago OAuth 2.0: Endpoint de Redirecionamento Callback ───────────
+app.get('/api/oauth/callback', (req, res) => {
+  const code = req.query.code;
+  if (!code) {
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>URL de Redirecionamento OAuth Mercado Pago</title></head>
+      <body style="font-family: sans-serif; background: #0d0d12; color: #e4e4e7; padding: 40px; text-align: center;">
+        <div style="max-width: 600px; margin: 0 auto; background: #18181b; padding: 30px; border-radius: 12px; border: 1px solid #c9a227;">
+          <h2 style="color: #e2c04a;">🔑 URL de Redirecionamento OAuth Configurada</h2>
+          <p>Esta é a URL de Callback oficial configurada para autorizações OAuth do Mercado Pago:</p>
+          <code style="background: #27272a; padding: 8px 14px; border-radius: 6px; color: #4ade80; display: inline-block; margin: 10px 0;">https://iuripiragibe.net/api/oauth/callback</code>
+          <br><br>
+          <a href="/material-oculto.html" style="color: #60a5fa; text-decoration: none; font-weight: bold;">← Voltar ao site</a>
+        </div>
+      </body>
+      </html>
+    `);
+  }
+  res.redirect('/material-oculto.html?oauth=success');
+});
+
 // ── Mercado Pago Webhook / IPN: Processamento Automático pós-pagamento ──────
 const handleMercadoPagoIPN = async (req, res) => {
   try {
