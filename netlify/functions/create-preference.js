@@ -24,7 +24,7 @@ export async function handler(event, context) {
         items: [
           {
             title: bodyData.title || 'O Livro dos Iniciados + Deusa da Discórdia - Iuri Piragibe',
-            unit_price: Number(bodyData.price || 1.00),
+            unit_price: Number(bodyData.price || 99.90),
             quantity: 1,
             currency_id: 'BRL'
           }
