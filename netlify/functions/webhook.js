@@ -12,21 +12,34 @@ export async function handler(event, context) {
   try {
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
     
-    // Obter ID do pagamento da notificação webhook do Mercado Pago
+    // Obter ID do pagamento das notificações Webhook / IPN do Mercado Pago
     let paymentId = null;
-    if (event.queryStringParameters && event.queryStringParameters['data.id']) {
-      paymentId = event.queryStringParameters['data.id'];
-    } else if (event.queryStringParameters && event.queryStringParameters.id) {
-      paymentId = event.queryStringParameters.id;
-    } else if (event.body) {
+    const query = event.queryStringParameters || {};
+    
+    // 1. Tenta query params (IPN padrão: ?id=123456789&topic=payment)
+    if (query['data.id']) {
+      paymentId = query['data.id'];
+    } else if (query.id) {
+      paymentId = query.id;
+    } else if (query.resource) {
+      const match = query.resource.match(/\/(\d+)$/);
+      if (match) paymentId = match[1];
+    }
+
+    // 2. Tenta corpo JSON ou urlencoded
+    if (!paymentId && event.body) {
       try {
-        const bodyObj = JSON.parse(event.body);
+        const bodyObj = typeof event.body === 'string' && event.body.startsWith('{') ? JSON.parse(event.body) : {};
         paymentId = bodyObj.data?.id || bodyObj.id;
+        if (!paymentId && bodyObj.resource) {
+          const match = bodyObj.resource.match(/\/(\d+)$/);
+          if (match) paymentId = match[1];
+        }
       } catch (e) {}
     }
 
     if (!paymentId) {
-      return { statusCode: 200, headers, body: JSON.stringify({ status: 'ignored', message: 'No payment ID' }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok', message: 'Notificação IPN recebida (sem id)' }) };
     }
 
     // Consultar status do pagamento na API do Mercado Pago
