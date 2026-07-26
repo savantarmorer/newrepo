@@ -147,7 +147,7 @@ app.post('/api/auth/bookmark', requireAuth, async (req, res) => {
 app.post('/api/create-preference', async (req, res) => {
   try {
     const { title = 'Material Oculto - Iuri Piragibe', price = 47.00, email, name } = req.body || {};
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN;
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN;
 
     if (!accessToken) {
       // Fallback gracioso para modo sem credenciais configuradas
