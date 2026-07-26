@@ -852,54 +852,133 @@
             }
         }
 
+        const MP_ACCESS_TOKEN = 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+
+        // Geração do PIX em Tempo Real via Mercado Pago API
         async function handlePixSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('btnPixSubmit');
             btn.disabled = true;
             btn.innerText = 'Gerando PIX Mercado Pago...';
 
-            const email = document.getElementById('pixEmail').value;
-            const name = document.getElementById('pixName').value;
+            const email = document.getElementById('pixEmail').value.trim();
+            const name = document.getElementById('pixName').value.trim();
+            const cpf = document.getElementById('pixCpf').value.replace(/\D/g, '');
 
-            try {
-                const response = await fetch('/api/create-preference', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ title: 'O Livro dos Iniciados - Iuri Piragibe', price: 47.00, email: email, name: name })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.init_point) {
-                        window.location.href = data.init_point;
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.log('Modo local ativado');
+            if (!cpf || cpf.length !== 11) {
+                alert('Por favor, informe um CPF válido com 11 números.');
+                btn.disabled = false;
+                btn.innerText = 'Gerar PIX de R$ 47,00 Mercado Pago';
+                return;
             }
 
-            setTimeout(() => {
-                btn.style.display = 'none';
-                document.getElementById('pixResultContainer').style.display = 'block';
-            }, 1000);
+            const nameParts = name.split(' ');
+            const firstName = nameParts[0] || 'Cliente';
+            const lastName = nameParts.slice(1).join(' ') || 'Leitor';
+
+            try {
+                const mpRes = await fetch('https://api.mercadopago.com/v1/payments', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + MP_ACCESS_TOKEN,
+                        'Content-Type': 'application/json',
+                        'X-Idempotency-Key': 'pix-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
+                    },
+                    body: JSON.stringify({
+                        transaction_amount: 47.00,
+                        description: 'O Livro dos Iniciados - Iuri Piragibe',
+                        payment_method_id: 'pix',
+                        payer: {
+                            email: email,
+                            first_name: firstName,
+                            last_name: lastName,
+                            identification: {
+                                type: 'CPF',
+                                number: cpf
+                            }
+                        }
+                    })
+                });
+
+                const data = await mpRes.json();
+
+                if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
+                    const txData = data.point_of_interaction.transaction_data;
+                    const qrImg = document.getElementById('pixQrCodeImg');
+                    
+                    if (txData.qr_code_base64) {
+                        qrImg.src = 'data:image/png;base64,' + txData.qr_code_base64;
+                    } else {
+                        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(txData.qr_code);
+                    }
+
+                    document.getElementById('pixCodeDisplay').innerText = txData.qr_code;
+                    btn.style.display = 'none';
+                    document.getElementById('pixResultContainer').style.display = 'block';
+                    return;
+                } else if (data.message) {
+                    alert('Mercado Pago: ' + (data.message || 'Verifique o CPF informado.'));
+                }
+            } catch (err) {
+                console.error('Erro ao gerar PIX:', err);
+                alert('Ocorreu uma falha ao gerar o PIX. Redirecionando para o Checkout Oficial...');
+                await redirectToMercadoPago();
+            }
+
+            btn.disabled = false;
+            btn.innerText = 'Gerar PIX de R$ 47,00 Mercado Pago';
         }
 
-        function handleCardSubmit(e) {
+        // Submissão do Formulário de Cartão de Crédito
+        async function handleCardSubmit(e) {
             e.preventDefault();
-            alert('Redirecionando para o ambiente de pagamento seguro do Mercado Pago...');
-            redirectToMercadoPago();
+            await redirectToMercadoPago();
         }
 
+        // Copiar Código PIX Válido
         function copyPixCode() {
             const code = document.getElementById('pixCodeDisplay').innerText;
             navigator.clipboard.writeText(code).then(() => {
-                alert('Código PIX copiado com sucesso!');
+                alert('Código PIX copiado com sucesso! Cole no aplicativo do seu banco.');
             });
         }
 
-        function redirectToMercadoPago() {
-            window.location.href = 'https://www.mercadopago.com.br/';
+        // Redirecionamento Dinâmico para Checkout Pro Válido Mercado Pago
+        async function redirectToMercadoPago() {
+            const activeBtn = event?.currentTarget || document.activeElement;
+            if (activeBtn) activeBtn.innerText = 'Redirecionando para o Mercado Pago...';
+
+            try {
+                const mpRes = await fetch('https://api.mercadopago.com/checkout/preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + MP_ACCESS_TOKEN,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        items: [{
+                            title: 'O Livro dos Iniciados - Iuri Piragibe',
+                            unit_price: 47.00,
+                            quantity: 1,
+                            currency_id: 'BRL'
+                        }],
+                        back_urls: {
+                            success: 'https://iuripiragibe.net/material-oculto.html?status=success',
+                            failure: 'https://iuripiragibe.net/material-oculto.html?status=failure'
+                        },
+                        auto_return: 'approved'
+                    })
+                });
+
+                const mpData = await mpRes.json();
+                if (mpData.init_point) {
+                    window.location.href = mpData.init_point;
+                    return;
+                }
+            } catch (err) {
+                console.error('Erro ao gerar preferência Mercado Pago:', err);
+            }
+            alert('Não foi possível conectar ao Mercado Pago. Verifique sua conexão.');
         }
     </script>
 </body>
