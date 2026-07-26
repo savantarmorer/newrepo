@@ -73,7 +73,7 @@ export async function handler(event, context) {
     const resData = await res.json();
 
     return {
-      statusCode: res.ok ? 200 : 400,
+      statusCode: 200,
       headers,
       body: JSON.stringify({
         status: res.ok ? 'success' : 'error',
