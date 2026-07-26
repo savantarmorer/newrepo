@@ -1,3 +1,5 @@
+const sentPayments = new Set();
+
 export async function handler(event, context) {
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -15,7 +17,6 @@ export async function handler(event, context) {
     let paymentId = null;
     const query = event.queryStringParameters || {};
     
-    // Extrair ID do pagamento (IPN / Webhook)
     if (query['data.id']) {
       paymentId = query['data.id'];
     } else if (query.id) {
@@ -36,11 +37,9 @@ export async function handler(event, context) {
       } catch (e) {}
     }
 
-    // Se for um ID real e não o teste genérico '123456'
-    // Se for simulação de teste direto do site
     if (paymentId === 'test_approved_simulation') {
       const simEmail = query.email || 'iuri@piragibe.com.br';
-      await sendAccessEmail(simEmail, 'Cliente Teste');
+      await sendAccessEmail(simEmail, 'Cliente Teste', 'test_approved_simulation');
     } else if (paymentId && paymentId !== '123456') {
       try {
         const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
@@ -56,7 +55,7 @@ export async function handler(event, context) {
 
           if (paymentData.status === 'approved' && targetEmail) {
             console.log(`[IPN / Webhook] Pagamento ${paymentId} aprovado! Enviando acesso para ${targetEmail}...`);
-            await sendAccessEmail(targetEmail, targetName);
+            await sendAccessEmail(targetEmail, targetName, paymentId);
           }
         }
       } catch (err) {
@@ -64,7 +63,6 @@ export async function handler(event, context) {
       }
     }
 
-    // Retorna SEMPRE 200 OK com status 'ok' para validação imediata do teste no Mercado Pago
     return {
       statusCode: 200,
       headers,
@@ -80,14 +78,19 @@ export async function handler(event, context) {
   }
 }
 
-async function sendAccessEmail(toEmail, name) {
+async function sendAccessEmail(toEmail, name, paymentId) {
+  if (paymentId && sentPayments.has(paymentId)) {
+    console.log(`[Email Deduplication] Pagamento ${paymentId} já processado anteriormente. Ignorando reenvio.`);
+    return { success: true, deduplicated: true };
+  }
+
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
     console.log(`[Email Simulation] RESEND_API_KEY ausente. Não foi possível enviar para ${toEmail}`);
     return { success: false, reason: 'RESEND_API_KEY ausente no Netlify' };
   }
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'Iuri Piragibe <vendas@iuripiragibe.net>';
 
   const buyerHtml = `
     <!DOCTYPE html>
@@ -139,11 +142,11 @@ async function sendAccessEmail(toEmail, name) {
             <p>Parabéns, Iuri! Uma nova compra foi realizada e aprovada no seu site:</p>
             <ul style="background: #27272a; padding: 15px 25px; border-radius: 8px; line-height: 1.8;">
                 <li><strong>Cliente:</strong> ${name}</li>
-                <li><strong>E-mail:</strong> ${toEmail}</li>
+                <li><strong>E-mail do Comprador:</strong> ${toEmail}</li>
                 <li><strong>Valor:</strong> R$ 99,90</li>
                 <li><strong>Produto:</strong> O Livro dos Iniciados + Deusa da Discórdia + Acervo 20k Docs</li>
             </ul>
-            <p style="font-size: 0.85rem; color: #a1a1aa;">Os e-mails de acesso contendo os 2 livros em PDF, o link do Google Drive e a comunidade do Discord já foram entregues ao comprador automaticamente.</p>
+            <p style="font-size: 0.85rem; color: #a1a1aa;">Os e-mails de acesso contendo os 2 livros em PDF, o link do Google Drive e a comunidade do Discord já foram entregues ao comprador (${toEmail}) automaticamente.</p>
         </div>
     </body>
     </html>
@@ -178,12 +181,11 @@ async function sendAccessEmail(toEmail, name) {
         body: JSON.stringify({
           from: fromEmail,
           to: ['iuri@piragibe.com.br'],
-          subject: `🚨 NOVA VENDA (R$ 99,90): ${name} (${toEmail})`,
+          subject: `🚨 NOVA VENDA CONFIRMADA (R$ 99,90): ${name} (${toEmail})`,
           html: sellerHtml
         })
       }).catch(() => {});
-    }
-
+    if (paymentId) sentPayments.add(paymentId);
     return { success: resBuyer.ok, data: buyerData };
   } catch(err) {
     return { success: false, error: err.message };
