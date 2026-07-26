@@ -26,5 +26,11 @@
   to = "/.netlify/functions/oauth-callback"
   status = 200
 
+[[redirects]]
+  from = "/api/test-email"
+  to = "/.netlify/functions/test-email"
+  status = 200
+
+
 
 

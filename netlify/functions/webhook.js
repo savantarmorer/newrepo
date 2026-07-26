@@ -80,9 +80,11 @@ export async function handler(event, context) {
 async function sendAccessEmail(toEmail, name) {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    console.log(`[Email Simulation] Enviando acesso para ${toEmail}`);
-    return;
+    console.log(`[Email Simulation] RESEND_API_KEY ausente. Não foi possível enviar para ${toEmail}`);
+    return { success: false, reason: 'RESEND_API_KEY ausente no Netlify' };
   }
+
+  const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -118,17 +120,24 @@ async function sendAccessEmail(toEmail, name) {
     </html>
   `;
 
-  await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${resendApiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      from: 'Iuri Piragibe <vendas@iuripiragibe.net>',
-      to: [toEmail],
-      subject: '📘 Seu Acesso: O Livro dos Iniciados + Acervo Secreto de Documentos',
-      html: htmlContent
-    })
-  });
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        from: fromEmail,
+        to: [toEmail],
+        subject: '📘 Seu Acesso: O Livro dos Iniciados + Acervo Secreto de Documentos',
+        html: htmlContent
+      })
+    });
+
+    const resData = await res.json();
+    return { success: res.ok, data: resData };
+  } catch(err) {
+    return { success: false, error: err.message };
+  }
 }
