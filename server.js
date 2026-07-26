@@ -194,6 +194,48 @@ app.post('/api/create-preference', async (req, res) => {
   }
 });
 
+// ── Mercado Pago API: Endpoint de Geração de PIX ───────────────────────────
+app.post('/api/create-pix', async (req, res) => {
+  try {
+    const { title = 'O Livro dos Iniciados - Iuri Piragibe', price = 47.00, email, name, cpf } = req.body || {};
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+
+    const nameParts = (name || 'Cliente Leitor').trim().split(' ');
+    const firstName = nameParts[0] || 'Cliente';
+    const lastName = nameParts.slice(1).join(' ') || 'Leitor';
+    const cleanCpf = (cpf || '19100000000').replace(/\D/g, '');
+
+    const mpResponse = await fetch('https://api.mercadopago.com/v1/payments', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'X-Idempotency-Key': 'pix-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
+      },
+      body: JSON.stringify({
+        transaction_amount: Number(price),
+        description: title,
+        payment_method_id: 'pix',
+        payer: {
+          email: email || 'cliente@exemplo.com',
+          first_name: firstName,
+          last_name: lastName,
+          identification: {
+            type: 'CPF',
+            number: cleanCpf.length === 11 ? cleanCpf : '19100000000'
+          }
+        }
+      })
+    });
+
+    const data = await mpResponse.json();
+    res.json(data);
+  } catch (error) {
+    console.error('[MercadoPago PIX Error]', error);
+    res.status(500).json({ error: 'Erro ao gerar PIX no Mercado Pago' });
+  }
+});
+
 // --- Participação cívica: rotas antes do static e do catch-all ---
 
 const enviarLimite = rateLimit({

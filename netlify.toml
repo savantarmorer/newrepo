@@ -1,0 +1,12 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/api/create-pix"
+  to = "/.netlify/functions/create-pix"
+  status = 200
+
+[[redirects]]
+  from = "/api/create-preference"
+  to = "/.netlify/functions/create-preference"
+  status = 200

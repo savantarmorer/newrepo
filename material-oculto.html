@@ -854,7 +854,7 @@
 
         const MP_ACCESS_TOKEN = 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
 
-        // Geração do PIX em Tempo Real via Mercado Pago API
+        // Geração do PIX em Tempo Real no Próprio Site (sem erro de CORS)
         async function handlePixSubmit(e) {
             e.preventDefault();
             const btn = document.getElementById('btnPixSubmit');
@@ -872,59 +872,82 @@
                 return;
             }
 
-            const nameParts = name.split(' ');
-            const firstName = nameParts[0] || 'Cliente';
-            const lastName = nameParts.slice(1).join(' ') || 'Leitor';
+            // Endpoints backend para evitar bloqueio de CORS do navegador
+            const apiEndpoints = [
+                '/.netlify/functions/create-pix',
+                '/api/create-pix'
+            ];
 
-            try {
-                const mpRes = await fetch('https://api.mercadopago.com/v1/payments', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + MP_ACCESS_TOKEN,
-                        'Content-Type': 'application/json',
-                        'X-Idempotency-Key': 'pix-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
-                    },
-                    body: JSON.stringify({
-                        transaction_amount: 47.00,
-                        description: 'O Livro dos Iniciados - Iuri Piragibe',
-                        payment_method_id: 'pix',
-                        payer: {
+            let data = null;
+            for (const endpoint of apiEndpoints) {
+                try {
+                    const res = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: 'O Livro dos Iniciados - Iuri Piragibe',
+                            price: 47.00,
                             email: email,
-                            first_name: firstName,
-                            last_name: lastName,
-                            identification: {
-                                type: 'CPF',
-                                number: cpf
-                            }
-                        }
-                    })
-                });
-
-                const data = await mpRes.json();
-
-                if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
-                    const txData = data.point_of_interaction.transaction_data;
-                    const qrImg = document.getElementById('pixQrCodeImg');
-                    
-                    if (txData.qr_code_base64) {
-                        qrImg.src = 'data:image/png;base64,' + txData.qr_code_base64;
-                    } else {
-                        qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(txData.qr_code);
+                            name: name,
+                            cpf: cpf
+                        })
+                    });
+                    if (res.ok) {
+                        data = await res.json();
+                        if (data && (data.point_of_interaction || data.qr_code)) break;
                     }
-
-                    document.getElementById('pixCodeDisplay').innerText = txData.qr_code;
-                    btn.style.display = 'none';
-                    document.getElementById('pixResultContainer').style.display = 'block';
-                    return;
-                } else if (data.message) {
-                    alert('Mercado Pago: ' + (data.message || 'Verifique o CPF informado.'));
-                }
-            } catch (err) {
-                console.error('Erro ao gerar PIX:', err);
-                alert('Ocorreu uma falha ao gerar o PIX. Redirecionando para o Checkout Oficial...');
-                await redirectToMercadoPago();
+                } catch(err) {}
             }
 
+            // Fallback direto via API
+            if (!data || !data.point_of_interaction) {
+                try {
+                    const nameParts = name.split(' ');
+                    const firstName = nameParts[0] || 'Cliente';
+                    const lastName = nameParts.slice(1).join(' ') || 'Leitor';
+                    const mpRes = await fetch('https://api.mercadopago.com/v1/payments', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + MP_ACCESS_TOKEN,
+                            'Content-Type': 'application/json',
+                            'X-Idempotency-Key': 'pix-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9)
+                        },
+                        body: JSON.stringify({
+                            transaction_amount: 47.00,
+                            description: 'O Livro dos Iniciados - Iuri Piragibe',
+                            payment_method_id: 'pix',
+                            payer: {
+                                email: email,
+                                first_name: firstName,
+                                last_name: lastName,
+                                identification: { type: 'CPF', number: cpf }
+                            }
+                        })
+                    });
+                    data = await mpRes.json();
+                } catch(err) {
+                    console.error('Erro na chamada direta:', err);
+                }
+            }
+
+            if (data && data.point_of_interaction && data.point_of_interaction.transaction_data) {
+                const txData = data.point_of_interaction.transaction_data;
+                const qrImg = document.getElementById('pixQrCodeImg');
+                
+                if (txData.qr_code_base64) {
+                    qrImg.src = 'data:image/png;base64,' + txData.qr_code_base64;
+                } else {
+                    qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(txData.qr_code);
+                }
+
+                document.getElementById('pixCodeDisplay').innerText = txData.qr_code;
+                btn.style.display = 'none';
+                document.getElementById('pixResultContainer').style.display = 'block';
+                return;
+            }
+
+            alert('Não foi possível gerar o PIX automaticamente. Redirecionando para o Checkout Oficial do Mercado Pago...');
+            await redirectToMercadoPago();
             btn.disabled = false;
             btn.innerText = 'Gerar PIX de R$ 47,00 Mercado Pago';
         }
