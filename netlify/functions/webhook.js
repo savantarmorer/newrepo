@@ -10,7 +10,7 @@ export async function handler(event, context) {
   }
 
   try {
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-4692020958918626-072604-2191846a86b3a5d90480a83c5b83d9e6-3569357018';
     
     let paymentId = null;
     const query = event.queryStringParameters || {};

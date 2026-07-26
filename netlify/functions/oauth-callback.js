@@ -53,7 +53,7 @@ export async function handler(event, context) {
     }
 
     // Se o código foi recebido, efetua a troca pelo Access Token com o Mercado Pago
-    const clientId = process.env.MERCADO_PAGO_CLIENT_ID || '2033396332836975';
+    const clientId = process.env.MERCADO_PAGO_CLIENT_ID || '4692020958918626';
     const clientSecret = process.env.MERCADO_PAGO_CLIENT_SECRET || '1djbl8tpfq5t2r4GqLasSYJodPtS07kV';
     const redirectUri = 'https://iuripiragibe.net/api/oauth/callback';
 

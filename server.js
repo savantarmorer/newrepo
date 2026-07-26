@@ -198,7 +198,7 @@ app.post('/api/create-preference', async (req, res) => {
 app.post('/api/create-pix', async (req, res) => {
   try {
     const { title = 'O Livro dos Iniciados - Iuri Piragibe', price = 99.90, email, name, cpf } = req.body || {};
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-4692020958918626-072604-2191846a86b3a5d90480a83c5b83d9e6-3569357018';
 
     const nameParts = (name || 'Cliente Leitor').trim().split(' ');
     const firstName = nameParts[0] || 'Cliente';
@@ -241,7 +241,7 @@ app.post('/api/create-pix', async (req, res) => {
 app.get('/api/check-payment', async (req, res) => {
   try {
     const paymentId = req.query.id;
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-4692020958918626-072604-2191846a86b3a5d90480a83c5b83d9e6-3569357018';
 
     if (!paymentId) return res.status(400).json({ error: 'ID ausente' });
 
@@ -291,7 +291,7 @@ const handleMercadoPagoIPN = async (req, res) => {
       if (match) paymentId = match[1];
     }
 
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-4692020958918626-072604-2191846a86b3a5d90480a83c5b83d9e6-3569357018';
 
     if (paymentId && paymentId !== '123456') {
       try {
