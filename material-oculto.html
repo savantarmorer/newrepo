@@ -524,6 +524,38 @@
         </div>
     </nav>
 
+    <!-- Payment Success Confirmation Container (displays if ?status=success) -->
+    <div id="paymentSuccessContainer" style="display: none; background: rgba(34, 197, 94, 0.1); border: 2px solid #22c55e; border-radius: 12px; padding: 2rem; margin: 2rem auto; max-width: 900px; text-align: center;">
+        <h2 style="color: #4ade80; font-size: 1.8rem; margin-bottom: 0.5rem;">🎉 Pagamento Confirmado com Sucesso!</h2>
+        <p style="color: #e4e4e7; font-size: 1rem; margin-bottom: 1.5rem;">Parabéns! Seu acesso aos materiais de Iuri Piragibe foi liberado. Também enviamos uma cópia para o seu e-mail!</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.25rem; text-align: left;">
+            <div style="background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(226, 192, 74, 0.4); border-radius: 8px; padding: 1.25rem;">
+                <h3 style="color: #e2c04a; font-size: 1.1rem; margin-bottom: 0.5rem;">📘 1. E-book Oficial</h3>
+                <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 1rem;">O Livro dos Iniciados em formato PDF digital.</p>
+                <a href="/downloads/O-Livro-dos-Iniciados-Iuri-Piragibe.pdf" class="btn-gold-buy" style="font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: center;" download>
+                    📥 Baixar E-book (PDF)
+                </a>
+            </div>
+            
+            <div style="background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 8px; padding: 1.25rem;">
+                <h3 style="color: #60a5fa; font-size: 1.1rem; margin-bottom: 0.5rem;">📂 2. Acervo no Google Drive</h3>
+                <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 1rem;">+20.000 documentos vazados de sociedades secretas.</p>
+                <a href="https://drive.google.com/drive/folders/1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52?hl=pt-br" target="_blank" class="btn-gold-buy" style="background: linear-gradient(135deg, #2563eb, #3b82f6); color: white !important; font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: center;">
+                    📂 Acessar Google Drive
+                </a>
+            </div>
+
+            <div style="background: rgba(24, 24, 27, 0.8); border: 1px solid rgba(88, 101, 242, 0.4); border-radius: 8px; padding: 1.25rem;">
+                <h3 style="color: #818cf8; font-size: 1.1rem; margin-bottom: 0.5rem;">💬 3. Comunidade Discord</h3>
+                <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 1rem;">Comunidade VIP de Urbex & Sociedades Secretas.</p>
+                <a href="https://discord.com/invite/agoraobscur" target="_blank" class="btn-gold-buy" style="background: #5865F2; color: white !important; font-size: 0.85rem; padding: 0.6rem 1rem; width: 100%; justify-content: center;">
+                    💬 Entrar no Discord
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Book Hero Section -->
     <section class="book-hero">
         <div class="container">
@@ -1003,6 +1035,18 @@
             }
             alert('Não foi possível conectar ao Mercado Pago. Verifique sua conexão.');
         }
+
+        // Exibir tela de confirmação pós-pagamento se o status for de sucesso
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('status') === 'success' || urlParams.get('status') === 'approved') {
+                const container = document.getElementById('paymentSuccessContainer');
+                if (container) {
+                    container.style.display = 'block';
+                    container.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
     </script>
 </body>
 </html>

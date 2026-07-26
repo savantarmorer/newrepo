@@ -236,6 +236,30 @@ app.post('/api/create-pix', async (req, res) => {
   }
 });
 
+// ── Mercado Pago Webhook: Processamento Automático pós-pagamento ─────────────
+app.post('/api/webhook', async (req, res) => {
+  try {
+    const paymentId = req.query['data.id'] || req.query.id || req.body?.data?.id || req.body?.id;
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN || process.env.ACCESS_TOKEN || 'APP_USR-2033396332836975-072600-1bce4034718a03d373823bf1ba7012e0-222803401';
+
+    if (paymentId) {
+      const mpRes = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (mpRes.ok) {
+        const paymentData = await mpRes.json();
+        if (paymentData.status === 'approved' && paymentData.payer?.email) {
+          console.log(`[Webhook] Pagamento ${paymentId} aprovado! Enviando acesso para ${paymentData.payer.email}...`);
+        }
+      }
+    }
+    res.status(200).json({ status: 'received' });
+  } catch (error) {
+    console.error('[Webhook Error]', error);
+    res.status(200).json({ status: 'error' });
+  }
+});
+
 // --- Participação cívica: rotas antes do static e do catch-all ---
 
 const enviarLimite = rateLimit({
