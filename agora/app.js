@@ -249,6 +249,76 @@ function queryOracle() {
   addXP(25, 'Consulta realizada no Oráculo');
 }
 
+// Provocatio Quiz Modal Functions
+function openProvocatioModal() {
+  const modal = document.getElementById('provocatioModal');
+  document.getElementById('provocatioStep1').style.display = 'block';
+  document.getElementById('provocatioStep2').style.display = 'none';
+  document.getElementById('provocatioResult').style.display = 'none';
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeProvocatioModal() {
+  const modal = document.getElementById('provocatioModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function answerProvocatio(step, isCorrect) {
+  if (!isCorrect) {
+    showNotificationToast('⚠️ Resposta incorreta. Lembre-se: O AEON fundamenta-se estritamente em documentos primários.');
+    return;
+  }
+
+  if (step === 1) {
+    document.getElementById('provocatioStep1').style.display = 'none';
+    document.getElementById('provocatioStep2').style.display = 'block';
+  } else if (step === 2) {
+    document.getElementById('provocatioStep2').style.display = 'none';
+    document.getElementById('provocatioResult').style.display = 'block';
+
+    currentUser.level = 4;
+    currentUser.levelTitle = 'Grau IV — Mestre do Ágora';
+    addXP(250, 'Aprovação no teste de Provocatio do AEON');
+  }
+}
+
+// Kanban Modal Functions
+function openKanbanModal() {
+  const modal = document.getElementById('newKanbanModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeKanbanModal() {
+  const modal = document.getElementById('newKanbanModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function submitNewKanbanCard() {
+  const title = (document.getElementById('kanbanTitleInput')?.value || '').trim();
+  const category = document.getElementById('kanbanCategorySelect')?.value || 'SOCIEDADES SECRETAS';
+
+  if (!title) {
+    alert('Por favor, informe o título da pauta.');
+    return;
+  }
+
+  const firstCol = document.querySelector('.kanban-col');
+  if (firstCol) {
+    const cardHtml = `
+      <div class="kanban-card">
+        <span class="kanban-tag" style="background: rgba(201,162,39,0.2); color: #facc15;">${category}</span>
+        <strong style="color: #fff; display: block; margin-bottom: 0.3rem;">${title}</strong>
+        <p style="font-size: 0.78rem; color: var(--text-muted);">Sugerido por ${currentUser.name} • Em análise documental.</p>
+      </div>
+    `;
+    firstCol.insertAdjacentHTML('beforeend', cardHtml);
+  }
+
+  addXP(100, 'Criou nova pauta investigativa');
+  showNotificationToast('📋 Pauta adicionada ao mural com sucesso!');
+  closeKanbanModal();
+}
+
 // Register SW
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/agora/sw.js')
