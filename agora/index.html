@@ -92,6 +92,8 @@
         <!-- Hub Tabs Navigation -->
         <nav class="hub-tabs">
             <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">🏆 Dashboard & Gamificação</button>
+            <button class="tab-btn" data-tab="feed" onclick="switchTab('feed')">⚡ Feed Cross-Plataforma</button>
+            <button class="tab-btn" data-tab="aeon" onclick="switchTab('aeon')" style="background: rgba(201, 162, 39, 0.15); border: 1px solid #c9a227; color: #facc15;">👁️ Ordem AEON (Círculo Interno)</button>
             <button class="tab-btn" data-tab="agenda" onclick="switchTab('agenda')">📅 Agenda de Eventos</button>
             <button class="tab-btn" data-tab="kanban" onclick="switchTab('kanban')">📋 Mural de Dossiês</button>
             <button class="tab-btn" data-tab="acervo" onclick="switchTab('acervo')">🔍 Acervo Google Drive</button>
@@ -286,6 +288,83 @@
                         </div>
                         <div class="leader-xp">1.210 XP</div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: FEED CROSS-PLATAFORMA -->
+        <div id="panel-feed" class="tab-content-panel" style="display: none;">
+            <div class="card-box">
+                <div class="card-title">⚡ Linha do Tempo Unificada (YouTube • Instagram • Drive • Discord)</div>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.3); border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                            <span style="color: #f87171; font-weight: 800; font-size: 0.8rem;">▶ YOUTUBE • VÍDEO NOVO</span>
+                            <span style="font-size: 0.75rem; color: #a1a1aa;">Há 2 horas</span>
+                        </div>
+                        <h4 style="color: #fff; font-size: 1rem; margin-bottom: 0.4rem;">O Ritual Secreto de Passagem da Nova Acrópole</h4>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 0.75rem;">Apuração exclusiva revelando os textos originais das Forças Vivas e os mantras diários estipulados no manual interno.</p>
+                        <a href="https://www.youtube.com/@iuripiragibe" target="_blank" onclick="addXP(30, 'Assistiu vídeo do YouTube')" class="btn-push-enable" style="background: #dc2626; color: #fff;">▶ Assistir no YouTube (+30 XP)</a>
+                    </div>
+
+                    <div style="background: rgba(88, 101, 242, 0.1); border: 1px solid rgba(88, 101, 242, 0.3); border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                            <span style="color: #818cf8; font-weight: 800; font-size: 0.8rem;">💬 DISCORD • ANÚNCIO DO ÁGORA</span>
+                            <span style="font-size: 0.75rem; color: #a1a1aa;">Há 4 horas</span>
+                        </div>
+                        <h4 style="color: #fff; font-size: 1rem; margin-bottom: 0.4rem;">Votação Aberta: Escolha o Próximo Dossiê Investigativo</h4>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 0.75rem;">Membros do Grau II ou superior podem votar no canal #enquetes-vip para decidir o próximo tópico de apuração.</p>
+                        <a href="https://discord.com/invite/agoraobscur" target="_blank" onclick="addXP(40, 'Votou na enquete do Discord')" class="btn-push-enable" style="background: #5865f2; color: #fff;">💬 Votar no Discord (+40 XP)</a>
+                    </div>
+
+                    <div style="background: rgba(201, 162, 39, 0.1); border: 1px solid rgba(201, 162, 39, 0.3); border-radius: 8px; padding: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+                            <span style="color: #facc15; font-weight: 800; font-size: 0.8rem;">📂 GOOGLE DRIVE • VAZAMENTO DE DOCUMENTO</span>
+                            <span style="font-size: 0.75rem; color: #a1a1aa;">Ontem</span>
+                        </div>
+                        <h4 style="color: #fff; font-size: 1rem; margin-bottom: 0.4rem;">Atas da Sociedade Eubiose (1974-1988)</h4>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 0.75rem;">Adicionadas 142 páginas digitalizadas do compêndio de decretos da Eubiose no diretório do Drive.</p>
+                        <a href="https://drive.google.com/drive/folders/1zG4yx8B2S1mh7WiFcquCdMGJH_5y6f52?hl=pt-br" target="_blank" onclick="addXP(30, 'Acessou novo documento')" class="btn-push-enable" style="background: #c9a227; color: #000;">📂 Abrir no Drive (+30 XP)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL: ORDEM AEON & CÍRCULO INTERNO -->
+        <div id="panel-aeon" class="tab-content-panel" style="display: none;">
+            <div class="card-box" style="background: linear-gradient(135deg, rgba(201, 162, 39, 0.15), rgba(7, 7, 10, 0.95)); border: 1px solid #c9a227;">
+                <div style="text-align: center; margin-bottom: 1.75rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👁️</div>
+                    <span style="color: #facc15; font-weight: 800; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.1em;">A TRANSIÇÃO PARA A ORDEM SEGRETA</span>
+                    <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0.4rem 0;">A ORDEM AEON</h2>
+                    <p style="font-size: 0.92rem; color: #e4e4e7; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+                        O Ágora é a forja onde reunimos mentes livres e analíticas. Aqueles que comprovam rigor ético, sede de verdade e disciplina intelectual são convocados para ingressar na <strong>Ordem AEON</strong> — uma fraternidade real, discreta e estruturada para além do mundo digital.
+                    </p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.75rem;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.3); border-radius: 10px; padding: 1.25rem;">
+                        <h3 style="color: #facc15; font-size: 1.05rem; margin-bottom: 0.5rem;">📜 I. O Manifesto do AEON</h3>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; line-height: 1.5;">Nossa missão é preservar o conhecimento factual, investigar estruturas de poder sem vieses ideológicos e formar uma rede de apoio fraterno entre buscadores.</p>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.3); border-radius: 10px; padding: 1.25rem;">
+                        <h3 style="color: #facc15; font-size: 1.05rem; margin-bottom: 0.5rem;">📍 II. Capítulos Locais (Presença Física)</h3>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; line-height: 1.5;">Mapeamento de iniciados por capitais para reuniões presenciais periódicas, expedições de exploração histórica e estudos em conjunto.</p>
+                    </div>
+
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(201,162,39,0.3); border-radius: 10px; padding: 1.25rem;">
+                        <h3 style="color: #facc15; font-size: 1.05rem; margin-bottom: 0.5rem;">⚔️ III. A Provocatio (Avaliação Iniciática)</h3>
+                        <p style="font-size: 0.85rem; color: #a1a1aa; line-height: 1.5;">Teste de aptidão composto por 7 questões investigativas e éticas para pleitear acesso ao Círculo Interno.</p>
+                    </div>
+                </div>
+
+                <div style="text-align: center; background: rgba(0,0,0,0.4); padding: 1.25rem; border-radius: 8px; border: 1px solid rgba(201, 162, 39, 0.4);">
+                    <h4 style="color: #fff; font-size: 1.05rem; margin-bottom: 0.5rem;">Pleitear Ingresso no Círculo Interno do AEON</h4>
+                    <p style="font-size: 0.85rem; color: #a1a1aa; margin-bottom: 1rem;">Exigido: Grau III ou superior no Ágora + Leitura de O Livro dos Iniciados</p>
+                    <button onclick="addXP(100, 'Submeteu candidatura para a Ordem AEON'); showNotificationToast('📜 Sua provocatio foi registrada! O Conselho avaliará seu perfil.');" class="btn-discord-login" style="background: linear-gradient(135deg, #c9a227, #facc15); color: #000; font-weight: 900; margin: 0 auto; display: inline-flex;">
+                        ⚔️ Iniciar Teste de Provocatio do AEON (+100 XP)
+                    </button>
                 </div>
             </div>
         </div>
