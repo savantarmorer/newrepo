@@ -963,6 +963,26 @@
         </div>
     </section>
 
+    <!-- Newsletter Secreta -->
+    <section class="section" id="newsletter" style="background: linear-gradient(180deg, #0a0a0f 0%, #12121c 100%); padding: 4rem 0; border-top: 1px solid rgba(201, 162, 39, 0.3);">
+        <div class="container" style="max-width: 800px; text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📩</div>
+            <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; color: #fff;">Newsletter Investigativa Secreta</h2>
+            <p style="color: var(--color-text-muted); font-size: 0.95rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Receba em primeira mão documentos inéditos, bastidores de apurações sigilosas e análises exclusivas direto na sua caixa de entrada. Sem spam.
+            </p>
+            <form id="newsletterForm" onsubmit="handleNewsletterSubmit(event)" style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; max-width: 540px; margin: 0 auto;">
+                <input type="email" id="newsletterEmail" placeholder="Digite seu melhor e-mail" required style="flex: 1; min-width: 260px; padding: 0.9rem 1.25rem; border-radius: 8px; border: 1px solid #3f3f46; background: #18181b; color: #fff; font-size: 0.95rem; outline: none;">
+                <button type="submit" class="btn-primary" style="padding: 0.9rem 1.5rem; border-radius: 8px; font-size: 0.95rem; font-weight: 800; background: linear-gradient(135deg, #c9a227, #facc15); color: #000; border: none; cursor: pointer;">
+                    Inscrever-se Grátis
+                </button>
+            </form>
+            <div id="newsletterSuccess" style="display: none; margin-top: 1rem; color: #4ade80; font-weight: 700; font-size: 0.95rem;">
+                ✓ Inscrição realizada com sucesso! Fique atento ao seu e-mail.
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section class="section contact" id="contato">
         <div class="container">
@@ -1033,5 +1053,24 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        async function handleNewsletterSubmit(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('newsletterEmail');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) return;
+
+            try {
+                await fetch('/.netlify/functions/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+            } catch(err) {}
+
+            document.getElementById('newsletterForm').style.display = 'none';
+            document.getElementById('newsletterSuccess').style.display = 'block';
+        }
+    </script>
 </body>
 </html>

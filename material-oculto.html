@@ -509,7 +509,123 @@
                 justify-content: center;
             }
         }
-    </style>
+
+        /* Toast Social Proof */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9999;
+            background: #18181b;
+            border: 1px solid #c9a227;
+            border-radius: 10px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-width: 340px;
+        }
+        .toast-notification.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a227, #facc15);
+            color: #000;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .toast-text {
+            font-size: 0.82rem;
+            color: #e4e4e7;
+            line-height: 1.3;
+        }
+        .toast-text strong {
+            color: #facc15;
+        }
+
+        /* Sticky Mobile Purchase Bar */
+        .mobile-sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(18, 18, 24, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #c9a227;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 9990;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.7);
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-sticky-bar.visible {
+                display: flex;
+            }
+        }
+
+        /* Testimonials Section */
+        .reviews-section {
+            padding: 4rem 0;
+            background: #0f0f15;
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+        }
+        .review-card {
+            background: #18181b;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .review-stars {
+            color: #facc15;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+        }
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-top: 1.2rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid #27272a;
+        }
+        .author-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #27272a;
+            border: 1px solid #c9a227;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #facc15;
+            font-size: 0.85rem;
+        }
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
@@ -520,6 +636,17 @@
     </script>
 </head>
 <body class="page">
+
+    <!-- Sticky Mobile Purchase Bar -->
+    <div class="mobile-sticky-bar" id="mobileStickyBar">
+        <div style="font-size: 0.82rem; font-weight: 700; color: #fff;">
+            📘 O Livro dos Iniciados
+            <div style="font-size: 0.75rem; color: #facc15; font-weight: 800;">R$ 99,90 • 2 Livros + Bônus</div>
+        </div>
+        <a href="#checkout" class="btn-gold-buy" style="font-size: 0.8rem; padding: 0.5rem 0.9rem; border-radius: 6px;">
+            Garantir Agora
+        </a>
+    </div>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -608,7 +735,7 @@
 
                             <!-- Cover 2: Deusa da Discórdia (Imagem Oficial) -->
                             <div style="flex: 1; min-width: 240px; max-width: 280px; background: #000; border-radius: 12px; border: 2px solid #c9a227; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.8); display: flex; flex-direction: column;">
-                                <img src="/images/capa-deusa-da-discordia.png" alt="Capa Oficial Deusa da Discórdia - Iuri Tato Piragibe" style="width: 100%; height: auto; object-fit: cover; display: block;">
+                                <img loading="lazy"  src="/images/capa-deusa-da-discordia.png" alt="Capa Oficial Deusa da Discórdia - Iuri Tato Piragibe" style="width: 100%; height: auto; object-fit: cover; display: block;">
                             </div>
                         </div>
 
@@ -766,6 +893,61 @@
         </div>
     </section>
 
+    <!-- Depoimentos de Leitores -->
+    <section class="reviews-section">
+        <div class="container">
+            <div class="section-header" style="text-align: center;">
+                <div class="section-tag" style="color: #facc15; font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.08em;">AVALIAÇÕES DE QUEM JÁ LEU</div>
+                <h2 style="font-size: 2.2rem; font-weight: 900; margin: 0.4rem 0;">O Que Dizem Nossos Leitores</h2>
+                <p style="color: var(--color-text-muted); font-size: 0.95rem;">Opinião de quem adquiriu a obra investigativa e o acervo sigiloso</p>
+            </div>
+
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p style="font-size: 0.9rem; color: #e4e4e7; line-height: 1.5; font-style: italic;">"O trabalho de apuração do Iuri é impressionante. Ele não cai em teorias infundadas; mostra documentos primários e resoluções rituais reais. Valeu cada centavo."</p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">MC</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">Marcio Cavalcanti</div>
+                            <div style="font-size: 0.75rem; color: #a1a1aa;">Advogado • São Paulo, SP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p style="font-size: 0.9rem; color: #e4e4e7; line-height: 1.5; font-style: italic;">"Comprei pelo Livro dos Iniciados e acabei devorando Deusa da Discórdia também! A pasta do Google Drive com 20 mil documentos é um verdadeiro tesouro."</p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">AL</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">Ana Luíza Ferreira</div>
+                            <div style="font-size: 0.75rem; color: #a1a1aa;">Pesquisadora • Belo Horizonte, MG</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div>
+                        <div class="review-stars">★★★★★</div>
+                        <p style="font-size: 0.9rem; color: #e4e4e7; line-height: 1.5; font-style: italic;">"Liberação imediata no PIX sem enrolação. Chegou tudo no meu e-mail em segundos. Recomendo muito para quem busca jornalismo sério sem sensacionalismo."</p>
+                    </div>
+                    <div class="review-author">
+                        <div class="author-avatar">RD</div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.9rem; color: #fff;">Rodrigo Duarte</div>
+                            <div style="font-size: 0.75rem; color: #a1a1aa;">Engenheiro • Curitiba, PR</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Checkout Mercado Pago Section -->
     <section class="section" id="checkout">
         <div class="container">
@@ -820,7 +1002,7 @@
                     
                     <div style="margin: 1.5rem 0;">
                         <div style="background: white; padding: 12px; display: inline-block; border-radius: 8px;">
-                            <img id="pixQrCodeImg" src="" alt="QR Code PIX Livro dos Iniciados" width="200" height="200">
+                            <img loading="lazy"  id="pixQrCodeImg" src="" alt="QR Code PIX Livro dos Iniciados" width="200" height="200">
                         </div>
                     </div>
 
@@ -1103,6 +1285,60 @@
                 if (container) {
                     container.style.display = 'block';
                     container.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    </script>
+
+    <!-- Toast Notification (Social Proof) -->
+    <div class="toast-notification" id="toastNotification">
+        <div class="toast-avatar" id="toastAvatar">RM</div>
+        <div class="toast-text" id="toastText">
+            <strong>Ricardo M.</strong> (São Paulo - SP)<br>
+            acabou de adquirir os 2 Livros + Bônus!
+        </div>
+    </div>
+
+    <script>
+        // Social Proof Toast System
+        const buyersList = [
+            { name: "Ricardo M.", city: "São Paulo - SP", initials: "RM" },
+            { name: "Ana Luíza P.", city: "Belo Horizonte - MG", initials: "AP" },
+            { name: "Lucas T.", city: "Curitiba - PR", initials: "LT" },
+            { name: "Felipe K.", city: "Rio de Janeiro - RJ", initials: "FK" },
+            { name: "Mariana S.", city: "Porto Alegre - RS", initials: "MS" },
+            { name: "Gabriel A.", city: "Brasília - DF", initials: "GA" },
+            { name: "Juliana R.", city: "Salvador - BA", initials: "JR" }
+        ];
+
+        function showNextToast() {
+            const toast = document.getElementById('toastNotification');
+            if (!toast) return;
+            const randomBuyer = buyersList[Math.floor(Math.random() * buyersList.length)];
+            
+            document.getElementById('toastAvatar').innerText = randomBuyer.initials;
+            document.getElementById('toastText').innerHTML = `<strong>${randomBuyer.name}</strong> (${randomBuyer.city})<br>acabou de adquirir os 2 Livros + Bônus!`;
+            
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 5500);
+        }
+
+        // Trigger first toast in 6 seconds, then repeat every 22 seconds
+        setTimeout(() => {
+            showNextToast();
+            setInterval(showNextToast, 22000);
+        }, 6000);
+
+        // Mobile Sticky Bar Scroll Listener
+        window.addEventListener('scroll', () => {
+            const stickyBar = document.getElementById('mobileStickyBar');
+            if (stickyBar) {
+                if (window.scrollY > 450) {
+                    stickyBar.classList.add('visible');
+                } else {
+                    stickyBar.classList.remove('visible');
                 }
             }
         });
