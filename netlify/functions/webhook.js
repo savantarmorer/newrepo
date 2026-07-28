@@ -185,6 +185,8 @@ async function sendAccessEmail(toEmail, name, paymentId) {
           html: sellerHtml
         })
       }).catch(() => {});
+    }
+
     if (paymentId) sentPayments.add(paymentId);
     return { success: resBuyer.ok, data: buyerData };
   } catch(err) {
