@@ -194,6 +194,9 @@
         </div>
     </nav>
 
+    <!-- Reading Progress Bar -->
+    <div id="readingProgress" style="position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #c9a227, #facc15); width: 0%; z-index: 10000; transition: width 0.1s ease;"></div>
+
     <!-- Page Hero -->
     <section class="page-hero">
         <div class="container">
@@ -203,6 +206,22 @@
                 Artigos profundos sobre urban exploration, sociedades secretas, política brasileira, 
                 true crime e filosofia. Conteúdo exclusivo baseado em investigações jornalísticas.
             </p>
+
+            <!-- Search Bar & Filter Chips -->
+            <div style="margin-top: 2rem; max-width: 650px; margin-left: auto; margin-right: auto;">
+                <div style="position: relative; margin-bottom: 1.2rem;">
+                    <input type="text" id="blogSearchInput" oninput="filterBlogArticles()" placeholder="🔍 Buscar artigos por título, palavra-chave ou tema..." style="width: 100%; padding: 0.9rem 1.25rem 0.9rem 2.8rem; border-radius: 8px; border: 1px solid #3f3f46; background: #18181b; color: #fff; font-size: 0.95rem; outline: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;" id="filterChips">
+                    <button onclick="setBlogCategory('all')" class="chip-btn active" data-category="all" style="background: #c9a227; color: #000; border: none; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer;">Todos os Artigos</button>
+                    <button onclick="setBlogCategory('Urbex')" class="chip-btn" data-category="Urbex" style="background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">#Urbex</button>
+                    <button onclick="setBlogCategory('Maçonaria')" class="chip-btn" data-category="Maçonaria" style="background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">#Maçonaria</button>
+                    <button onclick="setBlogCategory('Sociedades Secretas')" class="chip-btn" data-category="Sociedades Secretas" style="background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">#Sociedades Secretas</button>
+                    <button onclick="setBlogCategory('Política')" class="chip-btn" data-category="Política" style="background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">#Política</button>
+                    <button onclick="setBlogCategory('Elite')" class="chip-btn" data-category="Elite" style="background: #27272a; color: #e4e4e7; border: 1px solid #3f3f46; padding: 0.4rem 0.85rem; border-radius: 20px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">#Bilderberg & Elite</button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -211,7 +230,7 @@
         <div class="container">
             <div class="page-grid">
                 <!-- Main Content -->
-                <main class="blog-main">
+                <main class="blog-main" id="blogMainContainer">
                     <!-- Article 1 -->
                     <article class="blog-article" id="sao-paulo-subterranea" itemscope itemtype="https://schema.org/BlogPosting">
                         <script type="application/ld+json">
@@ -518,23 +537,159 @@
 
                     <div class="sidebar-card">
                         <h3>Redes Sociais</h3>
-                        <div class="social-links">
-                            <a href="https://www.instagram.com/iuripiragibe" target="_blank" class="social-link">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                                </svg>
-                                Instagram
-                            </a>
-                            <a href="https://www.youtube.com/@iuripiragibe" target="_blank" class="social-link">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M23 7l-7 5 7 5V7z"></path>
-                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-                                </svg>
-                                YouTube
-                            </a>
+                    <!-- Article 3 (NEW SEO Article: Opus Dei & Vaticano) -->
+                    <article class="blog-article" id="opus-dei-constituicoes-secretas" itemscope itemtype="https://schema.org/BlogPosting" data-category="Sociedades Secretas">
+                        <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "BlogPosting",
+                            "headline": "Opus Dei e as Constituições Secretas: O Uso do Cilício e a Intervenção Papal",
+                            "description": "Análise documental sobre os estatutos internos da Opus Dei, mortificação corpórea e a reestruturação efetuada pelo Vaticano",
+                            "author": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "datePublished": "2026-06-18",
+                            "dateModified": "2026-06-18",
+                            "url": "https://iuripiragibe.net/blog.html#opus-dei-constituicoes-secretas",
+                            "articleSection": "Sociedades Secretas",
+                            "keywords": "Opus Dei, cilício, constituições secretas, Vaticano, Josemaría Escrivá",
+                            "publisher": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "inLanguage": "pt-BR"
+                        }
+                        </script>
+                        <div class="article-header">
+                            <div class="article-category">Sociedades Secretas</div>
+                            <time class="article-date" datetime="2026-06-18" itemprop="datePublished">18 de Junho, 2026</time>
                         </div>
+                        <h2 class="article-title" itemprop="headline">Opus Dei e as Constituições Secretas: O Uso do Cilício e a Intervenção Papal</h2>
+                        <div class="article-meta">
+                            <span>Por <strong itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Iuri Piragibe</span></strong></span>
+                            <span>•</span>
+                            <span>15 min de leitura</span>
+                        </div>
+                        <div class="article-content" itemprop="articleBody">
+                            <p>
+                                A Opus Dei ("Obra de Deus"), fundada pelo padre espanhol Josemaría Escrivá em 1928, manteve durante décadas constituições internas escritas em latim e com distribuição altamente restrita aos seus membros numerários. A apuração jornalística baseada em arquivos vazados e relatórios canônicos revela a estrutura de disciplina e os pontos de conflito com a Santa Sé.
+                            </p>
+                            <p>
+                                Os manuais internos estipulam normas rigorosas para numerários, incluindo o uso de instrumentos de mortificação corpórea como a <strong>disciplina</strong> (chicote de cordas) e o <strong>cilício</strong> (corrente metálica com pontas voltadas para a pele usada na coxa durante duas horas diárias). Em 2022 e 2023, reformas impostas pelo Papa Francisco alteraram o status jurídico da prelazia pessoal, retirando a obrigatoriedade de bispos na liderança e aumentando a fiscalização financeira do Vaticano.
+                            </p>
+                        </div>
+                        <div class="article-footer">
+                            <a href="/material-oculto.html" class="read-more">Ler Capítulo Completo no Livro dos Iniciados →</a>
+                        </div>
+                    </article>
+
+                    <!-- Article 4 (NEW SEO Article: Maçonaria & Grau Kadosh) -->
+                    <article class="blog-article" id="maconaria-grau-kadosh" itemscope itemtype="https://schema.org/BlogPosting" data-category="Maçonaria">
+                        <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "BlogPosting",
+                            "headline": "Os Rituais Ocultos do Grau Kadosh na Maçonaria: Mito vs. Apuração Documental",
+                            "description": "Exame dos manuais do 30º Grau do Rito Escocês Antigo e Aceito, a lenda da vingança dos Templários e a farsa de Léo Taxil",
+                            "author": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "datePublished": "2026-05-22",
+                            "dateModified": "2026-05-22",
+                            "url": "https://iuripiragibe.net/blog.html#maconaria-grau-kadosh",
+                            "articleSection": "Maçonaria",
+                            "keywords": "Maçonaria, Grau Kadosh, REAA, 30 grau, Léo Taxil, rituais maçônicos",
+                            "publisher": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "inLanguage": "pt-BR"
+                        }
+                        </script>
+                        <div class="article-header">
+                            <div class="article-category">Maçonaria</div>
+                            <time class="article-date" datetime="2026-05-22" itemprop="datePublished">22 de Maio, 2026</time>
+                        </div>
+                        <h2 class="article-title" itemprop="headline">Os Rituais Ocultos do Grau Kadosh na Maçonaria: Mito vs. Apuração Documental</h2>
+                        <div class="article-meta">
+                            <span>Por <strong itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Iuri Piragibe</span></strong></span>
+                            <span>•</span>
+                            <span>18 min de leitura</span>
+                        </div>
+                        <div class="article-content" itemprop="articleBody">
+                            <p>
+                                O 30º Grau do Rito Escocês Antigo e Aceito (REAA), denominado <em>Cavaleiro Kadosh</em>, é historicamente cercado de simbolismo político e acusações de anticlericalismo. O estudo documental dos rituais originais demonstra o simbolismo da espada e da tiara pontifícia, associados ao julgamento mitológico de Filipe, o Belo, e do Papa Clemente V pela destruição da Ordem dos Templários em 1312.
+                            </p>
+                            <p>
+                                A investigação desmistifica a célebre farsa de Léo Taxil do final do século XIX — uma elaborada fraude jornalística que inventou o culto a <em>Baphomet</em> nas lojas maçônicas e enganou o alto clero europeu durante doze anos —, reestabelecendo a fronteira entre os ritos iniciáticos de cavalaria e as lendas populares.
+                            </p>
+                        </div>
+                        <div class="article-footer">
+                            <a href="/material-oculto.html" class="read-more">Baixar Dossiê no Livro dos Iniciados →</a>
+                        </div>
+                    </article>
+
+                    <!-- Article 5 (NEW SEO Article: Clube Bilderberg) -->
+                    <article class="blog-article" id="clube-bilderberg-elite" itemscope itemtype="https://schema.org/BlogPosting" data-category="Elite">
+                        <script type="application/ld+json">
+                        {
+                            "@context": "https://schema.org",
+                            "@type": "BlogPosting",
+                            "headline": "Bilderberg e as Reuniões de Elite Global: A Regra de Chatham House e a Ata Confirmada",
+                            "description": "Análise jornalística das atas do Clube Bilderberg, seus fundadores e a influência na diplomacia ocidental",
+                            "author": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "datePublished": "2026-04-10",
+                            "dateModified": "2026-04-10",
+                            "url": "https://iuripiragibe.net/blog.html#clube-bilderberg-elite",
+                            "articleSection": "Elite & Geopolítica",
+                            "keywords": "Clube Bilderberg, Chatham House, elite global, geopolítica, Prince Bernhard",
+                            "publisher": {
+                                "@type": "Person",
+                                "name": "Iuri Piragibe",
+                                "url": "https://iuripiragibe.net"
+                            },
+                            "inLanguage": "pt-BR"
+                        }
+                        </script>
+                        <div class="article-header">
+                            <div class="article-category">Elite & Geopolítica</div>
+                            <time class="article-date" datetime="2026-04-10" itemprop="datePublished">10 de Abril, 2026</time>
+                        </div>
+                        <h2 class="article-title" itemprop="headline">Bilderberg e as Reuniões de Elite Global: A Regra de Chatham House e a Ata Confirmada</h2>
+                        <div class="article-meta">
+                            <span>Por <strong itemprop="author" itemscope itemtype="https://schema.org/Person"><span itemprop="name">Iuri Piragibe</span></strong></span>
+                            <span>•</span>
+                            <span>14 min de leitura</span>
+                        </div>
+                        <div class="article-content" itemprop="articleBody">
+                            <p>
+                                Desde a sua primeira conferência no Hotel de Bilderberg, na Holanda, em 1954, o grupo reúne anualmente cerca de 130 líderes políticos, banqueiros, CEOs de tecnologia e chefes de estado da Europa e América do Norte. As reuniões ocorrem sob a estrita <strong>Regra de Chatham House</strong>: os participantes são livres para usar a informação recebida, mas não podem revelar a identidade nem a afiliação dos palestrantes.
+                            </p>
+                            <p>
+                                A revelação de documentos desclassificados confirma o envolvimento inicial do Príncipe Bernardo da Holanda e o financiamento da fundação Ford no pós-guerra, esclarecendo como o fórum serviu para alinhar o Atlantismo durante a Guerra Fria.
+                            </p>
+                        </div>
+                        <div class="article-footer">
+                            <a href="/material-oculto.html" class="read-more">Acessar Documentos do Bilderberg no Google Drive →</a>
+                        </div>
+                    </article>
+
+                </main>
+                <aside class="blog-sidebar">
+                    <div class="sidebar-widget author-widget">
+                        <h3>Sobre o Autor</h3>
+                        <p>Iuri Piragibe é jornalista investigativo e autor de "O Livro dos Iniciados". Acumula mais de 630 mil seguidores e 6 milhões de visualizações mensais.</p>
+                        <a href="/sobre.html" class="btn-ghost btn-sm" style="margin-top: 1rem; width: 100%; justify-content: center;">Perfil Completo →</a>
                     </div>
                 </aside>
             </div>
@@ -566,5 +721,52 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+        // Blog Search & Category Filter System
+        let currentCategory = 'all';
+
+        function setBlogCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('#filterChips .chip-btn').forEach(btn => {
+                if (btn.getAttribute('data-category') === cat) {
+                    btn.style.background = '#c9a227';
+                    btn.style.color = '#000';
+                } else {
+                    btn.style.background = '#27272a';
+                    btn.style.color = '#e4e4e7';
+                }
+            });
+            filterBlogArticles();
+        }
+
+        function filterBlogArticles() {
+            const query = (document.getElementById('blogSearchInput')?.value || '').toLowerCase().trim();
+            const articles = document.querySelectorAll('.blog-article');
+
+            articles.forEach(art => {
+                const title = art.querySelector('.article-title')?.innerText.toLowerCase() || '';
+                const content = art.querySelector('.article-content')?.innerText.toLowerCase() || '';
+                const category = art.getAttribute('data-category') || art.querySelector('.article-category')?.innerText || '';
+
+                const matchesQuery = !query || title.includes(query) || content.includes(query) || category.toLowerCase().includes(query);
+                const matchesCat = currentCategory === 'all' || category.toLowerCase().includes(currentCategory.toLowerCase());
+
+                if (matchesQuery && matchesCat) {
+                    art.style.display = 'block';
+                } else {
+                    art.style.display = 'none';
+                }
+            });
+        }
+
+        // Reading Progress Indicator
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            const progressBar = document.getElementById('readingProgress');
+            if (progressBar) progressBar.style.width = scrolled + '%';
+        });
+    </script>
 </body>
 </html>
