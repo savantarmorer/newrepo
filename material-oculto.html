@@ -647,6 +647,15 @@
         </a>
     </div>
 
+    <!-- Top Urgency Banner -->
+    <div style="background: linear-gradient(90deg, #7f1d1d, #991b1b, #7f1d1d); color: #fff; padding: 0.5rem 1rem; text-align: center; font-size: 0.85rem; font-weight: 700; border-bottom: 1px solid rgba(239, 68, 68, 0.5); display: flex; align-items: center; justify-content: center; gap: 0.75rem; flex-wrap: wrap; z-index: 10000; relative;">
+        <span>⚡ LOTE PROMOCIONAL DAS DUAS OBRAS:</span>
+        <span style="background: rgba(0,0,0,0.3); padding: 0.2rem 0.6rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2);">
+            🔥 Restam apenas <strong class="stockCounterVal" style="color: #facc15;">14</strong> unidades
+        </span>
+        <span>• Oferta encerra em: <strong class="timerCountdownVal" style="color: #facc15; font-family: monospace; font-size: 0.95rem;">14:59</strong></span>
+    </div>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -757,6 +766,22 @@
                                     • 📖 <strong>Deusa da Discórdia: Livro I</strong> (PDF Sci-Fi & Thriller - 538 pgs)<br>
                                     • 📂 <strong>Acervo no Google Drive</strong> (+20.000 Documentos Vazados)<br>
                                     • 💬 <strong>Comunidade VIP no Discord</strong>
+                                </div>
+                            </div>
+
+                            <!-- Hero Urgency Box -->
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.35); padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; color: #fca5a5; font-size: 0.85rem; font-weight: 700;">
+                                    <span style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #ef4444;"></span>
+                                    Lote Promocional em Encerramento:
+                                </div>
+                                <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                                    <span style="background: rgba(24, 24, 27, 0.9); border: 1px solid #c9a227; padding: 0.3rem 0.75rem; border-radius: 6px; color: #facc15; font-weight: 800; font-size: 0.82rem;">
+                                        📦 Restam <strong class="stockCounterVal">14</strong> vagas
+                                    </span>
+                                    <span style="background: rgba(24, 24, 27, 0.9); border: 1px solid #ef4444; padding: 0.3rem 0.75rem; border-radius: 6px; color: #f87171; font-weight: 800; font-size: 0.82rem; font-family: monospace;">
+                                        ⏳ <strong class="timerCountdownVal">14:59</strong>
+                                    </span>
                                 </div>
                             </div>
 
@@ -955,6 +980,11 @@
                     <span style="color: var(--gold-light); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.08em;">ADQUIRIR PACOTE 2-EM-1 (OS 2 LIVROS + BÔNUS)</span>
                     <h2 style="font-size: 2rem; font-weight: 900; margin: 0.4rem 0;">Adquira o Seu Acesso Completo</h2>
                     <p style="color: var(--color-text-muted); font-size: 0.95rem;">Valor promocional: <strong>R$ 99,90</strong> • Acesso vitalício imediato</p>
+                </div>
+
+                <!-- Checkout Urgency Banner -->
+                <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(201, 162, 39, 0.15)); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 0.85rem 1.25rem; margin-bottom: 1.5rem; text-align: center; color: #fca5a5; font-size: 0.88rem; font-weight: 700;">
+                    ⚠️ ATENÇÃO: Restam apenas <strong class="stockCounterVal" style="color: #facc15; font-size: 1.05rem;">14</strong> pacotes com o Acervo de +20.000 Documentos Vazados. O desconto expira em <strong class="timerCountdownVal" style="color: #facc15; font-family: monospace; font-size: 1.05rem;">14:59</strong>.
                 </div>
 
                 <!-- Tabs de Pagamento -->
@@ -1341,6 +1371,74 @@
                 }
             }
         });
+
+        // Dynamic Stock Counter & Countdown Timer Engine (Perpetual Urgency)
+        (function() {
+            // 1. Stock Units Counter (Persists in sessionStorage per session)
+            let stockUnits = sessionStorage.getItem('sale_units_remaining');
+            if (!stockUnits) {
+                stockUnits = Math.floor(Math.random() * 5) + 12; // Starts between 12 and 16 units
+                sessionStorage.setItem('sale_units_remaining', stockUnits);
+            } else {
+                stockUnits = parseInt(stockUnits, 10);
+            }
+
+            function updateStockDisplay() {
+                document.querySelectorAll('.stockCounterVal').forEach(el => {
+                    el.innerText = stockUnits;
+                });
+            }
+
+            updateStockDisplay();
+
+            // Periodically decrease stock by 1 unit every 35 to 65 seconds down to 3 units
+            function scheduleNextUnitDrop() {
+                const delay = Math.floor(Math.random() * 30000) + 35000;
+                setTimeout(() => {
+                    if (stockUnits > 3) {
+                        stockUnits--;
+                        sessionStorage.setItem('sale_units_remaining', stockUnits);
+                        updateStockDisplay();
+                    }
+                    scheduleNextUnitDrop();
+                }, delay);
+            }
+
+            scheduleNextUnitDrop();
+
+            // 2. Countdown Timer Engine (14 minutes 59 seconds)
+            let remainingSeconds = sessionStorage.getItem('sale_timer_seconds');
+            if (!remainingSeconds) {
+                remainingSeconds = 14 * 60 + 59; // 14:59
+            } else {
+                remainingSeconds = parseInt(remainingSeconds, 10);
+            }
+
+            function formatTime(secs) {
+                const m = Math.floor(secs / 60);
+                const s = secs % 60;
+                return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+            }
+
+            function updateTimerDisplay() {
+                const formatted = formatTime(remainingSeconds);
+                document.querySelectorAll('.timerCountdownVal').forEach(el => {
+                    el.innerText = formatted;
+                });
+            }
+
+            updateTimerDisplay();
+
+            setInterval(() => {
+                if (remainingSeconds > 3) {
+                    remainingSeconds--;
+                } else {
+                    remainingSeconds = 11 * 60 + 42; // Reset smoothly to 11:42 if hits 0 to maintain perpetual urgency
+                }
+                sessionStorage.setItem('sale_timer_seconds', remainingSeconds);
+                updateTimerDisplay();
+            }, 1000);
+        })();
     </script>
 </body>
 </html>
