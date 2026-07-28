@@ -1,0 +1,17 @@
+{
+  "name": "Ágora Obscur — Hub da Comunidade VIP",
+  "short_name": "Hub do Ágora",
+  "description": "Ferramenta paralela e integrada à comunidade do Discord Ágora Obscur por Iuri Piragibe. Gamificação, Eventos, Dossiês e Notificações.",
+  "start_url": "/agora/index.html",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c9a227",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
