@@ -210,6 +210,45 @@ function enablePushNotifications() {
   }
 }
 
+// AEON Credential Card Modal Functions
+function openAeonCardModal() {
+  const modal = document.getElementById('aeonCardModal');
+  const modalName = document.getElementById('modalCardName');
+  if (modalName) modalName.innerText = currentUser.name + ' ' + currentUser.tag;
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAeonCardModal() {
+  const modal = document.getElementById('aeonCardModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Oracle AI Research Assistant Query Handler
+function queryOracle() {
+  const query = (document.getElementById('oracleInput')?.value || '').toLowerCase().trim();
+  const container = document.getElementById('oracleAnswerContainer');
+  const answerText = document.getElementById('oracleAnswerText');
+
+  if (!query) return;
+
+  let answer = "";
+  if (query.includes('chatham') || query.includes('bilderberg')) {
+    answer = "<strong>Regra de Chatham House (Clube Bilderberg):</strong> Estipula que os participantes das reuniões privadas de elite são livres para utilizar as informações recebidas, mas não podem revelar a identidade nem a afiliação política do palestrante. Confirmada pelas atas vazadas de 1954 a 2026.";
+  } else if (query.includes('bite') || query.includes('acrópole') || query.includes('acropole')) {
+    answer = "<strong>Modelo BITE no Manual da Nova Acrópole:</strong> O relatório interno estipula 9 níveis hierárquicos. O nível 4 (Almena) impõe a recitação do mantra 'Fuerzas Vivas' 3 vezes ao dia e punições de autodisciplina em caso de falha.";
+  } else if (query.includes('grau 30') || query.includes('kadosh') || query.includes('maçonaria')) {
+    answer = "<strong>30º Grau (Cavaleiro Kadosh):</strong> O ritual simboliza a justiça histórica contra Filipe IV e o Papa Clemente V pela dissolução da Ordem dos Templários em 1312, desmistificando a fraude do culto a Baphomet criada por Léo Taxil.";
+  } else if (query.includes('cilício') || query.includes('opus dei')) {
+    answer = "<strong>Opus Dei & Mortificação:</strong> O cilício é uma corrente de malha metálica com pontas voltadas para a pele usada na coxa por membros numerários durante duas horas diárias, conforme estipulado nos manuais internos de disciplina.";
+  } else {
+    answer = `<strong>Consulta ao Acervo:</strong> Localizamos 14 documentos correspondentes a "<em>${query}</em>" no diretório do Google Drive. Os decretos e sentenças relacionadas estão disponíveis para leitura no painel do Acervo.`;
+  }
+
+  if (answerText) answerText.innerHTML = answer;
+  if (container) container.style.display = 'block';
+  addXP(25, 'Consulta realizada no Oráculo');
+}
+
 // Register SW
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/agora/sw.js')

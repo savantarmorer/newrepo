@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1331111457225325"
@@ -2103,6 +2103,18 @@ async function doBookmark(f, e) {
     render();
     if (ppData && ppCurrentTab==='grimorio') renderProfile(ppData);
   } catch { /* silencioso */ }
+}
+
+// ABNT Citation Generator
+function copyAbntCitation(docTitle) {
+  const cleanTitle = (docTitle || 'Documento do Acervo').replace(/'/g, "");
+  const citation = `PIRAGIBE, Iuri (Org.). ${cleanTitle}. Acervo Secreto de Documentos do Ágora Obscur, 2026. Disponível em: <https://iuripiragibe.net/biblioteca.html>. Acesso em: ${new Date().toLocaleDateString('pt-BR')}.`;
+  
+  navigator.clipboard.writeText(citation).then(() => {
+    alert(`📄 Citação ABNT copiada para a área de transferência!\n\n${citation}`);
+  }).catch(() => {
+    prompt('Copie a citação ABNT:', citation);
+  });
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────
