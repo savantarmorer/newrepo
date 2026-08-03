@@ -86,13 +86,13 @@
       <div class="text-muted" style="font-size:var(--text-xs);">"A Forja dos Selos da Æon"</div>
     </div>
     <div class="card glass">
-      <div class="num">142 / 200</div>
-      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Arquivos Decifrados</div>
-      <div class="text-muted" style="font-size:var(--text-xs);">Pen Drive misterioso, lote #04</div>
+      <div class="num" id="statSolves">—</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Decifragens Registradas</div>
+      <div class="text-muted" style="font-size:var(--text-xs);">Terminal ARG — Pen Drive Misterioso</div>
     </div>
     <div class="card glass">
-      <div class="num">1.420</div>
-      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Integrantes Ativos</div>
+      <div class="num" id="statOnline">—</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Online no Discord Agora</div>
       <div class="text-muted" style="font-size:var(--text-xs);">Buscadores da Grande Obra</div>
     </div>
   </div>
@@ -128,8 +128,24 @@
 </footer>
 
 <script type="module">
-import { montarNavAuth } from './js/agoraAuth.js';
+import { montarNavAuth, obterProgressoARG } from './js/agoraAuth.js';
 montarNavAuth();
+
+obterProgressoARG().then(progresso => {
+  const total = progresso.reduce((sum, p) => sum + Number(p.total_solves), 0);
+  document.getElementById('statSolves').textContent = total.toLocaleString('pt-BR');
+}).catch(() => { document.getElementById('statSolves').textContent = '0'; });
+
+// Endpoint público do widget do Discord (não exige bot/API própria no ar)
+const guildId = window.AGORA_DISCORD_GUILD_ID || null;
+if (guildId) {
+  fetch(`https://discord.com/api/guilds/${guildId}/widget.json`)
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => { document.getElementById('statOnline').textContent = (data.presence_count ?? 0).toLocaleString('pt-BR'); })
+    .catch(() => { document.getElementById('statOnline').textContent = '—'; });
+} else {
+  document.getElementById('statOnline').textContent = '—';
+}
 </script>
 
 </body>

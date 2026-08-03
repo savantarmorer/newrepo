@@ -68,33 +68,52 @@ montarNavAuth();
 const session = await getSession();
 const listEl = document.getElementById('eventsList');
 
-const { data: events, error } = await sb.from('agora_events').select('*').order('data_evento', { ascending: true });
+const [{ data: manuais, error: err1 }, { data: doDiscord, error: err2 }] = await Promise.all([
+  sb.from('agora_events').select('*'),
+  sb.from('agora_discord_events').select('*').neq('status', 'cancelado'),
+]);
+const error = err1 || err2;
 
-let rsvpIds = new Set();
-if (session && events) {
-  const { data: mine } = await sb.from('agora_event_rsvps').select('event_id').eq('user_id', session.user.id);
-  rsvpIds = new Set((mine || []).map(r => r.event_id));
+// Normaliza as duas fontes num único formato de exibição
+const events = [
+  ...(manuais || []).map(ev => ({ id: ev.id, source: 'manual', titulo: ev.titulo, descricao: ev.descricao, fase: ev.fase, data: ev.data_evento, local: ev.local })),
+  ...(doDiscord || []).map(ev => ({ id: ev.id, source: 'discord', titulo: ev.titulo, descricao: ev.descricao, fase: null, data: ev.data_inicio, local: ev.local })),
+].sort((a, b) => new Date(a.data) - new Date(b.data));
+
+const rsvpTable = { manual: 'agora_event_rsvps', discord: 'agora_discord_event_rsvps' };
+const rsvpColumn = { manual: 'event_id', discord: 'event_id' };
+
+let rsvpIds = new Set(); // chaves "source:id"
+if (session) {
+  const [{ data: m1 }, { data: m2 }] = await Promise.all([
+    sb.from('agora_event_rsvps').select('event_id').eq('user_id', session.user.id),
+    sb.from('agora_discord_event_rsvps').select('event_id').eq('user_id', session.user.id),
+  ]);
+  (m1 || []).forEach(r => rsvpIds.add(`manual:${r.event_id}`));
+  (m2 || []).forEach(r => rsvpIds.add(`discord:${r.event_id}`));
 }
 
 function renderList(items) {
   if (error) { listEl.innerHTML = `<div id="emptyMsg">Não foi possível carregar os eventos (${error.message}).</div>`; return; }
   if (!items.length) { listEl.innerHTML = `<div id="emptyMsg">Nenhum evento nesta fase.</div>`; return; }
   listEl.innerHTML = items.map(ev => {
-    const d = new Date(ev.data_evento);
+    const d = new Date(ev.data);
+    const key = `${ev.source}:${ev.id}`;
+    const going = rsvpIds.has(key);
     return `
-    <div class="card ev-card" data-id="${ev.id}">
+    <div class="card ev-card" data-key="${key}">
       <div class="ev-date">
         <div class="d">${d.getDate()}</div>
         <div class="m">${d.toLocaleString('pt-BR', { month: 'short' })}</div>
       </div>
       <div style="flex:1;">
-        <span class="badge">${ev.fase || 'Egrégora'}</span>
+        <span class="badge">${ev.fase || (ev.source === 'discord' ? 'Sincronizado do Discord' : 'Egrégora')}</span>
         <h3 style="font-size:var(--text-md); margin:var(--space-2) 0 4px;">${ev.titulo}</h3>
         <p class="text-secondary" style="font-size:var(--text-sm);">${ev.descricao || ''}</p>
         <p class="text-muted" style="font-size:var(--text-xs); margin-top:var(--space-2);">${d.toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })} · ${ev.local || 'Discord da Ágora'}</p>
       </div>
-      <button class="btn btn-secondary rsvp-btn ${rsvpIds.has(ev.id) ? 'going' : ''}" data-id="${ev.id}">
-        ${rsvpIds.has(ev.id) ? '✓ Presença' : 'Confirmar'}
+      <button class="btn btn-secondary rsvp-btn ${going ? 'going' : ''}" data-key="${key}">
+        ${going ? '✓ Presença' : 'Confirmar'}
       </button>
     </div>`;
   }).join('');
@@ -102,29 +121,30 @@ function renderList(items) {
   listEl.querySelectorAll('.rsvp-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       if (!session) { window.location.href = 'login.html?next=eventos.html'; return; }
-      const id = btn.dataset.id;
+      const [source, id] = btn.dataset.key.split(':');
+      const table = rsvpTable[source];
       const going = btn.classList.contains('going');
       btn.disabled = true;
       if (going) {
-        await sb.from('agora_event_rsvps').delete().eq('event_id', id).eq('user_id', session.user.id);
-        btn.classList.remove('going'); btn.textContent = 'Confirmar'; rsvpIds.delete(id);
+        await sb.from(table).delete().eq('event_id', id).eq('user_id', session.user.id);
+        btn.classList.remove('going'); btn.textContent = 'Confirmar'; rsvpIds.delete(btn.dataset.key);
       } else {
-        await sb.from('agora_event_rsvps').insert({ event_id: id, user_id: session.user.id });
-        btn.classList.add('going'); btn.textContent = '✓ Presença'; rsvpIds.add(id);
+        await sb.from(table).insert({ event_id: id, user_id: session.user.id });
+        btn.classList.add('going'); btn.textContent = '✓ Presença'; rsvpIds.add(btn.dataset.key);
       }
       btn.disabled = false;
     });
   });
 }
 
-renderList(events || []);
+renderList(events);
 
 document.getElementById('filters').addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return;
   document.querySelectorAll('#filters button').forEach(b => b.classList.remove('active'));
   e.target.classList.add('active');
   const f = e.target.dataset.f;
-  renderList(f === 'todas' ? (events || []) : (events || []).filter(ev => ev.fase === f));
+  renderList(f === 'todas' ? events : events.filter(ev => ev.fase === f));
 });
 </script>
 

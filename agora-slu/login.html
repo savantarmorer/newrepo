@@ -58,6 +58,14 @@ window.entrarGoogle = async () => {
   if (error) document.getElementById('statusMsg').textContent = 'Erro: ' + error.message;
 };
 
+// Trata retorno de erro do OAuth (provedor desativado, acesso negado, etc.)
+const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
+const oauthError = hashParams.get('error_description') || hashParams.get('error');
+if (oauthError) {
+  document.getElementById('statusMsg').textContent = `O ritual foi interrompido: ${decodeURIComponent(oauthError)}`;
+  history.replaceState(null, '', location.pathname + location.search);
+}
+
 // Se já houver sessão ativa (ex: retorno do OAuth), registra login e segue
 const session = await getSession();
 if (session) {

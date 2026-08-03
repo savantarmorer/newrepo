@@ -135,6 +135,19 @@ export async function concluirMissao(userId, missionId) {
   return data;
 }
 
+// ── Prévia real do Discord (canais e mensagens) ─────────────────────
+export async function fetchDiscordChannels() {
+  const res = await fetch(`${AGORA_API_URL}/api/discord/channels`);
+  if (!res.ok) throw new Error(`Falha ao carregar canais do Discord (HTTP ${res.status})`);
+  return res.json();
+}
+
+export async function fetchDiscordMessages() {
+  const res = await fetch(`${AGORA_API_URL}/api/discord/messages`);
+  if (!res.ok) throw new Error(`Falha ao carregar mensagens do Discord (HTTP ${res.status})`);
+  return res.json();
+}
+
 // ── Nav dinâmica ─────────────────────────────────────────────────────
 // Preenche o slot de login/perfil na barra de navegação (elemento com id="navAuthSlot").
 export async function montarNavAuth() {

@@ -83,11 +83,20 @@ import { sb, getSession, getDiscordSync, montarNavAuth } from './js/agoraAuth.js
 montarNavAuth();
 const session = await getSession();
 
-const [{ data: decree }, { data: event }, { data: session_ }] = await Promise.all([
+const now = new Date().toISOString();
+const [{ data: decree }, { data: manualEvent }, { data: discordEvent }, { data: session_ }] = await Promise.all([
   sb.from('agora_decrees').select('*').eq('status', 'aberto').order('fecha_em').limit(1).maybeSingle(),
-  sb.from('agora_events').select('*').gte('data_evento', new Date().toISOString()).order('data_evento').limit(1).maybeSingle(),
-  sb.from('agora_book_club_sessions').select('*').gte('data_sessao', new Date().toISOString()).order('data_sessao').limit(1).maybeSingle(),
+  sb.from('agora_events').select('*').gte('data_evento', now).order('data_evento').limit(1).maybeSingle(),
+  sb.from('agora_discord_events').select('*').gte('data_inicio', now).neq('status', 'cancelado').order('data_inicio').limit(1).maybeSingle(),
+  sb.from('agora_book_club_sessions').select('*').gte('data_sessao', now).order('data_sessao').limit(1).maybeSingle(),
 ]);
+
+// Usa o que vier primeiro entre evento cadastrado manualmente e evento sincronizado do Discord
+const candidates = [
+  manualEvent && { titulo: manualEvent.titulo, fase: manualEvent.fase, data: manualEvent.data_evento },
+  discordEvent && { titulo: discordEvent.titulo, fase: null, data: discordEvent.data_inicio },
+].filter(Boolean).sort((a, b) => new Date(a.data) - new Date(b.data));
+const event = candidates[0] || null;
 
 document.getElementById('phaseBanner').innerHTML = event
   ? `<div class="text-gold" style="font-family:var(--font-display); font-size:var(--text-sm);">${event.fase ? 'FASE: ' + event.fase.toUpperCase() : 'PRÓXIMO EVENTO'}</div>
@@ -110,7 +119,7 @@ if (event) {
   cards.push(`
     <div class="feed-card">
       <div class="who"><svg viewBox="0 0 200 200"><use href="assets/seals.svg#seal-chronos-phanes"/></svg> <span class="text-gold">${event.titulo}</span></div>
-      <p class="text-secondary">${new Date(event.data_evento).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })}</p>
+      <p class="text-secondary">${new Date(event.data).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })}</p>
       <a href="eventos.html"><button class="btn btn-secondary" style="font-size:11px; padding:var(--space-2) var(--space-4); width:100%;">Confirmar Presença</button></a>
     </div>`);
 }

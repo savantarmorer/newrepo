@@ -17,6 +17,7 @@ Runbook operacional para ligar as integrações reais do site. Sem estes passos,
    - **Add Bot**.
    - Em **Privileged Gateway Intents**, ative **Server Members Intent** (obrigatório — é o que permite ler cargos/data de entrada dos membros).
    - Copie o **Token do Bot** (aparece uma vez só — se perder, "Reset Token").
+3b. Aba **Bot** (continuação) — ative também **Message Content Intent** se quiser a prévia de mensagens em `discord.html` (canal configurável em `DISCORD_PREVIEW_CHANNEL_ID` no `server/.env`; sem isso, o widget de membros online continua funcionando normalmente).
 4. Aba **OAuth2 → URL Generator**:
    - Scopes: `bot`.
    - Bot Permissions: `View Channels`, `Read Message History` (mínimo necessário para o bot existir no servidor; a leitura de membros usa a Intent, não permissões de canal).
@@ -61,8 +62,9 @@ No **SQL Editor** do Supabase, nesta ordem:
 
 1. `supabase/agora-migration.sql`
 2. `supabase/agora-migration-v2.sql`
+3. `supabase/agora-migration-v3.sql`
 
-Ambas usam `CREATE TABLE IF NOT EXISTS` — seguro rodar mais de uma vez.
+Todas usam `CREATE TABLE IF NOT EXISTS` — seguro rodar mais de uma vez.
 
 ---
 

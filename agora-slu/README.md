@@ -32,14 +32,14 @@ Sem os passos 2-4, a navegação funciona mas login/gamificação ficam bloquead
 | `eventos.html` | Eventos reais por fase + RSVP |
 | `calendario.html` | Chamadas reais + exportação `.ics` para qualquer calendário |
 | `grafo.html` | Estatísticas agregadas reais (contagens do banco), não números inventados |
-| `discord.html` | Widget oficial do Discord embutido (ao vivo, quando configurado) + exemplo ilustrativo de fluxo de mensagens |
+| `discord.html` | Widget oficial + canais reais (categorias/nomes) + prévia real de mensagens de um canal público (polling 20s) |
 | `mobile.html` | Feed real (próximo decreto/evento/sessão + status de sync do Discord) num frame de celular |
 | `checkout.html` | Registra o pedido de associação de verdade no banco — não processa pagamento (ver limitação abaixo) |
 
 ## O que é genuinamente ilustrativo (e por quê)
 
 - **`index.html`** (copy institucional, números de "prova viva"): página de marketing — números de vaidade são normais aqui, como em qualquer landing page.
-- **`discord.html`** (feed de mensagens de exemplo): o widget real do Discord não expõe histórico de mensagens por API pública; o feed de exemplo mostra o *tom* esperado do canal. O widget acima dele é real.
+- **`discord.html`**: canais, membros online e mensagens agora vêm todos de dados reais via `server/`. A única limitação é que a prévia de mensagens usa polling a cada 20s (REST), não um WebSocket em tempo real — ver `ROADMAP.md`.
 - **Pagamento no `checkout.html`**: nenhum agente automatizado deve mover dinheiro em nome do usuário. O pedido é gravado de verdade; a cobrança (PIX/cartão) é manual até que um gateway de pagamento seja integrado (ver `SETUP_INTEGRACOES.md` §6).
 
 ---

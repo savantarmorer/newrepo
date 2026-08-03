@@ -88,6 +88,18 @@ Streak diário: `registrar_login_agora(uid)`, chamada em `login.html` e no `dash
 
 **Por que precisa de um servidor:** a Guild Members API exige o token do bot, que nunca pode chegar ao navegador. É o único ponto do sistema que não pode ser 100% estático.
 
+### 4.1 Canais reais (`GET /api/discord/channels`)
+
+Rota pública (sem autenticação — só nomes de canais, não é dado sensível). Busca `GET /guilds/{id}/channels` e `GET /guilds/{id}/roles`, filtra canais onde o cargo `@everyone` tem `VIEW_CHANNEL` negado (não expõe canais privados), agrupa por categoria e devolve para `discord.html` montar a barra lateral de verdade. Cada canal linka para `https://discord.com/channels/{guild}/{canal}` (abre no Discord real).
+
+### 4.2 Prévia de mensagens (`GET /api/discord/messages`)
+
+Rota pública, com cache de 20s. Lê as últimas mensagens de **um único canal público configurado** via `DISCORD_PREVIEW_CHANNEL_ID` (`GET /channels/{id}/messages`). Requer a **Message Content Intent** ativada no bot (Discord Developer Portal → Bot). `discord.html` faz polling desta rota a cada 20s — não é um WebSocket em tempo real (ver Roadmap), mas é dado real, não simulado. Se `DISCORD_PREVIEW_CHANNEL_ID` não estiver definido, a rota responde `{configured: false}` e a UI explica isso claramente em vez de mostrar uma área vazia.
+
+### 4.3 Sincronização automática de eventos (Scheduled Events)
+
+`syncDiscordEvents()` roda **ao subir o server** e depois a cada `DISCORD_EVENTS_SYNC_MINUTES` (padrão 10min) via `setInterval` — sem precisar de ação do usuário. Busca `GET /guilds/{id}/scheduled-events` e faz upsert em `agora_discord_events` (chave única `discord_event_id`). `eventos.html` e `mobile.html` mesclam esses eventos com os cadastrados manualmente em `agora_events`, ordenando tudo por data.
+
 ## 5. Terminal ARG
 
 - Puzzles ficam em `agora_arg_puzzles` (pergunta pública).
@@ -146,6 +158,7 @@ Streak diário: `registrar_login_agora(uid)`, chamada em `login.html` e no `dash
 | `agora_events` / `agora_event_rsvps` | Eventos |
 | `agora_calls` / `agora_call_rsvps` | Calendário de Chamadas |
 | `agora_membership_requests` | Pedidos de associação (Ritual de Iniciação) |
+| `agora_discord_events` / `agora_discord_event_rsvps` | Eventos sincronizados automaticamente do Discord (Scheduled Events) |
 
 Todas com Row Level Security ativado; políticas específicas documentadas nos comentários de `supabase/agora-migration.sql` e `supabase/agora-migration-v2.sql`.
 

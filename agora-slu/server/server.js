@@ -10,6 +10,8 @@ const {
   DISCORD_BOT_TOKEN,
   DISCORD_GUILD_ID,
   DISCORD_ROLE_GRAU_MAP,
+  DISCORD_PREVIEW_CHANNEL_ID,
+  DISCORD_EVENTS_SYNC_MINUTES,
   PORT = 4000,
   ALLOWED_ORIGIN = '*',
 } = process.env;
@@ -48,27 +50,97 @@ async function getSupabaseUser(accessToken) {
 
 // ── Discord REST helpers (bot token — nunca exposto ao cliente) ───────
 const DISCORD_API = 'https://discord.com/api/v10';
-let cachedRoles = null;
-let cachedRolesAt = 0;
+const VIEW_CHANNEL_BIT = 1024n; // 0x400
 
+function botHeaders() {
+  return { Authorization: `Bot ${DISCORD_BOT_TOKEN}` };
+}
+
+async function discordGet(path) {
+  const res = await fetch(`${DISCORD_API}${path}`, { headers: botHeaders() });
+  if (!res.ok) throw new Error(`Discord API ${path} → HTTP ${res.status}`);
+  return res.json();
+}
+
+// Um canal é considerado público se o cargo @everyone (id === guild id) não
+// tem VIEW_CHANNEL explicitamente negado nos permission_overwrites.
+function isChannelPublic(channel) {
+  const overwrite = (channel.permission_overwrites || []).find(o => o.id === DISCORD_GUILD_ID && o.type === 0);
+  if (!overwrite) return true;
+  const deny = BigInt(overwrite.deny || '0');
+  return (deny & VIEW_CHANNEL_BIT) === 0n;
+}
+
+let cachedRoles = null, cachedRolesAt = 0;
 async function getGuildRoles() {
   if (cachedRoles && Date.now() - cachedRolesAt < 5 * 60 * 1000) return cachedRoles;
-  const res = await fetch(`${DISCORD_API}/guilds/${DISCORD_GUILD_ID}/roles`, {
-    headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` },
-  });
-  if (!res.ok) throw new Error(`Falha ao ler cargos do servidor (HTTP ${res.status})`);
-  cachedRoles = await res.json();
+  cachedRoles = await discordGet(`/guilds/${DISCORD_GUILD_ID}/roles`);
   cachedRolesAt = Date.now();
   return cachedRoles;
 }
 
 async function getGuildMember(discordId) {
-  const res = await fetch(`${DISCORD_API}/guilds/${DISCORD_GUILD_ID}/members/${discordId}`, {
-    headers: { Authorization: `Bot ${DISCORD_BOT_TOKEN}` },
-  });
+  const res = await fetch(`${DISCORD_API}/guilds/${DISCORD_GUILD_ID}/members/${discordId}`, { headers: botHeaders() });
   if (res.status === 404) return null; // usuário logado mas não está (mais) no servidor
   if (!res.ok) throw new Error(`Falha ao consultar membro no Discord (HTTP ${res.status})`);
   return res.json();
+}
+
+let cachedChannels = null, cachedChannelsAt = 0;
+async function getPublicChannelTree() {
+  if (cachedChannels && Date.now() - cachedChannelsAt < 5 * 60 * 1000) return cachedChannels;
+
+  const all = await discordGet(`/guilds/${DISCORD_GUILD_ID}/channels`);
+  const CHANNEL_TYPE_LABEL = { 0: 'text', 2: 'voice', 5: 'announcement', 13: 'stage', 15: 'forum' };
+  const visible = all.filter(c => CHANNEL_TYPE_LABEL[c.type] !== undefined && isChannelPublic(c));
+  const categories = all.filter(c => c.type === 4 && isChannelPublic(c));
+
+  const byCategory = new Map(categories.map(cat => [cat.id, { id: cat.id, name: cat.name, position: cat.position, channels: [] }]));
+  const uncategorized = { id: null, name: null, position: -1, channels: [] };
+
+  for (const ch of visible) {
+    const entry = { id: ch.id, name: ch.name, type: CHANNEL_TYPE_LABEL[ch.type], position: ch.position };
+    const bucket = ch.parent_id && byCategory.has(ch.parent_id) ? byCategory.get(ch.parent_id) : uncategorized;
+    bucket.channels.push(entry);
+  }
+
+  const groups = [...byCategory.values(), ...(uncategorized.channels.length ? [uncategorized] : [])]
+    .sort((a, b) => a.position - b.position);
+  for (const g of groups) g.channels.sort((a, b) => a.position - b.position);
+
+  cachedChannels = { guildId: DISCORD_GUILD_ID, groups };
+  cachedChannelsAt = Date.now();
+  return cachedChannels;
+}
+
+let cachedChannelName = null;
+let cachedMessages = null, cachedMessagesAt = 0;
+async function getPreviewMessages() {
+  if (!DISCORD_PREVIEW_CHANNEL_ID) return { configured: false, messages: [] };
+  if (cachedMessages && Date.now() - cachedMessagesAt < 20 * 1000) return cachedMessages;
+
+  const [raw, channel] = await Promise.all([
+    discordGet(`/channels/${DISCORD_PREVIEW_CHANNEL_ID}/messages?limit=15`),
+    cachedChannelName ? Promise.resolve({ name: cachedChannelName }) : discordGet(`/channels/${DISCORD_PREVIEW_CHANNEL_ID}`),
+  ]);
+  cachedChannelName = channel.name;
+
+  const messages = raw
+    .filter(m => m.content || m.attachments?.length)
+    .reverse()
+    .map(m => ({
+      id: m.id,
+      author: m.member?.nick || m.author?.global_name || m.author?.username || 'Iniciado',
+      bot: Boolean(m.author?.bot),
+      avatar: m.author?.avatar ? `https://cdn.discordapp.com/avatars/${m.author.id}/${m.author.avatar}.png` : null,
+      content: m.content,
+      hasAttachment: Boolean(m.attachments?.length),
+      timestamp: m.timestamp,
+    }));
+
+  cachedMessages = { configured: true, channelName: cachedChannelName, messages };
+  cachedMessagesAt = Date.now();
+  return cachedMessages;
 }
 
 function calcularGrauPorCargos(roleNames) {
@@ -80,7 +152,35 @@ function calcularGrauPorCargos(roleNames) {
   return maior;
 }
 
-// ── Rota principal ──────────────────────────────────────────────────
+// ── Sincronização automática dos Scheduled Events do Discord ──────────
+async function syncDiscordEvents() {
+  if (!DISCORD_GUILD_ID || !DISCORD_BOT_TOKEN) return;
+  try {
+    const events = await discordGet(`/guilds/${DISCORD_GUILD_ID}/scheduled-events`);
+    for (const ev of events) {
+      const row = {
+        discord_event_id: ev.id,
+        titulo: ev.name,
+        descricao: ev.description || null,
+        data_inicio: ev.scheduled_start_time,
+        data_fim: ev.scheduled_end_time || null,
+        local: ev.entity_metadata?.location || 'Discord da Ágora',
+        status: ev.status === 1 ? 'agendado' : ev.status === 2 ? 'ativo' : ev.status === 3 ? 'concluido' : 'cancelado',
+        synced_at: new Date().toISOString(),
+      };
+      await supaFetch('/rest/v1/agora_discord_events?on_conflict=discord_event_id', {
+        method: 'POST',
+        headers: { Prefer: 'resolution=merge-duplicates' },
+        body: JSON.stringify(row),
+      });
+    }
+    console.log(`[agora-api] Sincronização automática: ${events.length} evento(s) do Discord.`);
+  } catch (err) {
+    console.error('[agora-api] syncDiscordEvents falhou:', err.message);
+  }
+}
+
+// ── Rotas ────────────────────────────────────────────────────────────
 app.post('/api/discord/sync', async (req, res) => {
   try {
     const auth = req.headers.authorization || '';
@@ -148,8 +248,34 @@ app.post('/api/discord/sync', async (req, res) => {
   }
 });
 
+// Lista pública de categorias/canais reais do servidor (não expõe canais privados)
+app.get('/api/discord/channels', async (_req, res) => {
+  try {
+    res.json(await getPublicChannelTree());
+  } catch (err) {
+    console.error('[agora-api] /api/discord/channels', err);
+    res.status(500).json({ error: err.message || 'Falha ao ler canais do Discord.' });
+  }
+});
+
+// Prévia (quase) ao vivo das últimas mensagens de um canal público configurado.
+// Requer DISCORD_PREVIEW_CHANNEL_ID e a Message Content Intent ativada no bot.
+app.get('/api/discord/messages', async (_req, res) => {
+  try {
+    res.json(await getPreviewMessages());
+  } catch (err) {
+    console.error('[agora-api] /api/discord/messages', err);
+    res.status(500).json({ error: err.message || 'Falha ao ler mensagens do Discord.' });
+  }
+});
+
 app.get('/api/health', (_req, res) => res.json({ ok: true, guild: Boolean(DISCORD_GUILD_ID) }));
 
 app.listen(PORT, () => {
   console.log(`[agora-api] rodando em http://localhost:${PORT}`);
+
+  // Sincronização automática de eventos: roda ao subir e depois periodicamente.
+  syncDiscordEvents();
+  const minutes = Number(DISCORD_EVENTS_SYNC_MINUTES) || 10;
+  setInterval(syncDiscordEvents, minutes * 60 * 1000);
 });

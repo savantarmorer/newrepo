@@ -21,8 +21,12 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - Clube do Livro, Eventos e Calendário com RSVP real
 - Exportação `.ics` real (sem backend) no Calendário
 - Grafo de Conhecimento com estatísticas agregadas reais do banco
-- Feed mobile com dados reais (próximo decreto/evento/sessão)
+- Feed mobile com dados reais (próximo decreto/evento/sessão + eventos do Discord)
 - Registro real de pedidos de associação (Ritual de Iniciação)
+- **Canais reais do servidor** na barra lateral de `discord.html` (categorias e nomes de verdade, com deep-link para abrir cada canal no Discord)
+- **Prévia real de mensagens** de um canal público, via polling a cada 20s (API do bot lê `GET /channels/{id}/messages`)
+- **Sincronização automática de eventos do Discord** (Scheduled Events → tabela `agora_discord_events`, sem ação manual — roda ao subir o server e a cada N minutos)
+- **Estatísticas reais na landing page**: decifragens registradas (Terminal ARG) e membros online (widget público do Discord) substituíram números fictícios
 
 ---
 
@@ -47,6 +51,10 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Central de notificações in-app**: sino no header, com histórico (novo decreto, resposta na sua nota do Códice, etc.) — hoje o usuário só descobre novidades visitando cada página.
 - **Sincronização bidirecional com o Discord**: quando o grau sobe no site, o bot atribui automaticamente o cargo correspondente no servidor (hoje a sincronização só lê do Discord; escrever cargos exige permissão adicional do bot — `MANAGE_ROLES` — e cuidado para não sobrepor cargos manuais).
 - **Badge Wall dedicada**: página própria de conquistas (hoje os selos aparecem só no Dashboard) com selos extras por marcos (primeira nota no Códice, primeira evidência, etc.).
+- **Chat em tempo real de verdade**: o feed de mensagens de `discord.html` hoje faz polling a cada 20s via REST. Migrar para o bot manter uma conexão de Gateway persistente e empurrar mensagens novas via WebSocket/SSE elimina o atraso e o custo de polling — exige o server rodar como processo de longa duração com `discord.js` (hoje ele só faz chamadas REST pontuais).
+- **Presença em canais de voz**: mostrar quem está em call agora (a Guild Members API + Gateway `VOICE_STATE_UPDATE` permite isso) — reforça a sensação de comunidade viva em `discord.html`.
+- **Anúncios automáticos no Discord**: quando um Ritual de Iniciação é concluído ou um Decreto é aprovado, o bot posta um anúncio cerimonial no canal oficial — fecha o ciclo site → Discord (hoje só existe Discord → site).
+- **Auto-criação de perfil ao entrar no servidor**: hoje o `agora_profiles` só existe depois do primeiro login no site. Um bot com conexão de Gateway pode escutar `GUILD_MEMBER_ADD` e criar o registro no instante em que a pessoa entra no Discord, mesmo antes de visitar o site.
 
 ## 🌐 Longo Prazo — infraestrutura maior
 
@@ -55,6 +63,7 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Painel administrativo completo**: dashboard para Curadores/Guardiões gerenciarem missões, puzzles ARG, decretos e moderação sem tocar em SQL.
 - **Testes automatizados**: hoje a verificação é manual no navegador; vale Playwright cobrindo os fluxos críticos (login, RSVP, votação, terminal ARG).
 - **Internacionalização**: se a Ágora expandir para o mundo lusófono internacional (Lei das Fronteiras do Manual de Marca já autoriza), preparar strings para PT-PT além de PT-BR.
+- **Rate limiting e observabilidade na API**: `server/` hoje não tem limite de requisições nem logging estruturado — importante antes de expor a API publicamente em produção com tráfego real.
 
 ---
 

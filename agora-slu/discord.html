@@ -16,33 +16,35 @@
     height: calc(100vh - 65px);
   }
   .server-rail { background: var(--bg-canvas); border-right: 1px solid var(--border-subtle); display:flex; flex-direction:column; align-items:center; gap: var(--space-3); padding: var(--space-4) 0; }
-  .server-rail .srv { width: 44px; height:44px; border-radius: var(--radius-full); background: var(--brand-surface); display:flex; align-items:center; justify-content:center; border: 1px solid var(--border-subtle); font-family: var(--font-display); color: var(--brand-action); cursor:pointer; }
-  .server-rail .srv.active { border-color: var(--border-active); box-shadow: var(--glow-gold); }
+  .server-rail a.srv { width: 44px; height:44px; border-radius: var(--radius-full); background: var(--brand-surface); display:flex; align-items:center; justify-content:center; border: 1px solid var(--border-subtle); font-family: var(--font-display); color: var(--brand-action); cursor:pointer; text-decoration:none; transition: border-color .2s, box-shadow .2s; }
+  .server-rail a.srv:hover, .server-rail a.srv.active { border-color: var(--border-active); box-shadow: var(--glow-gold); text-decoration:none; }
 
   .channel-col { background: var(--brand-surface); border-right: 1px solid var(--border-subtle); overflow-y:auto; padding: var(--space-4) var(--space-3); }
   .channel-col h4 { font-family: var(--font-display); font-size: var(--text-sm); color: #fff; padding: 0 var(--space-2); margin-bottom: var(--space-3); }
   .channel-group { margin-bottom: var(--space-4); }
   .channel-group .label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-muted); padding: 0 var(--space-2); margin-bottom: var(--space-1); }
-  .channel-group a { display:block; padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: 2px; }
-  .channel-group a:hover, .channel-group a.active { background: var(--bg-surface-elevated); color: #fff; text-decoration:none; }
-  .channel-group a.active { color: var(--color-text-gold); }
+  .channel-group a { display:flex; align-items:center; gap:6px; padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--color-text-secondary); margin-bottom: 2px; text-decoration:none; }
+  .channel-group a:hover { background: var(--bg-surface-elevated); color: #fff; }
+  .channel-group a .ic { opacity:.6; font-size: 12px; }
 
   .feed-col { display:flex; flex-direction:column; background: var(--bg-canvas); }
   .feed-header { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); font-weight:600; display:flex; align-items:center; gap:var(--space-2); }
   .feed-body { flex:1; overflow-y:auto; padding: var(--space-6); }
   .msg { display:flex; gap: var(--space-3); margin-bottom: var(--space-4); }
-  .avatar { width:40px; height:40px; border-radius:var(--radius-full); background: var(--brand-primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; border: 1px solid var(--border-medium); }
+  .avatar { width:40px; height:40px; border-radius:var(--radius-full); background: var(--brand-primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; border: 1px solid var(--border-medium); overflow:hidden; }
+  .avatar img { width:100%; height:100%; object-fit:cover; }
   .msg .author { font-weight:700; font-size: var(--text-sm); }
   .msg .author.bot { color: var(--brand-action); }
   .msg .author .tag { font-size: 10px; background: var(--brand-action); color: var(--brand-text); padding: 0 4px; border-radius: 3px; margin-left: 4px; vertical-align: 2px; }
-  .msg .body { font-size: var(--text-sm); color: var(--color-text-primary); margin-top: 2px; }
-  .evidence-card { margin-top: var(--space-2); border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: var(--space-3); background: var(--brand-surface); max-width: 360px; }
-  .feed-input { padding: var(--space-4); border-top: 1px solid var(--border-subtle); }
+  .msg .body { font-size: var(--text-sm); color: var(--color-text-primary); margin-top: 2px; white-space: pre-wrap; }
+  .msg .time { font-size: 10px; color: var(--color-text-muted); margin-left: 6px; font-weight: 400; }
+  .feed-footer { padding: var(--space-4); border-top: 1px solid var(--border-subtle); display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); }
+  .feed-empty { text-align:center; color:var(--color-text-muted); font-size:var(--text-sm); padding:var(--space-8); }
+
   .widget-wrap { padding: var(--space-4); border-bottom: 1px solid var(--border-subtle); background: var(--brand-surface); }
   .widget-wrap iframe { width: 100%; border-radius: var(--radius-md); border: 1px solid var(--border-medium); }
   .widget-missing { font-size: var(--text-xs); color: var(--color-text-muted); padding: var(--space-4); background: var(--bg-surface-elevated); border-radius: var(--radius-sm); }
   .widget-missing code { color: var(--color-text-gold); }
-  .example-label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: .06em; color: var(--color-text-muted); padding: var(--space-3) var(--space-4) 0; }
 </style>
 </head>
 <body>
@@ -71,106 +73,116 @@
 
 <div class="discord-shell">
   <div class="server-rail">
-    <div class="srv active" title="Ágora">Á</div>
-    <div class="srv" title="Hall das Lendas">L</div>
-    <div class="srv" title="Códice">C</div>
-    <div class="srv" title="ARG">Δ</div>
+    <a class="srv active" href="discord.html" title="Ágora">Á</a>
+    <a class="srv" href="dashboard.html#hall" title="Hall das Lendas">L</a>
+    <a class="srv" href="codex.html" title="Códice">C</a>
+    <a class="srv" href="terminal.html" title="Terminal ARG">Δ</a>
   </div>
 
   <div class="channel-col">
     <h4>ÁGORA (SLU) · SERVIDOR OFICIAL</h4>
-
-    <div class="channel-group">
-      <div class="label">Ritual de Entrada</div>
-      <a href="#"># boas-vindas-e-regras</a>
-      <a href="#"># manifesto-da-grande-obra</a>
-    </div>
-
-    <div class="channel-group">
-      <div class="label">As 4 Fases da Obra</div>
-      <a href="#"># fase-1-gênese</a>
-      <a href="#" class="active"># fase-2-conselho</a>
-      <a href="#"># fase-3-fundação</a>
-      <a href="#"># fase-4-expansão</a>
-    </div>
-
-    <div class="channel-group">
-      <div class="label">A Ordem Æon &amp; Lore</div>
-      <a href="#"># codex-caelestis</a>
-      <a href="#"># arg-pen-drive-investigacao</a>
-      <a href="#"># hall-das-lendas</a>
-    </div>
-
-    <div class="channel-group">
-      <div class="label">Governança &amp; Ritos</div>
-      <a href="#"># votacoes-do-conselho</a>
-    </div>
+    <div id="channelGroups"><p class="text-muted" style="font-size:var(--text-xs); padding:0 var(--space-2);">Carregando canais reais do servidor...</p></div>
   </div>
 
   <div class="feed-col">
     <div class="widget-wrap" id="widgetWrap"></div>
-    <div class="feed-header"># fase-2-conselho <span class="text-muted" style="font-size:var(--text-xs); font-weight:400;">— Debate rituístico das teses e votação de cânon</span></div>
-    <div class="example-label">Exemplo de fluxo de mensagens (ilustrativo)</div>
-    <div class="feed-body">
-      <div class="msg">
-        <div class="avatar">
-          <svg width="24" height="24" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-lux-vael"/></svg>
-        </div>
-        <div>
-          <div class="author bot">LuxVael <span class="tag">BOT</span></div>
-          <div class="body">Saudações, Neófito. Seu registro no Códice foi iniciado. Acesse o canal <a href="#">#fase-2-conselho</a> para reivindicar suas tarefas.</div>
-        </div>
-      </div>
-
-      <div class="msg">
-        <div class="avatar" style="background:var(--brand-surface); border-color:var(--border-medium);"></div>
-        <div>
-          <div class="author">Iniciado_Zero</div>
-          <div class="body">Consegui extrair o hash SHA-256 do arquivo no Pen Drive. Alguém mais notou o símbolo de Umbra-Kael no cabeçalho?</div>
-          <div class="evidence-card">
-            <div style="display:flex; align-items:center; gap:var(--space-2);">
-              <svg width="32" height="32" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-umbra-kael"/></svg>
-              <div>
-                <div class="text-gold" style="font-size:var(--text-xs); font-weight:700;">EVIDÊNCIA #088</div>
-                <div class="text-muted" style="font-size:var(--text-xs);">selo_umbra_kael_v2.png</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="msg">
-        <div class="avatar" style="background:var(--brand-surface); border-color:var(--border-medium);"></div>
-        <div>
-          <div class="author">Beatriz_Arcana</div>
-          <div class="body">O selo octogonal reflete o equilíbrio de cargas no ritual — proponho registrarmos isso no Hall das Lendas antes do fim da semana.</div>
-        </div>
-      </div>
-    </div>
-    <div class="feed-input">
-      <input type="text" placeholder="Mensagem em #fase-2-conselho...">
+    <div class="feed-header" id="feedHeader"># prévia de mensagens <span class="text-muted" style="font-size:var(--text-xs); font-weight:400;">— atualiza a cada 20s</span></div>
+    <div class="feed-body" id="feedBody"><div class="feed-empty">Carregando mensagens reais do servidor...</div></div>
+    <div class="feed-footer">
+      <span class="text-muted" style="font-size:var(--text-xs);">Para responder, participe direto pelo Discord.</span>
+      <a id="openDiscordBtn" class="btn btn-primary" href="#" target="_blank" rel="noopener" style="font-size:var(--text-xs);">Abrir no Discord ↗</a>
     </div>
   </div>
 </div>
 
 <script type="module">
-import { montarNavAuth } from './js/agoraAuth.js';
+import { montarNavAuth, fetchDiscordChannels, fetchDiscordMessages } from './js/agoraAuth.js';
+
 montarNavAuth();
 
-// ID real do servidor da Ágora — defina em config.js (AGORA_DISCORD_GUILD_ID).
-// Ver SETUP_INTEGRACOES.md, seção 1, passo 5.
 const guildId = window.AGORA_DISCORD_GUILD_ID || null;
 const widgetWrap = document.getElementById('widgetWrap');
+const channelGroupsEl = document.getElementById('channelGroups');
+const feedBody = document.getElementById('feedBody');
+const feedHeader = document.getElementById('feedHeader');
+const openDiscordBtn = document.getElementById('openDiscordBtn');
+
+openDiscordBtn.href = guildId ? `https://discord.com/channels/${guildId}` : 'https://discord.com';
 
 if (guildId) {
-  widgetWrap.innerHTML = `<iframe src="https://discord.com/widget?id=${guildId}&theme=dark" height="360" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>`;
+  widgetWrap.innerHTML = `<iframe src="https://discord.com/widget?id=${guildId}&theme=dark" height="220" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>`;
 } else {
   widgetWrap.innerHTML = `<div class="widget-missing">
-    Widget ao vivo do servidor ainda não configurado. Defina <code>window.AGORA_DISCORD_GUILD_ID</code>
-    e ative "Widget do Servidor" nas configurações do Discord (ver <a href="SETUP_INTEGRACOES.md">SETUP_INTEGRACOES.md</a>)
-    para exibir aqui os membros online e o convite reais.
+    Widget ao vivo do servidor ainda não configurado. Defina <code>window.AGORA_DISCORD_GUILD_ID</code> em <code>config.js</code>
+    e ative "Widget do Servidor" nas configurações do Discord (ver <a href="SETUP_INTEGRACOES.md">SETUP_INTEGRACOES.md</a>).
   </div>`;
 }
+
+// ── Canais reais (categorias + canais) via API do servidor ────────────
+async function carregarCanais() {
+  try {
+    const { groups } = await fetchDiscordChannels();
+    if (!groups || groups.length === 0) {
+      channelGroupsEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-xs); padding:0 var(--space-2);">Nenhum canal público encontrado.</p>`;
+      return;
+    }
+    const iconByType = { text: '#', voice: '🔊', announcement: '📣', stage: '🎙', forum: '💬' };
+    channelGroupsEl.innerHTML = groups.map(g => `
+      <div class="channel-group">
+        ${g.name ? `<div class="label">${g.name}</div>` : ''}
+        ${g.channels.map(c => `
+          <a href="https://discord.com/channels/${guildId}/${c.id}" target="_blank" rel="noopener">
+            <span class="ic">${iconByType[c.type] || '#'}</span> ${c.name}
+          </a>
+        `).join('')}
+      </div>
+    `).join('');
+  } catch (e) {
+    channelGroupsEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-xs); padding:0 var(--space-2);">
+      Não foi possível carregar os canais reais (${e.message}). Confira se <code>AGORA_API_URL</code> em config.js aponta
+      para a API rodando e se o Guild ID está correto.
+    </p>`;
+  }
+}
+
+// ── Prévia real de mensagens (polling) ────────────────────────────────
+function formatTime(iso) {
+  return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+async function carregarMensagens() {
+  try {
+    const { configured, messages, channelName } = await fetchDiscordMessages();
+    if (!configured) {
+      feedBody.innerHTML = `<div class="feed-empty">
+        Prévia de mensagens desativada. Defina <code>DISCORD_PREVIEW_CHANNEL_ID</code> no <code>server/.env</code>
+        (e ative a Message Content Intent no bot) para mostrar aqui as últimas mensagens reais de um canal público.
+      </div>`;
+      return;
+    }
+    if (channelName) feedHeader.innerHTML = `# ${channelName} <span class="text-muted" style="font-size:var(--text-xs); font-weight:400;">— atualiza a cada 20s</span>`;
+    if (!messages.length) {
+      feedBody.innerHTML = `<div class="feed-empty">Nenhuma mensagem recente neste canal.</div>`;
+      return;
+    }
+    feedBody.innerHTML = messages.map(m => `
+      <div class="msg">
+        <div class="avatar">${m.avatar ? `<img src="${m.avatar}" alt="">` : ''}</div>
+        <div>
+          <div class="author ${m.bot ? 'bot' : ''}">${m.author}${m.bot ? '<span class="tag">BOT</span>' : ''}<span class="time">${formatTime(m.timestamp)}</span></div>
+          <div class="body">${m.content || (m.hasAttachment ? '[anexo]' : '')}</div>
+        </div>
+      </div>
+    `).join('');
+    feedBody.scrollTop = feedBody.scrollHeight;
+  } catch (e) {
+    feedBody.innerHTML = `<div class="feed-empty">Não foi possível carregar as mensagens (${e.message}).</div>`;
+  }
+}
+
+carregarCanais();
+carregarMensagens();
+setInterval(carregarMensagens, 20000);
 </script>
 
 </body>
