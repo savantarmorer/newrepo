@@ -6,7 +6,7 @@
 // Como pegar: ative o Modo Desenvolvedor (Discord > Configurações > Avançado),
 // clique com o botão direito no servidor > "Copiar ID do Servidor".
 // Também é preciso ativar "Widget do Servidor" em Configurações do Servidor > Widget.
-window.AGORA_DISCORD_GUILD_ID = '';
+window.AGORA_DISCORD_GUILD_ID = '1439091029973405891';
 
 // URL pública onde a API de sincronização (server/server.js) está rodando.
 // Em desenvolvimento local, deixe como está. Em produção, troque para o host real
