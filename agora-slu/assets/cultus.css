@@ -1,0 +1,207 @@
+/* ==========================================================================
+   CULTUS DESIGN SYSTEM — CORE TOKENS v1.0.0
+   Brand: Ágora (SLU)
+   Fonte da verdade: DESIGN_SYSTEM_CULTUS_SPEC.md
+   ========================================================================== */
+
+:root {
+  --brand-primary:   #5B2C6F;
+  --brand-action:    #D4AF37;
+  --brand-text:      #0F0E17;
+  --brand-bg:        #161426;
+  --brand-surface:   #221F3B;
+  --brand-warn:      #FF8C00;
+  --brand-alert:     #E5484D;
+
+  --color-text-primary:    #F4F1EA;
+  --color-text-secondary:  #B8B0CD;
+  --color-text-muted:      #7C7393;
+  --color-text-gold:       #F1D279;
+
+  --bg-canvas:             #0D0C17;
+  --bg-surface-elevated:   #2D284B;
+  --bg-surface-overlay:    rgba(22, 20, 38, 0.85);
+
+  --border-subtle:         rgba(212, 175, 55, 0.15);
+  --border-medium:         rgba(212, 175, 55, 0.35);
+  --border-active:         #D4AF37;
+  --border-alert:          #E5484D;
+
+  --glass-bg:              rgba(34, 31, 59, 0.65);
+  --glass-border:          rgba(212, 175, 55, 0.20);
+  --glass-backdrop-filter: blur(12px) saturate(140%);
+
+  --shadow-ritual-sm:      0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-ritual-md:      0 8px 24px rgba(15, 14, 23, 0.6);
+  --shadow-ritual-lg:      0 16px 48px rgba(91, 44, 111, 0.35);
+  --glow-gold:             0 0 20px rgba(212, 175, 55, 0.45);
+  --glow-purple:           0 0 25px rgba(91, 44, 111, 0.60);
+  --glow-alert:            0 0 20px rgba(229, 72, 77, 0.50);
+
+  --font-display: 'Cinzel', 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', 'EB Garamond', system-ui, -apple-system, sans-serif;
+  --font-code:    'Fira Code', 'JetBrains Mono', 'Courier New', monospace;
+
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1.000rem;
+  --text-md:    1.250rem;
+  --text-lg:    1.563rem;
+  --text-xl:    1.953rem;
+  --text-2xl:   2.441rem;
+  --text-3xl:   3.052rem;
+
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .display {
+  font-family: var(--font-display);
+  color: #FFFFFF;
+  letter-spacing: 0.02em;
+  margin: 0 0 var(--space-3);
+}
+
+a { color: var(--color-text-gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, .code {
+  font-family: var(--font-code);
+}
+
+::selection { background: rgba(212,175,55,0.3); }
+
+/* ---- LAYOUT SHELL ---- */
+.cultus-shell { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-6); }
+
+.cultus-nav {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-3) var(--space-6);
+  background: var(--bg-surface-overlay);
+  backdrop-filter: var(--glass-backdrop-filter);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.cultus-nav .brand {
+  font-family: var(--font-display);
+  color: var(--brand-action);
+  font-size: var(--text-md);
+  font-weight: 700;
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.cultus-nav .brand svg { width: 28px; height: 28px; }
+.cultus-nav ul { list-style: none; display: flex; gap: var(--space-4); margin: 0; padding: 0; flex-wrap: wrap; }
+.cultus-nav ul a {
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: var(--space-2) var(--space-1);
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.cultus-nav ul a:hover, .cultus-nav ul a.active {
+  color: var(--brand-action);
+  border-color: var(--brand-action);
+  text-decoration: none;
+}
+
+footer.cultus-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/* ---- COMPONENTS ---- */
+.card {
+  background: var(--brand-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-ritual-sm);
+}
+.card.elevated { background: var(--bg-surface-elevated); box-shadow: var(--shadow-ritual-md); }
+.card.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-backdrop-filter);
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  font-family: var(--font-body); font-weight: 600; font-size: var(--text-sm);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--brand-action); color: var(--brand-text); box-shadow: var(--glow-gold); }
+.btn-primary:hover { box-shadow: 0 0 30px rgba(212,175,55,0.65); }
+.btn-secondary { background: transparent; color: var(--color-text-gold); border-color: var(--border-medium); }
+.btn-secondary:hover { border-color: var(--border-active); }
+.btn-alert { background: var(--brand-alert); color: #FFF; }
+.btn-warn { background: var(--brand-warn); color: var(--brand-text); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+.badge {
+  display: inline-block; font-size: var(--text-xs); text-transform: uppercase;
+  letter-spacing: .06em; padding: 2px var(--space-2); border-radius: var(--radius-full);
+  border: 1px solid var(--border-medium); color: var(--color-text-gold);
+}
+.badge.alert { border-color: var(--brand-alert); color: var(--brand-alert); }
+.badge.warn { border-color: var(--brand-warn); color: var(--brand-warn); }
+
+input[type="text"], input[type="email"], input[type="number"], textarea {
+  width: 100%;
+  background: var(--bg-canvas);
+  border: 1px solid var(--border-subtle);
+  color: var(--color-text-primary);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+}
+input:focus, textarea:focus { outline: none; border-color: var(--border-active); box-shadow: var(--glow-gold); }
+
+.grid { display: grid; gap: var(--space-6); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } .cultus-nav ul { display: none; } }
+
+.progress-track { width: 100%; height: 10px; border-radius: var(--radius-full); background: rgba(255,255,255,0.08); overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-primary), var(--brand-action)); }
+
+.seal-icon { filter: drop-shadow(0 0 6px rgba(212,175,55,0.4)); }
+
+.hairline { border: none; border-top: 1px solid var(--border-subtle); margin: var(--space-6) 0; }
+
+.text-muted { color: var(--color-text-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-gold { color: var(--color-text-gold); }

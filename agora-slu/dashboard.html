@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Painel do Iniciado</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .dash-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-4); padding:var(--space-6) 0; }
+  .dash-header .who { display:flex; align-items:center; gap:var(--space-4); }
+  .avatar-ring { width:56px; height:56px; border-radius:50%; border:2px solid var(--brand-action); box-shadow:var(--glow-gold); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); color:var(--brand-action); background:var(--brand-surface); overflow:hidden; }
+  .avatar-ring img { width:100%; height:100%; object-fit:cover; }
+  .stat { text-align:center; }
+  .stat .v { font-family:var(--font-display); color:var(--brand-action); font-size:var(--text-lg); }
+  .stat .l { font-size:var(--text-xs); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em; }
+
+  .seal-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:var(--space-4); }
+  .seal-slot { text-align:center; padding:var(--space-3); border-radius:var(--radius-md); border:1px solid var(--border-subtle); }
+  .seal-slot.locked svg { filter: grayscale(1) opacity(.25); }
+  .seal-slot .name { font-size:var(--text-xs); margin-top:var(--space-2); color:var(--color-text-secondary); }
+  .seal-slot.locked .name { color: var(--color-text-muted); }
+
+  .mission { border-left:3px solid var(--brand-warn); padding: var(--space-3) var(--space-4); background: var(--bg-surface-elevated); border-radius: var(--radius-sm); margin-bottom: var(--space-3); }
+  .mission .reward { font-size:var(--text-xs); color: var(--color-text-gold); margin-top:4px; }
+
+  .legend-item { display:flex; gap:var(--space-3); padding:var(--space-3) 0; border-bottom:1px solid var(--border-subtle); }
+  .legend-item:last-child { border-bottom:none; }
+
+  .discord-card { display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap; }
+  .discord-card .di-avatar { width:64px; height:64px; border-radius:50%; background:var(--brand-surface); border:1px solid var(--border-medium); }
+  .role-chip { display:inline-block; font-size:var(--text-xs); padding:2px var(--space-2); border-radius:var(--radius-full); background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); margin:2px 4px 2px 0; }
+  .streak-flame { font-size: var(--text-xl); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html" class="active">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" id="dashContent" style="display:none;">
+  <div class="dash-header">
+    <div class="who">
+      <div class="avatar-ring" id="avatarRing">I</div>
+      <div>
+        <h1 style="font-size:var(--text-md); margin-bottom:2px;" id="welcomeName">Painel do Iniciado</h1>
+        <span class="badge" id="grauBadge">Neófito</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:var(--space-8); align-items:center;">
+      <div class="stat"><div class="v" id="xpValue">0</div><div class="l">XP</div></div>
+      <div class="stat"><div class="v" id="progressValue">0%</div><div class="l">Próximo Grau</div></div>
+      <div class="stat"><div class="v streak-flame" id="streakValue">🔥 0</div><div class="l">Streak</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:var(--space-6);">
+    <div style="display:flex; justify-content:space-between; margin-bottom:var(--space-2); font-size:var(--text-sm);">
+      <span>Progresso até o próximo grau</span>
+      <span class="text-gold" id="progressLabel">—</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:var(--space-6);" id="discordCard">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3);">
+      <h3 style="font-size:var(--text-md); margin:0;">Sincronização com o Discord</h3>
+      <button class="btn btn-secondary" id="syncBtn" style="font-size:var(--text-xs);">Sincronizar Agora</button>
+    </div>
+    <div id="discordBody" style="margin-top:var(--space-4);">
+      <p class="text-muted" style="font-size:var(--text-sm);">Nenhum dado sincronizado ainda. Clique em "Sincronizar Agora" para importar seu apelido, cargos e data de entrada no servidor da Ágora.</p>
+    </div>
+    <p class="text-muted" id="syncStatus" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
+  </div>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3 style="font-size:var(--text-md);">Selos Desbloqueados</h3>
+      <div class="seal-grid" id="sealGrid"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:var(--text-md);">Missões Ativas da Egrégora</h3>
+      <div id="missionsList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando missões...</p></div>
+      <a href="terminal.html" class="btn btn-secondary" style="margin-top:var(--space-2); font-size:var(--text-xs);">Ir ao Terminal ARG →</a>
+    </div>
+  </div>
+
+  <h2 style="font-size:var(--text-lg); margin:var(--space-12) 0 var(--space-4);">Hall das Lendas — Últimas Contribuições</h2>
+  <div class="card" id="hallList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
+
+  <div style="text-align:center; margin: var(--space-12) 0;">
+    <button class="btn btn-secondary" id="logoutBtn">Sair do Círculo</button>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · A Grande Obra aguarda os obstinados.
+</footer>
+
+<script type="module">
+import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile, getDiscordSync,
+         registrarLoginDiario, sincronizarDiscord, signOut, montarNavAuth, concluirMissao } from './js/agoraAuth.js';
+
+montarNavAuth();
+
+const SEALS_BY_GRAU = [
+  ['seal-lux-vael'],
+  ['seal-lux-vael','seal-umbra-kael','seal-chronos-phanes'],
+  ['seal-lux-vael','seal-umbra-kael','seal-chronos-phanes','seal-aether-sophia'],
+  ['seal-lux-vael','seal-umbra-kael','seal-chronos-phanes','seal-aether-sophia','seal-ignis-architectus','seal-noesis-vesper'],
+];
+const ALL_SEALS = [
+  ['seal-lux-vael','Lux-Vael'], ['seal-umbra-kael','Umbra-Kael'], ['seal-chronos-phanes','Chronos-Phanes'],
+  ['seal-aether-sophia','Aether-Sophia'], ['seal-ignis-architectus','Ignis-Architectus'], ['seal-noesis-vesper','Noesis-Vesper'],
+];
+
+const session = await requireAuth('login.html');
+if (session) {
+  document.getElementById('dashContent').style.display = 'block';
+  await registrarLoginDiario(session.user.id);
+  await render(session.user.id);
+}
+
+async function render(userId) {
+  const profile = await getProfile(userId);
+  const xp = profile?.xp || 0;
+  const grau = calcularGrau(xp);
+  const prox = proximoGrau(xp);
+
+  document.getElementById('welcomeName').textContent = `Painel do Iniciado`;
+  document.getElementById('grauBadge').textContent = `${grau.nome} · Grau ${grau.grau}`;
+  document.getElementById('xpValue').textContent = xp.toLocaleString('pt-BR');
+  document.getElementById('streakValue').textContent = `🔥 ${profile?.streak_atual ?? 0}`;
+
+  if (prox) {
+    const pct = Math.min(100, Math.round((xp / prox.xpMin) * 100));
+    document.getElementById('progressValue').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = `${xp} / ${prox.xpMin} XP para ${prox.nome}`;
+  } else {
+    document.getElementById('progressValue').textContent = '100%';
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = 'Grau máximo alcançado — Conselheiro';
+  }
+
+  const unlocked = SEALS_BY_GRAU[grau.grau] || SEALS_BY_GRAU[0];
+  document.getElementById('sealGrid').innerHTML = ALL_SEALS.map(([id, name]) => {
+    const isUnlocked = unlocked.includes(id);
+    return `<div class="seal-slot ${isUnlocked ? '' : 'locked'}">
+      <svg width="56" height="56" viewBox="0 0 200 200"><use href="assets/seals.svg#${id}"/></svg>
+      <div class="name">${name}</div>
+    </div>`;
+  }).join('');
+
+  const dsync = await getDiscordSync(userId);
+  if (dsync) renderDiscord(dsync);
+
+  const avatarUrl = session.user.user_metadata?.avatar_url;
+  if (avatarUrl) document.getElementById('avatarRing').innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+
+  await renderMissions(userId);
+  await renderHall();
+}
+
+async function renderMissions(userId) {
+  const [{ data: missions }, { data: done }] = await Promise.all([
+    sb.from('agora_missions').select('*').eq('ativo', true),
+    sb.from('agora_mission_completions').select('mission_id').eq('user_id', userId),
+  ]);
+  const doneIds = new Set((done || []).map(d => d.mission_id));
+  const el = document.getElementById('missionsList');
+  if (!missions || missions.length === 0) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma missão ativa.</p>`; return; }
+
+  el.innerHTML = missions.map(m => `
+    <div class="mission" data-id="${m.id}" style="${doneIds.has(m.id) ? 'opacity:.55;' : ''}">
+      <strong style="font-size:var(--text-sm);">${m.titulo}</strong>
+      <div class="reward">Recompensa: ${m.xp_reward} XP</div>
+      <button class="btn btn-secondary complete-btn" style="font-size:var(--text-xs); margin-top:var(--space-2);" ${doneIds.has(m.id) ? 'disabled' : ''}>
+        ${doneIds.has(m.id) ? '✓ Concluída' : 'Marcar como Concluída'}
+      </button>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.complete-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const missionEl = btn.closest('.mission');
+      btn.disabled = true;
+      const result = await concluirMissao(userId, missionEl.dataset.id);
+      if (result.ok) {
+        btn.textContent = '✓ Concluída';
+        missionEl.style.opacity = '.55';
+        if (result.xp_ganho > 0) await render(userId); // atualiza XP/grau/streak exibidos
+      } else {
+        btn.disabled = false;
+      }
+    });
+  });
+}
+
+async function renderHall() {
+  const { data: entries } = await sb.from('agora_hall_entries').select('*').eq('status', 'aprovado').order('created_at', { ascending: false }).limit(6);
+  const el = document.getElementById('hallList');
+  if (!entries || entries.length === 0) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma contribuição homologada ainda.</p>`; return; }
+  el.innerHTML = entries.map(e => `
+    <div class="legend-item">
+      <svg width="32" height="32" viewBox="0 0 200 200"><use href="assets/seals.svg#${e.selo_ref || 'seal-aether-sophia'}"/></svg>
+      <div>
+        <div style="font-size:var(--text-sm);">"${e.titulo}" — <span class="text-secondary">${e.autor_nome}</span></div>
+        <span class="badge" style="margin-top:4px;">Aprovado pelo Conselho</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDiscord(d) {
+  const roles = Array.isArray(d.roles) ? d.roles : [];
+  document.getElementById('discordBody').innerHTML = `
+    <div class="discord-card">
+      ${d.discord_avatar ? `<img class="di-avatar" src="${d.discord_avatar}" alt="">` : `<div class="di-avatar"></div>`}
+      <div>
+        <div style="font-weight:600;">${d.nickname || d.discord_username || 'Iniciado'}</div>
+        <div class="text-muted" style="font-size:var(--text-xs); margin:4px 0;">
+          No servidor desde ${d.joined_guild_at ? new Date(d.joined_guild_at).toLocaleDateString('pt-BR') : '—'}
+        </div>
+        <div>${roles.map(r => `<span class="role-chip">${r}</span>`).join('') || '<span class="text-muted" style="font-size:12px;">Nenhum cargo especial ainda</span>'}</div>
+      </div>
+    </div>`;
+}
+
+document.getElementById('syncBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('syncBtn');
+  const status = document.getElementById('syncStatus');
+  btn.disabled = true;
+  status.textContent = 'Consultando o Daemon Umbra-Kael no servidor da Ágora...';
+  try {
+    const result = await sincronizarDiscord();
+    status.textContent = 'Sincronização concluída.';
+    renderDiscord(result.discord);
+  } catch (e) {
+    status.textContent = `Não foi possível sincronizar: ${e.message}. Verifique se seu Discord está vinculado e se a API está no ar (ver SETUP_INTEGRACOES.md).`;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', signOut);
+</script>
+
+</body>
+</html>

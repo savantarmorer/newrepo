@@ -1,0 +1,16 @@
+{
+  "name": "agora-discord-sync-api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "API mínima que sincroniza cargos/dados do servidor Discord da Ágora com o Supabase, usando o token do bot (nunca exposto ao navegador).",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.0",
+    "express": "^4.22.1"
+  }
+}

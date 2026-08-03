@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Eventos da Egrégora</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .filters { display:flex; gap:var(--space-2); margin: var(--space-4) 0 var(--space-6); flex-wrap:wrap; }
+  .filters button { background:transparent; border:1px solid var(--border-subtle); color:var(--color-text-secondary); padding:var(--space-2) var(--space-4); border-radius:var(--radius-full); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.05em; cursor:pointer; }
+  .filters button.active { border-color:var(--border-active); color:var(--color-text-gold); }
+  .ev-card { display:flex; gap:var(--space-4); align-items:flex-start; }
+  .ev-date { text-align:center; background:var(--bg-surface-elevated); border-radius:var(--radius-sm); padding:var(--space-2) var(--space-3); min-width:64px; }
+  .ev-date .d { font-family:var(--font-display); font-size:var(--text-lg); color:var(--brand-action); line-height:1; }
+  .ev-date .m { font-size:var(--text-xs); color:var(--color-text-muted); text-transform:uppercase; }
+  .rsvp-btn.going { background:#34D399; color:#0F0E17; }
+  #emptyMsg { text-align:center; color:var(--color-text-muted); padding: var(--space-8) 0; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html" class="active">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="padding-top:var(--space-6); padding-bottom:var(--space-16);">
+  <h1 style="font-size:var(--text-lg);">Eventos da Egrégora</h1>
+  <p class="text-secondary" style="max-width:640px;">Ritos, lives de decifração e marcos das 4 Fases da Grande Obra.</p>
+
+  <div class="filters" id="filters">
+    <button class="active" data-f="todas">Todas as Fases</button>
+    <button data-f="Gênese">Gênese</button>
+    <button data-f="Conselho">Conselho</button>
+    <button data-f="Fundação">Fundação</button>
+    <button data-f="Expansão">Expansão</button>
+  </div>
+
+  <div class="grid" id="eventsList" style="gap:var(--space-4);"></div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, getSession, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+const listEl = document.getElementById('eventsList');
+
+const { data: events, error } = await sb.from('agora_events').select('*').order('data_evento', { ascending: true });
+
+let rsvpIds = new Set();
+if (session && events) {
+  const { data: mine } = await sb.from('agora_event_rsvps').select('event_id').eq('user_id', session.user.id);
+  rsvpIds = new Set((mine || []).map(r => r.event_id));
+}
+
+function renderList(items) {
+  if (error) { listEl.innerHTML = `<div id="emptyMsg">Não foi possível carregar os eventos (${error.message}).</div>`; return; }
+  if (!items.length) { listEl.innerHTML = `<div id="emptyMsg">Nenhum evento nesta fase.</div>`; return; }
+  listEl.innerHTML = items.map(ev => {
+    const d = new Date(ev.data_evento);
+    return `
+    <div class="card ev-card" data-id="${ev.id}">
+      <div class="ev-date">
+        <div class="d">${d.getDate()}</div>
+        <div class="m">${d.toLocaleString('pt-BR', { month: 'short' })}</div>
+      </div>
+      <div style="flex:1;">
+        <span class="badge">${ev.fase || 'Egrégora'}</span>
+        <h3 style="font-size:var(--text-md); margin:var(--space-2) 0 4px;">${ev.titulo}</h3>
+        <p class="text-secondary" style="font-size:var(--text-sm);">${ev.descricao || ''}</p>
+        <p class="text-muted" style="font-size:var(--text-xs); margin-top:var(--space-2);">${d.toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })} · ${ev.local || 'Discord da Ágora'}</p>
+      </div>
+      <button class="btn btn-secondary rsvp-btn ${rsvpIds.has(ev.id) ? 'going' : ''}" data-id="${ev.id}">
+        ${rsvpIds.has(ev.id) ? '✓ Presença' : 'Confirmar'}
+      </button>
+    </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.rsvp-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!session) { window.location.href = 'login.html?next=eventos.html'; return; }
+      const id = btn.dataset.id;
+      const going = btn.classList.contains('going');
+      btn.disabled = true;
+      if (going) {
+        await sb.from('agora_event_rsvps').delete().eq('event_id', id).eq('user_id', session.user.id);
+        btn.classList.remove('going'); btn.textContent = 'Confirmar'; rsvpIds.delete(id);
+      } else {
+        await sb.from('agora_event_rsvps').insert({ event_id: id, user_id: session.user.id });
+        btn.classList.add('going'); btn.textContent = '✓ Presença'; rsvpIds.add(id);
+      }
+      btn.disabled = false;
+    });
+  });
+}
+
+renderList(events || []);
+
+document.getElementById('filters').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#filters button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  const f = e.target.dataset.f;
+  renderList(f === 'todas' ? (events || []) : (events || []).filter(ev => ev.fase === f));
+});
+</script>
+
+</body>
+</html>

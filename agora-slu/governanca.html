@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Câmara do Conselho</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .gov-header { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-4); padding: var(--space-6) 0; }
+  .vote-bar-row { margin: var(--space-4) 0; }
+  .vote-bar-row .label { display:flex; justify-content:space-between; font-size:var(--text-sm); margin-bottom: var(--space-1); }
+  .vote-bar { height: 16px; border-radius: var(--radius-full); background: rgba(255,255,255,0.06); overflow:hidden; display:flex; }
+  .vote-fill-yes { background: linear-gradient(90deg, var(--brand-primary), #34D399); height:100%; }
+  .vote-fill-no { background: var(--brand-alert); height:100%; }
+  .vote-actions { display:flex; gap: var(--space-3); margin: var(--space-6) 0; flex-wrap:wrap; }
+  .vote-actions button { flex:1; min-width:160px; }
+  .vote-actions button.picked { outline: 2px solid #fff; }
+  #emptyMsg { text-align:center; color:var(--color-text-muted); padding: var(--space-8) 0; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html" class="active">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell">
+  <div class="gov-header">
+    <h1 style="font-size:var(--text-lg); margin:0;">Câmara do Conselho</h1>
+  </div>
+
+  <div id="decreesList"><div id="emptyMsg">Consultando os decretos em pauta...</div></div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · Que a Sabedoria prevaleça na decisão do Círculo.
+</footer>
+
+<script type="module">
+import { sb, getSession, votarDecreto, obterTallyDecreto, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+const listEl = document.getElementById('decreesList');
+
+const { data: decrees, error } = await sb.from('agora_decrees').select('*').order('numero', { ascending: false });
+
+if (error) {
+  listEl.innerHTML = `<div id="emptyMsg">Não foi possível carregar os decretos (${error.message}).</div>`;
+} else if (!decrees || decrees.length === 0) {
+  listEl.innerHTML = `<div id="emptyMsg">Nenhum decreto em pauta no momento.</div>`;
+} else {
+  let meusVotos = {};
+  if (session) {
+    const { data: mine } = await sb.from('agora_decree_votes').select('decree_id,escolha').eq('user_id', session.user.id);
+    meusVotos = Object.fromEntries((mine || []).map(v => [v.decree_id, v.escolha]));
+  }
+
+  document.getElementById('emptyMsg')?.remove();
+  for (const d of decrees) {
+    const tally = await obterTallyDecreto(d.id);
+    const counts = { sim: 0, nao: 0, abster: 0 };
+    tally.forEach(t => { counts[t.escolha] = Number(t.total); });
+    listEl.appendChild(buildDecreeCard(d, counts, meusVotos[d.id]));
+  }
+}
+
+function buildDecreeCard(d, counts, meuVoto) {
+  const total = counts.sim + counts.nao + counts.abster || 1;
+  const yesPct = Math.round((counts.sim / total) * 100);
+  const noPct = Math.round((counts.nao / total) * 100);
+  const aberto = d.status === 'aberto' && new Date(d.fecha_em) > new Date();
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.marginBottom = 'var(--space-6)';
+  card.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--space-3);">
+      <div>
+        <div class="text-muted" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em;">Decreto Nº ${d.numero}</div>
+        <h2 style="font-size:var(--text-md);">${d.titulo}</h2>
+        <span class="text-secondary" style="font-size:var(--text-sm);">Proponente: ${d.proponente || 'Conselho'}</span>
+      </div>
+      <span class="badge ${aberto ? '' : 'alert'}">${aberto ? 'Aberto até ' + new Date(d.fecha_em).toLocaleString('pt-BR') : 'Encerrado'}</span>
+    </div>
+
+    <div class="vote-bar-row">
+      <div class="label"><span>Favorável (Sim)</span><span class="text-gold">${yesPct}% (${counts.sim} votos)</span></div>
+      <div class="vote-bar"><div class="vote-fill-yes" style="width:${yesPct}%;"></div></div>
+    </div>
+    <div class="vote-bar-row">
+      <div class="label"><span>Contrário (Não)</span><span style="color:var(--brand-alert);">${noPct}% (${counts.nao} votos)</span></div>
+      <div class="vote-bar"><div class="vote-fill-no" style="width:${noPct}%;"></div></div>
+    </div>
+    <p class="text-muted" style="font-size:var(--text-xs);">Abstenções: ${counts.abster}</p>
+
+    ${aberto ? `
+    <h4 style="font-size:var(--text-sm); margin-top:var(--space-6); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em;">Seu Voto de Iniciado</h4>
+    <div class="vote-actions">
+      <button class="btn btn-primary vote-btn ${meuVoto === 'sim' ? 'picked' : ''}" data-escolha="sim">Votar a Favor</button>
+      <button class="btn btn-alert vote-btn ${meuVoto === 'nao' ? 'picked' : ''}" data-escolha="nao">Votar Contra</button>
+      <button class="btn btn-secondary vote-btn ${meuVoto === 'abster' ? 'picked' : ''}" data-escolha="abster">Abster-se</button>
+    </div>
+    <div class="text-gold vote-confirm" style="font-size:var(--text-sm);">${meuVoto ? 'Seu voto atual: ' + meuVoto.toUpperCase() : ''}</div>
+    ` : `<p class="text-muted" style="margin-top:var(--space-4);">Votação encerrada.</p>`}
+
+    <hr class="hairline">
+    <h4 style="font-size:var(--text-sm); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em;">Parecer</h4>
+    <p class="text-secondary" style="font-size:var(--text-sm);">${d.descricao || ''}</p>
+  `;
+
+  card.querySelectorAll('.vote-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!session) { window.location.href = 'login.html?next=governanca.html'; return; }
+      btn.disabled = true;
+      try {
+        const result = await votarDecreto(session.user.id, d.id, btn.dataset.escolha);
+        if (!result.ok) { card.querySelector('.vote-confirm').textContent = result.mensagem; return; }
+        const novoTally = await obterTallyDecreto(d.id);
+        const novoCounts = { sim: 0, nao: 0, abster: 0 };
+        novoTally.forEach(t => { novoCounts[t.escolha] = Number(t.total); });
+        card.replaceWith(buildDecreeCard(d, novoCounts, btn.dataset.escolha));
+      } catch (e) {
+        card.querySelector('.vote-confirm').textContent = 'Erro: ' + e.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  return card;
+}
+</script>
+
+</body>
+</html>

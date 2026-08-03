@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Codex Caelestis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .codex-layout { display:grid; grid-template-columns: 260px 1fr; gap: var(--space-8); }
+  @media (max-width:860px){ .codex-layout{ grid-template-columns:1fr; } }
+  .verbete-list a { display:block; padding: var(--space-2) var(--space-3); border-radius:var(--radius-sm); color:var(--color-text-secondary); font-size:var(--text-sm); margin-bottom:2px; cursor:pointer; }
+  .verbete-list a:hover, .verbete-list a.active { background: var(--bg-surface-elevated); color:#fff; text-decoration:none; }
+  .chapter-head { display:flex; gap: var(--space-6); align-items:flex-start; margin-bottom: var(--space-6); }
+  .chapter-head svg { width:120px; height:120px; flex-shrink:0; }
+  blockquote { font-family: var(--font-display); color: var(--color-text-gold); border-left: 3px solid var(--brand-action); padding-left: var(--space-4); margin: var(--space-4) 0; font-size: var(--text-md); }
+  .margin-note { border-top: 1px solid var(--border-subtle); padding-top: var(--space-3); margin-top: var(--space-3); font-size: var(--text-sm); color: var(--color-text-secondary); }
+  .margin-note b { color: var(--color-text-gold); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html" class="active">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="padding-top:var(--space-6);">
+  <div class="codex-layout">
+    <aside>
+      <input type="text" id="verbeteSearch" placeholder="Buscar no Códice...">
+      <div class="verbete-list" id="verbeteList" style="margin-top:var(--space-4);"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
+      <div id="noResults" class="text-muted" style="display:none; font-size:var(--text-xs); margin-top:var(--space-3);">Nenhum verbete corresponde à busca.</div>
+    </aside>
+
+    <article class="card" id="entryView"></article>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · A Grande Obra aguarda os obstinados.
+</footer>
+
+<script type="module">
+import { sb, getSession, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+
+const { data: entries, error } = await sb.from('agora_codex_entries').select('*').order('ordem');
+const listEl = document.getElementById('verbeteList');
+const viewEl = document.getElementById('entryView');
+
+if (error || !entries || entries.length === 0) {
+  listEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Não foi possível carregar o Códice${error ? ': ' + error.message : ''}.</p>`;
+} else {
+  listEl.innerHTML = entries.map((e, i) => `
+    <a data-slug="${e.slug}" class="${i === 0 ? 'active' : ''}">${e.tipo === 'capitulo' ? 'Cap. — ' : 'Verbete: '}${e.titulo.split('—')[0].trim()}</a>
+  `).join('');
+
+  listEl.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      listEl.querySelectorAll('a').forEach(x => x.classList.remove('active'));
+      a.classList.add('active');
+      abrirEntrada(entries.find(e => e.slug === a.dataset.slug));
+    });
+  });
+
+  document.getElementById('verbeteSearch').addEventListener('keyup', function () {
+    const q = this.value.trim().toLowerCase();
+    let visible = 0;
+    listEl.querySelectorAll('a').forEach(a => {
+      const match = a.textContent.toLowerCase().includes(q);
+      a.style.display = match ? 'block' : 'none';
+      if (match) visible++;
+    });
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+  });
+
+  await abrirEntrada(entries[0]);
+}
+
+async function abrirEntrada(entry) {
+  const { data: notas } = await sb.from('agora_codex_notes').select('*').eq('entry_id', entry.id).order('created_at', { ascending: false });
+
+  viewEl.innerHTML = `
+    <div class="chapter-head">
+      <svg viewBox="0 0 200 200"><use href="assets/seals.svg#${entry.selo_ref || 'seal-noesis-vesper'}"/></svg>
+      <div>
+        <div class="text-muted" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.08em;">${entry.tipo === 'capitulo' ? 'Capítulo' : 'Verbete'}</div>
+        <h1 style="font-size:var(--text-lg);">${entry.titulo}</h1>
+      </div>
+    </div>
+
+    ${entry.citacao ? `<blockquote>"${entry.citacao}"</blockquote>` : ''}
+
+    <div class="text-secondary" style="white-space:pre-line;">${entry.conteudo}</div>
+
+    <hr class="hairline">
+    <h4 style="font-size:var(--text-sm); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em;">Notas de Margem (${notas?.length || 0})</h4>
+    <div id="notesList">
+      ${(notas || []).map(n => `<div class="margin-note"><b>${n.autor_nome || 'Iniciado'}:</b> ${n.nota}</div>`).join('') || '<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma nota ainda.</p>'}
+    </div>
+
+    <div style="margin-top:var(--space-4); display:flex; gap:var(--space-2);">
+      <input type="text" id="novaNota" placeholder="${session ? 'Adicione uma nota de margem...' : 'Entre para anotar no Códice'}" ${session ? '' : 'disabled'}>
+      <button class="btn btn-secondary" id="addNoteBtn" style="font-size:var(--text-xs);" ${session ? '' : 'disabled'}>Anotar</button>
+    </div>
+  `;
+
+  document.getElementById('addNoteBtn')?.addEventListener('click', async () => {
+    if (!session) { window.location.href = 'login.html?next=codex.html'; return; }
+    const input = document.getElementById('novaNota');
+    const texto = input.value.trim();
+    if (!texto) return;
+    const autorNome = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+    await sb.from('agora_codex_notes').insert({ entry_id: entry.id, user_id: session.user.id, autor_nome: autorNome, nota: texto });
+    input.value = '';
+    await abrirEntrada(entry);
+  });
+}
+</script>
+
+</body>
+</html>

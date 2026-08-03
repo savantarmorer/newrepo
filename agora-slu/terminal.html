@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Terminal de Decodificação do Pen Drive Misterioso</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .terminal-wrap { max-width: 980px; margin: var(--space-8) auto; padding: 0 var(--space-6); }
+  .terminal-window {
+    background: #06050C; border: 1px solid var(--border-medium); border-radius: var(--radius-md);
+    box-shadow: var(--shadow-ritual-lg); overflow: hidden;
+  }
+  .terminal-titlebar { display:flex; align-items:center; justify-content:space-between; padding: var(--space-2) var(--space-4); background: var(--brand-surface); border-bottom: 1px solid var(--border-subtle); font-family: var(--font-code); font-size: var(--text-xs); }
+  .dot-row { display:flex; gap:6px; }
+  .dot { width:10px; height:10px; border-radius:50%; }
+  .terminal-body { font-family: var(--font-code); font-size: var(--text-sm); padding: var(--space-6); color: #34D399; line-height:1.7; }
+  .terminal-body .ok { color: #34D399; }
+  .terminal-body .warn { color: var(--brand-warn); }
+  .terminal-body .alert { color: var(--brand-alert); }
+  .terminal-body .gold { color: var(--brand-action); }
+  .terminal-body .muted { color: var(--color-text-muted); }
+  .file-list { margin: var(--space-4) 0; padding-left: var(--space-4); }
+  .decode-row { display:flex; gap: var(--space-3); margin: var(--space-6) 0; flex-wrap: wrap; }
+  .decode-row input { font-family: var(--font-code); flex:1; min-width: 240px; }
+  .console-out { background: #000; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: var(--space-4); margin-top: var(--space-6); max-height: 220px; overflow-y:auto; }
+  .console-out div { margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html" class="active">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<div class="terminal-wrap">
+  <h1 style="font-size:var(--text-lg);">Terminal de Decodificação</h1>
+  <p class="text-secondary" style="margin-bottom:var(--space-6);">O Pen Drive do Investigador expeliu partições criptografadas reais. A resolução exige trabalho coletivo — cada Adepto que decifra um bloco expande o Codex Caelestis e recebe XP de verdade.</p>
+
+  <div class="terminal-window">
+    <div class="terminal-titlebar">
+      <span>AGORA-OS v4.0.9 // ÆON_UNKNOWN_DRIVE</span>
+      <div class="dot-row">
+        <span class="dot" style="background:var(--brand-alert);"></span>
+        <span class="dot" style="background:var(--brand-warn);"></span>
+        <span class="dot" style="background:#34D399;"></span>
+      </div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="gold">$</span> sys_init --sector="ÆON_UNKNOWN_DRIVE"</div>
+      <div class="ok">[OK] Chave de Acesso Validada. Acessando Cripta Digital...</div>
+      <div class="muted" style="margin-top:var(--space-4);">BLOCOS ATIVOS NO VOLUME /DEV/VOL_04_ÆON:</div>
+      <div class="file-list" id="fileList">
+        <div class="muted">Carregando blocos do Codex...</div>
+      </div>
+
+      <div class="muted" id="perguntaAtual"></div>
+
+      <div class="decode-row">
+        <input type="text" id="cipherInput" placeholder="Insira o palimpsesto da chave...">
+        <button class="btn btn-warn" id="decodeBtn">Executar Decifragem</button>
+      </div>
+
+      <div class="console-out" id="consoleOut">
+        <div class="muted">[--:--:--] WARN: Tentativa de força bruta detectada pelo Daemon Umbra-Kael.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · A Grande Obra aguarda os obstinados.
+</footer>
+
+<script type="module">
+import { sb, getSession, obterProgressoARG, resolverPuzzleARG, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+
+function pad(n){ return n.toString().padStart(2,'0'); }
+function timestamp(){ const d=new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`; }
+function log(html){
+  const out = document.getElementById('consoleOut');
+  const line = document.createElement('div');
+  line.innerHTML = `[${timestamp()}] ${html}`;
+  out.appendChild(line);
+  out.scrollTop = out.scrollHeight;
+}
+
+let puzzleAtivo = null;
+
+async function carregarBlocos() {
+  const { data: puzzles } = await sb.from('agora_arg_puzzles').select('*').eq('ativo', true).order('ordem');
+  const progresso = await obterProgressoARG();
+  const solvesByBloco = Object.fromEntries(progresso.map(p => [p.bloco, Number(p.total_solves)]));
+
+  if (!puzzles || puzzles.length === 0) {
+    document.getElementById('fileList').innerHTML = `<div class="muted">Nenhum bloco cadastrado ainda — rode supabase/agora-migration-v2.sql.</div>`;
+    return;
+  }
+
+  puzzleAtivo = puzzles[0];
+  document.getElementById('fileList').innerHTML = puzzles.map(p => `
+    <div>├── [${p.bloco}] ${p.titulo} .......... <span class="warn">CRIPTOGRAFADO</span> — <span class="ok">${solvesByBloco[p.bloco] || 0} iniciados já decifraram</span></div>
+  `).join('');
+  document.getElementById('perguntaAtual').innerHTML = `<span class="gold">DECODIFICADOR ATIVO — ${puzzleAtivo.titulo}:</span><br>${puzzleAtivo.pergunta}`;
+}
+
+await carregarBlocos();
+
+document.getElementById('decodeBtn').addEventListener('click', async () => {
+  const input = document.getElementById('cipherInput');
+  const val = input.value.trim();
+  if (!val) { log('<span class="alert">ERROR:</span> Nenhuma chave inserida no palimpsesto.'); return; }
+  if (!puzzleAtivo) { log('<span class="alert">ERROR:</span> Nenhum bloco ativo carregado.'); return; }
+
+  const session = await getSession();
+  if (!session) {
+    log('<span class="warn">WARN:</span> É preciso estar iniciado para registrar uma decifragem. Redirecionando ao Rito da Soleira...');
+    setTimeout(() => window.location.href = 'login.html?next=terminal.html', 1200);
+    return;
+  }
+
+  document.getElementById('decodeBtn').disabled = true;
+  try {
+    const result = await resolverPuzzleARG(session.user.id, puzzleAtivo.id, val);
+    if (result.correto) {
+      log(`<span class="ok">OK:</span> ${result.mensagem}`);
+      if (result.ja_resolvido_antes) {
+        log('<span class="muted">Você já havia decifrado este bloco — nenhum XP adicional concedido.</span>');
+      } else {
+        log(`<span class="gold">+${result.xp_ganho} XP</span> concedidos. Confira seu <a href="dashboard.html">Painel</a>.`);
+      }
+      await carregarBlocos();
+    } else {
+      log(`<span class="warn">WARN:</span> ${result.mensagem}`);
+    }
+  } catch (e) {
+    log(`<span class="alert">ERROR:</span> ${e.message}`);
+  } finally {
+    document.getElementById('decodeBtn').disabled = false;
+    input.value = '';
+  }
+});
+</script>
+
+</body>
+</html>

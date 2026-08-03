@@ -36,3 +36,4 @@ jobs:
             **/DEPLOY.md
             **/README*
             **/newrepo-0.md
+            agora-slu/supabase/**

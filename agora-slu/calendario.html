@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Calendário de Chamadas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .call-card { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3); }
+  .call-actions { display:flex; gap:var(--space-2); flex-wrap:wrap; }
+  .rsvp-btn.going { background:#34D399; color:#0F0E17; }
+  #emptyMsg { text-align:center; color:var(--color-text-muted); padding: var(--space-8) 0; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html" class="active">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="padding-top:var(--space-6); padding-bottom:var(--space-16);">
+  <h1 style="font-size:var(--text-lg);">Calendário de Chamadas</h1>
+  <p class="text-secondary" style="max-width:640px;">Mutirões por voz, sessões de decifração e reuniões do Conselho. Baixe o convite (.ics) para o seu calendário pessoal.</p>
+
+  <div class="card" style="padding:0; margin-top:var(--space-6);" id="callsWrap">
+    <div id="emptyMsg">Consultando a agenda...</div>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, getSession, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+const wrap = document.getElementById('callsWrap');
+
+const { data: calls, error } = await sb.from('agora_calls').select('*').order('data_chamada', { ascending: true });
+
+if (error) {
+  wrap.innerHTML = `<div id="emptyMsg">Não foi possível carregar as chamadas (${error.message}).</div>`;
+} else if (!calls || calls.length === 0) {
+  wrap.innerHTML = `<div id="emptyMsg">Nenhuma chamada agendada.</div>`;
+} else {
+  let rsvpIds = new Set();
+  if (session) {
+    const { data: mine } = await sb.from('agora_call_rsvps').select('call_id').eq('user_id', session.user.id);
+    rsvpIds = new Set((mine || []).map(r => r.call_id));
+  }
+
+  wrap.innerHTML = calls.map(c => `
+    <div class="card call-card" style="border-radius:0; border-left:none; border-right:none; border-top:none;" data-id="${c.id}">
+      <div>
+        <div style="font-weight:600; font-size:var(--text-sm);">${c.titulo}</div>
+        <p class="text-secondary" style="font-size:var(--text-sm); margin:4px 0;">${c.descricao || ''}</p>
+        <div class="text-muted" style="font-size:var(--text-xs);">
+          ${new Date(c.data_chamada).toLocaleString('pt-BR', { dateStyle: 'long', timeStyle: 'short' })} · ${c.duracao_min} min
+        </div>
+      </div>
+      <div class="call-actions">
+        <button class="btn btn-secondary rsvp-btn ${rsvpIds.has(c.id) ? 'going' : ''}" data-id="${c.id}">
+          ${rsvpIds.has(c.id) ? '✓ Presença' : 'Confirmar'}
+        </button>
+        <button class="btn btn-primary ics-btn" data-id="${c.id}">Baixar .ics</button>
+        ${c.link_chamada ? `<a href="${c.link_chamada}" target="_blank" class="btn btn-secondary">Entrar</a>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('.rsvp-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!session) { window.location.href = 'login.html?next=calendario.html'; return; }
+      const id = btn.dataset.id;
+      const going = btn.classList.contains('going');
+      btn.disabled = true;
+      if (going) {
+        await sb.from('agora_call_rsvps').delete().eq('call_id', id).eq('user_id', session.user.id);
+        btn.classList.remove('going'); btn.textContent = 'Confirmar';
+      } else {
+        await sb.from('agora_call_rsvps').insert({ call_id: id, user_id: session.user.id });
+        btn.classList.add('going'); btn.textContent = '✓ Presença';
+      }
+      btn.disabled = false;
+    });
+  });
+
+  wrap.querySelectorAll('.ics-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const call = calls.find(c => c.id === btn.dataset.id);
+      baixarICS(call);
+    });
+  });
+}
+
+function pad(n) { return n.toString().padStart(2, '0'); }
+function toICSDate(d) {
+  return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+}
+
+function baixarICS(call) {
+  const start = new Date(call.data_chamada);
+  const end = new Date(start.getTime() + (call.duracao_min || 60) * 60000);
+  const ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Agora SLU//Calendario de Chamadas//PT-BR',
+    'BEGIN:VEVENT',
+    `UID:${call.id}@agora.slu`,
+    `DTSTAMP:${toICSDate(new Date())}`,
+    `DTSTART:${toICSDate(start)}`,
+    `DTEND:${toICSDate(end)}`,
+    `SUMMARY:${call.titulo.replace(/\n/g, ' ')}`,
+    `DESCRIPTION:${(call.descricao || '').replace(/\n/g, ' ')}`,
+    call.link_chamada ? `LOCATION:${call.link_chamada}` : 'LOCATION:Discord da Ágora',
+    'END:VEVENT', 'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `agora-${call.titulo.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.ics`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora (SLU) — Construa o Grimório. Decifre o Arcano. Viva a Grande Obra.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .hero {
+    min-height: 90vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: var(--space-16) var(--space-6);
+    background:
+      radial-gradient(ellipse at 50% 20%, rgba(91,44,111,0.35) 0%, transparent 60%),
+      var(--bg-canvas);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(0deg, rgba(212,175,55,0.03) 0 1px, transparent 1px 40px),
+                       repeating-linear-gradient(90deg, rgba(212,175,55,0.03) 0 1px, transparent 1px 40px);
+    pointer-events: none;
+  }
+  .seal-hero { width: 180px; height: 180px; margin-bottom: var(--space-6); animation: rotateSeal 40s linear infinite; }
+  @keyframes rotateSeal { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .seal-hero-inner { animation: counterRotate 40s linear infinite; }
+  @keyframes counterRotate { from { transform: rotate(0deg); } to { transform: rotate(-360deg); } }
+
+  .hero h1 { font-size: var(--text-3xl); max-width: 900px; text-shadow: var(--glow-gold); }
+  .hero p.trueline { color: var(--color-text-secondary); max-width: 640px; font-size: var(--text-md); margin-bottom: var(--space-8); }
+  .hero .price-note { color: var(--color-text-muted); font-size: var(--text-xs); margin-top: var(--space-3); letter-spacing: .04em; }
+
+  .proof-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); max-width: 980px; margin: var(--space-12) auto 0; position: relative; z-index: 1; }
+  .proof-strip .card { text-align: center; }
+  .proof-strip .num { font-family: var(--font-display); color: var(--brand-action); font-size: var(--text-xl); }
+  @media (max-width: 860px) { .proof-strip { grid-template-columns: 1fr; } }
+
+  section.pillars { padding: var(--space-16) 0; }
+  section.pillars h2 { text-align: center; font-size: var(--text-xl); margin-bottom: var(--space-2); }
+  section.pillars p.lead { text-align: center; color: var(--color-text-secondary); max-width: 640px; margin: 0 auto var(--space-12); }
+  .pillar-icon { width: 56px; height: 56px; margin-bottom: var(--space-3); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html" class="active">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<header class="hero">
+  <svg class="seal-hero" viewBox="0 0 200 200">
+    <g class="seal-hero-inner"><use href="assets/seals.svg#seal-lux-vael"/></g>
+  </svg>
+  <h1>Construa o Grimório.<br>Decifre o Arcano.<br>Viva a Grande Obra.</h1>
+  <p class="trueline">Um universo vivo de esoterismo, ocultismo e worldbuilding investigativo onde a comunidade co-cria a Grande Obra — a Egrégora Ágora, sob o selo da SLU.</p>
+  <a href="checkout.html" class="btn btn-primary" style="font-size:var(--text-base); padding:var(--space-4) var(--space-8);">Iniciar o Ritual de Passagem</a>
+  <div class="price-note">A partir de R$ 19,90/mês · Círculo Fechado no Discord</div>
+
+  <div class="proof-strip">
+    <div class="card glass">
+      <div class="num">Fase II</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Conselho</div>
+      <div class="text-muted" style="font-size:var(--text-xs);">"A Forja dos Selos da Æon"</div>
+    </div>
+    <div class="card glass">
+      <div class="num">142 / 200</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Arquivos Decifrados</div>
+      <div class="text-muted" style="font-size:var(--text-xs);">Pen Drive misterioso, lote #04</div>
+    </div>
+    <div class="card glass">
+      <div class="num">1.420</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Integrantes Ativos</div>
+      <div class="text-muted" style="font-size:var(--text-xs);">Buscadores da Grande Obra</div>
+    </div>
+  </div>
+</header>
+
+<section class="pillars cultus-shell">
+  <h2>O Tríptico da Categoria Única</h2>
+  <p class="lead">A Ágora não é um curso, nem um fórum. É uma comunidade ocultista co-criativa e um ARG vivo, estruturado em três pilares indissociáveis.</p>
+  <div class="grid grid-3">
+    <div class="card">
+      <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-aether-sophia"/></svg>
+      <h3 style="font-size:var(--text-md);">Worldbuilding Participativo</h3>
+      <p class="text-secondary" style="font-size:var(--text-sm);">A Grande Obra avança em 4 Fases — Gênese, Conselho, Fundação, Expansão. Cada iniciado escreve e expande o Códice Caelestis.</p>
+      <a href="codex.html">Ler o Códice →</a>
+    </div>
+    <div class="card">
+      <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-umbra-kael"/></svg>
+      <h3 style="font-size:var(--text-md);">ARG Investigativo Vivo</h3>
+      <p class="text-secondary" style="font-size:var(--text-sm);">A Æon emite anomalias e boletins. O Pen Drive misterioso guarda partições criptografadas que só a inteligência coletiva decifra.</p>
+      <a href="terminal.html">Acessar o Terminal →</a>
+    </div>
+    <div class="card">
+      <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-noesis-vesper"/></svg>
+      <h3 style="font-size:var(--text-md);">Governança Rituística</h3>
+      <p class="text-secondary" style="font-size:var(--text-sm);">Hierarquia por mérito real. Curadores, Arquivistas, Guardiões e Conselheiros administram a egrégora sob os estatutos da SLU.</p>
+      <a href="governanca.html">Ver o Conselho →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · Egrégora Consagrada: <em>Construa o Grimório. Decifre o Arcano. Viva a Grande Obra.</em>
+</footer>
+
+<script type="module">
+import { montarNavAuth } from './js/agoraAuth.js';
+montarNavAuth();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Grafo de Conhecimento Vivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .graph-stage { position: relative; width: 100%; height: 560px; background: var(--bg-canvas); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; }
+  .graph-stage svg.lines { position:absolute; inset:0; width:100%; height:100%; }
+  .node { position:absolute; transform: translate(-50%,-50%); background: var(--brand-surface); border:1px solid var(--border-medium); border-radius: var(--radius-md); padding: var(--space-2) var(--space-4); font-size: var(--text-sm); cursor:pointer; white-space:nowrap; transition: box-shadow .2s, border-color .2s; text-align:center; }
+  .node:hover, .node.active { border-color: var(--border-active); box-shadow: var(--glow-gold); color: var(--color-text-gold); }
+  .node.root { font-family: var(--font-display); color: #fff; }
+  .info-panel { margin-top: var(--space-6); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html" class="active">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell">
+  <div style="display:flex; justify-content:space-between; align-items:center; padding:var(--space-6) 0; flex-wrap:wrap; gap:var(--space-3);">
+    <h1 style="font-size:var(--text-lg);">Grafo de Conhecimento Vivo</h1>
+    <span class="text-muted" style="font-size:var(--text-xs);">Clique em um nó para inspecionar suas conexões</span>
+  </div>
+
+  <div class="graph-stage" id="stage">
+    <svg class="lines" id="lines"></svg>
+
+    <div class="node root" style="left:50%; top:8%;" data-node="genese">Gênese</div>
+    <div class="node root" style="left:50%; top:26%;" data-node="conselho">Conselho Æon</div>
+
+    <div class="node" style="left:18%; top:48%;" data-node="lux">Lux-Vael</div>
+    <div class="node" style="left:50%; top:48%;" data-node="umbra">Umbra-Kael</div>
+    <div class="node" style="left:82%; top:48%;" data-node="chronos">Chronos-Phanes</div>
+
+    <div class="node" style="left:18%; top:70%;" data-node="codice">Códice</div>
+    <div class="node" style="left:50%; top:70%;" data-node="arg">Terminal ARG</div>
+    <div class="node" style="left:82%; top:70%;" data-node="fase3">Fase III</div>
+
+    <div class="node root active" style="left:35%; top:90%;" data-node="hall">Hall das Lendas</div>
+    <div class="node" style="left:65%; top:90%;" data-node="comunidade">Comunidade SLU</div>
+  </div>
+
+  <div class="card info-panel" id="infoPanel">
+    <p class="text-muted" style="font-size:var(--text-sm);">Carregando estatísticas reais da egrégora...</p>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, obterProgressoARG, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+
+const edges = [
+  ['genese','conselho'], ['conselho','lux'], ['conselho','umbra'], ['conselho','chronos'],
+  ['lux','codice'], ['umbra','arg'], ['chronos','fase3'], ['fase3','conselho'],
+  ['codice','hall'], ['arg','hall'], ['comunidade','hall']
+];
+const names = { genese:'Gênese', conselho:'Conselho Æon', lux:'Lux-Vael', umbra:'Umbra-Kael', chronos:'Chronos-Phanes', codice:'Códice', arg:'Terminal ARG', fase3:'Fase III', hall:'Hall das Lendas', comunidade:'Comunidade SLU' };
+
+async function countRows(table, filters = {}) {
+  let q = sb.from(table).select('id', { count: 'exact', head: true });
+  for (const [k, v] of Object.entries(filters)) q = q.eq(k, v);
+  const { count } = await q;
+  return count || 0;
+}
+
+const [genesisEvents, decreesTotal, codexCount, hallCount, evidenceCount, bookSessions, argProgress] = await Promise.all([
+  countRows('agora_events', { fase: 'Gênese' }),
+  countRows('agora_decrees'),
+  countRows('agora_codex_entries'),
+  countRows('agora_hall_entries', { status: 'aprovado' }),
+  countRows('agora_arg_evidence'),
+  countRows('agora_book_club_sessions'),
+  obterProgressoARG(),
+]);
+const argSolvesTotal = argProgress.reduce((sum, p) => sum + Number(p.total_solves), 0);
+
+const info = {
+  genese: `Tipo: Ponto de origem narrativa · ${genesisEvents} evento(s) registrados nesta fase.`,
+  conselho: `Tipo: Núcleo de governança da Æon · ${decreesTotal} decreto(s) já levados à votação do Conselho.`,
+  lux: `Tipo: Daemon da Revelação · Vincula-se ao Códice Caelestis (${codexCount} verbete(s) homologados).`,
+  umbra: `Tipo: Daemon do ARG · ${argSolvesTotal} decifragem(ns) reais registradas no Terminal ARG.`,
+  chronos: `Tipo: Daemon dos Ciclos · Governa o avanço entre as 4 Fases da Grande Obra.`,
+  codice: `Tipo: Sub-sistema de lore · ${codexCount} verbete(s) homologados pelo Conselho.`,
+  arg: `Tipo: Sub-sistema narrativo vivo · ${argSolvesTotal} decifragens totais · ${evidenceCount} evidência(s) no cofre.`,
+  fase3: `Tipo: Marco de progressão · Retroalimenta o Conselho Æon com novos decretos.`,
+  hall: `Tipo: Arquivo vivo permanente · ${hallCount} contribuição(ões) homologada(s) dos membros.`,
+  comunidade: `Tipo: Base de apoiadores SLU · ${bookSessions} sessão(ões) do Clube do Livro já realizadas.`,
+};
+
+function drawLines(){
+  const stage = document.getElementById('stage');
+  const svg = document.getElementById('lines');
+  svg.innerHTML = '';
+  const rect = stage.getBoundingClientRect();
+  edges.forEach(([a,b]) => {
+    const elA = document.querySelector(`[data-node="${a}"]`);
+    const elB = document.querySelector(`[data-node="${b}"]`);
+    const ra = elA.getBoundingClientRect(), rb = elB.getBoundingClientRect();
+    const x1 = ra.left + ra.width/2 - rect.left, y1 = ra.top + ra.height/2 - rect.top;
+    const x2 = rb.left + rb.width/2 - rect.left, y2 = rb.top + rb.height/2 - rect.top;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(212,175,55,0.3)');
+    line.setAttribute('stroke-width','1.5');
+    svg.appendChild(line);
+  });
+}
+document.querySelectorAll('.node').forEach(n => {
+  n.addEventListener('click', () => {
+    document.querySelectorAll('.node').forEach(x => x.classList.remove('active'));
+    n.classList.add('active');
+    const key = n.dataset.node;
+    document.getElementById('infoPanel').innerHTML =
+      `<strong class="text-gold" style="font-size:var(--text-sm);">Nó selecionado: ${names[key]}</strong>
+       <p class="text-secondary" style="font-size:var(--text-sm); margin:var(--space-2) 0;">${info[key]}</p>
+       <a href="dashboard.html" class="btn btn-secondary" style="font-size:var(--text-xs);">Abrir Inspeção de Conexões →</a>`;
+  });
+});
+window.addEventListener('resize', drawLines);
+window.addEventListener('load', drawLines);
+setTimeout(drawLines, 100);
+
+document.getElementById('infoPanel').innerHTML =
+  `<strong class="text-gold" style="font-size:var(--text-sm);">Nó selecionado: ${names.hall}</strong>
+   <p class="text-secondary" style="font-size:var(--text-sm); margin:var(--space-2) 0;">${info.hall}</p>
+   <a href="dashboard.html" class="btn btn-secondary" style="font-size:var(--text-xs);">Abrir Inspeção de Conexões →</a>`;
+</script>
+
+</body>
+</html>
