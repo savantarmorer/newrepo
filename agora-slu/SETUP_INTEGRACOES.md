@@ -94,11 +94,13 @@ e abra `http://localhost:5500/index.html`.
 
 Se o site já é publicado via `iuripiragibe.net` (que roda no Netlify — confirmado, é o mesmo host das funções de pagamento Mercado Pago), a API da Ágora já está pronta como Netlify Functions em `netlify/functions/agora-discord-*.js`, na raiz do repositório (fora de `agora-slu/`, ao lado das outras funções existentes).
 
-Só falta cadastrar as variáveis de ambiente no **Netlify → Site settings → Environment variables** (mesmo site das funções de pagamento):
+**Importante:** o Netlify já tem variáveis genéricas `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` (criadas automaticamente por uma integração Netlify↔Supabase — "Created by Supabase" no painel). Isso é de **outro projeto Supabase**, não o da Ágora. Por isso a Ágora usa nomes próprios (`AGORA_SUPABASE_URL` / `AGORA_SUPABASE_SERVICE_KEY`) — **não edite as variáveis `SUPABASE_*` existentes**, crie as novas abaixo do zero.
+
+Cadastre em **Netlify → Site settings → Environment variables** (mesmo site das funções de pagamento):
 
 ```
-SUPABASE_URL=https://fveslvzjjixzpwiqcydz.supabase.co
-SUPABASE_SERVICE_KEY=<service role key do Supabase>
+AGORA_SUPABASE_URL=https://fveslvzjjixzpwiqcydz.supabase.co
+AGORA_SUPABASE_SERVICE_KEY=<service role key do projeto Supabase do AMOQ/Ágora>
 DISCORD_BOT_TOKEN=<token do bot>
 DISCORD_GUILD_ID=<guild id>
 DISCORD_ROLE_GRAU_MAP={"Conselheiro":3,"Mestre da Obra":2,"Adepto":1,"Neófito":0}
@@ -106,7 +108,11 @@ DISCORD_PREVIEW_CHANNEL_ID=<opcional>
 DISCORD_ANNOUNCE_CHANNEL_ID=<opcional>
 ```
 
-Depois de salvar as variáveis, faça um novo deploy (qualquer `git push` já dispara, ou use "Trigger deploy" no painel do Netlify). Com `AGORA_API_URL` vazio em `config.js` (passo 5), tudo passa a funcionar automaticamente no mesmo domínio — sem hospedar nada separado.
+`AGORA_SUPABASE_SERVICE_KEY` é a **service role key** (não a anon key) do projeto `fveslvzjjixzpwiqcydz` — pegue em Supabase Dashboard → Settings → API.
+
+**Depois de cadastrar (ou de editar) qualquer variável, um deploy novo é obrigatório** — o Netlify não aplica variáveis de ambiente em funções já publicadas até rodar um deploy depois da mudança. Use "Trigger deploy" no painel do Netlify (Deploys → Trigger deploy → Deploy site), ou faça qualquer `git push`.
+
+Com `AGORA_API_URL` vazio em `config.js` (passo 5), tudo passa a funcionar automaticamente no mesmo domínio — sem hospedar nada separado.
 
 ### Alternativa local: `server/` (Express)
 

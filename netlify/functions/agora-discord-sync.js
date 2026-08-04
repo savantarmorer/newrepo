@@ -7,7 +7,7 @@ export async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Método não permitido.' });
 
   try {
-    checkEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_KEY', 'DISCORD_BOT_TOKEN', 'DISCORD_GUILD_ID']);
+    checkEnv(['AGORA_SUPABASE_URL', 'AGORA_SUPABASE_SERVICE_KEY', 'DISCORD_BOT_TOKEN', 'DISCORD_GUILD_ID']);
 
     const auth = event.headers.authorization || event.headers.Authorization || '';
     const accessToken = auth.startsWith('Bearer ') ? auth.slice(7) : null;

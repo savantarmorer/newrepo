@@ -12,9 +12,14 @@ export function json(statusCode, body) {
   return { statusCode, headers: CORS_HEADERS, body: JSON.stringify(body) };
 }
 
+// Nomes próprios (AGORA_*) de propósito: este site Netlify já tem
+// SUPABASE_URL/SUPABASE_SERVICE_KEY genéricos criados automaticamente por
+// uma integração Netlify↔Supabase (provavelmente outro projeto, sem as
+// tabelas agora_*). Usar nomes distintos evita ler o banco errado ou
+// quebrar se aquela integração mudar de baixo dos nossos pés.
 const {
-  SUPABASE_URL,
-  SUPABASE_SERVICE_KEY,
+  AGORA_SUPABASE_URL: SUPABASE_URL,
+  AGORA_SUPABASE_SERVICE_KEY: SUPABASE_SERVICE_KEY,
   DISCORD_BOT_TOKEN,
   DISCORD_GUILD_ID,
   DISCORD_ROLE_GRAU_MAP,

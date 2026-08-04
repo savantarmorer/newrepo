@@ -6,7 +6,7 @@ const STATUS_MAP = { 1: 'agendado', 2: 'ativo', 3: 'concluido', 4: 'cancelado' }
 
 export async function handler(event) {
   try {
-    checkEnv(['SUPABASE_URL', 'SUPABASE_SERVICE_KEY', 'DISCORD_BOT_TOKEN', 'DISCORD_GUILD_ID']);
+    checkEnv(['AGORA_SUPABASE_URL', 'AGORA_SUPABASE_SERVICE_KEY', 'DISCORD_BOT_TOKEN', 'DISCORD_GUILD_ID']);
 
     const events = await discordGet(`/guilds/${ENV.DISCORD_GUILD_ID}/scheduled-events`);
     for (const ev of events) {
