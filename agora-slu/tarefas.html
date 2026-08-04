@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Quadro de Tarefas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .board { display:grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+  @media (max-width: 900px) { .board { grid-template-columns: 1fr; } }
+  .col h3 { font-size: var(--text-sm); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-3); }
+  .task-card { margin-bottom: var(--space-3); }
+  .task-card .cat { font-size:var(--text-xs); }
+  .task-card h4 { font-size: var(--text-sm); margin: var(--space-2) 0 4px; }
+  .task-card p { font-size: var(--text-xs); color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+  .task-card .claimant { font-size: var(--text-xs); color: var(--color-text-muted); margin-bottom: var(--space-2); }
+  .empty-col { font-size: var(--text-xs); color: var(--color-text-muted); text-align:center; padding: var(--space-6) 0; border: 1px dashed var(--border-subtle); border-radius: var(--radius-md); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="tarefas.html" class="active">Tarefas</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="evidencias.html">Evidências</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="padding-top:var(--space-6); padding-bottom:var(--space-16);">
+  <h1 style="font-size:var(--text-lg);">Quadro de Tarefas dos Voluntários</h1>
+  <p class="text-secondary" style="max-width:640px;">O mesmo quadro do canal <code>#quadro-de-tarefas</code>, agora com XP real. Reivindique uma tarefa aberta, entregue quando concluir — a Egrégora confia no seu registro.</p>
+
+  <div class="board" style="margin-top:var(--space-8);">
+    <div class="col">
+      <h3>Abertas</h3>
+      <div id="colAberta"></div>
+    </div>
+    <div class="col">
+      <h3>Em Andamento</h3>
+      <div id="colAndamento"></div>
+    </div>
+    <div class="col">
+      <h3>Concluídas</h3>
+      <div id="colConcluida"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, getSession, reivindicarTarefa, concluirTarefa, liberarTarefa, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+
+const { data: tasks, error } = await sb.from('agora_tasks').select('*').order('created_at', { ascending: false });
+
+const cols = { aberta: document.getElementById('colAberta'), em_andamento: document.getElementById('colAndamento'), concluida: document.getElementById('colConcluida') };
+
+async function render() {
+  const { data: fresh } = await sb.from('agora_tasks').select('*').order('created_at', { ascending: false });
+  const byStatus = { aberta: [], em_andamento: [], concluida: [] };
+  (fresh || []).forEach(t => byStatus[t.status]?.push(t));
+
+  for (const [status, el] of Object.entries(cols)) {
+    if (!byStatus[status].length) { el.innerHTML = `<div class="empty-col">Nenhuma tarefa aqui.</div>`; continue; }
+    el.innerHTML = byStatus[status].map(t => taskCard(t)).join('');
+  }
+  wireButtons();
+}
+
+function taskCard(t) {
+  const souEu = session && t.claimed_by === session.user.id;
+  let actions = '';
+  if (t.status === 'aberta') {
+    actions = `<button class="btn btn-primary claim-btn" data-id="${t.id}" style="font-size:var(--text-xs); width:100%;">Reivindicar</button>`;
+  } else if (t.status === 'em_andamento' && souEu) {
+    actions = `
+      <button class="btn btn-primary deliver-btn" data-id="${t.id}" style="font-size:var(--text-xs); width:100%; margin-bottom:6px;">Marcar como Concluída</button>
+      <button class="btn btn-secondary release-btn" data-id="${t.id}" style="font-size:var(--text-xs); width:100%;">Liberar Tarefa</button>`;
+  } else if (t.status === 'em_andamento') {
+    actions = `<span class="text-muted" style="font-size:var(--text-xs);">Em andamento com outro Iniciado.</span>`;
+  } else if (t.status === 'concluida') {
+    actions = `<span class="badge">✓ +${t.xp_reward} XP</span>`;
+  }
+
+  return `
+    <div class="card task-card">
+      <span class="badge cat">${t.categoria}</span>
+      <h4>${t.titulo}</h4>
+      <p>${t.descricao || ''}</p>
+      <div class="claimant">Recompensa: ${t.xp_reward} XP</div>
+      ${actions}
+    </div>`;
+}
+
+function wireButtons() {
+  document.querySelectorAll('.claim-btn').forEach(btn => btn.addEventListener('click', async () => {
+    if (!session) { window.location.href = 'login.html?next=tarefas.html'; return; }
+    btn.disabled = true;
+    const result = await reivindicarTarefa(session.user.id, btn.dataset.id);
+    if (!result.ok) alert(result.mensagem);
+    await render();
+  }));
+  document.querySelectorAll('.deliver-btn').forEach(btn => btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const result = await concluirTarefa(session.user.id, btn.dataset.id);
+    alert(result.mensagem);
+    await render();
+  }));
+  document.querySelectorAll('.release-btn').forEach(btn => btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    const result = await liberarTarefa(session.user.id, btn.dataset.id);
+    if (!result.ok) alert(result.mensagem);
+    await render();
+  }));
+}
+
+if (error) {
+  document.querySelector('.board').innerHTML = `<p class="text-muted">Não foi possível carregar as tarefas (${error.message}). Confira se supabase/agora-migration-v4.sql já foi executada.</p>`;
+} else {
+  await render();
+}
+</script>
+
+</body>
+</html>

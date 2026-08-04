@@ -27,6 +27,12 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Prévia real de mensagens** de um canal público, via polling a cada 20s (API do bot lê `GET /channels/{id}/messages`)
 - **Sincronização automática de eventos do Discord** (Scheduled Events → tabela `agora_discord_events`, sem ação manual — roda ao subir o server e a cada N minutos)
 - **Estatísticas reais na landing page**: decifragens registradas (Terminal ARG) e membros online (widget público do Discord) substituíram números fictícios
+- **API em produção via Netlify Functions**: mesma API do server/ Express reescrita como funções Netlify, no mesmo domínio do site — zero hospedagem separada, zero conta nova
+- **Quadro de Tarefas dos Voluntários** (`tarefas.html`): espelha o `#quadro-de-tarefas` real do Discord — reivindicar, entregar e ganhar XP real, com trava atômica contra dois iniciados pegando a mesma tarefa
+- **Anúncios automáticos site → Discord**: quando alguém sobe de grau via sincronização, o bot posta um anúncio cerimonial no canal configurado (fecha o ciclo que antes só ia Discord → site)
+- **Menu de perfil com logout** acessível em qualquer página (antes só existia no Dashboard)
+- **Bot interativo real (slash commands)**: `/perfil`, `/tarefas`, `/enigma` (com resposta) e `/oraculo`, respondendo direto no Discord via Interactions Endpoint verificado por assinatura Ed25519 — sem precisar de conexão de Gateway persistente
+- **Cargo do Discord sobe sozinho quando o XP sobe pelo site**: webhook do Supabase (`agora_profiles` UPDATE) → Netlify Function atribui o cargo real via `PUT /guilds/{id}/members/{id}/roles/{id}` — fecha de vez o ciclo bidirecional site ↔ Discord
 
 ---
 
@@ -53,8 +59,14 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Badge Wall dedicada**: página própria de conquistas (hoje os selos aparecem só no Dashboard) com selos extras por marcos (primeira nota no Códice, primeira evidência, etc.).
 - **Chat em tempo real de verdade**: o feed de mensagens de `discord.html` hoje faz polling a cada 20s via REST. Migrar para o bot manter uma conexão de Gateway persistente e empurrar mensagens novas via WebSocket/SSE elimina o atraso e o custo de polling — exige o server rodar como processo de longa duração com `discord.js` (hoje ele só faz chamadas REST pontuais).
 - **Presença em canais de voz**: mostrar quem está em call agora (a Guild Members API + Gateway `VOICE_STATE_UPDATE` permite isso) — reforça a sensação de comunidade viva em `discord.html`.
-- **Anúncios automáticos no Discord**: quando um Ritual de Iniciação é concluído ou um Decreto é aprovado, o bot posta um anúncio cerimonial no canal oficial — fecha o ciclo site → Discord (hoje só existe Discord → site).
+- **Mais anúncios automáticos**: hoje só a subida de grau posta no Discord; estender para Ritual de Iniciação concluído, Decreto aprovado e tarefa do Quadro concluída.
+- **Aprovação com curadoria no Quadro de Tarefas**: hoje a entrega já credita XP imediatamente (confiança, igual às Missões). Uma versão com revisão de um Curador antes do XP cair é o próximo passo natural se o volume de tarefas crescer.
 - **Auto-criação de perfil ao entrar no servidor**: hoje o `agora_profiles` só existe depois do primeiro login no site. Um bot com conexão de Gateway pode escutar `GUILD_MEMBER_ADD` e criar o registro no instante em que a pessoa entra no Discord, mesmo antes de visitar o site.
+- **Aproveitar o restante das permissões do bot** (já concedidas: Criar enquetes, Criar eventos, Fixar mensagens, Ver análises do servidor):
+  - `/decreto` como enquete nativa do Discord ao abrir uma votação (`POST /channels/{id}/polls`), além da votação no site.
+  - Criar automaticamente o Scheduled Event do Discord quando um Curador cadastra um evento/sessão do Clube do Livro no site (hoje a sincronização só vai Discord → site).
+  - Fixar a mensagem de anúncio de decreto/grau no canal configurado.
+  - **Moderação (Moderar membros) foi propositalmente deixada de fora**: kick/ban/timeout são ações consequentes sobre pessoas reais — nenhuma automação deste sistema deve executá-las sem um humano decidindo caso a caso.
 
 ## 🌐 Longo Prazo — infraestrutura maior
 

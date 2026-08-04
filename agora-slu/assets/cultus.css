@@ -205,3 +205,27 @@ input:focus, textarea:focus { outline: none; border-color: var(--border-active);
 .text-muted { color: var(--color-text-muted); }
 .text-secondary { color: var(--color-text-secondary); }
 .text-gold { color: var(--color-text-gold); }
+
+/* ---- NAV PROFILE DROPDOWN ---- */
+.nav-profile { position: relative; }
+.nav-profile-btn {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  background: transparent; border: 1px solid var(--border-medium); color: var(--color-text-gold);
+  font-size: var(--text-xs); padding: var(--space-2) var(--space-4); border-radius: var(--radius-sm); cursor: pointer;
+}
+.nav-profile-btn:hover { border-color: var(--border-active); }
+.nav-profile-btn .caret { font-size: 9px; opacity: .7; }
+.nav-profile-menu {
+  display: none; position: absolute; right: 0; top: calc(100% + var(--space-2));
+  background: var(--brand-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-ritual-md); min-width: 200px; overflow: hidden; z-index: 60;
+}
+.nav-profile-menu.open { display: block; }
+.nav-profile-menu a, .nav-profile-menu button {
+  display: block; width: 100%; text-align: left; padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm); color: var(--color-text-secondary); background: none; border: none;
+  cursor: pointer; font-family: var(--font-body);
+}
+.nav-profile-menu a:hover, .nav-profile-menu button:hover { background: var(--bg-surface-elevated); color: #fff; text-decoration: none; }
+.nav-profile-menu .divider { border-top: 1px solid var(--border-subtle); margin: 0; }
+.nav-profile-menu .sair { color: var(--brand-alert); }

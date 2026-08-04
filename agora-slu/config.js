@@ -8,7 +8,9 @@
 // Também é preciso ativar "Widget do Servidor" em Configurações do Servidor > Widget.
 window.AGORA_DISCORD_GUILD_ID = '1439091029973405891';
 
-// URL pública onde a API de sincronização (server/server.js) está rodando.
-// Em desenvolvimento local, deixe como está. Em produção, troque para o host real
-// (Railway/Render/Fly.io/VPS) onde você publicou a pasta server/.
-window.AGORA_API_URL = 'http://localhost:4000';
+// URL da API de sincronização com o Discord.
+// Em produção (Netlify, mesmo domínio do site) deixe em branco — as rotas
+// /api/agora/discord/* já respondem no mesmo domínio via Netlify Functions.
+// Para testar localmente com server/server.js (Express), troque para
+// 'http://localhost:4000'.
+window.AGORA_API_URL = '';

@@ -31,6 +31,37 @@
   to = "/.netlify/functions/test-email"
   status = 200
 
+# ── Ágora (SLU) — API de integração com o Discord ──────────────────────
+[[redirects]]
+  from = "/api/agora/discord/sync"
+  to = "/.netlify/functions/agora-discord-sync"
+  status = 200
+
+[[redirects]]
+  from = "/api/agora/discord/channels"
+  to = "/.netlify/functions/agora-discord-channels"
+  status = 200
+
+[[redirects]]
+  from = "/api/agora/discord/messages"
+  to = "/.netlify/functions/agora-discord-messages"
+  status = 200
+
+[[redirects]]
+  from = "/api/agora/discord/role-webhook"
+  to = "/.netlify/functions/agora-discord-role-webhook"
+  status = 200
+
+# Interactions Endpoint URL dos slash commands — configure esta URL completa
+# (https://iuripiragibe.net/.netlify/functions/agora-discord-interactions)
+# em Discord Developer Portal → General Information. Sem redirect próprio:
+# o Discord exige o caminho exato /.netlify/functions/... para a verificação
+# funcionar de forma previsível.
+
+# Sincroniza os Scheduled Events do Discord a cada 10 minutos, sozinha.
+[functions."agora-discord-events-sync"]
+  schedule = "*/10 * * * *"
+
 
 
 

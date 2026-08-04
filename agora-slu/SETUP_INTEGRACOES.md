@@ -63,6 +63,7 @@ No **SQL Editor** do Supabase, nesta ordem:
 1. `supabase/agora-migration.sql`
 2. `supabase/agora-migration-v2.sql`
 3. `supabase/agora-migration-v3.sql`
+4. `supabase/agora-migration-v4.sql`
 
 Todas usam `CREATE TABLE IF NOT EXISTS` — seguro rodar mais de uma vez.
 
@@ -74,10 +75,10 @@ Abra `config.js` na raiz do site e edite:
 
 ```js
 window.AGORA_DISCORD_GUILD_ID = '1234567890123456789'; // seu Guild ID real, entre aspas
-window.AGORA_API_URL = 'http://localhost:4000';        // ou a URL pública da API em produção
+window.AGORA_API_URL = '';                              // vazio = mesmo domínio (produção via Netlify)
 ```
 
-Sem isso, `discord.html` mostra a mensagem "widget não configurado" mesmo com tudo certo no Discord/Supabase — é o arquivo que liga a configuração externa ao front-end estático.
+Sem o Guild ID, `discord.html` mostra a mensagem "widget não configurado" mesmo com tudo certo no Discord/Supabase.
 
 **Importante:** abra o site por um servidor local, não por duplo-clique no arquivo (`file://`). Navegadores bloqueiam `import` de módulos JavaScript quando a página é aberta como arquivo local, então login, dashboard e todas as páginas com dados dinâmicos ficam com a tela em branco/parcial nesse modo. Rode, na pasta `site/`:
 
@@ -87,7 +88,29 @@ npx http-server . -p 5500
 
 e abra `http://localhost:5500/index.html`.
 
-## 6. Subir a API de sincronização com o Discord
+## 6. Ligar a API de sincronização com o Discord
+
+### Em produção: Netlify Functions (recomendado — mesmo domínio, sem conta nova)
+
+Se o site já é publicado via `iuripiragibe.net` (que roda no Netlify — confirmado, é o mesmo host das funções de pagamento Mercado Pago), a API da Ágora já está pronta como Netlify Functions em `netlify/functions/agora-discord-*.js`, na raiz do repositório (fora de `agora-slu/`, ao lado das outras funções existentes).
+
+Só falta cadastrar as variáveis de ambiente no **Netlify → Site settings → Environment variables** (mesmo site das funções de pagamento):
+
+```
+SUPABASE_URL=https://fveslvzjjixzpwiqcydz.supabase.co
+SUPABASE_SERVICE_KEY=<service role key do Supabase>
+DISCORD_BOT_TOKEN=<token do bot>
+DISCORD_GUILD_ID=<guild id>
+DISCORD_ROLE_GRAU_MAP={"Conselheiro":3,"Mestre da Obra":2,"Adepto":1,"Neófito":0}
+DISCORD_PREVIEW_CHANNEL_ID=<opcional>
+DISCORD_ANNOUNCE_CHANNEL_ID=<opcional>
+```
+
+Depois de salvar as variáveis, faça um novo deploy (qualquer `git push` já dispara, ou use "Trigger deploy" no painel do Netlify). Com `AGORA_API_URL` vazio em `config.js` (passo 5), tudo passa a funcionar automaticamente no mesmo domínio — sem hospedar nada separado.
+
+### Alternativa local: `server/` (Express)
+
+Só necessário se você quiser rodar/testar a API fora do Netlify:
 
 ```bash
 cd server
@@ -97,13 +120,57 @@ cp .env.example .env
 npm start
 ```
 
-A API sobe em `http://localhost:4000` (ajustável via `PORT`). Ela é a **única** peça que precisa rodar em um servidor (Node) — o resto do site é HTML estático que fala direto com o Supabase.
-
-Em produção, hospede este `server/` em qualquer runtime Node (Railway, Render, Fly.io, VPS) e atualize `window.AGORA_API_URL` em `config.js` (passo 5) para essa URL pública.
+Sobe em `http://localhost:4000`. Para usá-la, troque `window.AGORA_API_URL` em `config.js` para `'http://localhost:4000'`.
 
 ---
 
-## 7. Pagamento real do Ritual de Iniciação (pendente)
+## 7. Bot interativo: slash commands + cargo bidirecional
+
+Isso usa as permissões amplas que você já concedeu ao bot (Administrador). Três peças:
+
+### 7a. Pegar a Public Key
+
+Discord Developer Portal → sua aplicação → **General Information → Public Key** → copie.
+
+### 7b. Cadastrar mais variáveis no Netlify
+
+Além das do passo 6, adicione:
+
+```
+DISCORD_PUBLIC_KEY=<public key do passo 7a>
+DISCORD_GRAU_ROLE_IDS={"0":"<id do cargo Neófito>","1":"<id do cargo Adepto>","2":"<id do cargo Mestre da Obra>","3":"<id do cargo Conselheiro>"}
+SUPABASE_WEBHOOK_SECRET=<uma senha aleatória qualquer, só sua>
+```
+
+Para pegar o ID de um cargo: Configurações do Servidor → Cargos → clique nos "···" do cargo → Copiar ID (com Modo Desenvolvedor ativo). Se algum grau ainda não tem cargo correspondente, deixe de fora do JSON — ele simplesmente não recebe atribuição automática.
+
+### 7c. Configurar o Interactions Endpoint URL (slash commands)
+
+1. No Developer Portal → **General Information → Interactions Endpoint URL**, cole:
+   ```
+   https://iuripiragibe.net/.netlify/functions/agora-discord-interactions
+   ```
+2. O Discord testa a URL na hora salvando — só funciona depois que `DISCORD_PUBLIC_KEY` já estiver salvo no Netlify e um deploy novo já tiver rodado.
+3. Registre os comandos (uma vez, e de novo sempre que a lista mudar):
+   ```bash
+   DISCORD_BOT_TOKEN=... DISCORD_CLIENT_ID=... DISCORD_GUILD_ID=... node scripts/register-agora-commands.mjs
+   ```
+   `DISCORD_CLIENT_ID` é o "Application ID", também em General Information.
+4. Comandos disponíveis no servidor: `/perfil`, `/tarefas`, `/enigma` (com ou sem `resposta:`), `/oraculo`.
+
+### 7d. Configurar o Webhook do Supabase (cargo sobe quando o XP sobe pelo site)
+
+Supabase Dashboard → **Database → Webhooks → Create a new hook**:
+- Table: `agora_profiles`
+- Events: `UPDATE`
+- Type: HTTP Request → URL: `https://iuripiragibe.net/.netlify/functions/agora-discord-role-webhook`
+- HTTP Headers: `Authorization: Bearer <o mesmo SUPABASE_WEBHOOK_SECRET do passo 7b>`
+
+A partir daí, sempre que alguém sobe de grau resolvendo um enigma, entregando uma tarefa ou concluindo uma missão, o cargo real no Discord é atualizado sozinho.
+
+---
+
+## 8. Pagamento real do Ritual de Iniciação (pendente)
 
 O `checkout.html` hoje grava o **pedido de associação** de verdade no Supabase (tabela `agora_membership_requests`), mas **não processa pagamento** — nenhum agente automatizado deve mover dinheiro em seu nome. Para captura real de PIX/cartão, escolha um gateway (Mercado Pago, Stripe, PagSeguro) e crie a conta comercial; a partir daí eu integro o checkout com a API do gateway. Sem essa conta, o fluxo permanece "pedido registrado → Curador cobra manualmente", que é funcional e real, só não é automático.
 
@@ -118,8 +185,12 @@ O `checkout.html` hoje grava o **pedido de associação** de verdade no Supabase
 - [ ] Widget do servidor ativado
 - [ ] OAuth Client do Google criado
 - [ ] Discord + Google ativados no Supabase Auth
-- [ ] `agora-migration.sql` e `agora-migration-v2.sql` executados
+- [ ] `agora-migration.sql`, `v2`, `v3` e `v4` executadas no Supabase
 - [ ] `config.js` preenchido com `AGORA_DISCORD_GUILD_ID` real
 - [ ] Site aberto via servidor local/produção (nunca por duplo-clique/`file://`)
-- [ ] `server/.env` preenchido e `npm start` rodando
-- [ ] `AGORA_API_URL` (em `config.js`) apontando para a API em produção
+- [ ] Variáveis de ambiente cadastradas no Netlify (Site settings → Environment variables)
+- [ ] Novo deploy disparado no Netlify após cadastrar as variáveis
+- [ ] `DISCORD_PUBLIC_KEY` cadastrada e Interactions Endpoint URL salva com sucesso
+- [ ] Slash commands registrados (`node scripts/register-agora-commands.mjs`)
+- [ ] `DISCORD_GRAU_ROLE_IDS` preenchido com os IDs reais dos cargos
+- [ ] Webhook do Supabase (`agora_profiles` → UPDATE) configurado com o `SUPABASE_WEBHOOK_SECRET`

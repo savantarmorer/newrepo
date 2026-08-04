@@ -11,6 +11,7 @@ const {
   DISCORD_GUILD_ID,
   DISCORD_ROLE_GRAU_MAP,
   DISCORD_PREVIEW_CHANNEL_ID,
+  DISCORD_ANNOUNCE_CHANNEL_ID,
   DISCORD_EVENTS_SYNC_MINUTES,
   PORT = 4000,
   ALLOWED_ORIGIN = '*',
@@ -143,6 +144,23 @@ async function getPreviewMessages() {
   return cachedMessages;
 }
 
+const NOME_GRAU = ['Neófito', 'Adepto', 'Mestre da Obra', 'Conselheiro'];
+
+// Anúncio cerimonial no Discord (site → Discord). Silencioso se
+// DISCORD_ANNOUNCE_CHANNEL_ID não estiver configurado ou se falhar.
+async function postAnnouncement(content) {
+  if (!DISCORD_ANNOUNCE_CHANNEL_ID) return;
+  try {
+    await fetch(`${DISCORD_API}/channels/${DISCORD_ANNOUNCE_CHANNEL_ID}/messages`, {
+      method: 'POST',
+      headers: { ...botHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    });
+  } catch (err) {
+    console.error('[agora-api] postAnnouncement falhou:', err.message);
+  }
+}
+
 function calcularGrauPorCargos(roleNames) {
   let maior = 0;
   for (const nome of roleNames) {
@@ -181,7 +199,7 @@ async function syncDiscordEvents() {
 }
 
 // ── Rotas ────────────────────────────────────────────────────────────
-app.post('/api/discord/sync', async (req, res) => {
+app.post('/api/agora/discord/sync', async (req, res) => {
   try {
     const auth = req.headers.authorization || '';
     const accessToken = auth.startsWith('Bearer ') ? auth.slice(7) : null;
@@ -239,6 +257,7 @@ app.post('/api/discord/sync', async (req, res) => {
         body: JSON.stringify({ grau: grauPorCargo }),
       });
       [profile] = await patchRes.json();
+      await postAnnouncement(`⚜️ **${syncRow.nickname || syncRow.discord_username || 'Um Iniciado'}** ascendeu ao grau de **${NOME_GRAU[grauPorCargo] || 'Iniciado'}** na Grande Obra.`);
     }
 
     res.json({ discord: syncRow, profile });
@@ -249,7 +268,7 @@ app.post('/api/discord/sync', async (req, res) => {
 });
 
 // Lista pública de categorias/canais reais do servidor (não expõe canais privados)
-app.get('/api/discord/channels', async (_req, res) => {
+app.get('/api/agora/discord/channels', async (_req, res) => {
   try {
     res.json(await getPublicChannelTree());
   } catch (err) {
@@ -260,7 +279,7 @@ app.get('/api/discord/channels', async (_req, res) => {
 
 // Prévia (quase) ao vivo das últimas mensagens de um canal público configurado.
 // Requer DISCORD_PREVIEW_CHANNEL_ID e a Message Content Intent ativada no bot.
-app.get('/api/discord/messages', async (_req, res) => {
+app.get('/api/agora/discord/messages', async (_req, res) => {
   try {
     res.json(await getPreviewMessages());
   } catch (err) {

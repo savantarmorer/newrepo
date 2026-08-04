@@ -43,7 +43,13 @@ Documentação técnica de arquitetura e modelo de dados. Para o runbook de cred
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Princípio de segurança:** qualquer segredo (token de bot, service role key, futura chave de gateway de pagamento) fica exclusivamente em `server/.env`, nunca em HTML/JS servido ao navegador. O navegador só conhece a `anon key` do Supabase, que é pública por design (protegida por Row Level Security).
+**Princípio de segurança:** qualquer segredo (token de bot, service role key) fica exclusivamente do lado do servidor — nunca em HTML/JS servido ao navegador. O navegador só conhece a `anon key` do Supabase, que é pública por design (protegida por Row Level Security).
+
+**Duas implementações da mesma API, mesmo contrato de rotas (`/api/agora/discord/*`):**
+- **Produção:** `netlify/functions/agora-discord-*.js`, na raiz do repositório `Discord/` (fora de `agora-slu/`) — reaproveita o mesmo site Netlify que já hospeda as funções de pagamento Mercado Pago. Roda no mesmo domínio do site, sem CORS, sem host separado.
+- **Local/alternativa:** `agora-slu/server/server.js` (Express) — útil para testar fora do Netlify ou hospedar em outro runtime Node (Railway/Render/Fly.io/VPS) se um dia o site sair do Netlify.
+
+O front-end (`js/agoraAuth.js`) não sabe qual das duas está respondendo — só usa `AGORA_API_URL` (vazio = mesmo domínio) + os caminhos `/api/agora/discord/...`.
 
 ---
 
@@ -96,7 +102,15 @@ Rota pública (sem autenticação — só nomes de canais, não é dado sensíve
 
 Rota pública, com cache de 20s. Lê as últimas mensagens de **um único canal público configurado** via `DISCORD_PREVIEW_CHANNEL_ID` (`GET /channels/{id}/messages`). Requer a **Message Content Intent** ativada no bot (Discord Developer Portal → Bot). `discord.html` faz polling desta rota a cada 20s — não é um WebSocket em tempo real (ver Roadmap), mas é dado real, não simulado. Se `DISCORD_PREVIEW_CHANNEL_ID` não estiver definido, a rota responde `{configured: false}` e a UI explica isso claramente em vez de mostrar uma área vazia.
 
-### 4.3 Sincronização automática de eventos (Scheduled Events)
+### 4.3 Bot interativo (slash commands)
+
+`netlify/functions/agora-discord-interactions.js` é o **Interactions Endpoint** do Discord — recebe todo `/comando` digitado no servidor via HTTP (sem precisar de conexão de Gateway persistente). Cada requisição é verificada com a assinatura Ed25519 do Discord (`crypto.verify` nativo do Node, sem dependência extra) antes de qualquer processamento. Comandos: `/perfil`, `/tarefas`, `/enigma` (mostra ou resolve o bloco ativo do Terminal ARG, chamando a mesma RPC `resolver_puzzle_arg` via service role), `/oraculo`.
+
+### 4.4 Escrita de cargo bidirecional (site → Discord)
+
+Quando o grau sobe por uma ação no **site** (Terminal ARG, Missão, Tarefa), a RPC do Postgres não tem como chamar a API do Discord diretamente. A ponte é um **Supabase Database Webhook** em `agora_profiles` (evento `UPDATE`) apontando para `netlify/functions/agora-discord-role-webhook.js`, que identifica o `discord_id` vinculado e atribui o cargo real (`DISCORD_GRAU_ROLE_IDS`) via `PUT /guilds/{id}/members/{id}/roles/{id}`, removendo cargos de graus anteriores.
+
+### 4.5 Sincronização automática de eventos (Scheduled Events)
 
 `syncDiscordEvents()` roda **ao subir o server** e depois a cada `DISCORD_EVENTS_SYNC_MINUTES` (padrão 10min) via `setInterval` — sem precisar de ação do usuário. Busca `GET /guilds/{id}/scheduled-events` e faz upsert em `agora_discord_events` (chave única `discord_event_id`). `eventos.html` e `mobile.html` mesclam esses eventos com os cadastrados manualmente em `agora_events`, ordenando tudo por data.
 
@@ -159,6 +173,7 @@ Rota pública, com cache de 20s. Lê as últimas mensagens de **um único canal 
 | `agora_calls` / `agora_call_rsvps` | Calendário de Chamadas |
 | `agora_membership_requests` | Pedidos de associação (Ritual de Iniciação) |
 | `agora_discord_events` / `agora_discord_event_rsvps` | Eventos sincronizados automaticamente do Discord (Scheduled Events) |
+| `agora_tasks` | Quadro de Tarefas dos Voluntários (espelha `#quadro-de-tarefas` do Discord) |
 
 Todas com Row Level Security ativado; políticas específicas documentadas nos comentários de `supabase/agora-migration.sql` e `supabase/agora-migration-v2.sql`.
 

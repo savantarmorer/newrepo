@@ -6,9 +6,11 @@
 const SUPABASE_URL = 'https://fveslvzjjixzpwiqcydz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_tUHMDyn291B9RBJ10tlXJQ_aPJkHKxX';
 
-// Endereço da API Node responsável pela sincronização com o bot do Discord.
-// Definido em config.js (carregado antes deste arquivo em toda página) — ver SETUP_INTEGRACOES.md.
-export const AGORA_API_URL = window.AGORA_API_URL || 'http://localhost:4000';
+// Endereço da API responsável pela sincronização com o bot do Discord.
+// Em produção (Netlify), a API roda no MESMO domínio — deixe AGORA_API_URL
+// em branco em config.js. Para testar com server/server.js localmente,
+// defina AGORA_API_URL = 'http://localhost:4000' em config.js.
+export const AGORA_API_URL = window.AGORA_API_URL || '';
 
 export const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -91,7 +93,7 @@ export async function registrarLoginDiario(userId) {
 export async function sincronizarDiscord() {
   const session = await getSession();
   if (!session) throw new Error('Sessão expirada.');
-  const res = await fetch(`${AGORA_API_URL}/api/discord/sync`, {
+  const res = await fetch(`${AGORA_API_URL}/api/agora/discord/sync`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${session.access_token}` },
   });
@@ -135,21 +137,41 @@ export async function concluirMissao(userId, missionId) {
   return data;
 }
 
+// ── Quadro de Tarefas dos Voluntários ────────────────────────────────
+export async function reivindicarTarefa(userId, taskId) {
+  const { data, error } = await sb.rpc('reivindicar_tarefa', { uid: userId, p_task_id: taskId });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function concluirTarefa(userId, taskId) {
+  const { data, error } = await sb.rpc('concluir_tarefa', { uid: userId, p_task_id: taskId });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function liberarTarefa(userId, taskId) {
+  const { data, error } = await sb.rpc('liberar_tarefa', { uid: userId, p_task_id: taskId });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 // ── Prévia real do Discord (canais e mensagens) ─────────────────────
 export async function fetchDiscordChannels() {
-  const res = await fetch(`${AGORA_API_URL}/api/discord/channels`);
+  const res = await fetch(`${AGORA_API_URL}/api/agora/discord/channels`);
   if (!res.ok) throw new Error(`Falha ao carregar canais do Discord (HTTP ${res.status})`);
   return res.json();
 }
 
 export async function fetchDiscordMessages() {
-  const res = await fetch(`${AGORA_API_URL}/api/discord/messages`);
+  const res = await fetch(`${AGORA_API_URL}/api/agora/discord/messages`);
   if (!res.ok) throw new Error(`Falha ao carregar mensagens do Discord (HTTP ${res.status})`);
   return res.json();
 }
 
 // ── Nav dinâmica ─────────────────────────────────────────────────────
-// Preenche o slot de login/perfil na barra de navegação (elemento com id="navAuthSlot").
+// Preenche o slot de login/perfil na barra de navegação (elemento com id="navAuthSlot")
+// com um menu de perfil (Meu Painel / Sair), acessível em qualquer página.
 export async function montarNavAuth() {
   const slot = document.getElementById('navAuthSlot');
   if (!slot) return;
@@ -158,7 +180,31 @@ export async function montarNavAuth() {
     slot.innerHTML = `<a href="login.html" class="btn btn-primary" style="font-size:var(--text-xs); padding:var(--space-2) var(--space-4);">Entrar</a>`;
     return;
   }
+
   const profile = await getProfile(session.user.id);
   const grau = calcularGrau(profile?.xp || 0);
-  slot.innerHTML = `<a href="dashboard.html" class="btn btn-secondary" style="font-size:var(--text-xs); padding:var(--space-2) var(--space-4);">${grau.nome} · ${profile?.xp ?? 0} XP</a>`;
+  const nomeExibicao = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+
+  slot.innerHTML = `
+    <div class="nav-profile">
+      <button class="nav-profile-btn" id="navProfileBtn" type="button">
+        ${grau.nome} · ${profile?.xp ?? 0} XP <span class="caret">▾</span>
+      </button>
+      <div class="nav-profile-menu" id="navProfileMenu">
+        <div style="padding: var(--space-3) var(--space-4); color: var(--color-text-muted); font-size: var(--text-xs);">
+          Conectado como<br><strong style="color:#fff;">${nomeExibicao}</strong>
+        </div>
+        <hr class="divider">
+        <a href="dashboard.html">Meu Painel</a>
+        <a href="dashboard.html#hall">Hall das Lendas</a>
+        <hr class="divider">
+        <button class="sair" id="navSignOutBtn" type="button">Sair do Círculo</button>
+      </div>
+    </div>`;
+
+  const btn = document.getElementById('navProfileBtn');
+  const menu = document.getElementById('navProfileMenu');
+  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', () => menu.classList.remove('open'));
+  document.getElementById('navSignOutBtn').addEventListener('click', signOut);
 }
