@@ -64,6 +64,8 @@ const oauthError = hashParams.get('error_description') || hashParams.get('error'
 if (oauthError) {
   document.getElementById('statusMsg').textContent = `O ritual foi interrompido: ${decodeURIComponent(oauthError)}`;
   history.replaceState(null, '', location.pathname + location.search);
+} else if (new URLSearchParams(location.search).get('motivo') === 'timeout_oauth') {
+  document.getElementById('statusMsg').textContent = 'O Discord respondeu, mas a sessão demorou demais para confirmar. Tente novamente — se persistir, pode ser cache do navegador (tente uma aba anônima).';
 }
 
 // Se já houver sessão ativa (ex: retorno do OAuth), registra login e segue

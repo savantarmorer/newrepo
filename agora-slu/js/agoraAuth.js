@@ -38,12 +38,39 @@ export async function getSession() {
   return data.session;
 }
 
+// Se a URL trouxe um retorno de OAuth (?code=... da PKCE, ou #access_token=...
+// do fluxo implícito), o supabase-js processa isso de forma assíncrona ao
+// inicializar. Chamar getSession() logo de cara pode vencer essa corrida e
+// retornar null mesmo com o login tendo funcionado. Esta função espera o
+// evento SIGNED_IN (até 4s) quando detecta que há um retorno pendente na URL.
+async function aguardarSessaoDoRetornoOAuth() {
+  const temRetornoPendente = location.search.includes('code=') || location.hash.includes('access_token');
+  if (!temRetornoPendente) return null;
+
+  return new Promise(resolve => {
+    let resolvido = false;
+    const { data: sub } = sb.auth.onAuthStateChange((_event, session) => {
+      if (session && !resolvido) {
+        resolvido = true;
+        sub.subscription.unsubscribe();
+        resolve(session);
+      }
+    });
+    setTimeout(() => {
+      if (!resolvido) { resolvido = true; sub.subscription.unsubscribe(); resolve(null); }
+    }, 4000);
+  });
+}
+
 // Protege uma página: redireciona para login.html se não houver sessão.
 // Uso: const session = await requireAuth();
 export async function requireAuth(redirectTo = 'login.html') {
-  const session = await getSession();
+  const tinhaRetornoPendente = location.search.includes('code=') || location.hash.includes('access_token');
+  let session = await getSession();
+  if (!session) session = await aguardarSessaoDoRetornoOAuth();
   if (!session) {
-    window.location.href = `${redirectTo}?next=${encodeURIComponent(location.pathname)}`;
+    const motivo = tinhaRetornoPendente ? '&motivo=timeout_oauth' : '';
+    window.location.href = `${redirectTo}?next=${encodeURIComponent(location.pathname)}${motivo}`;
     return null;
   }
   return session;
