@@ -229,3 +229,16 @@ input:focus, textarea:focus { outline: none; border-color: var(--border-active);
 .nav-profile-menu a:hover, .nav-profile-menu button:hover { background: var(--bg-surface-elevated); color: #fff; text-decoration: none; }
 .nav-profile-menu .divider { border-top: 1px solid var(--border-subtle); margin: 0; }
 .nav-profile-menu .sair { color: var(--brand-alert); }
+
+/* ---- NAV NOTIFICATION BELL ---- */
+.nav-auth-row { display: flex; align-items: center; gap: var(--space-3); }
+.nav-bell-btn { position: relative; background: transparent; border: 1px solid var(--border-medium); color: var(--color-text-secondary); width: 34px; height: 34px; border-radius: var(--radius-sm); cursor: pointer; font-size: 15px; line-height: 1; }
+.nav-bell-btn:hover { border-color: var(--border-active); color: #fff; }
+.nav-bell-badge { position: absolute; top: -6px; right: -6px; background: var(--brand-alert); color: #fff; font-size: 10px; line-height: 1; min-width: 16px; height: 16px; border-radius: 999px; display: flex; align-items: center; justify-content: center; padding: 0 3px; font-weight: 700; }
+.nav-bell-menu { display: none; position: absolute; right: 0; top: calc(100% + var(--space-2)); background: var(--brand-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md); box-shadow: var(--shadow-ritual-md); width: 300px; max-height: 360px; overflow-y: auto; z-index: 60; }
+.nav-bell-menu.open { display: block; }
+.nav-bell-menu .notif-item { display: block; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); font-size: var(--text-xs); color: var(--color-text-secondary); text-decoration: none; }
+.nav-bell-menu .notif-item:last-child { border-bottom: none; }
+.nav-bell-menu .notif-item:hover { background: var(--bg-surface-elevated); color: #fff; text-decoration: none; }
+.nav-bell-menu .notif-item .quando { display: block; color: var(--color-text-muted); margin-top: 2px; }
+.nav-bell-menu .notif-empty { padding: var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted); text-align: center; }

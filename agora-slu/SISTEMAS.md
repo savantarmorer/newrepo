@@ -13,7 +13,8 @@ Documentação técnica de arquitetura e modelo de dados. Para o runbook de cred
 │  index.html, login.html, perfil.html, dashboard.html, admin.html,   │
 │  governanca.html, investigacoes.html, provida.html, codex.html,     │
 │  eventos.html, calendario.html, discord.html, checkout.html,        │
-│  tarefas.html                                                       │
+│  tarefas.html, busca.html, novo-aeon.html                           │
+│  manifest.json + sw.js (PWA — instalável, app shell em cache)       │
 │                                                                       │
 │  js/agoraAuth.js  ──►  @supabase/supabase-js (CDN)                 │
 └───────────────────────────────┬───────────────────────────────────┘
@@ -75,16 +76,21 @@ XP é concedido **exclusivamente** por funções `SECURITY DEFINER` no Postgres 
 - `concluir_missao` — Missões do Dashboard, idempotente.
 - `enviar_ficha_provida` — Ficha Pró-Vida, uma vez por analista/documento (`UNIQUE(documento_id, analista_user_id)`).
 - `resolver_puzzle_arg` — legado do antigo Terminal ARG (página removida do site, tabelas mantidas intocadas no banco — ver §5).
+- **Gatilhos automáticos (`agora-migration-v7.sql`)**: RSVP em Evento (+30 XP), RSVP em Chamada do Calendário (+30 XP), nota de margem no Códice (+20 XP), nota em Investigações (+25 XP). Cada gatilho chama o helper `conceder_xp(...)`, que grava no `agora_xp_ledger` com `ON CONFLICT` numa constraint única `(user_id, fonte_tipo, fonte_id)` — cancelar e reconfirmar presença no mesmo evento não paga XP duas vezes.
 
 Isso impede que um usuário forje XP manipulando chamadas REST diretamente — a tabela `agora_profiles` não tem policy de `UPDATE` para `xp`/`grau` vinda do cliente; só as RPCs (que rodam como dono da tabela) escrevem ali.
 
 Streak diário: `registrar_login_agora(uid)`, chamada em `login.html` e no `dashboard.html` a cada sessão — incrementa se o último login foi ontem, reseta se houve lacuna.
 
+### 3a. Ledger de XP e Atividade Coletiva
+
+`agora_xp_ledger` é ao mesmo tempo a trava de idempotência das novas fontes de XP e a fonte de dados do feed "Atividade Recente da Egrégora" em `dashboard.html`. Toda concessão de XP (gatilhos novos + `concluir_missao`/`concluir_tarefa`/`enviar_ficha_provida`, já existentes) grava uma linha ali com `autor_nome`, `motivo` e `fonte_tipo`. A RPC pública `obter_atividade_recente(limite)` lê as últimas N linhas — sem expor nada sensível, só "quem fez o quê e ganhou quanto".
+
 ## 3b. Painel Administrativo (`admin.html`)
 
 Login separado do fluxo social: `sb.auth.signInWithPassword({ email, senha })`, contra uma conta de e-mail/senha comum do Supabase Auth (criada manualmente — ver `SETUP_INTEGRACOES.md` §4b). O gate de acesso é simplesmente `agora_profiles.is_admin === true`; sem isso, a página mostra "Acesso Negado" mesmo com login válido.
 
-Toda leitura/escrita usa o cliente `sb` normal (JWT do próprio admin) — sem RPCs dedicadas. A permissão real vem das policies de RLS criadas em `agora-migration-v6.sql`: cada tabela gerenciável tem uma policy `FOR ALL USING (is_admin_user())`, onde `is_admin_user()` é uma função SQL que confere `agora_profiles.is_admin` do `auth.uid()` da chamada. `admin.html` monta um CRUD genérico (`montarCRUD()`) a partir de uma lista declarativa de datasets (tabela + colunas + tipos de campo) — cobre Missões, Eventos, Calendário, Hall das Lendas, Códice, Investigações, Tarefas e Associações. Fichas Pró-Vida têm uma aba própria, só de moderação (listar + apagar), porque o conteúdo é JSONB estruturado demais pro editor genérico de colunas simples. Decretos continuam geridos em `governanca.html` (RPCs `criar_decreto`/`definir_status_decreto`, já existentes antes do painel).
+Toda leitura/escrita usa o cliente `sb` normal (JWT do próprio admin) — sem RPCs dedicadas. A permissão real vem das policies de RLS criadas em `agora-migration-v6.sql`: cada tabela gerenciável tem uma policy `FOR ALL USING (is_admin_user())`, onde `is_admin_user()` é uma função SQL que confere `agora_profiles.is_admin` do `auth.uid()` da chamada. `admin.html` monta um CRUD genérico (`montarCRUD()`) a partir de uma lista declarativa de datasets (tabela + colunas + tipos de campo) — cobre Missões, Eventos, Calendário, Hall das Lendas, Códice, Investigações, Tarefas, Associações e Novo Æon. Fichas Pró-Vida têm uma aba própria, só de moderação (listar + apagar), porque o conteúdo é JSONB estruturado demais pro editor genérico de colunas simples. Decretos continuam geridos em `governanca.html` (RPCs `criar_decreto`/`definir_status_decreto`, já existentes antes do painel).
 
 ## 4. Sincronização com o Discord
 
@@ -160,6 +166,18 @@ A página `terminal.html` (minigame narrativo de decifrar um "Pen Drive") foi re
 - Grava um registro real em `agora_membership_requests` (nome, e-mail, tier, método de pagamento, status `pendente`).
 - **Não captura pagamento.** Nenhuma automação move dinheiro em nome do usuário. Integração com um gateway real (Mercado Pago/Stripe) é um passo futuro que exige conta comercial do usuário — ver `SETUP_INTEGRACOES.md` §6 e `ROADMAP.md`.
 
+## 11b. Notificações in-app (`agora-migration-v8.sql`)
+
+Sino no menu (`montarNavAuth()`), sem tabela de "lido" no servidor — o cliente guarda em `localStorage` o timestamp da última vez que abriu o sino (`obterUltimaVisualizacaoNotificacoes`/`marcarNotificacoesVistas`) e conta quantas notificações são mais novas que isso. Duas fontes automáticas via gatilho: broadcast (`user_id IS NULL`) quando um decreto é aberto, e direcionada quando uma Ficha Pró-Vida é removida pela moderação (o gatilho `AFTER DELETE` ainda enxerga `OLD.analista_user_id` antes da linha sumir).
+
+## 11c. Busca Global (`busca.html`)
+
+Sem RPC dedicada — três queries `ilike` em paralelo (`agora_investigacoes`, `agora_provida_fichas`, `agora_codex_entries`), debounce de 350ms, resultado agrupado por sistema. `investigacoes.html` e `codex.html` aceitam deep link (`?item=<id>` e `#<slug>`, respectivamente) pra abrir direto o item buscado.
+
+## 11d. Novo Æon (`novo-aeon.html`)
+
+Página de ingresso — texto de abertura fixo + formulário (nome, e-mail, telefone, "expressão" opcional) gravado em `agora_aeon_applications`, um pedido por usuário (`UNIQUE(user_id)`). Acessível só pelo botão dedicado no Dashboard (não está no menu principal — mantém o caráter de "descoberta"). Moderado na aba "Novo Æon" do `admin.html` (aprovar/recusar via campo `status`).
+
 ---
 
 ## 12. Modelo de Dados (tabelas `agora_*`)
@@ -181,8 +199,11 @@ A página `terminal.html` (minigame narrativo de decifrar um "Pen Drive") foi re
 | `agora_membership_requests` | Pedidos de associação (Ritual de Iniciação) |
 | `agora_discord_events` / `agora_discord_event_rsvps` | Eventos sincronizados automaticamente do Discord (Scheduled Events) |
 | `agora_tasks` | Quadro de Tarefas dos Voluntários (espelha `#quadro-de-tarefas` do Discord) |
+| `agora_xp_ledger` | Ledger unificado de XP — idempotência dos gatilhos + fonte do feed de atividade |
+| `agora_notificacoes` | Notificações in-app (broadcast ou direcionadas) |
+| `agora_aeon_applications` | Pedidos de ingresso no Novo Æon |
 
-Todas com Row Level Security ativado; políticas específicas documentadas nos comentários de `supabase/agora-migration.sql` e `supabase/agora-migration-v2.sql`.
+Todas com Row Level Security ativado; políticas específicas documentadas nos comentários de `supabase/agora-migration.sql` a `supabase/agora-migration-v9.sql`.
 
 ## 13. Convenção de nomes
 

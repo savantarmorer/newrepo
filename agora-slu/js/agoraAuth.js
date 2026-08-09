@@ -242,6 +242,66 @@ export async function listarFichasProvida() {
   return data || [];
 }
 
+// ── Atividade coletiva (ledger de XP) ──────────────────────────────────
+export async function obterAtividadeRecente(limite = 20) {
+  const { data, error } = await sb.rpc('obter_atividade_recente', { p_limite: limite });
+  if (error) { console.warn('obter_atividade_recente:', error.message); return []; }
+  return data || [];
+}
+
+// ── Mensagens de erro amigáveis ────────────────────────────────────────
+// Traduz erros técnicos (Postgres/Supabase) para algo que um humano
+// não-técnico entende. O erro original sempre fica no console para debug.
+const MENSAGENS_ERRO_CONHECIDAS = [
+  [/JWT|token/i, 'Sua sessão expirou. Atualize a página e entre de novo.'],
+  [/duplicate key|unique constraint/i, 'Isso já foi registrado antes — não dá pra duplicar.'],
+  [/violates foreign key/i, 'Esse item não existe mais (pode ter sido removido por um administrador).'],
+  [/permission denied|row-level security/i, 'Você não tem permissão para fazer isso.'],
+  [/Failed to fetch|NetworkError|network/i, 'Sem conexão com o servidor. Confira sua internet e tente de novo.'],
+];
+export function mensagemAmigavel(error, contexto = 'ação') {
+  const bruta = error?.message || String(error || '');
+  console.error(`[agora] erro em "${contexto}":`, error);
+  for (const [padrao, amigavel] of MENSAGENS_ERRO_CONHECIDAS) {
+    if (padrao.test(bruta)) return amigavel;
+  }
+  return `Não foi possível concluir esta ${contexto} agora. Tente de novo em instantes.`;
+}
+
+// ── Notificações ─────────────────────────────────────────────────────
+// Sem estado de "lido" no servidor: o cliente guarda em localStorage o
+// timestamp da última vez que abriu o sino, por usuário.
+const NOTIF_LASTSEEN_KEY = uid => `agora_notif_lastseen_${uid}`;
+
+export async function obterNotificacoes(userId, limite = 15) {
+  const { data, error } = await sb.from('agora_notificacoes').select('*')
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+    .order('created_at', { ascending: false }).limit(limite);
+  if (error) { console.warn('agora_notificacoes:', error.message); return []; }
+  return data || [];
+}
+
+export function obterUltimaVisualizacaoNotificacoes(userId) {
+  return localStorage.getItem(NOTIF_LASTSEEN_KEY(userId));
+}
+
+export function marcarNotificacoesVistas(userId) {
+  localStorage.setItem(NOTIF_LASTSEEN_KEY(userId), new Date().toISOString());
+}
+
+// ── Novo Æon ─────────────────────────────────────────────────────────
+export async function enviarPedidoAeon(userId, { nome, email, telefone, expressao }) {
+  const { error } = await sb.from('agora_aeon_applications').insert({
+    user_id: userId, nome, email, telefone, expressao: expressao || null,
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function obterMeuPedidoAeon(userId) {
+  const { data } = await sb.from('agora_aeon_applications').select('*').eq('user_id', userId).maybeSingle();
+  return data || null;
+}
+
 // ── Missões ──────────────────────────────────────────────────────────
 export async function concluirMissao(userId, missionId) {
   const { data, error } = await sb.rpc('concluir_missao', { uid: userId, p_mission_id: missionId });
@@ -297,28 +357,58 @@ export async function montarNavAuth() {
   const grau = calcularGrau(profile?.xp || 0);
   const nomeExibicao = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
 
+  const notificacoes = await obterNotificacoes(session.user.id);
+  const ultimaVista = obterUltimaVisualizacaoNotificacoes(session.user.id);
+  const naoLidas = ultimaVista ? notificacoes.filter(n => n.created_at > ultimaVista).length : notificacoes.length;
+
   slot.innerHTML = `
-    <div class="nav-profile">
-      <button class="nav-profile-btn" id="navProfileBtn" type="button">
-        ${grau.nome} · ${profile?.xp ?? 0} XP <span class="caret">▾</span>
-      </button>
-      <div class="nav-profile-menu" id="navProfileMenu">
-        <div style="padding: var(--space-3) var(--space-4); color: var(--color-text-muted); font-size: var(--text-xs);">
-          Conectado como<br><strong style="color:#fff;">${nomeExibicao}</strong>
+    <div class="nav-auth-row">
+      <div class="nav-profile">
+        <button class="nav-bell-btn" id="navBellBtn" type="button" title="Notificações">
+          🔔${naoLidas > 0 ? `<span class="nav-bell-badge">${naoLidas > 9 ? '9+' : naoLidas}</span>` : ''}
+        </button>
+        <div class="nav-bell-menu" id="navBellMenu">
+          ${notificacoes.length ? notificacoes.map(n => `
+            <a class="notif-item" href="${n.link || '#'}">
+              ${n.mensagem}
+              <span class="quando">${new Date(n.created_at).toLocaleString('pt-BR')}</span>
+            </a>
+          `).join('') : '<div class="notif-empty">Nenhuma notificação ainda.</div>'}
         </div>
-        <hr class="divider">
-        <a href="perfil.html">Meu Perfil</a>
-        <a href="dashboard.html">Meu Painel</a>
-        <a href="dashboard.html#hall">Hall das Lendas</a>
-        ${profile?.is_admin ? '<a href="admin.html">Painel Admin</a>' : ''}
-        <hr class="divider">
-        <button class="sair" id="navSignOutBtn" type="button">Sair do Círculo</button>
+      </div>
+      <div class="nav-profile">
+        <button class="nav-profile-btn" id="navProfileBtn" type="button">
+          ${grau.nome} · ${profile?.xp ?? 0} XP <span class="caret">▾</span>
+        </button>
+        <div class="nav-profile-menu" id="navProfileMenu">
+          <div style="padding: var(--space-3) var(--space-4); color: var(--color-text-muted); font-size: var(--text-xs);">
+            Conectado como<br><strong style="color:#fff;">${nomeExibicao}</strong>
+          </div>
+          <hr class="divider">
+          <a href="perfil.html">Meu Perfil</a>
+          <a href="dashboard.html">Meu Painel</a>
+          <a href="dashboard.html#hall">Hall das Lendas</a>
+          ${profile?.is_admin ? '<a href="admin.html">Painel Admin</a>' : ''}
+          <hr class="divider">
+          <button class="sair" id="navSignOutBtn" type="button">Sair do Círculo</button>
+        </div>
       </div>
     </div>`;
+
+  const bellBtn = document.getElementById('navBellBtn');
+  const bellMenu = document.getElementById('navBellMenu');
+  bellBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    bellMenu.classList.toggle('open');
+    if (bellMenu.classList.contains('open')) {
+      marcarNotificacoesVistas(session.user.id);
+      bellBtn.querySelector('.nav-bell-badge')?.remove();
+    }
+  });
 
   const btn = document.getElementById('navProfileBtn');
   const menu = document.getElementById('navProfileMenu');
   btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
-  document.addEventListener('click', () => menu.classList.remove('open'));
+  document.addEventListener('click', () => { menu.classList.remove('open'); bellMenu.classList.remove('open'); });
   document.getElementById('navSignOutBtn').addEventListener('click', signOut);
 }

@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
 <title>Ágora — Painel do Iniciado</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/cultus.css">
@@ -30,6 +32,18 @@
   .legend-item:last-child { border-bottom:none; }
 
   .streak-flame { font-size: var(--text-xl); }
+  .aeon-banner { display:block; text-align:center; padding: var(--space-8) var(--space-6); border-radius: var(--radius-md);
+    background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,.28) 0%, transparent 70%), var(--brand-surface);
+    border:1px solid rgba(139,92,246,.4); margin-bottom:var(--space-6); text-decoration:none; transition: border-color .2s, box-shadow .2s; }
+  .aeon-banner:hover { border-color: rgba(139,92,246,.8); box-shadow: 0 0 30px rgba(139,92,246,.25); text-decoration:none; }
+  .aeon-banner svg { width:48px; height:48px; margin-bottom:var(--space-3); filter: drop-shadow(0 0 12px rgba(139,92,246,.6)); }
+  .aeon-banner .titulo { font-family:var(--font-display); font-size:var(--text-lg); color:#fff; margin-bottom:var(--space-2); }
+  .aeon-banner .sub { font-size:var(--text-sm); color:var(--color-text-secondary); max-width:44ch; margin:0 auto; }
+  .feed-item { display:flex; justify-content:space-between; gap:var(--space-3); padding:var(--space-2) 0; border-bottom:1px solid var(--border-subtle); font-size:var(--text-sm); }
+  .feed-item:last-child { border-bottom:none; }
+  .feed-item .quem { color:var(--color-text-gold); font-weight:600; }
+  .feed-item .xp { color:#34D399; font-size:var(--text-xs); white-space:nowrap; }
+  .feed-item .quando { display:block; color:var(--color-text-muted); font-size:var(--text-xs); margin-top:2px; }
 </style>
 </head>
 <body>
@@ -51,6 +65,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="busca.html">Busca</a></li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -80,6 +95,12 @@
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
   </div>
 
+  <a href="novo-aeon.html" class="aeon-banner">
+    <svg viewBox="0 0 200 200"><use href="assets/seals.svg#seal-chronos-phanes"/></svg>
+    <div class="titulo">Entrar no Novo Æon</div>
+    <div class="sub">Um braço de ensino da Ágora aguarda quem estiver pronto para questionar. Sem hierarquias. Sem líderes. Apenas o primeiro passo.</div>
+  </a>
+
   <div class="grid grid-2">
     <div class="card">
       <h3 style="font-size:var(--text-md);">Selos Desbloqueados</h3>
@@ -92,6 +113,9 @@
       <a href="investigacoes.html" class="btn btn-secondary" style="margin-top:var(--space-2); font-size:var(--text-xs);">Ir às Investigações →</a>
     </div>
   </div>
+
+  <h2 style="font-size:var(--text-lg); margin:var(--space-12) 0 var(--space-4);">Atividade Recente da Egrégora</h2>
+  <div class="card" id="feedList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
 
   <h2 id="hall" style="font-size:var(--text-lg); margin:var(--space-12) 0 var(--space-4); scroll-margin-top: var(--space-16);">Hall das Lendas — Últimas Contribuições</h2>
   <div class="card" id="hallList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
@@ -107,7 +131,7 @@
 
 <script type="module">
 import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile,
-         registrarLoginDiario, signOut, montarNavAuth, concluirMissao } from './js/agoraAuth.js';
+         registrarLoginDiario, signOut, montarNavAuth, concluirMissao, obterAtividadeRecente } from './js/agoraAuth.js';
 
 montarNavAuth();
 
@@ -164,7 +188,22 @@ async function render(userId) {
   if (avatarUrl) document.getElementById('avatarRing').innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
 
   await renderMissions(userId);
+  await renderFeed();
   await renderHall();
+}
+
+async function renderFeed() {
+  const el = document.getElementById('feedList');
+  const atividades = await obterAtividadeRecente(12);
+  if (!atividades.length) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma atividade registrada ainda — seja o primeiro.</p>`; return; }
+  el.innerHTML = atividades.map(a => `
+    <div class="feed-item">
+      <div><span class="quem">${a.autor_nome || 'Um Iniciado'}</span> — ${a.motivo}
+        <span class="quando">${new Date(a.created_at).toLocaleString('pt-BR')}</span>
+      </div>
+      <span class="xp">+${a.xp} XP</span>
+    </div>
+  `).join('');
 }
 
 async function renderMissions(userId) {
@@ -220,5 +259,6 @@ async function renderHall() {
 document.getElementById('logoutBtn').addEventListener('click', signOut);
 </script>
 
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
 </body>
 </html>

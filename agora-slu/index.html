@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
 <title>Ágora (SLU) — Construa o Grimório. Decifre o Arcano. Viva a Grande Obra.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,6 +67,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="busca.html">Busca</a></li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -146,5 +149,6 @@ if (guildId) {
 }
 </script>
 
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
 </body>
 </html>

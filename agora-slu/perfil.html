@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
 <title>Ágora — Meu Perfil</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/cultus.css">
@@ -23,6 +25,14 @@
   .mini-stat { text-align:center; }
   .mini-stat .v { font-family:var(--font-display); color:var(--brand-action); font-size:var(--text-lg); }
   .mini-stat .l { font-size:var(--text-xs); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em; }
+  .onboard-item { display:flex; align-items:center; gap:var(--space-3); padding:var(--space-3) 0; border-bottom:1px solid var(--border-subtle); }
+  .onboard-item:last-child { border-bottom:none; }
+  .onboard-check { width:22px; height:22px; border-radius:50%; border:1px solid var(--border-medium); flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .onboard-item.done .onboard-check { background:#34D399; border-color:#34D399; color:#06251A; }
+  .onboard-item .txt { flex:1; font-size:var(--text-sm); }
+  .onboard-item.done .txt { color:var(--color-text-muted); text-decoration:line-through; }
+  .onboard-item .txt strong { display:block; color:#fff; font-weight:600; }
+  .onboard-item.done .txt strong { color:var(--color-text-muted); font-weight:400; text-decoration:line-through; }
 </style>
 </head>
 <body>
@@ -44,6 +54,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="busca.html">Busca</a></li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -56,6 +67,11 @@
       <span class="badge" id="grauBadge">Neófito</span>
       <div id="providerChips" style="margin-top:var(--space-2);"></div>
     </div>
+  </div>
+
+  <div class="card" id="onboardingCard" style="display:none; margin-bottom:var(--space-6);">
+    <h3 style="font-size:var(--text-md);">Primeiros Passos na Ágora</h3>
+    <div id="onboardingList"></div>
   </div>
 
   <div class="grid grid-3" style="margin-bottom:var(--space-6);">
@@ -94,7 +110,7 @@
 </footer>
 
 <script type="module">
-import { requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth } from './js/agoraAuth.js';
+import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavAuth();
 
@@ -134,6 +150,36 @@ async function render(session) {
 
   const dsync = await getDiscordSync(user.id);
   if (dsync) renderDiscord(dsync);
+
+  await renderOnboarding(user.id, Boolean(dsync));
+}
+
+async function renderOnboarding(uid, jaSincronizou) {
+  const [votos, investigacoes, notasInvest, fichas, tarefas] = await Promise.all([
+    sb.from('agora_decree_votes').select('id', { count: 'exact', head: true }).eq('user_id', uid),
+    sb.from('agora_investigacoes').select('id', { count: 'exact', head: true }).eq('criado_por', uid),
+    sb.from('agora_investigacao_notas').select('id', { count: 'exact', head: true }).eq('user_id', uid),
+    sb.from('agora_provida_fichas').select('id', { count: 'exact', head: true }).eq('analista_user_id', uid),
+    sb.from('agora_tasks').select('id', { count: 'exact', head: true }).eq('claimed_by', uid),
+  ]);
+
+  const passos = [
+    { done: jaSincronizou, titulo: 'Sincronize com o Discord', desc: 'Importa seu apelido, cargos e data de entrada no servidor.', link: '#discordCard', label: 'Sincronizar' },
+    { done: (votos.count || 0) > 0, titulo: 'Vote em um Decreto', desc: 'Participe de uma votação real do Conselho.', link: 'governanca.html', label: 'Ir ao Conselho' },
+    { done: (investigacoes.count || 0) + (notasInvest.count || 0) + (fichas.count || 0) > 0, titulo: 'Registre uma Investigação ou Ficha Pró-Vida', desc: 'Adicione um arquivo, uma análise, ou envie uma Ficha Pró-Vida completa.', link: 'investigacoes.html', label: 'Investigar' },
+    { done: (tarefas.count || 0) > 0, titulo: 'Reivindique uma Tarefa', desc: 'Ajude a Egrégora com uma tarefa real do Quadro de Voluntários.', link: 'tarefas.html', label: 'Ver Tarefas' },
+  ];
+
+  if (passos.every(p => p.done)) return; // veterano — não precisa mais do checklist
+
+  document.getElementById('onboardingCard').style.display = 'block';
+  document.getElementById('onboardingList').innerHTML = passos.map(p => `
+    <div class="onboard-item ${p.done ? 'done' : ''}">
+      <div class="onboard-check">${p.done ? '✓' : ''}</div>
+      <div class="txt"><strong>${p.titulo}</strong>${p.desc}</div>
+      ${p.done ? '' : `<a href="${p.link}" class="btn btn-secondary" style="font-size:var(--text-xs); flex-shrink:0;">${p.label}</a>`}
+    </div>
+  `).join('');
 }
 
 function renderDiscord(d) {
@@ -161,7 +207,7 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
     status.textContent = 'Sincronização concluída.';
     renderDiscord(result.discord);
   } catch (e) {
-    status.textContent = `Não foi possível sincronizar: ${e.message}. Verifique se seu Discord está vinculado e se a API está no ar (ver SETUP_INTEGRACOES.md).`;
+    status.textContent = mensagemAmigavel(e, 'sincronizar com o Discord') + ' Verifique se sua conta tem o Discord vinculado.';
   } finally {
     btn.disabled = false;
   }
@@ -170,5 +216,6 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
 document.getElementById('logoutBtn').addEventListener('click', signOut);
 </script>
 
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
 </body>
 </html>

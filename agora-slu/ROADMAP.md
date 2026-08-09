@@ -21,10 +21,8 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - Códice Caelestis dinâmico (verbetes + notas de margem reais)
 - Missões auto-reportadas com XP real
 - Hall das Lendas com fluxo de aprovação (pendente → aprovado)
-- Clube do Livro, Eventos e Calendário com RSVP real
+- Eventos e Calendário com RSVP real (Clube do Livro removido junto com `clube-do-livro.html` — ver poda de páginas)
 - Exportação `.ics` real (sem backend) no Calendário
-- Grafo de Conhecimento com estatísticas agregadas reais do banco
-- Feed mobile com dados reais (próximo decreto/evento/sessão + eventos do Discord)
 - Registro real de pedidos de associação (Ritual de Iniciação)
 - **Canais reais do servidor** na barra lateral de `discord.html` (categorias e nomes de verdade, com deep-link para abrir cada canal no Discord)
 - **Prévia real de mensagens** de um canal público, via polling a cada 20s (API do bot lê `GET /channels/{id}/messages`)
@@ -36,6 +34,15 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Menu de perfil com logout** acessível em qualquer página (antes só existia no Dashboard)
 - **Bot interativo real (slash commands)**: `/perfil`, `/tarefas`, `/enigma` (com resposta) e `/oraculo`, respondendo direto no Discord via Interactions Endpoint verificado por assinatura Ed25519 — sem precisar de conexão de Gateway persistente
 - **Cargo do Discord sobe sozinho quando o XP sobe pelo site**: webhook do Supabase (`agora_profiles` UPDATE) → Netlify Function atribui o cargo real via `PUT /guilds/{id}/members/{id}/roles/{id}` — fecha de vez o ciclo bidirecional site ↔ Discord
+- **XP em Eventos, Calendário e Códice**: RSVP e notas de margem passam a conceder XP real via gatilho (idempotente por `agora_xp_ledger`), com concessão retroativa pra quem já tinha RSVP/notas antes da migração
+- **Pró-Vida ↔ Investigações unificados**: enviar uma Ficha Pró-Vida cria/vincula automaticamente o item correspondente em Investigações pelo mesmo código — deixaram de ser listas paralelas
+- **Onboarding guiado no Perfil**: checklist de primeiros passos (sincronizar Discord, votar, investigar, reivindicar tarefa) que some sozinho quando o membro já completou tudo
+- **Atividade Recente da Egrégora**: feed no Painel alimentado pelo mesmo ledger de XP — mostra quem fez o quê, em tempo real
+- **Busca global** (`busca.html`): Investigações + Fichas Pró-Vida + Códice numa busca só, com deep link pro item exato
+- **Notificações in-app**: sino no menu — decreto novo aberto (broadcast) e ficha Pró-Vida removida pela moderação (direcionada)
+- **Mensagens de erro amigáveis**: páginas voltadas a membros comuns não mostram mais erro cru do Postgres; painel admin continua com erro técnico (público certo pra isso)
+- **Novo Æon** (`novo-aeon.html`): braço de ensino da Ágora, acessível por botão dedicado no Painel — texto de abertura + formulário de ingresso, moderado no `admin.html`
+- **PWA instalável**: `manifest.json` + `sw.js` (cache do app shell, nunca intercepta chamadas de API) em todas as páginas
 
 ---
 
@@ -74,9 +81,9 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 ## 🌐 Longo Prazo — infraestrutura maior
 
 - **Gateway de pagamento real** (Mercado Pago ou Stripe) para automatizar a cobrança do Ritual de Iniciação — exige conta comercial do usuário; ver `SETUP_INTEGRACOES.md` §6.
-- **App mobile nativo ou PWA instalável**: hoje o site é só responsivo via CSS, sem app dedicado; virar PWA de verdade dá push notifications e ícone na tela inicial.
-- **Painel administrativo — próxima camada**: `admin.html` já cobre CRUD de conteúdo (missões, eventos, hall, códice, investigações, tarefas, associações); falta controle de layout/CSS/blocos visuais, que é um projeto à parte (motor de templates data-driven, não HTML estático).
-- **Testes automatizados**: hoje a verificação é manual no navegador; vale Playwright cobrindo os fluxos críticos (login, RSVP, votação, painel admin).
+- **Push notifications de verdade no PWA**: `manifest.json`/`sw.js` já cobrem instalação e app shell; falta a API de Push (exige um servidor de push + permissão do usuário) para notificar fora do navegador aberto.
+- **Painel administrativo — próxima camada**: `admin.html` já cobre CRUD de conteúdo (missões, eventos, hall, códice, investigações, tarefas, associações, Novo Æon); falta controle de layout/CSS/blocos visuais, que é um projeto à parte (motor de templates data-driven, não HTML estático).
+- **Testes automatizados — próxima camada**: `tests/agora-slu-smoke.spec.ts` cobre carregamento/gate de autenticação/estrutura; falta cobrir fluxos que exigem sessão real (login social não dá pra automatizar sem credenciais de teste dedicadas — RSVP, votação, envio de ficha logado).
 - **Internacionalização**: se a Ágora expandir para o mundo lusófono internacional (Lei das Fronteiras do Manual de Marca já autoriza), preparar strings para PT-PT além de PT-BR.
 - **Rate limiting e observabilidade na API**: `server/` hoje não tem limite de requisições nem logging estruturado — importante antes de expor a API publicamente em produção com tráfego real.
 

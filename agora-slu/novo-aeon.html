@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
+<meta name="robots" content="noindex">
+<title>Ágora — O Novo Æon</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  body { background: radial-gradient(ellipse at 50% -10%, rgba(139,92,246,0.18) 0%, transparent 55%), var(--bg-canvas); }
+  .aeon-hero { text-align:center; padding: var(--space-16) var(--space-6) var(--space-10); max-width:720px; margin:0 auto; }
+  .aeon-hero svg.seal { width:110px; height:110px; margin-bottom:var(--space-5); filter: drop-shadow(0 0 20px rgba(139,92,246,.55)); }
+  .aeon-hero .eyebrow { font-size:var(--text-xs); letter-spacing:.24em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:var(--space-3); }
+  .aeon-hero h1 { font-size:clamp(2rem, 5vw, 3rem); line-height:1.1; margin:0 0 var(--space-4); }
+  .aeon-hero .kicker { font-size:var(--text-md); color:var(--color-text-secondary); font-style:italic; max-width:52ch; margin:0 auto; }
+
+  .aeon-body { max-width:680px; margin:0 auto; padding: 0 var(--space-6) var(--space-16); }
+  .aeon-body h2 { font-size:var(--text-xl); text-align:center; margin: var(--space-16) 0 var(--space-8); color:var(--color-text-gold); }
+  .aeon-body p { font-size:var(--text-md); line-height:1.85; color:var(--color-text-secondary); margin-bottom:var(--space-5); }
+  .aeon-body p strong { color:#fff; }
+  .aeon-body .law { text-align:center; font-family:var(--font-display); font-size:var(--text-lg); color:var(--brand-action); margin: var(--space-8) 0; line-height:1.5; }
+  .aeon-divider { display:flex; align-items:center; gap:var(--space-4); margin: var(--space-12) auto; max-width:200px; }
+  .aeon-divider span { flex:1; height:1px; background: var(--border-medium); }
+  .aeon-divider svg { width:18px; height:18px; opacity:.6; }
+
+  .aeon-cta { text-align:center; padding: var(--space-12) var(--space-6); }
+  .aeon-cta p { max-width:48ch; margin:0 auto var(--space-6); font-size:var(--text-md); color:var(--color-text-secondary); }
+
+  .aeon-form-wrap { max-width:520px; margin:0 auto var(--space-16); padding: 0 var(--space-6); }
+  .aeon-form-wrap .card { border-color:var(--violet, #8B5CF6); box-shadow: 0 0 40px rgba(139,92,246,.12); }
+  .field { margin-bottom: var(--space-4); }
+  .field label { display:block; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-1); }
+  .field .hint { font-size:var(--text-xs); color:var(--color-text-muted); margin-top:4px; }
+
+  .status-card { text-align:center; }
+  .status-card .estado { display:inline-block; padding:var(--space-2) var(--space-5); border-radius:var(--radius-full); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.08em; margin:var(--space-3) 0 var(--space-4); }
+  .status-pendente { background:rgba(232,184,75,.15); color:var(--brand-warn); }
+  .status-aceito { background:rgba(52,211,153,.15); color:#34D399; }
+  .status-recusado { background:rgba(232,101,74,.15); color:var(--brand-alert); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="dashboard.html">← Voltar ao Painel</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<div class="aeon-hero">
+  <svg class="seal" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-chronos-phanes"/></svg>
+  <div class="eyebrow">Braço de Ensino da Ágora</div>
+  <h1>O Novo Æon</h1>
+  <p class="kicker">Sem hierarquias. Sem líderes. Sem Messias. Apenas buscadores de sentido, construindo juntos.</p>
+</div>
+
+<main class="aeon-body">
+
+  <p><strong>O que é o Novo Æon?</strong></p>
+  <p>O termo foi popularizado por Aleister Crowley em contexto thelêmico e esotérico. O objetivo do Æon não é mágico nem místico <em>stricto sensu</em>.</p>
+  <p>A inspiração de Crowley vem da interpretação filosófica do seu material. Em essência: <span class="law">"Faze o que tu queres, pois há de ser o todo da Lei.<br>O amor é a lei, o amor sob vontade."</span></p>
+  <p>O que isso significa? Existe uma explicação, mas faz-se necessária uma exploração interna para buscar o verdadeiro significado. É um processo.</p>
+  <p>Não se trata de evolução espiritual ou mística, mas sim da abertura do senso crítico e analítico do ser humano, incentivando a neuroplasticidade.</p>
+  <p>O Æon é um braço de ensino da Ágora. O microcosmo dos buscadores e curiosos. Sem hierarquias, sem líderes, sem Messias. Nem os autores deste texto sabem exatamente como funciona o Æon. Eles próprios são buscadores de sentido.</p>
+  <p>A abertura do ceticismo saudável ocorre através da construção conjunta e do acesso ao inconsciente coletivo (místico ou não) para encontrar a sua (nossa) Vontade.</p>
+  <p>Serão apresentados conceitos nesta introdução. Não é importante que você os entenda para além de palavras vazias num primeiro momento. Basta ter consciência de tais termos e mantê-los em seu glossário mental (outra prática que será explicada no devido momento).</p>
+  <p>O primeiro passo para o Novo Æon é colocar seu tijolo e deixar sua marca nesta estrutura. Esse será seu primeiro exercício Noemático. Não são necessários longos textos para transmitir uma mensagem e deixar sua marca. Você não será avaliado, mas sua digital e sua energia serão eternizadas nos autos como arquitetos da eterna estrutura que representa o Novo Æon.</p>
+  <p>Questionar não é um caminho simples; haverá provações ao seu psicológico e à sua noção de realidade.</p>
+  <p>Se seu coração e sua coragem forem fortes o suficiente, a iniciação começa agora. Basta colocar sua essência em palavras e ressignificar a perspectiva.</p>
+
+  <div class="aeon-divider"><span></span><svg viewBox="0 0 200 200"><use href="assets/seals.svg#seal-umbra-kael"/></svg><span></span></div>
+
+  <p>Siga as seguintes etapas: aguarde uma noite clara, quando a lua for visível. Vá para o lado de fora e receba a luz. Encare a lua, tente observar as crateras, concentre-se nelas e esvazie a mente.</p>
+  <p>Faça isso até a imagem negativa da lua ficar queimada na sua retina. Poucos minutos costumam ser suficientes.</p>
+  <p>Ainda sob a luz, feche os olhos e medite na imagem. Projete-se até a lua. Não como indivíduo. Seja a cratera e nada mais. Tente desvincular o indivíduo do ego e seja somente aquela estrutura banhada de poeira por tempos incompreensíveis.</p>
+  <p>Caso esteja confuso, tente outro dia. Se tiver dificuldade, respire fundo e tente novamente em outro momento.</p>
+  <p>Quando tiver sucesso no conceito da cratera, imagine a história dela, fixa no mesmo lugar por tanto tempo. Regresse até o momento de sua formação, quando alguma rocha chegou até lá.</p>
+  <p>Voltaremos à rocha posteriormente. No momento, você não deve ser nada além da cratera.</p>
+  <p>Quando conseguir visualizar o instante do impacto, respire fundo e retorne com a mente limpa. Pense no conceito de Æon. Na palavra.</p>
+  <p>Não importa o conceito da palavra. Não é sobre o significado, é sobre a forma, a visualização da estrutura geométrica intrínseca ao termo, não daquilo que ele nomeia. Há uma resposta, mas os grandes segredos têm seu tempo.</p>
+  <p>O tempo atual é o seu tempo. Escreva sobre isso. Pode ser uma frase, podem ser quinhentas páginas. Pode ser uma ilustração ou uma música, ou apenas uma abstração esotérica que não seja possível identificar.</p>
+  <p>Mas exponha o que é o Æon. O que você descobriu a respeito desta meditação. Sua expressão se consolidará nos registros, e lhe será atribuído um título segundo as práticas de sincrematria.</p>
+
+  <h2>Por que o Novo Æon?</h2>
+
+  <p>O ser humano é dotado de uma grandeza não merecida. Acreditamos ser o centro de um universo que não se importa conosco. Há, portanto, duas vertentes interpretativas — e o Æon sempre apresentará ambas, tanto a prática quanto a esotérica, para que o membro utilize a explicação que melhor lhe convier.</p>
+  <p>Também é incentivada a transição entre as vertentes interpretativas. Não há dogmas nem conceitos gravados em pedra. O iniciado deve ser um questionador, jamais alguém que simplesmente aceite o que lhe é imposto. Conivência e submissão não são traços desejados no Novo Æon.</p>
+  <p>Agora, a resposta primordial: por que fazer parte disso? Bom, existem respostas. Se são satisfatórias, não cabe ao autor afirmar, haja vista que cada percepção subjetiva e cada resultado individual são únicos.</p>
+  <p>A existência mundana é falha. Nossa mente nos prega peças; somos todos facilmente manipulados por falsas promessas, ídolos farsantes e figuras de autoridade desviantes. Até mesmo por nossas próprias memórias. Recorde uma lembrança. Por mais nítida que ela pareça, a situação nunca terá sido daquela maneira. Cada vez que você se recorda de algo, a mente altera um pouco a lembrança — da mesma forma que temos a tendência de relembrar com muito mais facilidade os acontecimentos negativos do que os positivos.</p>
+  <p>Por que isso acontece? Temos uma resposta longa e uma curta, uma negativa e uma positiva. Tudo isso irá surgir ao longo do seu processo no Æon.</p>
+  <p>De igual modo, somos subordinados, enquanto seres humanos, a um regime das 8 às 18 para meramente subsistir. Ignorar a miséria alheia, revoltar-se com políticos através de comentários vazios nas redes sociais, enquanto dosamos continuamente dopamina para prolongar essa anestesia moral e ética. Olhe em volta para as cabeças deslizando celular abaixo quando estiver no metrô ou no ônibus.</p>
+  <p>São ciclos. Ciclos que precisam ser quebrados. E não somente para os participantes do Æon, mas para toda a humanidade.</p>
+  <p>Você deixará de ver e começará a enxergar. Recuperará uma habilidade há muito perdida e, talvez, receba uma nova perspectiva ou propósito. Não é uma promessa nem uma garantia. Mas a filosofia Æon salvou muitos de ciclos viciosos, filosofia esta que será construída por você.</p>
+  <p style="text-align:center; font-family:var(--font-display); font-size:var(--text-lg); color:#fff; margin-top:var(--space-10);">Um Novo Æon o aguarda.<br>Basta dar o primeiro passo.</p>
+</main>
+
+<div class="aeon-form-wrap">
+  <div id="formCard" class="card">
+    <h3 style="font-size:var(--text-md); text-align:center;">Coloque seu Tijolo na Estrutura</h3>
+    <p class="text-secondary" style="text-align:center; font-size:var(--text-sm); margin-bottom:var(--space-6);">Deixe seus dados. Um Guardião do Æon entrará em contato.</p>
+    <form id="aeonForm">
+      <div class="field"><label for="aNome">Nome completo *</label><input type="text" id="aNome" required></div>
+      <div class="field"><label for="aEmail">E-mail *</label><input type="email" id="aEmail" required></div>
+      <div class="field"><label for="aTelefone">Telefone *</label><input type="tel" id="aTelefone" required placeholder="(00) 00000-0000"></div>
+      <div class="field">
+        <label for="aExpressao">Sua expressão (opcional)</label>
+        <textarea id="aExpressao" rows="4" placeholder="O que você descobriu sobre o Æon? Uma frase, um verso, um pensamento — não há forma certa."></textarea>
+        <div class="hint">O exercício Noemático descrito acima. Pode deixar em branco e enviar depois, se preferir.</div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Colocar Meu Tijolo</button>
+      <p id="formStatus" class="text-muted" style="font-size:var(--text-xs); margin-top:var(--space-3); text-align:center;"></p>
+    </form>
+  </div>
+
+  <div id="statusCard" class="card status-card" style="display:none;">
+    <svg width="56" height="56" viewBox="0 0 200 200" style="margin-bottom:var(--space-2);"><use href="assets/seals.svg#seal-chronos-phanes"/></svg>
+    <h3 style="font-size:var(--text-md);">Seu tijolo já está na estrutura.</h3>
+    <div id="statusBadge"></div>
+    <p class="text-secondary" style="font-size:var(--text-sm);" id="statusTexto"></p>
+  </div>
+</div>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { getSession, montarNavAuth, enviarPedidoAeon, obterMeuPedidoAeon, mensagemAmigavel } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+
+const STATUS_LABEL = { pendente: 'Em análise', aceito: 'Aceito', recusado: 'Não aceito desta vez' };
+const STATUS_TEXTO = {
+  pendente: 'Um Guardião do Æon vai ler sua expressão e entrar em contato pelos dados que você deixou.',
+  aceito: 'Bem-vindo(a) ao Novo Æon. Aguarde o contato com os próximos passos.',
+  recusado: 'Nem toda porta se abre na primeira tentativa. Você pode tentar novamente mais adiante.',
+};
+
+if (session) {
+  const meuPedido = await obterMeuPedidoAeon(session.user.id);
+  if (meuPedido) {
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('statusCard').style.display = 'block';
+    document.getElementById('statusBadge').innerHTML = `<span class="estado status-${meuPedido.status}">${STATUS_LABEL[meuPedido.status]}</span>`;
+    document.getElementById('statusTexto').textContent = STATUS_TEXTO[meuPedido.status];
+  } else {
+    document.getElementById('aEmail').value = session.user.email || '';
+    document.getElementById('aNome').value = session.user.user_metadata?.full_name || session.user.user_metadata?.name || '';
+  }
+}
+
+document.getElementById('aeonForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!session) { window.location.href = 'login.html?next=novo-aeon.html'; return; }
+
+  const status = document.getElementById('formStatus');
+  const nome = document.getElementById('aNome').value.trim();
+  const email = document.getElementById('aEmail').value.trim();
+  const telefone = document.getElementById('aTelefone').value.trim();
+  const expressao = document.getElementById('aExpressao').value.trim();
+  if (!nome || !email || !telefone) { status.textContent = 'Preencha nome, e-mail e telefone.'; return; }
+
+  status.textContent = 'Registrando seu tijolo na estrutura...';
+  try {
+    await enviarPedidoAeon(session.user.id, { nome, email, telefone, expressao });
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('statusCard').style.display = 'block';
+    document.getElementById('statusBadge').innerHTML = `<span class="estado status-pendente">${STATUS_LABEL.pendente}</span>`;
+    document.getElementById('statusTexto').textContent = STATUS_TEXTO.pendente;
+  } catch (err) {
+    status.textContent = mensagemAmigavel(err, 'enviar seu pedido');
+  }
+});
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>

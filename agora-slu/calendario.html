@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
 <title>Ágora — Calendário de Chamadas</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/cultus.css">
@@ -33,6 +35,8 @@
     <li><a href="eventos.html">Eventos</a></li>
     <li><a href="calendario.html" class="active">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="busca.html">Busca</a></li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -51,7 +55,7 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, montarNavAuth } from './js/agoraAuth.js';
+import { sb, getSession, montarNavAuth, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavAuth();
 const session = await getSession();
@@ -60,7 +64,7 @@ const wrap = document.getElementById('callsWrap');
 const { data: calls, error } = await sb.from('agora_calls').select('*').order('data_chamada', { ascending: true });
 
 if (error) {
-  wrap.innerHTML = `<div id="emptyMsg">Não foi possível carregar as chamadas (${error.message}).</div>`;
+  wrap.innerHTML = `<div id="emptyMsg">${mensagemAmigavel(error, 'carregar as chamadas')}</div>`;
 } else if (!calls || calls.length === 0) {
   wrap.innerHTML = `<div id="emptyMsg">Nenhuma chamada agendada.</div>`;
 } else {
@@ -144,5 +148,6 @@ function baixarICS(call) {
 }
 </script>
 
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
 </body>
 </html>

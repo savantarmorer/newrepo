@@ -1,0 +1,16 @@
+{
+  "name": "Ágora — Sociedade das Luzes Ocultas",
+  "short_name": "Ágora SLU",
+  "description": "Comunidade ocultista co-criativa da Ágora (SLU) — investigações coletivas, governança, missões e a Grande Obra.",
+  "start_url": "perfil.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#14121A",
+  "theme_color": "#14121A",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

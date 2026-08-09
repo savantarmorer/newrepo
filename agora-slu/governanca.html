@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
 <title>Ágora — Câmara do Conselho</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/cultus.css">
@@ -44,6 +46,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html" class="active">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="busca.html">Busca</a></li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -87,7 +90,7 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavAuth();
 const session = await getSession();
@@ -100,7 +103,7 @@ if (souAdmin) document.getElementById('adminPanel').style.display = 'block';
 const { data: decrees, error } = await sb.from('agora_decrees').select('*').order('numero', { ascending: false });
 
 if (error) {
-  listEl.innerHTML = `<div id="emptyMsg">Não foi possível carregar os decretos (${error.message}).</div>`;
+  listEl.innerHTML = `<div id="emptyMsg">${mensagemAmigavel(error, 'carregar os decretos')}</div>`;
 } else if (!decrees || decrees.length === 0) {
   listEl.innerHTML = `<div id="emptyMsg">Nenhum decreto em pauta no momento.</div>`;
 } else {
@@ -201,7 +204,7 @@ function buildDecreeCard(d, counts, meuVoto) {
         novoTally.forEach(t => { novoCounts[t.escolha] = Number(t.total); });
         card.replaceWith(buildDecreeCard(d, novoCounts, btn.dataset.escolha));
       } catch (e) {
-        card.querySelector('.vote-confirm').textContent = 'Erro: ' + e.message;
+        card.querySelector('.vote-confirm').textContent = mensagemAmigavel(e, 'votação');
       } finally {
         btn.disabled = false;
       }
@@ -227,5 +230,6 @@ function buildDecreeCard(d, counts, meuVoto) {
 }
 </script>
 
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
 </body>
 </html>

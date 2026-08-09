@@ -33,7 +33,9 @@ Sem os passos 2-4, a navegação funciona mas login/gamificação ficam bloquead
 | `calendario.html` | Chamadas reais + exportação `.ics` para qualquer calendário |
 | `discord.html` | Widget oficial + canais reais (categorias/nomes) + prévia real de mensagens de um canal público (polling 20s) |
 | `tarefas.html` | Quadro de tarefas dos voluntários — reivindicar/concluir com XP real |
-| `admin.html` | Painel administrativo (login e-mail/senha próprio) — CRUD real sobre Missões, Eventos, Calendário, Hall, Códice, Investigações, Tarefas e Associações |
+| `admin.html` | Painel administrativo (login e-mail/senha próprio) — CRUD real sobre Missões, Eventos, Calendário, Hall, Códice, Investigações, Tarefas, Associações e Novo Æon |
+| `busca.html` | Busca global real (Investigações + Fichas Pró-Vida + Códice) com deep link pro item exato |
+| `novo-aeon.html` | Ingresso no Novo Æon — texto de abertura + formulário real, moderado no painel admin |
 | `checkout.html` | Registra o pedido de associação de verdade no banco — não processa pagamento (ver limitação abaixo) |
 
 ## O que é genuinamente ilustrativo (e por quê)
