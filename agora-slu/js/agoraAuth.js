@@ -38,6 +38,20 @@ export async function getSession() {
   return data.session;
 }
 
+// O Supabase devolve falhas de OAuth (provedor não habilitado, e-mail já
+// registrado com outro provedor, acesso negado no Discord, etc.) como
+// ?error=...&error_description=... — às vezes na querystring (fluxo PKCE),
+// às vezes no hash (fluxo implícito). Como o redirectTo do login aponta
+// direto para dashboard.html (não para login.html), esse erro chega em
+// QUALQUER página protegida, não só na tela de login.
+export function lerErroOAuthDaURL() {
+  const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const searchParams = new URLSearchParams(location.search);
+  const bruto = hashParams.get('error_description') || searchParams.get('error_description')
+    || hashParams.get('error') || searchParams.get('error');
+  return bruto ? decodeURIComponent(bruto.replace(/\+/g, ' ')) : null;
+}
+
 // Se a URL trouxe um retorno de OAuth (?code=... da PKCE, ou #access_token=...
 // do fluxo implícito), o supabase-js processa isso de forma assíncrona ao
 // inicializar. Chamar getSession() logo de cara pode vencer essa corrida e
@@ -65,6 +79,12 @@ async function aguardarSessaoDoRetornoOAuth() {
 // Protege uma página: redireciona para login.html se não houver sessão.
 // Uso: const session = await requireAuth();
 export async function requireAuth(redirectTo = 'login.html') {
+  const erroOAuth = lerErroOAuthDaURL();
+  if (erroOAuth) {
+    window.location.href = `${redirectTo}?next=${encodeURIComponent(location.pathname)}&erro=${encodeURIComponent(erroOAuth)}`;
+    return null;
+  }
+
   const tinhaRetornoPendente = location.search.includes('code=') || location.hash.includes('access_token');
   let session = await getSession();
   if (!session) session = await aguardarSessaoDoRetornoOAuth();

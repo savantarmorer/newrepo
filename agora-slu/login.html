@@ -44,7 +44,7 @@
 </div>
 
 <script type="module">
-import { sb, signInWithDiscord, signInWithGoogle, getSession, registrarLoginDiario } from './js/agoraAuth.js';
+import { sb, signInWithDiscord, signInWithGoogle, getSession, registrarLoginDiario, lerErroOAuthDaURL } from './js/agoraAuth.js';
 
 window.entrarDiscord = async () => {
   document.getElementById('statusMsg').textContent = 'Abrindo o portal do Discord...';
@@ -58,22 +58,26 @@ window.entrarGoogle = async () => {
   if (error) document.getElementById('statusMsg').textContent = 'Erro: ' + error.message;
 };
 
-// Trata retorno de erro do OAuth (provedor desativado, acesso negado, etc.)
-const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
-const oauthError = hashParams.get('error_description') || hashParams.get('error');
+// Trata retorno de erro do OAuth (provedor desativado, acesso negado, e-mail já
+// registrado com outro provedor, etc.) — pode chegar direto aqui (erro antes do
+// redirect) ou repassado por requireAuth() via ?erro= (erro só visível depois
+// que o Supabase redirecionou para dashboard.html).
+const paramsIniciais = new URLSearchParams(location.search);
+const proximaPagina = paramsIniciais.get('next');
+const oauthError = lerErroOAuthDaURL() || paramsIniciais.get('erro');
 if (oauthError) {
-  document.getElementById('statusMsg').textContent = `O ritual foi interrompido: ${decodeURIComponent(oauthError)}`;
-  history.replaceState(null, '', location.pathname + location.search);
-} else if (new URLSearchParams(location.search).get('motivo') === 'timeout_oauth') {
+  document.getElementById('statusMsg').textContent = `O ritual foi interrompido: ${oauthError}`;
+} else if (paramsIniciais.get('motivo') === 'timeout_oauth') {
   document.getElementById('statusMsg').textContent = 'O Discord respondeu, mas a sessão demorou demais para confirmar. Tente novamente — se persistir, pode ser cache do navegador (tente uma aba anônima).';
 }
+// Limpa erro/hash/motivo da URL visível, mas preserva "next" para o redirect abaixo.
+history.replaceState(null, '', location.pathname + (proximaPagina ? `?next=${encodeURIComponent(proximaPagina)}` : ''));
 
 // Se já houver sessão ativa (ex: retorno do OAuth), registra login e segue
 const session = await getSession();
 if (session) {
   await registrarLoginDiario(session.user.id);
-  const params = new URLSearchParams(location.search);
-  window.location.href = params.get('next') || 'dashboard.html';
+  window.location.href = proximaPagina || 'dashboard.html';
 }
 </script>
 
