@@ -12,24 +12,91 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <style>
-  body { background: radial-gradient(ellipse at 50% -10%, rgba(139,92,246,0.18) 0%, transparent 55%), var(--bg-canvas); }
-  .aeon-hero { text-align:center; padding: var(--space-16) var(--space-6) var(--space-10); max-width:720px; margin:0 auto; }
-  .aeon-hero svg.seal { width:110px; height:110px; margin-bottom:var(--space-5); filter: drop-shadow(0 0 20px rgba(139,92,246,.55)); }
-  .aeon-hero .eyebrow { font-size:var(--text-xs); letter-spacing:.24em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:var(--space-3); }
-  .aeon-hero h1 { font-size:clamp(2rem, 5vw, 3rem); line-height:1.1; margin:0 0 var(--space-4); }
-  .aeon-hero .kicker { font-size:var(--text-md); color:var(--color-text-secondary); font-style:italic; max-width:52ch; margin:0 auto; }
+  html { scroll-behavior:smooth; }
+  body { background: #0B0A10; overflow-x:hidden; }
+
+  /* ── Campo de estrelas ambiente (fixo, atrás de tudo) ─────────────── */
+  .aeon-stars { position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 30% 65%, rgba(255,255,255,.35), transparent),
+      radial-gradient(2px 2px at 55% 15%, rgba(212,175,55,.4), transparent),
+      radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 85% 35%, rgba(139,92,246,.5), transparent),
+      radial-gradient(1px 1px at 92% 60%, rgba(255,255,255,.3), transparent),
+      radial-gradient(1.5px 1.5px at 20% 90%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,.25), transparent);
+    background-repeat:no-repeat;
+  }
+  .aeon-glow { position:fixed; top:-20%; left:50%; translate:-50% 0; width:1200px; height:1200px; z-index:0; pointer-events:none;
+    background:radial-gradient(ellipse at center, rgba(139,92,246,0.16) 0%, transparent 60%); }
+
+  /* ── Trilho de progresso lateral ("a estrutura sendo erguida") ────── */
+  .aeon-rail { position:fixed; top:0; left:0; width:3px; height:100%; z-index:50; background:rgba(255,255,255,.05); }
+  .aeon-rail-fill { width:100%; height:0%; background:linear-gradient(180deg, var(--violet,#8B5CF6), var(--brand-action)); box-shadow:0 0 12px rgba(212,175,55,.6); transition:height .1s linear; }
+  @media (max-width:860px) { .aeon-rail { display:none; } }
+
+  main, .aeon-hero, .aeon-form-wrap, footer, nav { position:relative; z-index:1; }
+
+  .aeon-hero { text-align:center; padding: var(--space-16) var(--space-6) var(--space-10); max-width:720px; margin:0 auto; min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .aeon-hero svg.seal { width:110px; height:110px; margin-bottom:var(--space-5); filter: drop-shadow(0 0 20px rgba(139,92,246,.55));
+    animation: sealPulse 5s ease-in-out infinite, heroIn 1.1s cubic-bezier(.16,1,.3,1) both; }
+  .aeon-hero .eyebrow { font-size:var(--text-xs); letter-spacing:.24em; text-transform:uppercase; color:var(--color-text-muted); margin-bottom:var(--space-3);
+    animation: heroIn 1s cubic-bezier(.16,1,.3,1) .15s both; }
+  .aeon-hero h1 { font-size:clamp(2rem, 5vw, 3rem); line-height:1.1; margin:0 0 var(--space-4);
+    animation: heroIn 1.1s cubic-bezier(.16,1,.3,1) .3s both; }
+  .aeon-hero .kicker { font-size:var(--text-md); color:var(--color-text-secondary); font-style:italic; max-width:52ch; margin:0 auto;
+    animation: heroIn 1.1s cubic-bezier(.16,1,.3,1) .45s both; }
+  .aeon-hero .scrolldown { margin-top:var(--space-10); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--color-text-muted);
+    animation: heroIn 1s ease .7s both, bob 2.4s ease-in-out 1.8s infinite; }
+  .aeon-hero .scrolldown::after { content:'↓'; display:block; margin-top:6px; font-size:16px; }
+
+  @keyframes heroIn { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes sealPulse { 0%,100% { filter:drop-shadow(0 0 20px rgba(139,92,246,.55)); } 50% { filter:drop-shadow(0 0 34px rgba(139,92,246,.85)); } }
+  @keyframes bob { 0%,100% { transform:translateY(0); } 50% { transform:translateY(6px); } }
 
   .aeon-body { max-width:680px; margin:0 auto; padding: 0 var(--space-6) var(--space-16); }
   .aeon-body h2 { font-size:var(--text-xl); text-align:center; margin: var(--space-16) 0 var(--space-8); color:var(--color-text-gold); }
   .aeon-body p { font-size:var(--text-md); line-height:1.85; color:var(--color-text-secondary); margin-bottom:var(--space-5); }
   .aeon-body p strong { color:#fff; }
-  .aeon-body .law { text-align:center; font-family:var(--font-display); font-size:var(--text-lg); color:var(--brand-action); margin: var(--space-8) 0; line-height:1.5; }
-  .aeon-divider { display:flex; align-items:center; gap:var(--space-4); margin: var(--space-12) auto; max-width:200px; }
+
+  /* ── Revelação ao rolar ────────────────────────────────────────────── */
+  .reveal { opacity:0; transform:translateY(28px); filter:blur(2px); transition:opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1), filter .8s ease; }
+  .reveal.in-view { opacity:1; transform:translateY(0); filter:blur(0); }
+  h2.reveal { transform:translateY(16px) scale(.97); }
+  h2.reveal.in-view { transform:translateY(0) scale(1); }
+
+  .law { text-align:center; font-family:var(--font-display); font-size:var(--text-lg); color:var(--brand-action); margin: var(--space-10) 0; line-height:1.6;
+    text-shadow:0 0 0 rgba(212,175,55,0); transition: text-shadow 1.4s ease .2s; }
+  .law.in-view { text-shadow:0 0 24px rgba(212,175,55,.45); }
+
+  .aeon-divider { display:flex; align-items:center; gap:var(--space-4); margin: var(--space-14) auto; max-width:200px; }
   .aeon-divider span { flex:1; height:1px; background: var(--border-medium); }
-  .aeon-divider svg { width:18px; height:18px; opacity:.6; }
+  .aeon-divider svg { width:20px; height:20px; opacity:.7; animation: slowSpin 24s linear infinite; }
+  @keyframes slowSpin { to { transform:rotate(360deg); } }
+
+  /* ── Cena do ritual da lua ────────────────────────────────────────── */
+  .ritual-scene { position:relative; padding-top:var(--space-6); }
+  .moon-wrap { position:sticky; top:14vh; display:flex; justify-content:center; margin-bottom:var(--space-10); height:0; z-index:-1; }
+  .moon { width:150px; height:150px; border-radius:50%; margin-top:-40px;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,.9), rgba(230,225,210,.5) 40%, rgba(180,175,165,.25) 60%, transparent 62%),
+      radial-gradient(circle at 60% 65%, rgba(0,0,0,.15), transparent 40%),
+      radial-gradient(circle at 20% 70%, rgba(0,0,0,.12), transparent 35%),
+      radial-gradient(circle at 70% 25%, rgba(0,0,0,.1), transparent 30%),
+      radial-gradient(ellipse at center, #E9E4D8 0%, #C9C3B4 55%, #8b876f 100%);
+    box-shadow: 0 0 60px 10px rgba(233,228,216,.35), 0 0 120px 40px rgba(139,92,246,.15);
+    filter: invert(0) brightness(1);
+    transition: filter 1.8s ease, box-shadow 1.8s ease, transform 1.8s ease;
+  }
+  .ritual-scene.burned .moon { filter: invert(1) brightness(1.4) hue-rotate(220deg); box-shadow:0 0 70px 14px rgba(139,92,246,.5), 0 0 140px 50px rgba(139,92,246,.25); transform:scale(1.04); }
+  .ritual-scene .aeon-body p { position:relative; background:rgba(11,10,16,.55); backdrop-filter:blur(2px); border-radius:var(--radius-sm); padding:var(--space-2) var(--space-3); margin-left:-var(--space-3); margin-right:-var(--space-3); }
 
   .aeon-cta { text-align:center; padding: var(--space-12) var(--space-6); }
   .aeon-cta p { max-width:48ch; margin:0 auto var(--space-6); font-size:var(--text-md); color:var(--color-text-secondary); }
+  .closing-line { text-align:center; font-family:var(--font-display); font-size:var(--text-xl); color:#fff; margin-top:var(--space-10); line-height:1.6;
+    opacity:0; transform:scale(.94); transition:opacity 1.1s cubic-bezier(.16,1,.3,1), transform 1.1s cubic-bezier(.16,1,.3,1); }
+  .closing-line.in-view { opacity:1; transform:scale(1); text-shadow:0 0 30px rgba(212,175,55,.4); }
 
   .aeon-form-wrap { max-width:520px; margin:0 auto var(--space-16); padding: 0 var(--space-6); }
   .aeon-form-wrap .card { border-color:var(--violet, #8B5CF6); box-shadow: 0 0 40px rgba(139,92,246,.12); }
@@ -42,9 +109,21 @@
   .status-pendente { background:rgba(232,184,75,.15); color:var(--brand-warn); }
   .status-aceito { background:rgba(52,211,153,.15); color:#34D399; }
   .status-recusado { background:rgba(232,101,74,.15); color:var(--brand-alert); }
+
+  /* Sem drama pra quem pediu menos animação */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior:auto; }
+    .reveal, h2.reveal, .closing-line, .aeon-hero * { opacity:1 !important; transform:none !important; filter:none !important; animation:none !important; transition:none !important; }
+    .moon { transition:none; }
+    .aeon-divider svg { animation:none; }
+  }
 </style>
 </head>
 <body>
+
+<div class="aeon-stars"></div>
+<div class="aeon-glow"></div>
+<div class="aeon-rail"><div class="aeon-rail-fill" id="railFill"></div></div>
 
 <nav class="cultus-nav">
   <a class="brand" href="index.html">
@@ -62,46 +141,56 @@
   <div class="eyebrow">Braço de Ensino da Ágora</div>
   <h1>O Novo Æon</h1>
   <p class="kicker">Sem hierarquias. Sem líderes. Sem Messias. Apenas buscadores de sentido, construindo juntos.</p>
+  <div class="scrolldown">Role para começar</div>
 </div>
 
 <main class="aeon-body">
 
-  <p><strong>O que é o Novo Æon?</strong></p>
-  <p>O termo foi popularizado por Aleister Crowley em contexto thelêmico e esotérico. O objetivo do Æon não é mágico nem místico <em>stricto sensu</em>.</p>
-  <p>A inspiração de Crowley vem da interpretação filosófica do seu material. Em essência: <span class="law">"Faze o que tu queres, pois há de ser o todo da Lei.<br>O amor é a lei, o amor sob vontade."</span></p>
-  <p>O que isso significa? Existe uma explicação, mas faz-se necessária uma exploração interna para buscar o verdadeiro significado. É um processo.</p>
-  <p>Não se trata de evolução espiritual ou mística, mas sim da abertura do senso crítico e analítico do ser humano, incentivando a neuroplasticidade.</p>
-  <p>O Æon é um braço de ensino da Ágora. O microcosmo dos buscadores e curiosos. Sem hierarquias, sem líderes, sem Messias. Nem os autores deste texto sabem exatamente como funciona o Æon. Eles próprios são buscadores de sentido.</p>
-  <p>A abertura do ceticismo saudável ocorre através da construção conjunta e do acesso ao inconsciente coletivo (místico ou não) para encontrar a sua (nossa) Vontade.</p>
-  <p>Serão apresentados conceitos nesta introdução. Não é importante que você os entenda para além de palavras vazias num primeiro momento. Basta ter consciência de tais termos e mantê-los em seu glossário mental (outra prática que será explicada no devido momento).</p>
-  <p>O primeiro passo para o Novo Æon é colocar seu tijolo e deixar sua marca nesta estrutura. Esse será seu primeiro exercício Noemático. Não são necessários longos textos para transmitir uma mensagem e deixar sua marca. Você não será avaliado, mas sua digital e sua energia serão eternizadas nos autos como arquitetos da eterna estrutura que representa o Novo Æon.</p>
-  <p>Questionar não é um caminho simples; haverá provações ao seu psicológico e à sua noção de realidade.</p>
-  <p>Se seu coração e sua coragem forem fortes o suficiente, a iniciação começa agora. Basta colocar sua essência em palavras e ressignificar a perspectiva.</p>
+  <div class="scene">
+    <p class="reveal"><strong>O que é o Novo Æon?</strong></p>
+    <p class="reveal">O termo foi popularizado por Aleister Crowley em contexto thelêmico e esotérico. O objetivo do Æon não é mágico nem místico <em>stricto sensu</em>.</p>
+    <p class="reveal">A inspiração de Crowley vem da interpretação filosófica do seu material. Em essência:</p>
+    <p class="law reveal">"Faze o que tu queres, pois há de ser o todo da Lei.<br>O amor é a lei, o amor sob vontade."</p>
+    <p class="reveal">O que isso significa? Existe uma explicação, mas faz-se necessária uma exploração interna para buscar o verdadeiro significado. É um processo.</p>
+    <p class="reveal">Não se trata de evolução espiritual ou mística, mas sim da abertura do senso crítico e analítico do ser humano, incentivando a neuroplasticidade.</p>
+    <p class="reveal">O Æon é um braço de ensino da Ágora. O microcosmo dos buscadores e curiosos. Sem hierarquias, sem líderes, sem Messias. Nem os autores deste texto sabem exatamente como funciona o Æon. Eles próprios são buscadores de sentido.</p>
+    <p class="reveal">A abertura do ceticismo saudável ocorre através da construção conjunta e do acesso ao inconsciente coletivo (místico ou não) para encontrar a sua (nossa) Vontade.</p>
+    <p class="reveal">Serão apresentados conceitos nesta introdução. Não é importante que você os entenda para além de palavras vazias num primeiro momento. Basta ter consciência de tais termos e mantê-los em seu glossário mental (outra prática que será explicada no devido momento).</p>
+    <p class="reveal">O primeiro passo para o Novo Æon é colocar seu tijolo e deixar sua marca nesta estrutura. Esse será seu primeiro exercício Noemático. Não são necessários longos textos para transmitir uma mensagem e deixar sua marca. Você não será avaliado, mas sua digital e sua energia serão eternizadas nos autos como arquitetos da eterna estrutura que representa o Novo Æon.</p>
+    <p class="reveal">Questionar não é um caminho simples; haverá provações ao seu psicológico e à sua noção de realidade.</p>
+    <p class="reveal">Se seu coração e sua coragem forem fortes o suficiente, a iniciação começa agora. Basta colocar sua essência em palavras e ressignificar a perspectiva.</p>
+  </div>
 
   <div class="aeon-divider"><span></span><svg viewBox="0 0 200 200"><use href="assets/seals.svg#seal-umbra-kael"/></svg><span></span></div>
 
-  <p>Siga as seguintes etapas: aguarde uma noite clara, quando a lua for visível. Vá para o lado de fora e receba a luz. Encare a lua, tente observar as crateras, concentre-se nelas e esvazie a mente.</p>
-  <p>Faça isso até a imagem negativa da lua ficar queimada na sua retina. Poucos minutos costumam ser suficientes.</p>
-  <p>Ainda sob a luz, feche os olhos e medite na imagem. Projete-se até a lua. Não como indivíduo. Seja a cratera e nada mais. Tente desvincular o indivíduo do ego e seja somente aquela estrutura banhada de poeira por tempos incompreensíveis.</p>
-  <p>Caso esteja confuso, tente outro dia. Se tiver dificuldade, respire fundo e tente novamente em outro momento.</p>
-  <p>Quando tiver sucesso no conceito da cratera, imagine a história dela, fixa no mesmo lugar por tanto tempo. Regresse até o momento de sua formação, quando alguma rocha chegou até lá.</p>
-  <p>Voltaremos à rocha posteriormente. No momento, você não deve ser nada além da cratera.</p>
-  <p>Quando conseguir visualizar o instante do impacto, respire fundo e retorne com a mente limpa. Pense no conceito de Æon. Na palavra.</p>
-  <p>Não importa o conceito da palavra. Não é sobre o significado, é sobre a forma, a visualização da estrutura geométrica intrínseca ao termo, não daquilo que ele nomeia. Há uma resposta, mas os grandes segredos têm seu tempo.</p>
-  <p>O tempo atual é o seu tempo. Escreva sobre isso. Pode ser uma frase, podem ser quinhentas páginas. Pode ser uma ilustração ou uma música, ou apenas uma abstração esotérica que não seja possível identificar.</p>
-  <p>Mas exponha o que é o Æon. O que você descobriu a respeito desta meditação. Sua expressão se consolidará nos registros, e lhe será atribuído um título segundo as práticas de sincrematria.</p>
+  <div class="scene ritual-scene" id="ritualScene">
+    <div class="moon-wrap"><div class="moon"></div></div>
+    <p class="reveal">Siga as seguintes etapas: aguarde uma noite clara, quando a lua for visível. Vá para o lado de fora e receba a luz. Encare a lua, tente observar as crateras, concentre-se nelas e esvazie a mente.</p>
+    <p class="reveal">Faça isso até a imagem negativa da lua ficar queimada na sua retina. Poucos minutos costumam ser suficientes.</p>
+    <p class="reveal">Ainda sob a luz, feche os olhos e medite na imagem. Projete-se até a lua. Não como indivíduo. Seja a cratera e nada mais. Tente desvincular o indivíduo do ego e seja somente aquela estrutura banhada de poeira por tempos incompreensíveis.</p>
+    <p class="reveal">Caso esteja confuso, tente outro dia. Se tiver dificuldade, respire fundo e tente novamente em outro momento.</p>
+    <p class="reveal">Quando tiver sucesso no conceito da cratera, imagine a história dela, fixa no mesmo lugar por tanto tempo. Regresse até o momento de sua formação, quando alguma rocha chegou até lá.</p>
+    <p class="reveal">Voltaremos à rocha posteriormente. No momento, você não deve ser nada além da cratera.</p>
+    <p class="reveal">Quando conseguir visualizar o instante do impacto, respire fundo e retorne com a mente limpa. Pense no conceito de Æon. Na palavra.</p>
+    <p class="reveal">Não importa o conceito da palavra. Não é sobre o significado, é sobre a forma, a visualização da estrutura geométrica intrínseca ao termo, não daquilo que ele nomeia. Há uma resposta, mas os grandes segredos têm seu tempo.</p>
+    <p class="reveal">O tempo atual é o seu tempo. Escreva sobre isso. Pode ser uma frase, podem ser quinhentas páginas. Pode ser uma ilustração ou uma música, ou apenas uma abstração esotérica que não seja possível identificar.</p>
+    <p class="reveal">Mas exponha o que é o Æon. O que você descobriu a respeito desta meditação. Sua expressão se consolidará nos registros, e lhe será atribuído um título segundo as práticas de sincrematria.</p>
+  </div>
 
-  <h2>Por que o Novo Æon?</h2>
+  <h2 class="reveal">Por que o Novo Æon?</h2>
 
-  <p>O ser humano é dotado de uma grandeza não merecida. Acreditamos ser o centro de um universo que não se importa conosco. Há, portanto, duas vertentes interpretativas — e o Æon sempre apresentará ambas, tanto a prática quanto a esotérica, para que o membro utilize a explicação que melhor lhe convier.</p>
-  <p>Também é incentivada a transição entre as vertentes interpretativas. Não há dogmas nem conceitos gravados em pedra. O iniciado deve ser um questionador, jamais alguém que simplesmente aceite o que lhe é imposto. Conivência e submissão não são traços desejados no Novo Æon.</p>
-  <p>Agora, a resposta primordial: por que fazer parte disso? Bom, existem respostas. Se são satisfatórias, não cabe ao autor afirmar, haja vista que cada percepção subjetiva e cada resultado individual são únicos.</p>
-  <p>A existência mundana é falha. Nossa mente nos prega peças; somos todos facilmente manipulados por falsas promessas, ídolos farsantes e figuras de autoridade desviantes. Até mesmo por nossas próprias memórias. Recorde uma lembrança. Por mais nítida que ela pareça, a situação nunca terá sido daquela maneira. Cada vez que você se recorda de algo, a mente altera um pouco a lembrança — da mesma forma que temos a tendência de relembrar com muito mais facilidade os acontecimentos negativos do que os positivos.</p>
-  <p>Por que isso acontece? Temos uma resposta longa e uma curta, uma negativa e uma positiva. Tudo isso irá surgir ao longo do seu processo no Æon.</p>
-  <p>De igual modo, somos subordinados, enquanto seres humanos, a um regime das 8 às 18 para meramente subsistir. Ignorar a miséria alheia, revoltar-se com políticos através de comentários vazios nas redes sociais, enquanto dosamos continuamente dopamina para prolongar essa anestesia moral e ética. Olhe em volta para as cabeças deslizando celular abaixo quando estiver no metrô ou no ônibus.</p>
-  <p>São ciclos. Ciclos que precisam ser quebrados. E não somente para os participantes do Æon, mas para toda a humanidade.</p>
-  <p>Você deixará de ver e começará a enxergar. Recuperará uma habilidade há muito perdida e, talvez, receba uma nova perspectiva ou propósito. Não é uma promessa nem uma garantia. Mas a filosofia Æon salvou muitos de ciclos viciosos, filosofia esta que será construída por você.</p>
-  <p style="text-align:center; font-family:var(--font-display); font-size:var(--text-lg); color:#fff; margin-top:var(--space-10);">Um Novo Æon o aguarda.<br>Basta dar o primeiro passo.</p>
+  <div class="scene">
+    <p class="reveal">O ser humano é dotado de uma grandeza não merecida. Acreditamos ser o centro de um universo que não se importa conosco. Há, portanto, duas vertentes interpretativas — e o Æon sempre apresentará ambas, tanto a prática quanto a esotérica, para que o membro utilize a explicação que melhor lhe convier.</p>
+    <p class="reveal">Também é incentivada a transição entre as vertentes interpretativas. Não há dogmas nem conceitos gravados em pedra. O iniciado deve ser um questionador, jamais alguém que simplesmente aceite o que lhe é imposto. Conivência e submissão não são traços desejados no Novo Æon.</p>
+    <p class="reveal">Agora, a resposta primordial: por que fazer parte disso? Bom, existem respostas. Se são satisfatórias, não cabe ao autor afirmar, haja vista que cada percepção subjetiva e cada resultado individual são únicos.</p>
+    <p class="reveal">A existência mundana é falha. Nossa mente nos prega peças; somos todos facilmente manipulados por falsas promessas, ídolos farsantes e figuras de autoridade desviantes. Até mesmo por nossas próprias memórias. Recorde uma lembrança. Por mais nítida que ela pareça, a situação nunca terá sido daquela maneira. Cada vez que você se recorda de algo, a mente altera um pouco a lembrança — da mesma forma que temos a tendência de relembrar com muito mais facilidade os acontecimentos negativos do que os positivos.</p>
+    <p class="reveal">Por que isso acontece? Temos uma resposta longa e uma curta, uma negativa e uma positiva. Tudo isso irá surgir ao longo do seu processo no Æon.</p>
+    <p class="reveal">De igual modo, somos subordinados, enquanto seres humanos, a um regime das 8 às 18 para meramente subsistir. Ignorar a miséria alheia, revoltar-se com políticos através de comentários vazios nas redes sociais, enquanto dosamos continuamente dopamina para prolongar essa anestesia moral e ética. Olhe em volta para as cabeças deslizando celular abaixo quando estiver no metrô ou no ônibus.</p>
+    <p class="reveal">São ciclos. Ciclos que precisam ser quebrados. E não somente para os participantes do Æon, mas para toda a humanidade.</p>
+    <p class="reveal">Você deixará de ver e começará a enxergar. Recuperará uma habilidade há muito perdida e, talvez, receba uma nova perspectiva ou propósito. Não é uma promessa nem uma garantia. Mas a filosofia Æon salvou muitos de ciclos viciosos, filosofia esta que será construída por você.</p>
+  </div>
+
+  <p class="closing-line">Um Novo Æon o aguarda.<br>Basta dar o primeiro passo.</p>
 </main>
 
 <div class="aeon-form-wrap">
@@ -182,6 +271,46 @@ document.getElementById('aeonForm').addEventListener('submit', async e => {
     status.textContent = mensagemAmigavel(err, 'enviar seu pedido');
   }
 });
+</script>
+
+<script>
+// ── Revelação ao rolar + trilho de progresso + lua "queimada" ──────────
+(function () {
+  const reduzMovimento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const railFill = document.getElementById('railFill');
+
+  function atualizarTrilho() {
+    const doc = document.documentElement;
+    const total = doc.scrollHeight - doc.clientHeight;
+    const pct = total > 0 ? (window.scrollY / total) * 100 : 0;
+    if (railFill) railFill.style.height = Math.min(100, Math.max(0, pct)) + '%';
+  }
+  window.addEventListener('scroll', () => requestAnimationFrame(atualizarTrilho), { passive: true });
+  atualizarTrilho();
+
+  if (reduzMovimento) return; // conteúdo já aparece tudo visível via CSS
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in-view');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Efeito "imagem negativa queimada na retina": a lua inverte quando a
+  // cena do ritual está bem no centro da tela.
+  const ritualScene = document.getElementById('ritualScene');
+  if (ritualScene) {
+    const moonObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => ritualScene.classList.toggle('burned', entry.isIntersecting));
+    }, { threshold: 0.35 });
+    moonObserver.observe(ritualScene);
+  }
+})();
 </script>
 
 <script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
