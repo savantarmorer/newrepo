@@ -52,7 +52,16 @@ Projeto: `fveslvzjjixzpwiqcydz` (mesmo projeto usado pelo AMOQ).
 2. **Authentication → Providers → Google**: ative, cole Client ID/Secret do passo 2.
 3. **Authentication → URL Configuration**:
    - Site URL: o domínio real onde o site da Ágora vai ficar publicado.
-   - Redirect URLs: adicione a URL de `dashboard.html` do domínio real (e `http://localhost:...` se for testar local).
+   - Redirect URLs: adicione a URL de `perfil.html` do domínio real (primeira tela após o login) e `http://localhost:...` se for testar local.
+
+### Diagnosticando erro "Unable to exchange external code"
+
+Se o login com Discord voltar pra tela de login com essa mensagem (visível em `login.html` desde a correção que passa a repassar erros de OAuth, ou nos **Logs → Auth Logs** do Supabase Dashboard), olhe o campo `error` do log:
+
+- **`oauth2: "invalid_client"`** → o Client ID/Secret do Discord salvos em Authentication → Providers → Discord **não batem** com o app no Discord Developer Portal (secret foi resetado, copiado errado, etc.). Corrija: gere um novo Client Secret em OAuth2 → General no Discord Developer Portal e cole os dois valores de novo no Supabase.
+- Qualquer outro erro de troca de código costuma ser o **Redirect URI** em OAuth2 → Redirects (no Discord Developer Portal) não sendo exatamente `https://fveslvzjjixzpwiqcydz.supabase.co/auth/v1/callback`.
+
+Esse provedor Discord é compartilhado com o projeto AMOQ (mesmo Supabase) — corrigir aqui conserta o login nos dois sites.
 
 ---
 
@@ -64,8 +73,30 @@ No **SQL Editor** do Supabase, nesta ordem:
 2. `supabase/agora-migration-v2.sql`
 3. `supabase/agora-migration-v3.sql`
 4. `supabase/agora-migration-v4.sql`
+5. `supabase/agora-migration-v5.sql`
+6. `supabase/agora-migration-v6.sql`
 
-Todas usam `CREATE TABLE IF NOT EXISTS` — seguro rodar mais de uma vez.
+Todas usam `CREATE TABLE IF NOT EXISTS` (ou `ADD COLUMN IF NOT EXISTS` / `DROP POLICY IF EXISTS` + recriação) — seguro rodar mais de uma vez.
+
+---
+
+## 4b. Criar a conta de Administrador (`admin.html`)
+
+O Painel Administrativo (`admin.html`) usa uma conta comum do Supabase Auth (e-mail/senha, sem passar pelo Discord/Google), só que com `agora_profiles.is_admin = true`. Não existe um jeito de criar isso via API sem a service key, então é manual:
+
+1. **Supabase Dashboard → Authentication → Users → Add user.**
+   - E-mail: o que você quiser usar para administrar o site.
+   - Senha: defina uma senha forte (ou gere uma, ex: `openssl rand -base64 18`).
+   - Marque **Auto Confirm User** (senão o Supabase espera confirmação por e-mail, que não vai chegar porque não configuramos SMTP customizado).
+2. Copie o **UUID** do usuário recém-criado (aparece na lista de Users).
+3. No **SQL Editor**, rode (depois de já ter rodado `agora-migration-v5.sql`, que cria a coluna):
+   ```sql
+   UPDATE public.agora_profiles SET is_admin = true WHERE id = '<uuid do usuário>';
+   ```
+   Se a linha em `agora_profiles` ainda não existir (o trigger só cria no primeiro login), faça login uma vez em `admin.html` com essas credenciais primeiro, e só depois rode o `UPDATE`.
+4. Acesse `https://<seu-domínio>/agora-slu/admin.html` e entre com esse e-mail/senha.
+
+Qualquer conta com `is_admin = true` também ganha o link "Painel Admin" no menu de perfil (`montarNavAuth`) em qualquer página do site, e o painel de criação de decretos em `governanca.html`.
 
 ---
 
@@ -191,7 +222,8 @@ O `checkout.html` hoje grava o **pedido de associação** de verdade no Supabase
 - [ ] Widget do servidor ativado
 - [ ] OAuth Client do Google criado
 - [ ] Discord + Google ativados no Supabase Auth
-- [ ] `agora-migration.sql`, `v2`, `v3` e `v4` executadas no Supabase
+- [ ] `agora-migration.sql`, `v2`, `v3`, `v4`, `v5` e `v6` executadas no Supabase
+- [ ] Conta de administrador criada em Authentication → Users + `is_admin = true` (ver §4b)
 - [ ] `config.js` preenchido com `AGORA_DISCORD_GUILD_ID` real
 - [ ] Site aberto via servidor local/produção (nunca por duplo-clique/`file://`)
 - [ ] Variáveis de ambiente cadastradas no Netlify (Site settings → Environment variables)

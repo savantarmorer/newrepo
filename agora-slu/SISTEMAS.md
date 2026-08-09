@@ -10,10 +10,10 @@ Documentação técnica de arquitetura e modelo de dados. Para o runbook de cred
 ┌─────────────────────────────────────────────────────────────────────┐
 │  NAVEGADOR (HTML estático, sem build/framework)                     │
 │                                                                       │
-│  index.html, login.html, perfil.html, dashboard.html,               │
+│  index.html, login.html, perfil.html, dashboard.html, admin.html,   │
 │  governanca.html, investigacoes.html, provida.html, codex.html,     │
-│  clube-do-livro.html, eventos.html, calendario.html, grafo.html,    │
-│  discord.html, mobile.html, checkout.html                           │
+│  eventos.html, calendario.html, discord.html, checkout.html,        │
+│  tarefas.html                                                       │
 │                                                                       │
 │  js/agoraAuth.js  ──►  @supabase/supabase-js (CDN)                 │
 └───────────────────────────────┬───────────────────────────────────┘
@@ -80,6 +80,12 @@ Isso impede que um usuário forje XP manipulando chamadas REST diretamente — a
 
 Streak diário: `registrar_login_agora(uid)`, chamada em `login.html` e no `dashboard.html` a cada sessão — incrementa se o último login foi ontem, reseta se houve lacuna.
 
+## 3b. Painel Administrativo (`admin.html`)
+
+Login separado do fluxo social: `sb.auth.signInWithPassword({ email, senha })`, contra uma conta de e-mail/senha comum do Supabase Auth (criada manualmente — ver `SETUP_INTEGRACOES.md` §4b). O gate de acesso é simplesmente `agora_profiles.is_admin === true`; sem isso, a página mostra "Acesso Negado" mesmo com login válido.
+
+Toda leitura/escrita usa o cliente `sb` normal (JWT do próprio admin) — sem RPCs dedicadas. A permissão real vem das policies de RLS criadas em `agora-migration-v6.sql`: cada tabela gerenciável tem uma policy `FOR ALL USING (is_admin_user())`, onde `is_admin_user()` é uma função SQL que confere `agora_profiles.is_admin` do `auth.uid()` da chamada. `admin.html` monta um CRUD genérico (`montarCRUD()`) a partir de uma lista declarativa de datasets (tabela + colunas + tipos de campo) — cobre Missões, Eventos, Calendário, Hall das Lendas, Códice, Investigações, Tarefas e Associações. Fichas Pró-Vida têm uma aba própria, só de moderação (listar + apagar), porque o conteúdo é JSONB estruturado demais pro editor genérico de colunas simples. Decretos continuam geridos em `governanca.html` (RPCs `criar_decreto`/`definir_status_decreto`, já existentes antes do painel).
+
 ## 4. Sincronização com o Discord
 
 1. Usuário faz login via Discord no Supabase → a identidade OAuth (incluindo `provider_id` = ID do Discord) fica em `auth.users.identities`.
@@ -113,7 +119,7 @@ Quando o grau sobe por uma ação no **site** (Terminal ARG, Missão, Tarefa), a
 
 ### 4.5 Sincronização automática de eventos (Scheduled Events)
 
-`syncDiscordEvents()` roda **ao subir o server** e depois a cada `DISCORD_EVENTS_SYNC_MINUTES` (padrão 10min) via `setInterval` — sem precisar de ação do usuário. Busca `GET /guilds/{id}/scheduled-events` e faz upsert em `agora_discord_events` (chave única `discord_event_id`). `eventos.html` e `mobile.html` mesclam esses eventos com os cadastrados manualmente em `agora_events`, ordenando tudo por data.
+`syncDiscordEvents()` roda **ao subir o server** e depois a cada `DISCORD_EVENTS_SYNC_MINUTES` (padrão 10min) via `setInterval` — sem precisar de ação do usuário. Busca `GET /guilds/{id}/scheduled-events` e faz upsert em `agora_discord_events` (chave única `discord_event_id`). `eventos.html` mescla esses eventos com os cadastrados manualmente em `agora_events`, ordenando tudo por data.
 
 ## 5. Terminal ARG (removido do site)
 

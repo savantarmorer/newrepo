@@ -16,6 +16,8 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - Investigação Coletiva de Arquivos (`investigacoes.html`, antes "Cofre de Evidências ARG") com diário de bordo colaborativo real e cadastro aberto a qualquer membro
 - **Ficha de Análise Pró-Vida** (`provida.html`): formulário estruturado completo, submissão concede XP real
 - **Página de Perfil** (`perfil.html`): primeira tela após o login — dados de conta, provedores vinculados e sincronização com o Discord (antes só existia dentro do Dashboard)
+- **Painel Administrativo real** (`admin.html`): login próprio (e-mail/senha, fora do fluxo social), CRUD completo sobre Missões, Eventos, Calendário, Hall das Lendas, Códice, Investigações, Tarefas e Associações, sem precisar do Supabase Table Editor — controle de permissão via RLS (`is_admin_user()`), não por RPC individual
+- **Poda de páginas de baixo valor**: removidas `mobile.html` (protótipo estático), `grafo.html` (decorativo, sem ação real) e `clube-do-livro.html` — menos superfície pra manter, menos gente se perdendo em página vazia
 - Códice Caelestis dinâmico (verbetes + notas de margem reais)
 - Missões auto-reportadas com XP real
 - Hall das Lendas com fluxo de aprovação (pendente → aprovado)
@@ -65,16 +67,16 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Auto-criação de perfil ao entrar no servidor**: hoje o `agora_profiles` só existe depois do primeiro login no site. Um bot com conexão de Gateway pode escutar `GUILD_MEMBER_ADD` e criar o registro no instante em que a pessoa entra no Discord, mesmo antes de visitar o site.
 - **Aproveitar o restante das permissões do bot** (já concedidas: Criar enquetes, Criar eventos, Fixar mensagens, Ver análises do servidor):
   - `/decreto` como enquete nativa do Discord ao abrir uma votação (`POST /channels/{id}/polls`), além da votação no site.
-  - Criar automaticamente o Scheduled Event do Discord quando um Curador cadastra um evento/sessão do Clube do Livro no site (hoje a sincronização só vai Discord → site).
+  - Criar automaticamente o Scheduled Event do Discord quando um Curador cadastra um evento no site pelo `admin.html` (hoje a sincronização só vai Discord → site).
   - Fixar a mensagem de anúncio de decreto/grau no canal configurado.
   - **Moderação (Moderar membros) foi propositalmente deixada de fora**: kick/ban/timeout são ações consequentes sobre pessoas reais — nenhuma automação deste sistema deve executá-las sem um humano decidindo caso a caso.
 
 ## 🌐 Longo Prazo — infraestrutura maior
 
 - **Gateway de pagamento real** (Mercado Pago ou Stripe) para automatizar a cobrança do Ritual de Iniciação — exige conta comercial do usuário; ver `SETUP_INTEGRACOES.md` §6.
-- **App mobile nativo ou PWA instalável**: `mobile.html` hoje é uma prévia num frame de navegador; virar PWA de verdade dá push notifications e ícone na tela inicial.
-- **Painel administrativo completo**: dashboard para Curadores/Guardiões gerenciarem missões, puzzles ARG, decretos e moderação sem tocar em SQL.
-- **Testes automatizados**: hoje a verificação é manual no navegador; vale Playwright cobrindo os fluxos críticos (login, RSVP, votação, terminal ARG).
+- **App mobile nativo ou PWA instalável**: hoje o site é só responsivo via CSS, sem app dedicado; virar PWA de verdade dá push notifications e ícone na tela inicial.
+- **Painel administrativo — próxima camada**: `admin.html` já cobre CRUD de conteúdo (missões, eventos, hall, códice, investigações, tarefas, associações); falta controle de layout/CSS/blocos visuais, que é um projeto à parte (motor de templates data-driven, não HTML estático).
+- **Testes automatizados**: hoje a verificação é manual no navegador; vale Playwright cobrindo os fluxos críticos (login, RSVP, votação, painel admin).
 - **Internacionalização**: se a Ágora expandir para o mundo lusófono internacional (Lei das Fronteiras do Manual de Marca já autoriza), preparar strings para PT-PT além de PT-BR.
 - **Rate limiting e observabilidade na API**: `server/` hoje não tem limite de requisições nem logging estruturado — importante antes de expor a API publicamente em produção com tráfego real.
 

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Ágora — Painel Administrativo</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .admin-shell { display:grid; grid-template-columns: 220px 1fr; gap:var(--space-6); align-items:start; }
+  @media (max-width: 860px) { .admin-shell { grid-template-columns: 1fr; } }
+  .admin-tabs { display:flex; flex-direction:column; gap:4px; position:sticky; top:var(--space-6); }
+  .admin-tabs button { text-align:left; background:transparent; border:1px solid var(--border-subtle); color:var(--color-text-secondary); padding:var(--space-3) var(--space-4); border-radius:var(--radius-sm); font-size:var(--text-sm); cursor:pointer; }
+  .admin-tabs button.active { border-color:var(--border-active); color:var(--color-text-gold); background:var(--bg-surface-elevated); }
+  .admin-panel { display:none; }
+  .admin-panel.active { display:block; }
+  .field { margin-bottom: var(--space-3); }
+  .field label { display:block; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-1); }
+  .field label input[type="checkbox"] { margin-right:6px; }
+  .crud-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0 var(--space-4); }
+  .crud-form-grid .field.wide { grid-column: 1 / -1; }
+  .crud-table { width:100%; border-collapse:collapse; font-size:var(--text-sm); margin-top:var(--space-4); }
+  .crud-table th, .crud-table td { text-align:left; padding:var(--space-2) var(--space-3); border-bottom:1px solid var(--border-subtle); vertical-align:top; }
+  .crud-table th { color:var(--color-text-muted); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.05em; }
+  .row-actions { display:flex; gap:var(--space-2); white-space:nowrap; }
+  .row-actions button { font-size:var(--text-xs); }
+  .crud-status { font-size:var(--text-xs); min-height:18px; margin-top:var(--space-2); }
+  #loginBox, #deniedBox { max-width:420px; margin:var(--space-16) auto; text-align:center; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell">
+
+  <div id="loginBox" class="card">
+    <h1 style="font-size:var(--text-lg);">Painel Administrativo</h1>
+    <p class="text-secondary" style="font-size:var(--text-sm); margin-bottom:var(--space-6);">Acesso restrito — entre com a conta de administrador.</p>
+    <form id="loginForm">
+      <div class="field"><label for="adminEmail">E-mail</label><input type="email" id="adminEmail" required></div>
+      <div class="field"><label for="adminSenha">Senha</label><input type="password" id="adminSenha" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Entrar</button>
+      <p id="loginStatus" class="text-muted" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
+    </form>
+  </div>
+
+  <div id="deniedBox" class="card" style="display:none;">
+    <h1 style="font-size:var(--text-lg);">Acesso Negado</h1>
+    <p class="text-secondary" style="font-size:var(--text-sm);">Esta conta não tem permissão de administrador.</p>
+    <button class="btn btn-secondary" id="deniedLogoutBtn" style="margin-top:var(--space-4);">Sair</button>
+  </div>
+
+  <div id="adminContent" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3); padding:var(--space-6) 0;">
+      <h1 style="font-size:var(--text-lg); margin:0;">Painel Administrativo</h1>
+      <div style="display:flex; gap:var(--space-3);">
+        <a href="governanca.html" class="btn btn-secondary" style="font-size:var(--text-xs);">Governança (Decretos) →</a>
+        <button class="btn btn-secondary" id="adminLogoutBtn" style="font-size:var(--text-xs);">Sair</button>
+      </div>
+    </div>
+
+    <div class="admin-shell">
+      <div class="admin-tabs" id="adminTabs"></div>
+      <div id="adminPanels"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, getSession, getProfile, montarNavAuth, listarFichasProvida } from './js/agoraAuth.js';
+
+montarNavAuth();
+
+const SEALS = ['seal-lux-vael','seal-umbra-kael','seal-chronos-phanes','seal-aether-sophia','seal-ignis-architectus','seal-noesis-vesper'];
+
+const DATASETS = [
+  {
+    key: 'missoes', table: 'agora_missions', label: 'Missões', order: 'created_at',
+    columns: [
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+      { key: 'xp_reward', label: 'XP', type: 'number', default: 100 },
+      { key: 'ativo', label: 'Ativa', type: 'boolean', default: true },
+    ],
+  },
+  {
+    key: 'eventos', table: 'agora_events', label: 'Eventos', order: 'data_evento',
+    columns: [
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+      { key: 'fase', label: 'Fase', type: 'select', options: ['Gênese','Conselho','Fundação','Expansão'] },
+      { key: 'tipo', label: 'Tipo', type: 'select', options: ['live','ritual','workshop','solstício'] },
+      { key: 'data_evento', label: 'Data', type: 'datetime-local', required: true },
+      { key: 'local', label: 'Local', type: 'text', default: 'Discord da Ágora' },
+    ],
+  },
+  {
+    key: 'chamadas', table: 'agora_calls', label: 'Calendário', order: 'data_chamada',
+    columns: [
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+      { key: 'data_chamada', label: 'Data', type: 'datetime-local', required: true },
+      { key: 'duracao_min', label: 'Duração (min)', type: 'number', default: 60 },
+      { key: 'link_chamada', label: 'Link', type: 'text' },
+    ],
+  },
+  {
+    key: 'hall', table: 'agora_hall_entries', label: 'Hall das Lendas', order: 'created_at',
+    columns: [
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'autor_nome', label: 'Autor', type: 'text', required: true },
+      { key: 'status', label: 'Status', type: 'select', options: ['pendente','aprovado'] },
+      { key: 'selo_ref', label: 'Selo', type: 'select', options: SEALS },
+      { key: 'link_discord', label: 'Link Discord', type: 'text', wide: true },
+    ],
+  },
+  {
+    key: 'codice', table: 'agora_codex_entries', label: 'Códice', order: 'ordem',
+    columns: [
+      { key: 'slug', label: 'Slug', type: 'text', required: true },
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'tipo', label: 'Tipo', type: 'select', options: ['capitulo','verbete'] },
+      { key: 'selo_ref', label: 'Selo', type: 'select', options: SEALS },
+      { key: 'ordem', label: 'Ordem', type: 'number', default: 1 },
+      { key: 'citacao', label: 'Citação', type: 'textarea', wide: true },
+      { key: 'conteudo', label: 'Conteúdo', type: 'textarea', wide: true, required: true },
+    ],
+  },
+  {
+    key: 'investigacoes', table: 'agora_investigacoes', label: 'Investigações', order: 'created_at',
+    columns: [
+      { key: 'codigo', label: 'Código', type: 'text', required: true },
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'status', label: 'Status', type: 'select', options: ['em_analise','decifrado','confirmado'] },
+      { key: 'categoria', label: 'Categoria', type: 'text', default: 'geral' },
+      { key: 'selo_ref', label: 'Selo', type: 'select', options: SEALS },
+      { key: 'encontrado_em', label: 'Encontrado em', type: 'text' },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+    ],
+  },
+  {
+    key: 'tarefas', table: 'agora_tasks', label: 'Tarefas', order: 'created_at',
+    columns: [
+      { key: 'titulo', label: 'Título', type: 'text', required: true },
+      { key: 'categoria', label: 'Categoria', type: 'text', default: 'Geral' },
+      { key: 'xp_reward', label: 'XP', type: 'number', default: 200 },
+      { key: 'status', label: 'Status', type: 'select', options: ['aberta','em_andamento','concluida'] },
+      { key: 'link_discord', label: 'Link Discord', type: 'text' },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+    ],
+  },
+  {
+    key: 'associacoes', table: 'agora_membership_requests', label: 'Associações', order: 'created_at',
+    noInsert: true, noDelete: true,
+    columns: [
+      { key: 'nome', label: 'Nome', type: 'text', readonly: true },
+      { key: 'email', label: 'E-mail', type: 'text', readonly: true },
+      { key: 'tier', label: 'Tier', type: 'text', readonly: true },
+      { key: 'metodo_pagamento', label: 'Pagamento', type: 'text', readonly: true },
+      { key: 'status', label: 'Status', type: 'select', options: ['pendente','contatado','confirmado','cancelado'] },
+    ],
+  },
+];
+
+function escapeHtml(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+function toDatetimeLocal(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function fieldHtml(col, value) {
+  const v = value ?? col.default ?? '';
+  const id = `f_${col.key}`;
+  const wideClass = col.wide ? ' wide' : '';
+  if (col.readonly) {
+    return `<div class="field${wideClass}"><label>${col.label}</label><input type="text" id="${id}" value="${escapeHtml(v)}" disabled></div>`;
+  }
+  switch (col.type) {
+    case 'textarea':
+      return `<div class="field${wideClass}"><label>${col.label}</label><textarea id="${id}" rows="3">${escapeHtml(v)}</textarea></div>`;
+    case 'number':
+      return `<div class="field${wideClass}"><label>${col.label}</label><input type="number" id="${id}" value="${escapeHtml(v)}"></div>`;
+    case 'boolean':
+      return `<div class="field${wideClass}"><label><input type="checkbox" id="${id}" ${v ? 'checked' : ''}>${col.label}</label></div>`;
+    case 'select':
+      return `<div class="field${wideClass}"><label>${col.label}</label><select id="${id}">${col.options.map(o => `<option value="${o}" ${o===v?'selected':''}>${o}</option>`).join('')}</select></div>`;
+    case 'datetime-local':
+      return `<div class="field${wideClass}"><label>${col.label}${col.required ? ' *' : ''}</label><input type="datetime-local" id="${id}" value="${toDatetimeLocal(v)}"></div>`;
+    default:
+      return `<div class="field${wideClass}"><label>${col.label}${col.required ? ' *' : ''}</label><input type="text" id="${id}" value="${escapeHtml(v)}"></div>`;
+  }
+}
+
+function readForm(dataset) {
+  const obj = {};
+  for (const col of dataset.columns) {
+    if (col.readonly) continue;
+    const el = document.getElementById(`f_${col.key}`);
+    if (!el) continue;
+    if (col.type === 'boolean') obj[col.key] = el.checked;
+    else if (col.type === 'number') obj[col.key] = el.value === '' ? null : Number(el.value);
+    else if (col.type === 'datetime-local') obj[col.key] = el.value ? new Date(el.value).toISOString() : null;
+    else obj[col.key] = el.value.trim();
+  }
+  return obj;
+}
+
+function montarCRUD(dataset) {
+  const panel = document.getElementById(`panel_${dataset.key}`);
+  let rows = [];
+  let editingId = null;
+
+  panel.innerHTML = `
+    <h2 style="font-size:var(--text-md);">${dataset.label}</h2>
+    <div class="card">
+      <h3 id="formTitle_${dataset.key}" style="font-size:var(--text-sm);">Novo registro</h3>
+      <form id="form_${dataset.key}">
+        <div class="crud-form-grid">${dataset.columns.map(c => fieldHtml(c, null)).join('')}</div>
+        <div style="display:flex; gap:var(--space-3); margin-top:var(--space-3);">
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <button type="button" class="btn btn-secondary" id="cancelEdit_${dataset.key}" style="display:none;">Cancelar edição</button>
+        </div>
+        <p class="crud-status" id="status_${dataset.key}"></p>
+      </form>
+    </div>
+    <div id="table_${dataset.key}"></div>
+  `;
+
+  const form = document.getElementById(`form_${dataset.key}`);
+  const statusEl = document.getElementById(`status_${dataset.key}`);
+  const cancelBtn = document.getElementById(`cancelEdit_${dataset.key}`);
+  const formTitle = document.getElementById(`formTitle_${dataset.key}`);
+  const tableEl = document.getElementById(`table_${dataset.key}`);
+
+  function atualizarEstadoSubmit() {
+    if (!dataset.noInsert) return;
+    form.querySelector('button[type="submit"]').disabled = !editingId;
+  }
+
+  function renderForm(values) {
+    document.getElementById(`form_${dataset.key}`).querySelector('.crud-form-grid').innerHTML =
+      dataset.columns.map(c => fieldHtml(c, values ? values[c.key] : null)).join('');
+    atualizarEstadoSubmit();
+  }
+
+  function renderTable() {
+    if (!rows.length) { tableEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhum registro ainda.</p>`; return; }
+    const previewCols = dataset.columns.filter(c => !c.wide).slice(0, 4);
+    tableEl.innerHTML = `<table class="crud-table"><thead><tr>${previewCols.map(c => `<th>${c.label}</th>`).join('')}<th></th></tr></thead><tbody>
+      ${rows.map(r => `<tr>
+        ${previewCols.map(c => `<td>${escapeHtml(String(r[c.key] ?? '').slice(0, 60))}</td>`).join('')}
+        <td class="row-actions">
+          <button class="btn btn-secondary edit-btn" data-id="${r.id}">Editar</button>
+          ${dataset.noDelete ? '' : `<button class="btn btn-alert delete-btn" data-id="${r.id}">Apagar</button>`}
+        </td>
+      </tr>`).join('')}
+    </tbody></table>`;
+
+    tableEl.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const row = rows.find(r => String(r.id) === btn.dataset.id);
+        editingId = row.id;
+        renderForm(row);
+        formTitle.textContent = `Editando: ${row.titulo || row.codigo || row.id}`;
+        cancelBtn.style.display = 'inline-block';
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    tableEl.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Apagar este registro? Não dá pra desfazer.')) return;
+        const { error } = await sb.from(dataset.table).delete().eq('id', btn.dataset.id);
+        if (error) { alert('Erro: ' + error.message); return; }
+        await carregar();
+      });
+    });
+  }
+
+  cancelBtn.addEventListener('click', () => {
+    editingId = null;
+    renderForm(null);
+    formTitle.textContent = dataset.noInsert ? 'Selecione um registro abaixo para editar' : 'Novo registro';
+    cancelBtn.style.display = 'none';
+    statusEl.textContent = '';
+  });
+
+  document.getElementById(`form_${dataset.key}`).addEventListener('submit', async e => {
+    e.preventDefault();
+    const payload = readForm(dataset);
+    statusEl.textContent = 'Salvando...';
+    let error;
+    if (editingId) {
+      ({ error } = await sb.from(dataset.table).update(payload).eq('id', editingId));
+    } else {
+      if (dataset.noInsert) { statusEl.textContent = 'Este registro não pode ser criado por aqui.'; return; }
+      ({ error } = await sb.from(dataset.table).insert(payload));
+    }
+    if (error) { statusEl.textContent = 'Erro: ' + error.message; return; }
+    statusEl.textContent = 'Salvo.';
+    editingId = null;
+    renderForm(null);
+    formTitle.textContent = dataset.noInsert ? 'Selecione um registro abaixo para editar' : 'Novo registro';
+    cancelBtn.style.display = 'none';
+    await carregar();
+  });
+
+  if (dataset.noInsert) formTitle.textContent = 'Selecione um registro abaixo para editar';
+  atualizarEstadoSubmit();
+
+  async function carregar() {
+    const { data, error } = await sb.from(dataset.table).select('*').order(dataset.order, { ascending: dataset.order === 'ordem' });
+    if (error) { tableEl.innerHTML = `<p class="text-muted">Erro ao carregar (${error.message}).</p>`; return; }
+    rows = data || [];
+    renderTable();
+  }
+
+  carregar();
+}
+
+// ── Pró-Vida: moderação simples (listar + apagar) ──────────────────────
+async function montarProvidaModeracao() {
+  const panel = document.getElementById('panel_provida');
+  panel.innerHTML = `<h2 style="font-size:var(--text-md);">Fichas Pró-Vida</h2><div id="providaList">Carregando...</div>`;
+  const listEl = document.getElementById('providaList');
+  const fichas = await listarFichasProvida();
+  if (!fichas.length) { listEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma ficha enviada ainda.</p>`; return; }
+  listEl.innerHTML = fichas.map(f => `
+    <div class="card" style="margin-bottom:var(--space-4);">
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap;">
+        <div>
+          <div class="text-gold" style="font-size:var(--text-xs); font-weight:700;">${escapeHtml(f.documento_id)}</div>
+          <strong>${escapeHtml(f.titulo || '(sem título)')}</strong>
+          <div class="text-muted" style="font-size:var(--text-xs);">${escapeHtml(f.analista_tag || 'Iniciado')} · ${new Date(f.created_at).toLocaleDateString('pt-BR')}</div>
+        </div>
+        <button class="btn btn-alert delete-ficha-btn" data-id="${f.id}" style="font-size:var(--text-xs); height:fit-content;">Apagar</button>
+      </div>
+    </div>
+  `).join('');
+  listEl.querySelectorAll('.delete-ficha-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Apagar esta ficha Pró-Vida? Não dá pra desfazer.')) return;
+      const { error } = await sb.from('agora_provida_fichas').delete().eq('id', btn.dataset.id);
+      if (error) { alert('Erro: ' + error.message); return; }
+      await montarProvidaModeracao();
+    });
+  });
+}
+
+function montarTabs() {
+  const tabsEl = document.getElementById('adminTabs');
+  const panelsEl = document.getElementById('adminPanels');
+  const allTabs = [...DATASETS.map(d => ({ key: d.key, label: d.label })), { key: 'provida', label: 'Pró-Vida' }];
+
+  tabsEl.innerHTML = allTabs.map((t, i) => `<button data-tab="${t.key}" class="${i === 0 ? 'active' : ''}">${t.label}</button>`).join('');
+  panelsEl.innerHTML = allTabs.map((t, i) => `<div class="admin-panel${i === 0 ? ' active' : ''}" id="panel_${t.key}"></div>`).join('');
+
+  tabsEl.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabsEl.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+      panelsEl.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(`panel_${btn.dataset.tab}`).classList.add('active');
+    });
+  });
+
+  DATASETS.forEach(montarCRUD);
+  montarProvidaModeracao();
+}
+
+// ── Login / gate ─────────────────────────────────────────────────────
+async function iniciar() {
+  const session = await getSession();
+  if (!session) {
+    document.getElementById('loginBox').style.display = 'block';
+    return;
+  }
+  const profile = await getProfile(session.user.id);
+  if (!profile?.is_admin) {
+    document.getElementById('deniedBox').style.display = 'block';
+    return;
+  }
+  document.getElementById('adminContent').style.display = 'block';
+  montarTabs();
+}
+
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const status = document.getElementById('loginStatus');
+  status.textContent = 'Entrando...';
+  const { error } = await sb.auth.signInWithPassword({
+    email: document.getElementById('adminEmail').value.trim(),
+    password: document.getElementById('adminSenha').value,
+  });
+  if (error) { status.textContent = 'Erro: ' + error.message; return; }
+  document.getElementById('loginBox').style.display = 'none';
+  await iniciar();
+});
+
+document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.reload();
+});
+document.getElementById('deniedLogoutBtn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  window.location.reload();
+});
+
+await iniciar();
+</script>
+
+</body>
+</html>

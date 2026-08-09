@@ -310,7 +310,7 @@ export async function montarNavAuth() {
         <a href="perfil.html">Meu Perfil</a>
         <a href="dashboard.html">Meu Painel</a>
         <a href="dashboard.html#hall">Hall das Lendas</a>
-        ${profile?.is_admin ? '<a href="governanca.html">Painel Admin</a>' : ''}
+        ${profile?.is_admin ? '<a href="admin.html">Painel Admin</a>' : ''}
         <hr class="divider">
         <button class="sair" id="navSignOutBtn" type="button">Sair do Círculo</button>
       </div>

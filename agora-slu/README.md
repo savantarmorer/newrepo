@@ -23,17 +23,17 @@ Sem os passos 2-4, a navegação funciona mas login/gamificação ficam bloquead
 |---|---|
 | `index.html` | Landing page, hero, prova viva (estática — copy institucional) |
 | `login.html` | Login real via Supabase Auth (Discord + Google OAuth) |
-| `dashboard.html` | Perfil real (XP, grau, streak), sync de cargos do Discord, missões com XP real, Hall das Lendas real |
-| `terminal.html` | Puzzles reais guardados no banco; resposta validada por hash no servidor (RPC `resolver_puzzle_arg`); XP real |
-| `governanca.html` | Decretos reais, um voto por usuário (RPC `votar_decreto`), apuração agregada real |
-| `evidencias.html` | Evidências reais + diário de bordo colaborativo (qualquer membro pode registrar uma análise) |
+| `perfil.html` | Primeira tela após o login — dados de conta, provedores vinculados, sync de cargos do Discord |
+| `dashboard.html` | XP, grau, streak, missões com XP real, Hall das Lendas real |
+| `governanca.html` | Decretos reais, um voto por usuário (RPC `votar_decreto`), apuração agregada real; painel para admins abrirem/encerrarem decretos |
+| `investigacoes.html` | Investigação coletiva de arquivos/documentos + diário de bordo colaborativo (qualquer membro pode adicionar um item ou registrar uma análise) |
+| `provida.html` | Ficha de Análise — Material Pró-Vida (formulário estruturado completo); envio concede XP real |
 | `codex.html` | Verbetes reais + notas de margem escritas pelos membros |
-| `clube-do-livro.html` | Sessões reais de leitura + RSVP |
 | `eventos.html` | Eventos reais por fase + RSVP |
 | `calendario.html` | Chamadas reais + exportação `.ics` para qualquer calendário |
-| `grafo.html` | Estatísticas agregadas reais (contagens do banco), não números inventados |
 | `discord.html` | Widget oficial + canais reais (categorias/nomes) + prévia real de mensagens de um canal público (polling 20s) |
-| `mobile.html` | Feed real (próximo decreto/evento/sessão + status de sync do Discord) num frame de celular |
+| `tarefas.html` | Quadro de tarefas dos voluntários — reivindicar/concluir com XP real |
+| `admin.html` | Painel administrativo (login e-mail/senha próprio) — CRUD real sobre Missões, Eventos, Calendário, Hall, Códice, Investigações, Tarefas e Associações |
 | `checkout.html` | Registra o pedido de associação de verdade no banco — não processa pagamento (ver limitação abaixo) |
 
 ## O que é genuinamente ilustrativo (e por quê)
