@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Meu Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .perfil-header { display:flex; align-items:center; gap:var(--space-6); padding:var(--space-8) 0; flex-wrap:wrap; }
+  .perfil-avatar { width:96px; height:96px; border-radius:50%; border:2px solid var(--brand-action); box-shadow:var(--glow-gold); overflow:hidden; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:var(--text-xl); color:var(--brand-action); background:var(--brand-surface); flex-shrink:0; }
+  .perfil-avatar img { width:100%; height:100%; object-fit:cover; }
+  .info-row { display:flex; justify-content:space-between; gap:var(--space-4); padding:var(--space-3) 0; border-bottom:1px solid var(--border-subtle); font-size:var(--text-sm); }
+  .info-row:last-child { border-bottom:none; }
+  .info-row .k { color:var(--color-text-muted); }
+  .info-row .v { color:var(--color-text-primary); text-align:right; }
+  .provider-chip { display:inline-flex; align-items:center; gap:6px; font-size:var(--text-xs); padding:4px var(--space-3); border-radius:var(--radius-full); background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); margin:2px 4px 2px 0; }
+  .discord-card { display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap; }
+  .discord-card .di-avatar { width:64px; height:64px; border-radius:50%; background:var(--brand-surface); border:1px solid var(--border-medium); }
+  .role-chip { display:inline-block; font-size:var(--text-xs); padding:2px var(--space-2); border-radius:var(--radius-full); background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); margin:2px 4px 2px 0; }
+  .mini-stat { text-align:center; }
+  .mini-stat .v { font-family:var(--font-display); color:var(--brand-action); font-size:var(--text-lg); }
+  .mini-stat .l { font-size:var(--text-xs); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html" class="active">Perfil</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="tarefas.html">Tarefas</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" id="perfilContent" style="display:none; max-width:760px;">
+  <div class="perfil-header">
+    <div class="perfil-avatar" id="avatarRing">I</div>
+    <div>
+      <h1 style="font-size:var(--text-lg); margin-bottom:2px;" id="nomeExibicao">Iniciado</h1>
+      <span class="badge" id="grauBadge">Neófito</span>
+      <div id="providerChips" style="margin-top:var(--space-2);"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-bottom:var(--space-6);">
+    <div class="card mini-stat"><div class="v" id="xpValue">0</div><div class="l">XP</div></div>
+    <div class="card mini-stat"><div class="v" id="streakValue">🔥 0</div><div class="l">Streak</div></div>
+    <div class="card mini-stat"><div class="v" id="grauValue">0</div><div class="l">Grau</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:var(--space-6);">
+    <h3 style="font-size:var(--text-md);">Dados da Conta</h3>
+    <div class="info-row"><span class="k">Nome</span><span class="v" id="infoNome">—</span></div>
+    <div class="info-row"><span class="k">Usuário</span><span class="v" id="infoUsuario">—</span></div>
+    <div class="info-row"><span class="k">E-mail</span><span class="v" id="infoEmail">—</span></div>
+    <div class="info-row"><span class="k">Membro desde</span><span class="v" id="infoDesde">—</span></div>
+  </div>
+
+  <div class="card" id="discordCard">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3);">
+      <h3 style="font-size:var(--text-md); margin:0;">Sincronização com o Discord</h3>
+      <button class="btn btn-secondary" id="syncBtn" style="font-size:var(--text-xs);">Sincronizar Agora</button>
+    </div>
+    <div id="discordBody" style="margin-top:var(--space-4);">
+      <p class="text-muted" style="font-size:var(--text-sm);">Nenhum dado sincronizado ainda. Clique em "Sincronizar Agora" para importar seu apelido, cargos e data de entrada no servidor da Ágora.</p>
+    </div>
+    <p class="text-muted" id="syncStatus" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
+  </div>
+
+  <div style="text-align:center; margin: var(--space-12) 0;">
+    <a href="dashboard.html" class="btn btn-primary" style="margin-right:var(--space-3);">Ir ao Painel →</a>
+    <button class="btn btn-secondary" id="logoutBtn">Sair do Círculo</button>
+  </div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas · Que a Soleira reconheça quem a atravessa.
+</footer>
+
+<script type="module">
+import { requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth } from './js/agoraAuth.js';
+
+montarNavAuth();
+
+const session = await requireAuth('login.html');
+if (session) {
+  document.getElementById('perfilContent').style.display = 'block';
+  await render(session);
+}
+
+async function render(session) {
+  const user = session.user;
+  const profile = await getProfile(user.id);
+  const xp = profile?.xp || 0;
+  const grau = calcularGrau(xp);
+  const nomeExibicao = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+  const usuario = user.user_metadata?.user_name || user.user_metadata?.preferred_username || null;
+  const avatarUrl = user.user_metadata?.avatar_url;
+
+  document.getElementById('nomeExibicao').textContent = nomeExibicao;
+  document.getElementById('grauBadge').textContent = `${grau.nome} · Grau ${grau.grau}`;
+  document.getElementById('xpValue').textContent = xp.toLocaleString('pt-BR');
+  document.getElementById('streakValue').textContent = `🔥 ${profile?.streak_atual ?? 0}`;
+  document.getElementById('grauValue').textContent = grau.grau;
+  document.getElementById('infoNome').textContent = nomeExibicao;
+  document.getElementById('infoUsuario').textContent = usuario ? `@${usuario}` : '—';
+  document.getElementById('infoEmail').textContent = user.email || '—';
+  document.getElementById('infoDesde').textContent = profile?.created_at
+    ? new Date(profile.created_at).toLocaleDateString('pt-BR') : '—';
+
+  if (avatarUrl) document.getElementById('avatarRing').innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
+  else document.getElementById('avatarRing').textContent = nomeExibicao.charAt(0).toUpperCase();
+
+  const provedores = (user.identities || []).map(i => i.provider);
+  document.getElementById('providerChips').innerHTML = provedores.map(p =>
+    `<span class="provider-chip">${p === 'discord' ? '🎮 Discord' : p === 'google' ? '🟢 Google' : p}</span>`
+  ).join('') || '<span class="provider-chip">e-mail</span>';
+
+  const dsync = await getDiscordSync(user.id);
+  if (dsync) renderDiscord(dsync);
+}
+
+function renderDiscord(d) {
+  const roles = Array.isArray(d.roles) ? d.roles : [];
+  document.getElementById('discordBody').innerHTML = `
+    <div class="discord-card">
+      ${d.discord_avatar ? `<img class="di-avatar" src="${d.discord_avatar}" alt="">` : `<div class="di-avatar"></div>`}
+      <div>
+        <div style="font-weight:600;">${d.nickname || d.discord_username || 'Iniciado'}</div>
+        <div class="text-muted" style="font-size:var(--text-xs); margin:4px 0;">
+          No servidor desde ${d.joined_guild_at ? new Date(d.joined_guild_at).toLocaleDateString('pt-BR') : '—'}
+        </div>
+        <div>${roles.map(r => `<span class="role-chip">${r}</span>`).join('') || '<span class="text-muted" style="font-size:12px;">Nenhum cargo especial ainda</span>'}</div>
+      </div>
+    </div>`;
+}
+
+document.getElementById('syncBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('syncBtn');
+  const status = document.getElementById('syncStatus');
+  btn.disabled = true;
+  status.textContent = 'Consultando o servidor da Ágora...';
+  try {
+    const result = await sincronizarDiscord();
+    status.textContent = 'Sincronização concluída.';
+    renderDiscord(result.discord);
+  } catch (e) {
+    status.textContent = `Não foi possível sincronizar: ${e.message}. Verifique se seu Discord está vinculado e se a API está no ar (ver SETUP_INTEGRACOES.md).`;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', signOut);
+</script>
+
+</body>
+</html>

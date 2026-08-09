@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Ficha Pró-Vida</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .field { margin-bottom: var(--space-4); }
+  .field label { display:block; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-1); }
+  .field .hint { font-size:var(--text-xs); color:var(--color-text-muted); margin-top:2px; }
+  .radio-row, .check-row { display:flex; gap:var(--space-4); flex-wrap:wrap; }
+  .radio-row label, .check-row label { display:flex; align-items:center; gap:6px; font-size:var(--text-sm); color:var(--color-text-secondary); text-transform:none; letter-spacing:0; font-weight:400; }
+  details.section { border:1px solid var(--border-subtle); border-radius:var(--radius-md); margin-bottom:var(--space-4); background:var(--card-bg, var(--bg-surface-elevated)); }
+  details.section summary { cursor:pointer; padding:var(--space-4); font-family:var(--font-display); font-size:var(--text-sm); color:var(--brand-action); list-style:none; }
+  details.section summary::-webkit-details-marker { display:none; }
+  details.section summary::before { content:'▸ '; }
+  details.section[open] summary::before { content:'▾ '; }
+  details.section .section-body { padding:0 var(--space-4) var(--space-4); }
+  .tec-row { display:grid; grid-template-columns: 26px 1fr 1.4fr; gap:var(--space-3); align-items:center; padding:var(--space-2) 0; border-bottom:1px solid var(--border-subtle); }
+  .tec-row:last-child { border-bottom:none; }
+  .dyn-row { display:grid; gap:var(--space-2); padding:var(--space-3); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); margin-bottom:var(--space-2); }
+  .dyn-row input, .dyn-row select { font-size:var(--text-sm); }
+  .dyn-row .remove-row { justify-self:end; background:transparent; border:none; color:var(--brand-alert); cursor:pointer; font-size:var(--text-xs); }
+  .fichas-list .card { margin-bottom:var(--space-4); }
+  #formStatus { min-height:20px; }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="provida.html" class="active">Pró-Vida</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="tarefas.html">Tarefas</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="max-width:820px;">
+  <h1 style="font-size:var(--text-lg); padding-top:var(--space-6);">Ficha de Análise — Material Pró-Vida</h1>
+  <p class="text-secondary">Registre o que o documento diz e como ele age sobre quem ouve. Separe sempre <strong>[DIZ]</strong> (o que está no texto) de <strong>[INTERP]</strong> (sua leitura). Não souber algo? Deixe em branco — nunca invente. Enviar uma ficha concede XP real.</p>
+
+  <form id="fichaForm">
+    <details class="section" open>
+      <summary>1. Identificação</summary>
+      <div class="section-body">
+        <div class="field"><label for="fDocId">ID do documento (ex: PV-B01) *</label><input type="text" id="fDocId" required></div>
+        <div class="field"><label for="fTitulo">Título / como se identifica</label><input type="text" id="fTitulo"></div>
+        <div class="field"><label for="fCurso">Curso e posição (ex: Curso Básico — Aula 01 de __)</label><input type="text" id="fCurso"></div>
+        <div class="field">
+          <label>Tipo de peça</label>
+          <div class="radio-row">
+            <label><input type="radio" name="tipoPeca" value="aula"> aula/script</label>
+            <label><input type="radio" name="tipoPeca" value="apostila"> apostila</label>
+            <label><input type="radio" name="tipoPeca" value="lista_afirmacoes"> lista de afirmações</label>
+            <label><input type="radio" name="tipoPeca" value="exercicio"> exercício/indução</label>
+            <label><input type="radio" name="tipoPeca" value="carta"> carta</label>
+            <label><input type="radio" name="tipoPeca" value="outro"> outro:</label>
+            <input type="text" id="fTipoOutro" style="max-width:160px;">
+          </div>
+        </div>
+        <div class="field">
+          <label>Procedência e legibilidade</label>
+          <div class="radio-row">
+            <label><input type="radio" name="procedencia" value="integro"> íntegro</label>
+            <label><input type="radio" name="procedencia" value="parcial"> parcial</label>
+            <label><input type="radio" name="procedencia" value="ilegivel"> trechos ilegíveis</label>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section" open>
+      <summary>2. Resumo e função no funil</summary>
+      <div class="section-body">
+        <div class="field"><label for="fResumo">Do que trata (2–4 linhas)</label><textarea id="fResumo" rows="3"></textarea></div>
+        <div class="field">
+          <label>Função da peça</label>
+          <div class="radio-row">
+            <label><input type="radio" name="funcaoFunil" value="captar"> captar</label>
+            <label><input type="radio" name="funcaoFunil" value="doutrinar"> doutrinar</label>
+            <label><input type="radio" name="funcaoFunil" value="induzir"> induzir/relaxar</label>
+            <label><input type="radio" name="funcaoFunil" value="escalar"> escalar compromisso</label>
+            <label><input type="radio" name="funcaoFunil" value="outra"> outra:</label>
+            <input type="text" id="fFuncaoOutra" style="max-width:160px;">
+          </div>
+        </div>
+        <div class="field"><label for="fPublico">A quem se dirige (aluno novo, avançado, monitor)</label><input type="text" id="fPublico"></div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>3. Estrutura retórica</summary>
+      <div class="section-body">
+        <div class="field">
+          <label>Como o texto conduz o ouvinte, na ordem em que aparece</label>
+          <textarea id="fEstrutura" rows="3" placeholder="ex: diagnóstico do mundo → descredibiliza alternativas → solução exclusiva → prova/promessa → exercício"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>4. Técnicas de persuasão / controle mental</summary>
+      <div class="section-body">
+        <p class="text-muted hint">Marque o que aparecer e cole o trecho que evidencia (localização abreviada).</p>
+        <div id="tecnicasList"></div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>5. Afirmações "científicas" e factuais — checagem</summary>
+      <div class="section-body">
+        <p class="text-muted hint">Toda alegação apresentada como fato ou ciência.</p>
+        <div id="afirmacoesList"></div>
+        <button type="button" class="btn btn-secondary" id="addAfirmacao" style="font-size:var(--text-xs);">+ Adicionar afirmação</button>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>6. Material apropriado de terceiros</summary>
+      <div class="section-body">
+        <p class="text-muted hint">De onde o conteúdo "secreto" realmente vem.</p>
+        <div id="materialList"></div>
+        <button type="button" class="btn btn-secondary" id="addMaterial" style="font-size:var(--text-xs);">+ Adicionar item</button>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>7. Léxico interno (glossário-doutrina)</summary>
+      <div class="section-body">
+        <p class="text-muted hint">Termos próprios do grupo — alimenta o glossário cumulativo da investigação.</p>
+        <div id="lexicoList"></div>
+        <button type="button" class="btn btn-secondary" id="addLexico" style="font-size:var(--text-xs);">+ Adicionar termo</button>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>8. Pessoas, entidades e datas</summary>
+      <div class="section-body">
+        <div class="field"><label for="fPessoas">Pessoas / nomes iniciáticos, entidades e ramificações</label><textarea id="fPessoas" rows="2"></textarea></div>
+        <div class="field"><label for="fDatas">Datas, locais, eventos</label><textarea id="fDatas" rows="2"></textarea></div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>9. Trechos-chave (citação literal)</summary>
+      <div class="section-body">
+        <div class="field">
+          <label for="fTrechos">Transcreva exatamente, com localização (página/parágrafo)</label>
+          <textarea id="fTrechos" rows="4" placeholder="«...» — (localização)"></textarea>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>10. Conexões</summary>
+      <div class="section-body">
+        <div class="field"><label for="fConexoes">Liga com quais outras aulas/documentos? Confirma ou contradiz algo já visto?</label><textarea id="fConexoes" rows="2"></textarea></div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>11. Relevância editorial</summary>
+      <div class="section-body">
+        <div class="field">
+          <label>Importância</label>
+          <div class="radio-row">
+            <label><input type="radio" name="relevancia" value="1"> 1</label>
+            <label><input type="radio" name="relevancia" value="2"> 2</label>
+            <label><input type="radio" name="relevancia" value="3"> 3</label>
+            <label><input type="radio" name="relevancia" value="4"> 4</label>
+            <label><input type="radio" name="relevancia" value="5"> 5</label>
+          </div>
+        </div>
+        <div class="field"><label for="fRelevanciaMotivo">Por que interessa</label><input type="text" id="fRelevanciaMotivo"></div>
+        <div class="field">
+          <label>Gancho de conteúdo</label>
+          <div class="check-row">
+            <label><input type="checkbox" name="gancho" value="reel"> Reel</label>
+            <label><input type="checkbox" name="gancho" value="video"> vídeo</label>
+            <label><input type="checkbox" name="gancho" value="capitulo"> capítulo do eBook</label>
+            <label><input type="checkbox" name="gancho" value="contexto"> só contexto</label>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="section">
+      <summary>12. Pendências, verificações e confiança</summary>
+      <div class="section-body">
+        <div class="field"><label for="fPendencias">A verificar</label><textarea id="fPendencias" rows="2"></textarea></div>
+        <div class="field">
+          <label>Confiança do analista nesta ficha</label>
+          <div class="radio-row">
+            <label><input type="radio" name="confianca" value="alta"> alta</label>
+            <label><input type="radio" name="confianca" value="media"> média</label>
+            <label><input type="radio" name="confianca" value="baixa"> baixa</label>
+          </div>
+        </div>
+        <div class="field"><label for="fObservacoes">Observações livres</label><textarea id="fObservacoes" rows="2"></textarea></div>
+      </div>
+    </details>
+
+    <button type="submit" class="btn btn-primary" style="width:100%; margin-top:var(--space-4);">Registrar Ficha na Investigação</button>
+    <p id="formStatus" class="text-muted" style="font-size:var(--text-xs); margin-top:var(--space-3); text-align:center;"></p>
+  </form>
+
+  <h2 style="font-size:var(--text-lg); margin:var(--space-12) 0 var(--space-4);">Fichas Já Enviadas pela Egrégora</h2>
+  <div class="fichas-list" id="fichasList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { getSession, montarNavAuth, enviarFichaProvida, listarFichasProvida } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+
+const TECNICAS = [
+  'Conhecimento secreto ("não está nos livros")',
+  'Descredibiliza alternativas (outras religiões, medicina, cursos)',
+  'Nós × eles / "os que racionalizam"',
+  'Medo e urgência (drogas, fim de ciclo, colapso)',
+  'Promessa total ("terão tudo o que desejam")',
+  'Autoridade do líder',
+  'Garantia / dinheiro de volta',
+  'Compromisso crescente / "daqui você não sai"',
+  'Auto-seleção ("o aluno se seleciona")',
+  'Indução / transe (relaxamento, contagem)',
+  'Afirmações plantadas / autossugestão',
+  'Thought-stopping ("pare o mundo", imobilidade)',
+];
+
+const tecnicasEl = document.getElementById('tecnicasList');
+tecnicasEl.innerHTML = TECNICAS.map((t, i) => `
+  <div class="tec-row">
+    <input type="checkbox" class="tec-aparece" data-tecnica="${t.replace(/"/g, '&quot;')}">
+    <span style="font-size:var(--text-sm);">${t}</span>
+    <input type="text" class="tec-trecho" placeholder="Trecho / localização">
+  </div>
+`).join('') + `
+  <div class="tec-row">
+    <input type="checkbox" class="tec-aparece" data-tecnica="outra">
+    <input type="text" id="tecOutraLabel" placeholder="Outra técnica...">
+    <input type="text" class="tec-trecho" placeholder="Trecho / localização">
+  </div>
+`;
+
+// ── Linhas dinâmicas genéricas (afirmações, material de terceiros, léxico) ─
+function criarLinhaDinamica(containerId, camposHtml) {
+  const container = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'dyn-row';
+  row.innerHTML = camposHtml + `<button type="button" class="remove-row">Remover</button>`;
+  row.querySelector('.remove-row').addEventListener('click', () => row.remove());
+  container.appendChild(row);
+}
+
+document.getElementById('addAfirmacao').addEventListener('click', () => {
+  criarLinhaDinamica('afirmacoesList', `
+    <input type="text" class="af-afirmacao" placeholder="Afirmação (resumo)">
+    <select class="af-categoria">
+      <option value="real">real</option>
+      <option value="distorcida">distorcida</option>
+      <option value="inventada">inventada</option>
+    </select>
+    <input type="text" class="af-fonte" placeholder="Fonte real provável">
+  `);
+});
+document.getElementById('addMaterial').addEventListener('click', () => {
+  criarLinhaDinamica('materialList', `
+    <input type="text" class="mt-elemento" placeholder="Elemento no texto">
+    <input type="text" class="mt-origem" placeholder="Origem real provável">
+    <input type="text" class="mt-trecho" placeholder="Trecho / localização">
+  `);
+});
+document.getElementById('addLexico').addEventListener('click', () => {
+  criarLinhaDinamica('lexicoList', `
+    <input type="text" class="lx-termo" placeholder="Termo">
+    <input type="text" class="lx-definicao" placeholder="Definição dada no texto">
+    <input type="text" class="lx-origem" placeholder="Equivalente / origem externa">
+  `);
+});
+// Uma linha inicial em cada tabela, para não começar em branco.
+document.getElementById('addAfirmacao').click();
+document.getElementById('addMaterial').click();
+document.getElementById('addLexico').click();
+
+function radioValue(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+
+document.getElementById('fichaForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (!session) { window.location.href = 'login.html?next=provida.html'; return; }
+
+  const status = document.getElementById('formStatus');
+  const docId = document.getElementById('fDocId').value.trim();
+  if (!docId) { status.textContent = 'Informe o ID do documento.'; return; }
+
+  const tecnicas = [...tecnicasEl.querySelectorAll('.tec-row')].map(row => {
+    const cb = row.querySelector('.tec-aparece');
+    const outraLabel = row.querySelector('#tecOutraLabel');
+    return {
+      tecnica: outraLabel ? (outraLabel.value.trim() || 'Outra') : cb.dataset.tecnica,
+      aparece: cb.checked,
+      trecho: row.querySelector('.tec-trecho').value.trim(),
+    };
+  }).filter(t => t.aparece || t.trecho);
+
+  const afirmacoes = [...document.querySelectorAll('#afirmacoesList .dyn-row')].map(row => ({
+    afirmacao: row.querySelector('.af-afirmacao').value.trim(),
+    categoria: row.querySelector('.af-categoria').value,
+    fonte_real: row.querySelector('.af-fonte').value.trim(),
+  })).filter(a => a.afirmacao);
+
+  const material_terceiros = [...document.querySelectorAll('#materialList .dyn-row')].map(row => ({
+    elemento: row.querySelector('.mt-elemento').value.trim(),
+    origem_real: row.querySelector('.mt-origem').value.trim(),
+    trecho: row.querySelector('.mt-trecho').value.trim(),
+  })).filter(m => m.elemento);
+
+  const lexico = [...document.querySelectorAll('#lexicoList .dyn-row')].map(row => ({
+    termo: row.querySelector('.lx-termo').value.trim(),
+    definicao_texto: row.querySelector('.lx-definicao').value.trim(),
+    origem_externa: row.querySelector('.lx-origem').value.trim(),
+  })).filter(l => l.termo);
+
+  const gancho_conteudo = [...document.querySelectorAll('input[name="gancho"]:checked')].map(c => c.value);
+
+  const ficha = {
+    documento_id: docId,
+    analista_tag: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email,
+    tipo_peca: radioValue('tipoPeca'),
+    tipo_peca_outro: document.getElementById('fTipoOutro').value.trim(),
+    curso_posicao: document.getElementById('fCurso').value.trim(),
+    titulo: document.getElementById('fTitulo').value.trim(),
+    procedencia: radioValue('procedencia'),
+    resumo: document.getElementById('fResumo').value.trim(),
+    funcao_funil: radioValue('funcaoFunil'),
+    funcao_funil_outra: document.getElementById('fFuncaoOutra').value.trim(),
+    publico_alvo: document.getElementById('fPublico').value.trim(),
+    estrutura_retorica: document.getElementById('fEstrutura').value.trim(),
+    tecnicas, afirmacoes, material_terceiros, lexico,
+    pessoas_entidades: document.getElementById('fPessoas').value.trim(),
+    datas_locais: document.getElementById('fDatas').value.trim(),
+    trechos_chave: document.getElementById('fTrechos').value.trim(),
+    conexoes: document.getElementById('fConexoes').value.trim(),
+    relevancia: radioValue('relevancia'),
+    relevancia_motivo: document.getElementById('fRelevanciaMotivo').value.trim(),
+    gancho_conteudo,
+    pendencias: document.getElementById('fPendencias').value.trim(),
+    confianca: radioValue('confianca'),
+    observacoes: document.getElementById('fObservacoes').value.trim(),
+  };
+
+  status.textContent = 'Registrando ficha...';
+  try {
+    const result = await enviarFichaProvida(session.user.id, ficha);
+    if (!result.ok) { status.textContent = result.mensagem; return; }
+    status.textContent = `Ficha registrada! +${result.xp_ganho} XP. Confira seu Painel.`;
+    document.getElementById('fichaForm').reset();
+    await carregarFichas();
+  } catch (err) {
+    status.textContent = 'Erro: ' + err.message;
+  }
+});
+
+async function carregarFichas() {
+  const el = document.getElementById('fichasList');
+  try {
+    const fichas = await listarFichasProvida();
+    if (!fichas.length) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma ficha enviada ainda. Seja a primeira analista.</p>`; return; }
+    el.innerHTML = fichas.map(f => `
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:var(--space-3);">
+          <div>
+            <div class="text-gold" style="font-size:var(--text-xs); font-weight:700;">${f.documento_id}</div>
+            <h3 style="font-size:var(--text-md); margin:2px 0;">${f.titulo || '(sem título)'}</h3>
+            <span class="text-secondary" style="font-size:var(--text-sm);">Analista: ${f.analista_tag || 'Iniciado'} · ${new Date(f.created_at).toLocaleDateString('pt-BR')}</span>
+          </div>
+          ${f.relevancia ? `<span class="badge">Relevância ${f.relevancia}/5</span>` : ''}
+        </div>
+        ${f.resumo ? `<p class="text-secondary" style="font-size:var(--text-sm); margin-top:var(--space-3);">${f.resumo}</p>` : ''}
+      </div>
+    `).join('');
+  } catch (e) {
+    el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Não foi possível carregar (${e.message}).</p>`;
+  }
+}
+
+await carregarFichas();
+</script>
+
+</body>
+</html>

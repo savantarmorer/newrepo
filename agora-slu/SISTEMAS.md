@@ -10,10 +10,10 @@ Documentação técnica de arquitetura e modelo de dados. Para o runbook de cred
 ┌─────────────────────────────────────────────────────────────────────┐
 │  NAVEGADOR (HTML estático, sem build/framework)                     │
 │                                                                       │
-│  index.html, login.html, dashboard.html, terminal.html,             │
-│  governanca.html, evidencias.html, codex.html, clube-do-livro.html, │
-│  eventos.html, calendario.html, grafo.html, discord.html,           │
-│  mobile.html, checkout.html                                         │
+│  index.html, login.html, perfil.html, dashboard.html,               │
+│  governanca.html, investigacoes.html, provida.html, codex.html,     │
+│  clube-do-livro.html, eventos.html, calendario.html, grafo.html,    │
+│  discord.html, mobile.html, checkout.html                           │
 │                                                                       │
 │  js/agoraAuth.js  ──►  @supabase/supabase-js (CDN)                 │
 └───────────────────────────────┬───────────────────────────────────┘
@@ -55,10 +55,10 @@ O front-end (`js/agoraAuth.js`) não sabe qual das duas está respondendo — s�
 
 ## 2. Autenticação (`js/agoraAuth.js`)
 
-- Login via Supabase Auth, provedores **Discord** e **Google** (OAuth redirect flow padrão do Supabase — `signInWithOAuth`).
+- Login via Supabase Auth, provedores **Discord** e **Google** (OAuth redirect flow padrão do Supabase — `signInWithOAuth`), com `redirectTo` apontando para `perfil.html` — primeira tela vista após o login, com dados de conta/Discord.
 - Sessão mantida pelo `supabase-js` (localStorage), lida em toda página via `getSession()`.
-- `requireAuth()` redireciona para `login.html?next=<pagina>` quando não há sessão.
-- `montarNavAuth()` preenche o slot `#navAuthSlot` da barra de navegação com "Entrar" ou "Grau · XP" dependendo do estado — chamado em todas as 14 páginas.
+- `requireAuth()` redireciona para `login.html?next=<pagina>` quando não há sessão, e repassa qualquer erro de OAuth vindo do Supabase (`lerErroOAuthDaURL()`) em vez de engolir a falha silenciosamente.
+- `montarNavAuth()` preenche o slot `#navAuthSlot` da barra de navegação com "Entrar" ou "Grau · XP" dependendo do estado, e mostra "Painel Admin" para quem tem `agora_profiles.is_admin = true`.
 
 ## 3. Gamificação — XP e Graus
 
@@ -72,8 +72,9 @@ Escala fixa (mesma no client `GRAUS` e no Postgres `calcular_grau_agora`):
 | 3 | Conselheiro | 2000 |
 
 XP é concedido **exclusivamente** por funções `SECURITY DEFINER` no Postgres (nunca calculado/gravado direto pelo cliente):
-- `resolver_puzzle_arg` — Terminal ARG, idempotente (não paga XP duas vezes pelo mesmo puzzle).
 - `concluir_missao` — Missões do Dashboard, idempotente.
+- `enviar_ficha_provida` — Ficha Pró-Vida, uma vez por analista/documento (`UNIQUE(documento_id, analista_user_id)`).
+- `resolver_puzzle_arg` — legado do antigo Terminal ARG (página removida do site, tabelas mantidas intocadas no banco — ver §5).
 
 Isso impede que um usuário forje XP manipulando chamadas REST diretamente — a tabela `agora_profiles` não tem policy de `UPDATE` para `xp`/`grau` vinda do cliente; só as RPCs (que rodam como dono da tabela) escrevem ali.
 
@@ -114,12 +115,9 @@ Quando o grau sobe por uma ação no **site** (Terminal ARG, Missão, Tarefa), a
 
 `syncDiscordEvents()` roda **ao subir o server** e depois a cada `DISCORD_EVENTS_SYNC_MINUTES` (padrão 10min) via `setInterval` — sem precisar de ação do usuário. Busca `GET /guilds/{id}/scheduled-events` e faz upsert em `agora_discord_events` (chave única `discord_event_id`). `eventos.html` e `mobile.html` mesclam esses eventos com os cadastrados manualmente em `agora_events`, ordenando tudo por data.
 
-## 5. Terminal ARG
+## 5. Terminal ARG (removido do site)
 
-- Puzzles ficam em `agora_arg_puzzles` (pergunta pública).
-- A resposta correta fica em `agora_arg_answers`, tabela com RLS **sem nenhuma policy** — inacessível via API REST para qualquer role exceto o dono (a função RPC).
-- `resolver_puzzle_arg(uid, puzzle_id, resposta)` compara `sha256(upper(trim(resposta)))` contra o hash guardado; se bater, registra a resolução em `agora_arg_solves` (única por usuário+puzzle) e credita XP.
-- Progresso coletivo (`obter_progresso_arg`) retorna contagem agregada de resoluções por bloco — sem expor quem resolveu.
+A página `terminal.html` (minigame narrativo de decifrar um "Pen Drive") foi retirada do site e do menu — não fazia mais sentido ao lado da investigação real de arquivos. As tabelas `agora_arg_puzzles` / `agora_arg_answers` / `agora_arg_solves` e a RPC `resolver_puzzle_arg` **continuam no banco intocadas** (XP já concedido permanece válido), só não são mais referenciadas pelo front-end.
 
 ## 6. Governança
 
@@ -127,11 +125,13 @@ Quando o grau sobe por uma ação no **site** (Terminal ARG, Missão, Tarefa), a
 - `agora_decree_votes`: um voto por usuário por decreto (`UNIQUE(decree_id, user_id)`), editável enquanto o decreto estiver aberto.
 - `votar_decreto(uid, decree_id, escolha)`: valida prazo/status, faz upsert do voto.
 - `obter_tally_decreto(decree_id)`: apuração agregada (sim/não/abster), sem expor votos individuais a outros membros.
+- **Painel administrativo** (`governanca.html`, visível só para `agora_profiles.is_admin = true`): `criar_decreto(...)` abre um novo decreto/votação; `definir_status_decreto(...)` encerra manualmente (aprovado/rejeitado) ou reabre. Ambas as RPCs checam `is_admin` no servidor — não é só uma UI escondida.
 
-## 7. Cofre de Evidências
+## 7. Investigações & Ficha Pró-Vida
 
-- `agora_arg_evidence`: evidências cadastradas (status: decifrado/em_analise/confirmado).
-- `agora_evidence_notes`: diário de bordo colaborativo — qualquer membro autenticado registra uma análise (insert-only, leitura pública entre membros).
+- `agora_investigacoes` (antes `agora_arg_evidence`): arquivos/documentos em investigação (status: decifrado/em_analise/confirmado). Qualquer membro autenticado pode cadastrar um novo item (`criado_por`); só admins mudam o status (`atualizar_status_investigacao`).
+- `agora_investigacao_notas` (antes `agora_evidence_notes`): diário de bordo colaborativo — qualquer membro autenticado registra uma análise (insert-only, leitura pública entre membros).
+- `agora_provida_fichas` + `enviar_ficha_provida(uid, ficha_jsonb)`: Ficha de Análise — Material Pró-Vida (`provida.html`), estruturada nas mesmas 12 seções do template de investigação (técnicas de persuasão, afirmações checadas, material de terceiros, léxico interno etc., guardadas como JSONB). Uma ficha por analista/documento; concede XP real ao ser enviada.
 
 ## 8. Códice Caelestis
 
@@ -160,11 +160,12 @@ Quando o grau sobe por uma ação no **site** (Terminal ARG, Missão, Tarefa), a
 
 | Tabela | Papel |
 |---|---|
-| `agora_profiles` | XP, grau, streak — 1:1 com `auth.users` |
+| `agora_profiles` | XP, grau, streak, `is_admin` — 1:1 com `auth.users` |
 | `agora_discord_sync` | Cópia local dos dados do Discord (cargos, apelido, entrada) |
-| `agora_arg_puzzles` / `agora_arg_answers` / `agora_arg_solves` | Terminal ARG |
+| `agora_arg_puzzles` / `agora_arg_answers` / `agora_arg_solves` | Terminal ARG (legado — página removida) |
 | `agora_decrees` / `agora_decree_votes` | Governança |
-| `agora_arg_evidence` / `agora_evidence_notes` | Cofre de Evidências |
+| `agora_investigacoes` / `agora_investigacao_notas` | Investigação Coletiva de Arquivos |
+| `agora_provida_fichas` | Ficha de Análise — Material Pró-Vida |
 | `agora_missions` / `agora_mission_completions` | Missões do Dashboard |
 | `agora_hall_entries` | Hall das Lendas |
 | `agora_codex_entries` / `agora_codex_notes` | Códice Caelestis |

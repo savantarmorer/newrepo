@@ -100,14 +100,14 @@ export async function requireAuth(redirectTo = 'login.html') {
 export async function signInWithDiscord() {
   return sb.auth.signInWithOAuth({
     provider: 'discord',
-    options: { redirectTo: new URL('dashboard.html', location.href).toString() },
+    options: { redirectTo: new URL('perfil.html', location.href).toString() },
   });
 }
 
 export async function signInWithGoogle() {
   return sb.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: new URL('dashboard.html', location.href).toString() },
+    options: { redirectTo: new URL('perfil.html', location.href).toString() },
   });
 }
 
@@ -151,19 +151,6 @@ export async function sincronizarDiscord() {
   return res.json();
 }
 
-// ── Terminal ARG ─────────────────────────────────────────────────────
-export async function obterProgressoARG() {
-  const { data, error } = await sb.rpc('obter_progresso_arg');
-  if (error) { console.warn('obter_progresso_arg:', error.message); return []; }
-  return data || [];
-}
-
-export async function resolverPuzzleARG(userId, puzzleId, resposta) {
-  const { data, error } = await sb.rpc('resolver_puzzle_arg', { uid: userId, p_puzzle_id: puzzleId, p_resposta: resposta });
-  if (error) throw new Error(error.message);
-  return data;
-}
-
 // ── Governança ───────────────────────────────────────────────────────
 export async function votarDecreto(userId, decreeId, escolha) {
   const { data, error } = await sb.rpc('votar_decreto', { uid: userId, p_decree_id: decreeId, p_escolha: escolha });
@@ -174,6 +161,84 @@ export async function votarDecreto(userId, decreeId, escolha) {
 export async function obterTallyDecreto(decreeId) {
   const { data, error } = await sb.rpc('obter_tally_decreto', { p_decree_id: decreeId });
   if (error) { console.warn('obter_tally_decreto:', error.message); return []; }
+  return data || [];
+}
+
+// Admin: abre um novo decreto/votação. horasDuracao define quando fecha_em vence.
+export async function criarDecreto(userId, { titulo, descricao, quorumMin, horasDuracao }) {
+  const { data, error } = await sb.rpc('criar_decreto', {
+    uid: userId, p_titulo: titulo, p_descricao: descricao, p_quorum_min: quorumMin, p_horas_duracao: horasDuracao,
+  });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Admin: encerra um decreto manualmente definindo o status final.
+export async function definirStatusDecreto(userId, decreeId, status) {
+  const { data, error } = await sb.rpc('definir_status_decreto', { uid: userId, p_decree_id: decreeId, p_status: status });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// ── Investigações (arquivos/documentos analisados coletivamente) ──────
+export async function listarInvestigacoes() {
+  const { data, error } = await sb.from('agora_investigacoes').select('*').order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+// Qualquer iniciado autenticado pode adicionar um novo arquivo/documento à investigação.
+export async function adicionarInvestigacao(userId, { codigo, titulo, descricao, encontradoEm, categoria, seloRef }) {
+  const { data, error } = await sb.from('agora_investigacoes').insert({
+    codigo, titulo, descricao, encontrado_em: encontradoEm, categoria: categoria || 'geral',
+    selo_ref: seloRef || 'seal-umbra-kael', criado_por: userId,
+  }).select().single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function listarNotasInvestigacao(investigacaoId) {
+  const { data, error } = await sb.from('agora_investigacao_notas').select('*')
+    .eq('investigacao_id', investigacaoId).order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function registrarNotaInvestigacao(userId, investigacaoId, autorNome, nota) {
+  const { error } = await sb.from('agora_investigacao_notas').insert({
+    investigacao_id: investigacaoId, user_id: userId, autor_nome: autorNome, nota,
+  });
+  if (error) throw new Error(error.message);
+}
+
+// Admin: muda o status de uma investigação (em_analise/decifrado/confirmado)
+export async function atualizarStatusInvestigacao(userId, investigacaoId, status) {
+  const { data, error } = await sb.rpc('atualizar_status_investigacao', {
+    uid: userId, p_investigacao_id: investigacaoId, p_status: status,
+  });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Métrica de atividade coletiva para a landing page (notas + fichas Pró-Vida)
+export async function contarAtividadeInvestigativa() {
+  const [notas, fichas] = await Promise.all([
+    sb.from('agora_investigacao_notas').select('id', { count: 'exact', head: true }),
+    sb.from('agora_provida_fichas').select('id', { count: 'exact', head: true }),
+  ]);
+  return (notas.count || 0) + (fichas.count || 0);
+}
+
+// ── Ficha de Análise — Material Pró-Vida ──────────────────────────────
+export async function enviarFichaProvida(userId, ficha) {
+  const { data, error } = await sb.rpc('enviar_ficha_provida', { uid: userId, p_ficha: ficha });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function listarFichasProvida() {
+  const { data, error } = await sb.from('agora_provida_fichas').select('*').order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
   return data || [];
 }
 
@@ -242,8 +307,10 @@ export async function montarNavAuth() {
           Conectado como<br><strong style="color:#fff;">${nomeExibicao}</strong>
         </div>
         <hr class="divider">
+        <a href="perfil.html">Meu Perfil</a>
         <a href="dashboard.html">Meu Painel</a>
         <a href="dashboard.html#hall">Hall das Lendas</a>
+        ${profile?.is_admin ? '<a href="governanca.html">Painel Admin</a>' : ''}
         <hr class="divider">
         <button class="sair" id="navSignOutBtn" type="button">Sair do Círculo</button>
       </div>

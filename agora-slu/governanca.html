@@ -19,6 +19,10 @@
   .vote-actions button { flex:1; min-width:160px; }
   .vote-actions button.picked { outline: 2px solid #fff; }
   #emptyMsg { text-align:center; color:var(--color-text-muted); padding: var(--space-8) 0; }
+  .field { margin-bottom: var(--space-4); }
+  .field label { display:block; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-1); }
+  #adminPanel { border-color: var(--border-active); }
+  .admin-decree-actions { margin-top:var(--space-4); display:flex; gap:var(--space-2); flex-wrap:wrap; }
 </style>
 </head>
 <body>
@@ -30,8 +34,9 @@
   </a>
   <ul>
     <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
     <li><a href="discord.html">Discord</a></li>
-    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
     <li><a href="dashboard.html">Painel</a></li>
     <li><a href="tarefas.html">Tarefas</a></li>
     <li><a href="codex.html">Códice</a></li>
@@ -40,7 +45,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html" class="active">Conselho</a></li>
     <li><a href="grafo.html">Grafo</a></li>
-    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
     <li><a href="mobile.html">Mobile</a></li>
   </ul>
   <span id="navAuthSlot"></span>
@@ -51,6 +56,32 @@
     <h1 style="font-size:var(--text-lg); margin:0;">Câmara do Conselho</h1>
   </div>
 
+  <div class="card" id="adminPanel" style="display:none; margin-bottom:var(--space-8);">
+    <h3 style="font-size:var(--text-md);">Painel Administrativo — Abrir Novo Decreto</h3>
+    <form id="novoDecretoForm">
+      <div class="field">
+        <label for="ndTitulo">Título</label>
+        <input type="text" id="ndTitulo" required>
+      </div>
+      <div class="field">
+        <label for="ndDescricao">Descrição / Parecer</label>
+        <textarea id="ndDescricao" rows="3"></textarea>
+      </div>
+      <div style="display:flex; gap:var(--space-4); flex-wrap:wrap;">
+        <div class="field" style="flex:1; min-width:160px;">
+          <label for="ndQuorum">Quórum mínimo (%)</label>
+          <input type="number" id="ndQuorum" value="60" min="1" max="100">
+        </div>
+        <div class="field" style="flex:1; min-width:160px;">
+          <label for="ndHoras">Duração da votação (horas)</label>
+          <input type="number" id="ndHoras" value="72" min="1">
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Abrir Decreto</button>
+      <span id="ndStatus" class="text-muted" style="font-size:var(--text-xs); margin-left:var(--space-3);"></span>
+    </form>
+  </div>
+
   <div id="decreesList"><div id="emptyMsg">Consultando os decretos em pauta...</div></div>
 </main>
 
@@ -59,11 +90,15 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, votarDecreto, obterTallyDecreto, montarNavAuth } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth } from './js/agoraAuth.js';
 
 montarNavAuth();
 const session = await getSession();
 const listEl = document.getElementById('decreesList');
+
+const profile = session ? await getProfile(session.user.id) : null;
+const souAdmin = Boolean(profile?.is_admin);
+if (souAdmin) document.getElementById('adminPanel').style.display = 'block';
 
 const { data: decrees, error } = await sb.from('agora_decrees').select('*').order('numero', { ascending: false });
 
@@ -86,6 +121,25 @@ if (error) {
     listEl.appendChild(buildDecreeCard(d, counts, meusVotos[d.id]));
   }
 }
+
+document.getElementById('novoDecretoForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const status = document.getElementById('ndStatus');
+  const titulo = document.getElementById('ndTitulo').value.trim();
+  const descricao = document.getElementById('ndDescricao').value.trim();
+  const quorumMin = Number(document.getElementById('ndQuorum').value) || 60;
+  const horasDuracao = Number(document.getElementById('ndHoras').value) || 72;
+  if (!titulo) return;
+
+  status.textContent = 'Abrindo decreto...';
+  try {
+    const result = await criarDecreto(session.user.id, { titulo, descricao, quorumMin, horasDuracao });
+    if (!result.ok) { status.textContent = result.mensagem; return; }
+    window.location.reload();
+  } catch (err) {
+    status.textContent = 'Erro: ' + err.message;
+  }
+});
 
 function buildDecreeCard(d, counts, meuVoto) {
   const total = counts.sim + counts.nao + counts.abster || 1;
@@ -129,6 +183,13 @@ function buildDecreeCard(d, counts, meuVoto) {
     <hr class="hairline">
     <h4 style="font-size:var(--text-sm); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.06em;">Parecer</h4>
     <p class="text-secondary" style="font-size:var(--text-sm);">${d.descricao || ''}</p>
+
+    ${souAdmin ? `
+    <div class="admin-decree-actions">
+      <button class="btn btn-secondary admin-status-btn" data-status="aprovado" style="font-size:var(--text-xs);">Marcar Aprovado</button>
+      <button class="btn btn-secondary admin-status-btn" data-status="rejeitado" style="font-size:var(--text-xs);">Marcar Rejeitado</button>
+      ${!aberto ? `<button class="btn btn-secondary admin-status-btn" data-status="aberto" style="font-size:var(--text-xs);">Reabrir Votação</button>` : ''}
+    </div>` : ''}
   `;
 
   card.querySelectorAll('.vote-btn').forEach(btn => {
@@ -144,6 +205,21 @@ function buildDecreeCard(d, counts, meuVoto) {
         card.replaceWith(buildDecreeCard(d, novoCounts, btn.dataset.escolha));
       } catch (e) {
         card.querySelector('.vote-confirm').textContent = 'Erro: ' + e.message;
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  card.querySelectorAll('.admin-status-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      try {
+        const result = await definirStatusDecreto(session.user.id, d.id, btn.dataset.status);
+        if (!result.ok) { alert(result.mensagem); return; }
+        window.location.reload();
+      } catch (e) {
+        alert('Erro: ' + e.message);
       } finally {
         btn.disabled = false;
       }

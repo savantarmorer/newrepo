@@ -29,9 +29,6 @@
   .legend-item { display:flex; gap:var(--space-3); padding:var(--space-3) 0; border-bottom:1px solid var(--border-subtle); }
   .legend-item:last-child { border-bottom:none; }
 
-  .discord-card { display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap; }
-  .discord-card .di-avatar { width:64px; height:64px; border-radius:50%; background:var(--brand-surface); border:1px solid var(--border-medium); }
-  .role-chip { display:inline-block; font-size:var(--text-xs); padding:2px var(--space-2); border-radius:var(--radius-full); background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); margin:2px 4px 2px 0; }
   .streak-flame { font-size: var(--text-xl); }
 </style>
 </head>
@@ -44,8 +41,9 @@
   </a>
   <ul>
     <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
     <li><a href="discord.html">Discord</a></li>
-    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
     <li><a href="dashboard.html" class="active">Painel</a></li>
     <li><a href="tarefas.html">Tarefas</a></li>
     <li><a href="codex.html">Códice</a></li>
@@ -54,7 +52,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="grafo.html">Grafo</a></li>
-    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
     <li><a href="mobile.html">Mobile</a></li>
   </ul>
   <span id="navAuthSlot"></span>
@@ -67,6 +65,7 @@
       <div>
         <h1 style="font-size:var(--text-md); margin-bottom:2px;" id="welcomeName">Painel do Iniciado</h1>
         <span class="badge" id="grauBadge">Neófito</span>
+        <a href="perfil.html" class="text-muted" style="font-size:var(--text-xs); display:block; margin-top:4px;">Ver meu Perfil →</a>
       </div>
     </div>
     <div style="display:flex; gap:var(--space-8); align-items:center;">
@@ -84,17 +83,6 @@
     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
   </div>
 
-  <div class="card" style="margin-bottom:var(--space-6);" id="discordCard">
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3);">
-      <h3 style="font-size:var(--text-md); margin:0;">Sincronização com o Discord</h3>
-      <button class="btn btn-secondary" id="syncBtn" style="font-size:var(--text-xs);">Sincronizar Agora</button>
-    </div>
-    <div id="discordBody" style="margin-top:var(--space-4);">
-      <p class="text-muted" style="font-size:var(--text-sm);">Nenhum dado sincronizado ainda. Clique em "Sincronizar Agora" para importar seu apelido, cargos e data de entrada no servidor da Ágora.</p>
-    </div>
-    <p class="text-muted" id="syncStatus" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
-  </div>
-
   <div class="grid grid-2">
     <div class="card">
       <h3 style="font-size:var(--text-md);">Selos Desbloqueados</h3>
@@ -104,7 +92,7 @@
     <div class="card">
       <h3 style="font-size:var(--text-md);">Missões Ativas da Egrégora</h3>
       <div id="missionsList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando missões...</p></div>
-      <a href="terminal.html" class="btn btn-secondary" style="margin-top:var(--space-2); font-size:var(--text-xs);">Ir ao Terminal ARG →</a>
+      <a href="investigacoes.html" class="btn btn-secondary" style="margin-top:var(--space-2); font-size:var(--text-xs);">Ir às Investigações →</a>
     </div>
   </div>
 
@@ -121,8 +109,8 @@
 </footer>
 
 <script type="module">
-import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile, getDiscordSync,
-         registrarLoginDiario, sincronizarDiscord, signOut, montarNavAuth, concluirMissao } from './js/agoraAuth.js';
+import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile,
+         registrarLoginDiario, signOut, montarNavAuth, concluirMissao } from './js/agoraAuth.js';
 
 montarNavAuth();
 
@@ -174,9 +162,6 @@ async function render(userId) {
       <div class="name">${name}</div>
     </div>`;
   }).join('');
-
-  const dsync = await getDiscordSync(userId);
-  if (dsync) renderDiscord(dsync);
 
   const avatarUrl = session.user.user_metadata?.avatar_url;
   if (avatarUrl) document.getElementById('avatarRing').innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
@@ -234,37 +219,6 @@ async function renderHall() {
     </div>
   `).join('');
 }
-
-function renderDiscord(d) {
-  const roles = Array.isArray(d.roles) ? d.roles : [];
-  document.getElementById('discordBody').innerHTML = `
-    <div class="discord-card">
-      ${d.discord_avatar ? `<img class="di-avatar" src="${d.discord_avatar}" alt="">` : `<div class="di-avatar"></div>`}
-      <div>
-        <div style="font-weight:600;">${d.nickname || d.discord_username || 'Iniciado'}</div>
-        <div class="text-muted" style="font-size:var(--text-xs); margin:4px 0;">
-          No servidor desde ${d.joined_guild_at ? new Date(d.joined_guild_at).toLocaleDateString('pt-BR') : '—'}
-        </div>
-        <div>${roles.map(r => `<span class="role-chip">${r}</span>`).join('') || '<span class="text-muted" style="font-size:12px;">Nenhum cargo especial ainda</span>'}</div>
-      </div>
-    </div>`;
-}
-
-document.getElementById('syncBtn').addEventListener('click', async () => {
-  const btn = document.getElementById('syncBtn');
-  const status = document.getElementById('syncStatus');
-  btn.disabled = true;
-  status.textContent = 'Consultando o Daemon Umbra-Kael no servidor da Ágora...';
-  try {
-    const result = await sincronizarDiscord();
-    status.textContent = 'Sincronização concluída.';
-    renderDiscord(result.discord);
-  } catch (e) {
-    status.textContent = `Não foi possível sincronizar: ${e.message}. Verifique se seu Discord está vinculado e se a API está no ar (ver SETUP_INTEGRACOES.md).`;
-  } finally {
-    btn.disabled = false;
-  }
-});
 
 document.getElementById('logoutBtn').addEventListener('click', signOut);
 </script>

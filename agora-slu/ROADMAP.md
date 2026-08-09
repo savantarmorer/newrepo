@@ -12,9 +12,10 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - Streak diário de login
 - Sincronização real de cargos/apelido/entrada do Discord (API Node dedicada)
 - Widget ao vivo do servidor Discord embutido
-- Terminal ARG com puzzles reais (resposta protegida por hash, nunca exposta ao cliente)
-- Governança com decretos e votos reais (um voto por pessoa, apuração agregada)
-- Cofre de Evidências com diário de bordo colaborativo real
+- Governança com decretos e votos reais (um voto por pessoa, apuração agregada) + **painel administrativo** para abrir/encerrar decretos (`is_admin`)
+- Investigação Coletiva de Arquivos (`investigacoes.html`, antes "Cofre de Evidências ARG") com diário de bordo colaborativo real e cadastro aberto a qualquer membro
+- **Ficha de Análise Pró-Vida** (`provida.html`): formulário estruturado completo, submissão concede XP real
+- **Página de Perfil** (`perfil.html`): primeira tela após o login — dados de conta, provedores vinculados e sincronização com o Discord (antes só existia dentro do Dashboard)
 - Códice Caelestis dinâmico (verbetes + notas de margem reais)
 - Missões auto-reportadas com XP real
 - Hall das Lendas com fluxo de aprovação (pendente → aprovado)
@@ -26,7 +27,7 @@ Para arquitetura/modelo de dados, ver [SISTEMAS.md](SISTEMAS.md). Para credencia
 - **Canais reais do servidor** na barra lateral de `discord.html` (categorias e nomes de verdade, com deep-link para abrir cada canal no Discord)
 - **Prévia real de mensagens** de um canal público, via polling a cada 20s (API do bot lê `GET /channels/{id}/messages`)
 - **Sincronização automática de eventos do Discord** (Scheduled Events → tabela `agora_discord_events`, sem ação manual — roda ao subir o server e a cada N minutos)
-- **Estatísticas reais na landing page**: decifragens registradas (Terminal ARG) e membros online (widget público do Discord) substituíram números fictícios
+- **Estatísticas reais na landing page**: análises registradas (Investigações + Fichas Pró-Vida) e membros online (widget público do Discord) substituíram números fictícios
 - **API em produção via Netlify Functions**: mesma API do server/ Express reescrita como funções Netlify, no mesmo domínio do site — zero hospedagem separada, zero conta nova
 - **Quadro de Tarefas dos Voluntários** (`tarefas.html`): espelha o `#quadro-de-tarefas` real do Discord — reivindicar, entregar e ganhar XP real, com trava atômica contra dois iniciados pegando a mesma tarefa
 - **Anúncios automáticos site → Discord**: quando alguém sobe de grau via sincronização, o bot posta um anúncio cerimonial no canal configurado (fecha o ciclo que antes só ia Discord → site)

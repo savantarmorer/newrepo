@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ágora — Investigações</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .filters { display:flex; gap:var(--space-2); margin: var(--space-4) 0 var(--space-6); flex-wrap:wrap; align-items:center; justify-content:space-between; }
+  .filters-left { display:flex; gap:var(--space-2); flex-wrap:wrap; }
+  .filters button { background:transparent; border:1px solid var(--border-subtle); color:var(--color-text-secondary); padding:var(--space-2) var(--space-4); border-radius:var(--radius-full); font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.05em; cursor:pointer; }
+  .filters button.active { border-color:var(--border-active); color:var(--color-text-gold); }
+  .ev-card .thumb { height:120px; border-radius:var(--radius-sm); background:var(--bg-surface-elevated); display:flex; align-items:center; justify-content:center; margin-bottom:var(--space-3); }
+  .ev-card .thumb svg { width:64px; height:64px; }
+  .ev-card .meta { font-size:var(--text-xs); color:var(--color-text-muted); margin:2px 0; }
+  .status-decifrado { color:#34D399; }
+  .status-em_analise { color:var(--brand-warn); }
+  .status-confirmado { color:var(--color-text-gold); }
+  .note { border-top:1px solid var(--border-subtle); padding-top:var(--space-3); margin-top:var(--space-3); font-size:var(--text-sm); }
+  .note .who { color:var(--color-text-gold); font-size:var(--text-xs); font-weight:700; }
+  #modalBg, #addModalBg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; align-items:center; justify-content:center; padding:var(--space-6); }
+  #modalBg .card, #addModalBg .card { max-width:520px; width:100%; max-height:88vh; overflow-y:auto; }
+  .field { margin-bottom: var(--space-4); }
+  .field label { display:block; font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-muted); margin-bottom:var(--space-1); }
+  .admin-status-row { display:flex; gap:var(--space-2); flex-wrap:wrap; margin-top:var(--space-4); border-top:1px solid var(--border-subtle); padding-top:var(--space-4); }
+  .admin-status-row button { font-size:var(--text-xs); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="tarefas.html">Tarefas</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="clube-do-livro.html">Clube do Livro</a></li>
+    <li><a href="eventos.html">Eventos</a></li>
+    <li><a href="calendario.html">Calendário</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="grafo.html">Grafo</a></li>
+    <li><a href="investigacoes.html" class="active">Investigações</a></li>
+    <li><a href="mobile.html">Mobile</a></li>
+  </ul>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell">
+  <h1 style="font-size:var(--text-lg); padding-top:var(--space-6);">Investigação Coletiva de Arquivos</h1>
+  <p class="text-secondary">Arquivo vivo da SLU — cada arquivo ou documento entra aqui para análise coletiva, e cada nota registrada por um investigador soma ao diário de bordo.</p>
+
+  <div class="filters">
+    <div class="filters-left" id="filters">
+      <button class="active" data-f="todas">Todas</button>
+      <button data-f="decifrado">Analisado</button>
+      <button data-f="em_analise">Em Análise</button>
+      <button data-f="confirmado">Confirmado</button>
+    </div>
+    <button class="btn btn-primary" id="addBtn" style="font-size:var(--text-xs);">+ Adicionar Arquivo</button>
+  </div>
+
+  <div class="grid grid-3" id="evGrid"><p class="text-muted">Consultando o arquivo...</p></div>
+</main>
+
+<div id="modalBg">
+  <div class="card">
+    <h3 style="font-size:var(--text-md);" id="modalTitle">Inspecionar Item</h3>
+    <div id="modalNotes" style="margin:var(--space-4) 0; max-height:200px; overflow-y:auto;"></div>
+    <textarea id="notaInput" placeholder="Registre sua análise deste item..." rows="3"></textarea>
+    <div style="display:flex; gap:var(--space-3); margin-top:var(--space-4);">
+      <button class="btn btn-primary" id="saveNoteBtn" style="flex:1;">Registrar no Diário de Bordo</button>
+      <button class="btn btn-secondary" id="closeModalBtn">Fechar</button>
+    </div>
+    <div class="admin-status-row" id="adminStatusRow" style="display:none;">
+      <button class="btn btn-secondary admin-status-btn" data-status="em_analise">Em Análise</button>
+      <button class="btn btn-secondary admin-status-btn" data-status="decifrado">Analisado</button>
+      <button class="btn btn-secondary admin-status-btn" data-status="confirmado">Confirmado</button>
+    </div>
+  </div>
+</div>
+
+<div id="addModalBg">
+  <div class="card">
+    <h3 style="font-size:var(--text-md);">Adicionar Arquivo à Investigação</h3>
+    <form id="addForm">
+      <div class="field"><label for="addCodigo">Código / Identificador</label><input type="text" id="addCodigo" placeholder="ex: PV-B01, DOC-014" required></div>
+      <div class="field"><label for="addTitulo">Título</label><input type="text" id="addTitulo" required></div>
+      <div class="field"><label for="addDescricao">Descrição</label><textarea id="addDescricao" rows="3"></textarea></div>
+      <div class="field"><label for="addEncontrado">Encontrado em</label><input type="text" id="addEncontrado" placeholder="ex: Discord #investigacao, Drive compartilhado"></div>
+      <div class="field"><label for="addCategoria">Categoria</label><input type="text" id="addCategoria" placeholder="ex: pró-vida, geral" value="geral"></div>
+      <div style="display:flex; gap:var(--space-3);">
+        <button type="submit" class="btn btn-primary" style="flex:1;">Adicionar</button>
+        <button type="button" class="btn btn-secondary" id="closeAddModalBtn">Cancelar</button>
+      </div>
+      <p class="text-muted" id="addStatus" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
+    </form>
+  </div>
+</div>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+</footer>
+
+<script type="module">
+import { sb, getSession, getProfile, montarNavAuth, adicionarInvestigacao, listarNotasInvestigacao,
+         registrarNotaInvestigacao, atualizarStatusInvestigacao } from './js/agoraAuth.js';
+
+montarNavAuth();
+const session = await getSession();
+const profile = session ? await getProfile(session.user.id) : null;
+const souAdmin = Boolean(profile?.is_admin);
+const grid = document.getElementById('evGrid');
+
+let evidences = [];
+async function carregar() {
+  const { data, error } = await sb.from('agora_investigacoes').select('*').order('created_at');
+  if (error) { grid.innerHTML = `<p class="text-muted">Não foi possível carregar (${error.message}).</p>`; return; }
+  evidences = data || [];
+  renderGrid(evidences);
+}
+
+const STATUS_LABEL = { decifrado: 'ANALISADO', em_analise: 'EM ANÁLISE', confirmado: 'CONFIRMADO' };
+
+function renderGrid(items) {
+  if (!items.length) { grid.innerHTML = `<p class="text-muted">Nenhum item nesta categoria.</p>`; return; }
+  grid.innerHTML = items.map(ev => `
+    <div class="card ev-card" data-status="${ev.status}">
+      <div class="thumb"><svg viewBox="0 0 200 200"><use href="assets/seals.svg#${ev.selo_ref || 'seal-umbra-kael'}"/></svg></div>
+      <div class="text-gold" style="font-size:var(--text-xs); font-weight:700;">${ev.codigo}</div>
+      <div class="meta status-${ev.status}">Status: ${STATUS_LABEL[ev.status] || ev.status}</div>
+      <div class="meta">Encontrado em: ${ev.encontrado_em || '—'}</div>
+      <div class="meta">${ev.titulo}</div>
+      <button class="btn btn-secondary inspect-btn" style="font-size:var(--text-xs); margin-top:var(--space-2); width:100%;" data-id="${ev.id}" data-titulo="${ev.codigo}">Inspecionar</button>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.inspect-btn').forEach(btn => {
+    btn.addEventListener('click', () => abrirModal(btn.dataset.id, btn.dataset.titulo));
+  });
+}
+
+await carregar();
+
+document.getElementById('filters').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#filters button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  const f = e.target.dataset.f;
+  renderGrid(f === 'todas' ? evidences : evidences.filter(ev => ev.status === f));
+});
+
+let itemAtual = null;
+
+async function abrirModal(id, titulo) {
+  itemAtual = id;
+  document.getElementById('modalTitle').textContent = `Inspecionar — ${titulo}`;
+  document.getElementById('modalBg').style.display = 'flex';
+  document.getElementById('adminStatusRow').style.display = souAdmin ? 'flex' : 'none';
+  await carregarNotas();
+}
+
+async function carregarNotas() {
+  const notas = await listarNotasInvestigacao(itemAtual);
+  const el = document.getElementById('modalNotes');
+  if (!notas.length) {
+    el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma análise registrada ainda. Seja o primeiro investigador.</p>`;
+    return;
+  }
+  el.innerHTML = notas.map(n => `
+    <div class="note">
+      <div class="who">${n.autor_nome || 'Investigador'} · ${new Date(n.created_at).toLocaleDateString('pt-BR')}</div>
+      <div class="text-secondary">${n.nota}</div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('closeModalBtn').addEventListener('click', () => {
+  document.getElementById('modalBg').style.display = 'none';
+  document.getElementById('notaInput').value = '';
+});
+
+document.getElementById('saveNoteBtn').addEventListener('click', async () => {
+  if (!session) { window.location.href = 'login.html?next=investigacoes.html'; return; }
+  const texto = document.getElementById('notaInput').value.trim();
+  if (!texto) return;
+  const btn = document.getElementById('saveNoteBtn');
+  btn.disabled = true;
+  const autorNome = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+  try {
+    await registrarNotaInvestigacao(session.user.id, itemAtual, autorNome, texto);
+    document.getElementById('notaInput').value = '';
+    await carregarNotas();
+  } catch (e) {
+    alert('Erro: ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.querySelectorAll('.admin-status-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    try {
+      const result = await atualizarStatusInvestigacao(session.user.id, itemAtual, btn.dataset.status);
+      if (!result.ok) { alert(result.mensagem); return; }
+      document.getElementById('modalBg').style.display = 'none';
+      await carregar();
+    } catch (e) {
+      alert('Erro: ' + e.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+});
+
+// ── Adicionar novo arquivo à investigação ──────────────────────────────
+document.getElementById('addBtn').addEventListener('click', () => {
+  if (!session) { window.location.href = 'login.html?next=investigacoes.html'; return; }
+  document.getElementById('addModalBg').style.display = 'flex';
+});
+document.getElementById('closeAddModalBtn').addEventListener('click', () => {
+  document.getElementById('addModalBg').style.display = 'none';
+});
+document.getElementById('addForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const status = document.getElementById('addStatus');
+  const codigo = document.getElementById('addCodigo').value.trim();
+  const titulo = document.getElementById('addTitulo').value.trim();
+  if (!codigo || !titulo) return;
+  status.textContent = 'Registrando...';
+  try {
+    await adicionarInvestigacao(session.user.id, {
+      codigo, titulo,
+      descricao: document.getElementById('addDescricao').value.trim(),
+      encontradoEm: document.getElementById('addEncontrado').value.trim(),
+      categoria: document.getElementById('addCategoria').value.trim() || 'geral',
+    });
+    document.getElementById('addForm').reset();
+    document.getElementById('addModalBg').style.display = 'none';
+    await carregar();
+  } catch (err) {
+    status.textContent = 'Erro: ' + err.message;
+  }
+});
+</script>
+
+</body>
+</html>

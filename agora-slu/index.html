@@ -55,8 +55,9 @@
   </a>
   <ul>
     <li><a href="index.html" class="active">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
     <li><a href="discord.html">Discord</a></li>
-    <li><a href="terminal.html">Terminal ARG</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
     <li><a href="dashboard.html">Painel</a></li>
     <li><a href="tarefas.html">Tarefas</a></li>
     <li><a href="codex.html">Códice</a></li>
@@ -65,7 +66,7 @@
     <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="grafo.html">Grafo</a></li>
-    <li><a href="evidencias.html">Evidências</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
     <li><a href="mobile.html">Mobile</a></li>
   </ul>
   <span id="navAuthSlot"></span>
@@ -88,8 +89,8 @@
     </div>
     <div class="card glass">
       <div class="num" id="statSolves">—</div>
-      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Decifragens Registradas</div>
-      <div class="text-muted" style="font-size:var(--text-xs);">Terminal ARG — Pen Drive Misterioso</div>
+      <div class="text-secondary" style="font-size:var(--text-xs); text-transform:uppercase; letter-spacing:.06em; margin:var(--space-2) 0;">Análises Registradas</div>
+      <div class="text-muted" style="font-size:var(--text-xs);">Investigação Coletiva de Arquivos</div>
     </div>
     <div class="card glass">
       <div class="num" id="statOnline">—</div>
@@ -101,7 +102,7 @@
 
 <section class="pillars cultus-shell">
   <h2>O Tríptico da Categoria Única</h2>
-  <p class="lead">A Ágora não é um curso, nem um fórum. É uma comunidade ocultista co-criativa e um ARG vivo, estruturado em três pilares indissociáveis.</p>
+  <p class="lead">A Ágora não é um curso, nem um fórum. É uma comunidade ocultista co-criativa e uma investigação coletiva viva, estruturada em três pilares indissociáveis.</p>
   <div class="grid grid-3">
     <div class="card">
       <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-aether-sophia"/></svg>
@@ -111,9 +112,9 @@
     </div>
     <div class="card">
       <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-umbra-kael"/></svg>
-      <h3 style="font-size:var(--text-md);">ARG Investigativo Vivo</h3>
-      <p class="text-secondary" style="font-size:var(--text-sm);">A Æon emite anomalias e boletins. O Pen Drive misterioso guarda partições criptografadas que só a inteligência coletiva decifra.</p>
-      <a href="terminal.html">Acessar o Terminal →</a>
+      <h3 style="font-size:var(--text-md);">Investigação Coletiva de Arquivos</h3>
+      <p class="text-secondary" style="font-size:var(--text-sm);">Documentos e materiais reais entram no cofre da Ágora para análise coletiva — cada iniciado que registra uma ficha expande o Codex Caelestis e recebe XP de verdade.</p>
+      <a href="investigacoes.html">Acessar as Investigações →</a>
     </div>
     <div class="card">
       <svg class="pillar-icon" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-noesis-vesper"/></svg>
@@ -129,11 +130,10 @@
 </footer>
 
 <script type="module">
-import { montarNavAuth, obterProgressoARG } from './js/agoraAuth.js';
+import { montarNavAuth, contarAtividadeInvestigativa } from './js/agoraAuth.js';
 montarNavAuth();
 
-obterProgressoARG().then(progresso => {
-  const total = progresso.reduce((sum, p) => sum + Number(p.total_solves), 0);
+contarAtividadeInvestigativa().then(total => {
   document.getElementById('statSolves').textContent = total.toLocaleString('pt-BR');
 }).catch(() => { document.getElementById('statSolves').textContent = '0'; });
 
