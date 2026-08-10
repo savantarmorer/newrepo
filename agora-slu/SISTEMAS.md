@@ -13,7 +13,7 @@ Documentação técnica de arquitetura e modelo de dados. Para o runbook de cred
 │  index.html, login.html, perfil.html, dashboard.html, admin.html,   │
 │  governanca.html, investigacoes.html, provida.html, codex.html,     │
 │  eventos.html, calendario.html, discord.html, checkout.html,        │
-│  tarefas.html, busca.html, novo-aeon.html                           │
+│  tarefas.html, busca.html, novo-aeon.html, atividade.html           │
 │  manifest.json + sw.js (PWA — instalável, app shell em cache)       │
 │                                                                       │
 │  js/agoraAuth.js  ──►  @supabase/supabase-js (CDN)                 │
@@ -84,7 +84,7 @@ Streak diário: `registrar_login_agora(uid)`, chamada em `login.html` e no `dash
 
 ### 3a. Ledger de XP e Atividade Coletiva
 
-`agora_xp_ledger` é ao mesmo tempo a trava de idempotência das novas fontes de XP e a fonte de dados do feed "Atividade Recente da Egrégora" em `dashboard.html`. Toda concessão de XP (gatilhos novos + `concluir_missao`/`concluir_tarefa`/`enviar_ficha_provida`, já existentes) grava uma linha ali com `autor_nome`, `motivo` e `fonte_tipo`. A RPC pública `obter_atividade_recente(limite)` lê as últimas N linhas — sem expor nada sensível, só "quem fez o quê e ganhou quanto".
+`agora_xp_ledger` é ao mesmo tempo a trava de idempotência das novas fontes de XP e a fonte de dados do feed global de atividade (`atividade.html`, com uma prévia em `dashboard.html`). Toda concessão de XP (gatilhos + `concluir_missao`/`concluir_tarefa`/`enviar_ficha_provida`) grava uma linha ali com `autor_nome`, `motivo` e `fonte_tipo`. Duas fontes não dão XP (`xp = 0`) mas entram no feed do mesmo jeito: **login** (`registrar_atividade_login`, chamada por `agoraAuth.js` só no evento `SIGNED_IN` do Supabase — nunca em `INITIAL_SESSION`, que é o que dispara ao só navegar entre páginas com sessão já existente; `fonte_id` é sempre um UUID novo, então todo login real vira uma linha, sem cair na trava de idempotência) e **voto em decreto** (`votar_decreto` grava no ledger na primeira vez que o usuário vota naquele decreto). A RPC pública `obter_atividade_recente(limite, antes_de, fonte_tipo)` suporta paginação por cursor (`antes_de`) e filtro por tipo — usada pelo "carregar mais" e pelos chips de filtro em `atividade.html`.
 
 ## 3b. Painel Administrativo (`admin.html`)
 

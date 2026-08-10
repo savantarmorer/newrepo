@@ -14,6 +14,18 @@ export const AGORA_API_URL = window.AGORA_API_URL || '';
 
 export const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Registra no feed global de atividade toda vez que um login de verdade
+// acontece. SIGNED_IN só dispara numa autenticação nova de fato (retorno
+// do OAuth, signInWithPassword) — nunca em INITIAL_SESSION, que é o que
+// dispara ao só navegar entre páginas com uma sessão já existente. Isso
+// evita lotar o feed com uma entrada por page view.
+sb.auth.onAuthStateChange((event, session) => {
+  if (event !== 'SIGNED_IN' || !session) return;
+  const provider = session.user.app_metadata?.provider || 'email';
+  sb.rpc('registrar_atividade_login', { uid: session.user.id, p_provider: provider })
+    .then(({ error }) => { if (error) console.warn('registrar_atividade_login:', error.message); });
+});
+
 // Graus da Ágora (Manifesto do Avatar — Seção 3)
 export const GRAUS = [
   { grau: 0, nome: 'Neófito',        xpMin: 0,    canal: '#portal-de-entrada' },
@@ -243,8 +255,13 @@ export async function listarFichasProvida() {
 }
 
 // ── Atividade coletiva (ledger de XP) ──────────────────────────────────
-export async function obterAtividadeRecente(limite = 20) {
-  const { data, error } = await sb.rpc('obter_atividade_recente', { p_limite: limite });
+// antesDe: paginação por cursor (timestamp da última linha já carregada).
+// fonteTipo: filtro opcional (login | missao | tarefa | investigacao_nota |
+// ficha_provida | evento_rsvp | chamada_rsvp | codex_nota | voto_decreto).
+export async function obterAtividadeRecente(limite = 20, antesDe = null, fonteTipo = null) {
+  const { data, error } = await sb.rpc('obter_atividade_recente', {
+    p_limite: limite, p_antes_de: antesDe, p_fonte_tipo: fonteTipo,
+  });
   if (error) { console.warn('obter_atividade_recente:', error.message); return []; }
   return data || [];
 }

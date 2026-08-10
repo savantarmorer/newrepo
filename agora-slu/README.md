@@ -35,6 +35,7 @@ Sem os passos 2-4, a navegação funciona mas login/gamificação ficam bloquead
 | `tarefas.html` | Quadro de tarefas dos voluntários — reivindicar/concluir com XP real |
 | `admin.html` | Painel administrativo (login e-mail/senha próprio) — CRUD real sobre Missões, Eventos, Calendário, Hall, Códice, Investigações, Tarefas, Associações e Novo Æon |
 | `busca.html` | Busca global real (Investigações + Fichas Pró-Vida + Códice) com deep link pro item exato |
+| `atividade.html` | Feed global de atividade real — login (por provedor), votos, missões, tarefas e mais, com filtro e paginação |
 | `novo-aeon.html` | Ingresso no Novo Æon — texto de abertura + formulário real, moderado no painel admin |
 | `checkout.html` | Registra o pedido de associação de verdade no banco — não processa pagamento (ver limitação abaixo) |
 

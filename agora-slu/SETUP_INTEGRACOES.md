@@ -78,6 +78,7 @@ No **SQL Editor** do Supabase, nesta ordem:
 7. `supabase/agora-migration-v7.sql` — ledger de XP (RSVP em Eventos/Chamadas, notas do Códice e de Investigações passam a dar XP real; concede retroativamente pra quem já tinha RSVP/notas antes)
 8. `supabase/agora-migration-v8.sql` — notificações in-app (sino no menu)
 9. `supabase/agora-migration-v9.sql` — pedidos de ingresso no Novo Æon
+10. `supabase/agora-migration-v10.sql` — feed global de atividade passa a registrar login (por provedor) e voto em decreto; adiciona paginação e filtro por tipo
 
 Todas usam `CREATE TABLE IF NOT EXISTS` (ou `ADD COLUMN IF NOT EXISTS` / `DROP POLICY IF EXISTS` + recriação) — seguro rodar mais de uma vez.
 
@@ -225,7 +226,7 @@ O `checkout.html` hoje grava o **pedido de associação** de verdade no Supabase
 - [ ] Widget do servidor ativado
 - [ ] OAuth Client do Google criado
 - [ ] Discord + Google ativados no Supabase Auth
-- [ ] `agora-migration.sql`, `v2` até `v9` executadas no Supabase, nessa ordem
+- [ ] `agora-migration.sql`, `v2` até `v10` executadas no Supabase, nessa ordem
 - [ ] Conta de administrador criada em Authentication → Users + `is_admin = true` (ver §4b)
 - [ ] `config.js` preenchido com `AGORA_DISCORD_GUILD_ID` real
 - [ ] Site aberto via servidor local/produção (nunca por duplo-clique/`file://`)
