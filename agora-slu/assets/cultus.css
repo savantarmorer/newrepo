@@ -252,3 +252,54 @@ input:focus, textarea:focus { outline: none; border-color: var(--border-active);
 .nav-bell-menu .notif-item:hover { background: var(--bg-surface-elevated); color: #fff; text-decoration: none; }
 .nav-bell-menu .notif-item .quando { display: block; color: var(--color-text-muted); margin-top: 2px; }
 .nav-bell-menu .notif-empty { padding: var(--space-4); font-size: var(--text-xs); color: var(--color-text-muted); text-align: center; }
+
+/* ---- NOVO ÆON — BOTÃO MÍSTICO CINTILANTE ---- */
+.aeon-shimmer-btn {
+  position: relative; display: block; overflow: hidden; text-align: center;
+  padding: var(--space-12) var(--space-6); border-radius: var(--radius-lg);
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(212,175,55,.32) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 115%, rgba(139,92,246,.32) 0%, transparent 55%),
+    var(--brand-surface);
+  border: 1px solid rgba(212,175,55,.45);
+  text-decoration: none;
+  animation: aeonPulse 4s ease-in-out infinite;
+  transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+.aeon-shimmer-btn:hover {
+  border-color: rgba(212,175,55,.9);
+  box-shadow: 0 0 55px rgba(212,175,55,.35), 0 0 100px rgba(139,92,246,.25);
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+.aeon-shimmer-btn::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.16) 45%, rgba(212,175,55,.32) 50%, rgba(255,255,255,.16) 55%, transparent 70%);
+  background-size: 260% 100%;
+  animation: aeonShimmer 3.2s linear infinite;
+}
+.aeon-shimmer-btn .seal-spin, .aeon-shimmer-btn .titulo, .aeon-shimmer-btn .sub, .aeon-shimmer-btn .cta {
+  position: relative; z-index: 2;
+}
+.aeon-shimmer-btn .seal-spin {
+  width: 64px; height: 64px; margin-bottom: var(--space-4);
+  filter: drop-shadow(0 0 18px rgba(212,175,55,.75));
+  animation: aeonSealSpin 30s linear infinite;
+}
+.aeon-shimmer-btn .titulo {
+  display: block; font-family: var(--font-display); font-size: var(--text-xl); color: #fff;
+  margin-bottom: var(--space-3); text-shadow: var(--glow-gold); letter-spacing: .03em;
+}
+.aeon-shimmer-btn .sub {
+  display: block; font-size: var(--text-sm); color: var(--color-text-secondary);
+  max-width: 46ch; margin: 0 auto;
+}
+.aeon-shimmer-btn .cta {
+  display: inline-block; margin-top: var(--space-6); font-size: var(--text-xs);
+  text-transform: uppercase; letter-spacing: .12em; color: var(--brand-action);
+  border: 1px solid rgba(212,175,55,.5); padding: var(--space-2) var(--space-6);
+  border-radius: var(--radius-full);
+}
+@keyframes aeonShimmer { from { background-position: 220% 0; } to { background-position: -60% 0; } }
+@keyframes aeonPulse { 0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,.15); } 50% { box-shadow: 0 0 45px rgba(212,175,55,.3), 0 0 80px rgba(139,92,246,.2); } }
+@keyframes aeonSealSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

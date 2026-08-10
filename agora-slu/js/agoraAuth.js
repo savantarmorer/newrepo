@@ -14,11 +14,12 @@ export const AGORA_API_URL = window.AGORA_API_URL || '';
 
 export const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Registra no feed global de atividade toda vez que um login de verdade
-// acontece. SIGNED_IN só dispara numa autenticação nova de fato (retorno
-// do OAuth, signInWithPassword) — nunca em INITIAL_SESSION, que é o que
-// dispara ao só navegar entre páginas com uma sessão já existente. Isso
-// evita lotar o feed com uma entrada por page view.
+// Registra no feed global de atividade um login. Como este é um site
+// multi-página (cada navegação recarrega tudo e recria este cliente),
+// SIGNED_IN acaba disparando não só num login novo mas também ao
+// restaurar a sessão do localStorage em cada page view — por isso o
+// dedup real (não repetir a cada navegação) é feito no servidor, dentro
+// de registrar_atividade_login() (ver migração v11), por janela de tempo.
 sb.auth.onAuthStateChange((event, session) => {
   if (event !== 'SIGNED_IN' || !session) return;
   const provider = session.user.app_metadata?.provider || 'email';
@@ -251,6 +252,23 @@ export async function enviarFichaProvida(userId, ficha) {
 export async function listarFichasProvida() {
   const { data, error } = await sb.from('agora_provida_fichas').select('*').order('created_at', { ascending: false });
   if (error) throw new Error(error.message);
+  return data || [];
+}
+
+// ── Módulos Pró-Vida (distribuição/sorteio de quem analisa o quê) ──────
+// Idempotente: se o Iniciado já tem módulo atribuído, devolve o mesmo.
+export async function atribuirModuloProvida(userId) {
+  const { data, error } = await sb.rpc('atribuir_modulo_provida', { uid: userId });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Tabela pública: quem está analisando qual módulo agora.
+export async function listarAtribuicoesProvida() {
+  const { data, error } = await sb.from('agora_provida_atribuicoes')
+    .select('analista_nome, atribuido_em, agora_provida_modulos(nome, link_drive)')
+    .order('atribuido_em', { ascending: false });
+  if (error) { console.warn('agora_provida_atribuicoes:', error.message); return []; }
   return data || [];
 }
 

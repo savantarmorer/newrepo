@@ -2,6 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#14121A">
@@ -56,6 +64,21 @@
   .fichas-list .card { margin-bottom:var(--space-4); }
   #formStatus { min-height:20px; }
   .sticky-submit { position:sticky; bottom:0; background:var(--bg-canvas); border-top:1px solid var(--border-subtle); padding:var(--space-4) 0; margin-top:var(--space-8); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-3); }
+
+  .intro-card { max-width:720px; margin: var(--space-6) 0 var(--space-12); }
+  .intro-card h2 { font-size:var(--text-md); margin-bottom:var(--space-3); }
+  .intro-card p { font-size:var(--text-sm); color:var(--color-text-secondary); margin-bottom:var(--space-4); }
+  .compromisso-list { list-style:none; padding:0; margin:0 0 var(--space-6); }
+  .compromisso-list li { display:flex; gap:var(--space-3); padding:var(--space-2) 0; font-size:var(--text-sm); color:var(--color-text-secondary); border-bottom:1px solid var(--border-subtle); }
+  .compromisso-list li:last-child { border-bottom:none; }
+  .compromisso-list li::before { content:"✦"; color:var(--brand-action); flex-shrink:0; }
+  .consent-row { display:flex; align-items:flex-start; gap:var(--space-3); padding:var(--space-4); background:var(--bg-surface-elevated); border-radius:var(--radius-sm); margin-bottom:var(--space-4); }
+  .consent-row input { margin-top:3px; flex-shrink:0; }
+  .consent-row label { font-size:var(--text-sm); color:var(--color-text-primary); }
+  .modulo-card { margin-bottom:var(--space-6); border-color:var(--border-active); }
+  .modulo-card h3 { font-size:var(--text-md); margin-bottom:var(--space-2); }
+  .atrib-row { display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); padding:var(--space-2) 0; border-bottom:1px solid var(--border-subtle); font-size:var(--text-sm); flex-wrap:wrap; }
+  .atrib-row:last-child { border-bottom:none; }
 </style>
 </head>
 <body>
@@ -80,7 +103,6 @@
         <a href="tarefas.html">Tarefas</a>
         <a href="eventos.html">Eventos</a>
         <a href="calendario.html">Calendário</a>
-        <a href="busca.html">Busca</a>
         <a href="atividade.html">Atividade</a>
       </div>
     </li>
@@ -90,6 +112,31 @@
 
 <main class="cultus-shell" style="max-width:1040px;">
   <h1 style="font-size:var(--text-lg); padding-top:var(--space-6);">Ficha de Análise — Material Pró-Vida</h1>
+
+  <div class="card intro-card" id="introSection">
+    <h2>Antes de começar: o compromisso da Análise Pró-Vida</h2>
+    <p>A investigação Pró-Vida lida com material real de captação e doutrinação — aulas, apostilas, roteiros de indução usados por grupos que manipulam pessoas vulneráveis. Registrar uma ficha aqui não é preencher um formulário qualquer: é trabalho de investigação do qual a Egrégora depende para entender e expor esse funil.</p>
+    <p>Ao entrar, você está dizendo que:</p>
+    <ul class="compromisso-list">
+      <li>Vai dedicar tempo de verdade lendo e analisando o documento antes de enviar — não é para preencher só pelo XP.</li>
+      <li>Nunca vai inventar ou supor algo que não está explícito no material. Não sabe? Deixa em branco.</li>
+      <li>Vai separar sempre o que o texto <strong>DIZ</strong> do que é sua <strong>INTERPRETAÇÃO</strong>.</li>
+      <li>Entende que o material pode ser sensível e vai tratá-lo com o cuidado que merece.</li>
+      <li>Sabe que uma ficha malfeita ou inventada prejudica toda a investigação coletiva — os demais Iniciados confiam no seu registro.</li>
+    </ul>
+    <div class="consent-row">
+      <input type="checkbox" id="consentCheck">
+      <label for="consentCheck">Eu entendo e aceito o compromisso de investigar com seriedade.</label>
+    </div>
+    <button type="button" class="btn btn-primary" id="consentBtn" disabled>Iniciar Investigação</button>
+  </div>
+
+  <div id="formSection" style="display:none;">
+  <div class="card modulo-card" id="moduloCard" style="display:none;">
+    <h3>Seu Módulo Atribuído</h3>
+    <p class="text-secondary" style="font-size:var(--text-sm);" id="moduloTexto"></p>
+    <a href="#" target="_blank" rel="noopener" class="btn btn-primary" id="moduloLink" style="font-size:var(--text-xs);">Abrir pasta no Drive →</a>
+  </div>
   <p class="text-secondary" style="margin-bottom:var(--space-6);">Registre o que o documento diz e como ele age sobre quem ouve. Separe sempre <strong>[DIZ]</strong> (o que está no texto) de <strong>[INTERP]</strong> (sua leitura). Não souber algo? Deixe em branco — nunca invente. Enviar uma ficha concede XP real.</p>
 
   <div id="draftBanner">
@@ -289,6 +336,10 @@
       </div>
     </form>
   </div>
+  </div>
+
+  <h2 style="font-size:var(--text-lg); margin:var(--space-16) 0 var(--space-4);">Quem Está Investigando Cada Módulo</h2>
+  <div class="card" id="atribuicoesList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
 
   <h2 style="font-size:var(--text-lg); margin:var(--space-16) 0 var(--space-4);">Fichas Já Enviadas pela Egrégora</h2>
   <div class="fichas-list" id="fichasList"><p class="text-muted" style="font-size:var(--text-sm);">Carregando...</p></div>
@@ -299,12 +350,73 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, montarNavAuth, montarNavMais, enviarFichaProvida, listarFichasProvida, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, getSession, montarNavAuth, montarNavMais, enviarFichaProvida, listarFichasProvida,
+         atribuirModuloProvida, listarAtribuicoesProvida, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavAuth();
 const session = await getSession();
 const DRAFT_KEY = 'agora_provida_draft_v1';
+const CONSENT_KEY = 'agora_provida_consentiu_v1';
+
+// ── Portal de compromisso: só mostra o formulário depois que o Iniciado
+// aceita explicitamente o que está assumindo (não é só abrir e preencher).
+// Ao aceitar, sorteia (ou recupera) o módulo Pró-Vida atribuído a ele.
+const introSection = document.getElementById('introSection');
+const formSection = document.getElementById('formSection');
+const consentCheck = document.getElementById('consentCheck');
+const consentBtn = document.getElementById('consentBtn');
+
+function mostrarModulo(a) {
+  document.getElementById('moduloTexto').textContent = `Você está investigando o módulo: ${a.modulo_nome}`;
+  document.getElementById('moduloLink').href = a.link_drive;
+  document.getElementById('moduloCard').style.display = 'block';
+}
+
+function liberarFormulario() {
+  introSection.style.display = 'none';
+  formSection.style.display = 'block';
+}
+
+async function iniciarInvestigacao() {
+  if (!session) { window.location.href = 'login.html?next=provida.html'; return; }
+  consentBtn.disabled = true;
+  consentBtn.textContent = 'Sorteando seu módulo...';
+  try {
+    const atribuicao = await atribuirModuloProvida(session.user.id);
+    if (!atribuicao.ok) { alert(atribuicao.mensagem); consentBtn.disabled = false; consentBtn.textContent = 'Iniciar Investigação'; return; }
+    mostrarModulo(atribuicao);
+    localStorage.setItem(CONSENT_KEY, new Date().toISOString());
+    liberarFormulario();
+    await carregarAtribuicoes();
+  } catch (e) {
+    alert(mensagemAmigavel(e, 'sortear seu módulo'));
+    consentBtn.disabled = false;
+    consentBtn.textContent = 'Iniciar Investigação';
+  }
+}
+
+if (localStorage.getItem(CONSENT_KEY) && session) {
+  atribuirModuloProvida(session.user.id).then(a => { if (a.ok) mostrarModulo(a); });
+  liberarFormulario();
+} else {
+  consentCheck.addEventListener('change', () => { consentBtn.disabled = !consentCheck.checked; });
+  consentBtn.addEventListener('click', iniciarInvestigacao);
+}
+
+async function carregarAtribuicoes() {
+  const el = document.getElementById('atribuicoesList');
+  const lista = await listarAtribuicoesProvida();
+  if (!lista.length) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Ninguém com módulo atribuído ainda.</p>`; return; }
+  const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  el.innerHTML = lista.map(a => `
+    <div class="atrib-row">
+      <span><strong class="text-gold">${escapeHtml(a.analista_nome || 'Iniciado')}</strong> investigando <strong>${escapeHtml(a.agora_provida_modulos?.nome || '—')}</strong></span>
+      <span class="text-muted" style="font-size:var(--text-xs);">desde ${new Date(a.atribuido_em).toLocaleDateString('pt-BR')}</span>
+    </div>
+  `).join('');
+}
+carregarAtribuicoes();
 
 const TECNICAS = [
   'Conhecimento secreto ("não está nos livros")',

@@ -2,6 +2,14 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#14121A">
@@ -46,7 +54,6 @@
     <li><a href="dashboard.html">Painel</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
-    <li><a href="busca.html">Busca</a></li>
     <li><a href="atividade.html">Atividade</a></li>
   </ul>
   <span id="navAuthSlot"></span>
@@ -92,7 +99,7 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, montarNavAuth, listarFichasProvida } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, montarNavAuth, listarFichasProvida, listarAtribuicoesProvida } from './js/agoraAuth.js';
 
 montarNavAuth();
 
@@ -183,6 +190,14 @@ const DATASETS = [
       { key: 'tier', label: 'Tier', type: 'text', readonly: true },
       { key: 'metodo_pagamento', label: 'Pagamento', type: 'text', readonly: true },
       { key: 'status', label: 'Status', type: 'select', options: ['pendente','contatado','confirmado','cancelado'] },
+    ],
+  },
+  {
+    key: 'modulos', table: 'agora_provida_modulos', label: 'Módulos Pró-Vida', order: 'nome',
+    columns: [
+      { key: 'nome', label: 'Nome', type: 'text', required: true },
+      { key: 'link_drive', label: 'Link do Drive', type: 'text', wide: true, required: true },
+      { key: 'ativo', label: 'Ativo', type: 'boolean', default: true },
     ],
   },
   {
@@ -386,10 +401,36 @@ async function montarProvidaModeracao() {
   });
 }
 
+// ── Pró-Vida: atribuições de módulo (ver + resetar pra forçar novo sorteio) ─
+async function montarAtribuicoesModeracao() {
+  const panel = document.getElementById('panel_atribuicoes');
+  panel.innerHTML = `<h2 style="font-size:var(--text-md);">Atribuições de Módulo Pró-Vida</h2><div id="atribList">Carregando...</div>`;
+  const listEl = document.getElementById('atribList');
+  const atribuicoes = await listarAtribuicoesProvida();
+  if (!atribuicoes.length) { listEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Ninguém com módulo atribuído ainda.</p>`; return; }
+  listEl.innerHTML = atribuicoes.map(a => `
+    <div class="card" style="margin-bottom:var(--space-4); display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); flex-wrap:wrap;">
+      <div>
+        <strong>${escapeHtml(a.analista_nome || 'Iniciado')}</strong> — ${escapeHtml(a.agora_provida_modulos?.nome || '—')}
+        <div class="text-muted" style="font-size:var(--text-xs);">desde ${new Date(a.atribuido_em).toLocaleDateString('pt-BR')}</div>
+      </div>
+      <button class="btn btn-alert reset-atrib-btn" data-uid="${a.user_id}" style="font-size:var(--text-xs);">Resetar (novo sorteio)</button>
+    </div>
+  `).join('');
+  listEl.querySelectorAll('.reset-atrib-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Apagar esta atribuição? Na próxima visita, um novo módulo será sorteado pra essa pessoa.')) return;
+      const { error } = await sb.from('agora_provida_atribuicoes').delete().eq('user_id', btn.dataset.uid);
+      if (error) { alert('Erro: ' + error.message); return; }
+      await montarAtribuicoesModeracao();
+    });
+  });
+}
+
 function montarTabs() {
   const tabsEl = document.getElementById('adminTabs');
   const panelsEl = document.getElementById('adminPanels');
-  const allTabs = [...DATASETS.map(d => ({ key: d.key, label: d.label })), { key: 'provida', label: 'Pró-Vida' }];
+  const allTabs = [...DATASETS.map(d => ({ key: d.key, label: d.label })), { key: 'provida', label: 'Pró-Vida' }, { key: 'atribuicoes', label: 'Atribuições Pró-Vida' }];
 
   tabsEl.innerHTML = allTabs.map((t, i) => `<button data-tab="${t.key}" class="${i === 0 ? 'active' : ''}">${t.label}</button>`).join('');
   panelsEl.innerHTML = allTabs.map((t, i) => `<div class="admin-panel${i === 0 ? ' active' : ''}" id="panel_${t.key}"></div>`).join('');
@@ -405,6 +446,7 @@ function montarTabs() {
 
   DATASETS.forEach(montarCRUD);
   montarProvidaModeracao();
+  montarAtribuicoesModeracao();
 }
 
 // ── Login / gate ─────────────────────────────────────────────────────
