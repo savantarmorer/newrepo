@@ -230,6 +230,16 @@ input:focus, textarea:focus { outline: none; border-color: var(--border-active);
 .nav-profile-menu .divider { border-top: 1px solid var(--border-subtle); margin: 0; }
 .nav-profile-menu .sair { color: var(--brand-alert); }
 
+/* ---- NAV "MAIS" (páginas secundárias, fora da barra principal) ---- */
+.nav-more { position: relative; }
+.nav-more-btn { background: transparent; border: none; color: var(--color-text-secondary); font-family: var(--font-body); font-size: var(--text-sm); cursor: pointer; padding: 0; display: inline-flex; align-items: center; gap: 4px; }
+.nav-more-btn:hover, .nav-more-btn.active { color: #fff; }
+.nav-more-btn .caret { font-size: 9px; opacity: .7; }
+.nav-more-menu { display: none; position: absolute; left: 0; top: calc(100% + var(--space-3)); background: var(--brand-surface); border: 1px solid var(--border-medium); border-radius: var(--radius-md); box-shadow: var(--shadow-ritual-md); min-width: 180px; overflow: hidden; z-index: 60; }
+.nav-more-menu.open { display: block; }
+.nav-more-menu a { display: block; padding: var(--space-3) var(--space-4); font-size: var(--text-sm); color: var(--color-text-secondary); text-decoration: none; }
+.nav-more-menu a:hover, .nav-more-menu a.active { background: var(--bg-surface-elevated); color: #fff; text-decoration: none; }
+
 /* ---- NAV NOTIFICATION BELL ---- */
 .nav-auth-row { display: flex; align-items: center; gap: var(--space-3); }
 .nav-bell-btn { position: relative; background: transparent; border: 1px solid var(--border-medium); color: var(--color-text-secondary); width: 34px; height: 34px; border-radius: var(--radius-sm); cursor: pointer; font-size: 15px; line-height: 1; }

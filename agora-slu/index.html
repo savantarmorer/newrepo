@@ -61,14 +61,19 @@
     <li><a href="discord.html">Discord</a></li>
     <li><a href="provida.html">Pró-Vida</a></li>
     <li><a href="dashboard.html">Painel</a></li>
-    <li><a href="tarefas.html">Tarefas</a></li>
     <li><a href="codex.html">Códice</a></li>
-    <li><a href="eventos.html">Eventos</a></li>
-    <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
-    <li><a href="busca.html">Busca</a></li>
-    <li><a href="atividade.html">Atividade</a></li>
+    <li class="nav-more">
+      <button type="button" id="navMoreBtn" class="nav-more-btn">Mais <span class="caret">▾</span></button>
+      <div id="navMoreMenu" class="nav-more-menu">
+        <a href="tarefas.html">Tarefas</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="calendario.html">Calendário</a>
+        <a href="busca.html">Busca</a>
+        <a href="atividade.html">Atividade</a>
+      </div>
+    </li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -79,8 +84,8 @@
   </svg>
   <h1>Construa o Grimório.<br>Decifre o Arcano.<br>Viva a Grande Obra.</h1>
   <p class="trueline">Um universo vivo de esoterismo, ocultismo e worldbuilding investigativo onde a comunidade co-cria a Grande Obra — a Egrégora Ágora, sob o selo da SLU.</p>
-  <a href="checkout.html" class="btn btn-primary" style="font-size:var(--text-base); padding:var(--space-4) var(--space-8);">Iniciar o Ritual de Passagem</a>
-  <div class="price-note">A partir de R$ 19,90/mês · Círculo Fechado no Discord</div>
+  <a href="perfil.html" class="btn btn-primary" style="font-size:var(--text-base); padding:var(--space-4) var(--space-8);">Entrar na Ágora</a>
+  <div class="price-note">Login com Discord ou Google · <a href="checkout.html" style="color:inherit; text-decoration:underline;">conheça os graus de acesso pagos →</a></div>
 
   <div class="proof-strip">
     <div class="card glass">
@@ -131,7 +136,8 @@
 </footer>
 
 <script type="module">
-import { montarNavAuth, contarAtividadeInvestigativa } from './js/agoraAuth.js';
+import { montarNavAuth, montarNavMais, contarAtividadeInvestigativa } from './js/agoraAuth.js';
+montarNavMais();
 montarNavAuth();
 
 contarAtividadeInvestigativa().then(total => {

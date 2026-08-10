@@ -359,6 +359,16 @@ export async function fetchDiscordMessages() {
 }
 
 // ── Nav dinâmica ─────────────────────────────────────────────────────
+// Liga o dropdown "Mais" (páginas secundárias fora da barra principal —
+// ver elementos #navMoreBtn/#navMoreMenu). Markup estático, só o toggle é JS.
+export function montarNavMais() {
+  const btn = document.getElementById('navMoreBtn');
+  const menu = document.getElementById('navMoreMenu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+  document.addEventListener('click', () => menu.classList.remove('open'));
+}
+
 // Preenche o slot de login/perfil na barra de navegação (elemento com id="navAuthSlot")
 // com um menu de perfil (Meu Painel / Sair), acessível em qualquer página.
 export async function montarNavAuth() {

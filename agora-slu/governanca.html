@@ -40,14 +40,19 @@
     <li><a href="discord.html">Discord</a></li>
     <li><a href="provida.html">Pró-Vida</a></li>
     <li><a href="dashboard.html">Painel</a></li>
-    <li><a href="tarefas.html">Tarefas</a></li>
     <li><a href="codex.html">Códice</a></li>
-    <li><a href="eventos.html">Eventos</a></li>
-    <li><a href="calendario.html">Calendário</a></li>
     <li><a href="governanca.html" class="active">Conselho</a></li>
     <li><a href="investigacoes.html">Investigações</a></li>
-    <li><a href="busca.html">Busca</a></li>
-    <li><a href="atividade.html">Atividade</a></li>
+    <li class="nav-more">
+      <button type="button" id="navMoreBtn" class="nav-more-btn">Mais <span class="caret">▾</span></button>
+      <div id="navMoreMenu" class="nav-more-menu">
+        <a href="tarefas.html">Tarefas</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="calendario.html">Calendário</a>
+        <a href="busca.html">Busca</a>
+        <a href="atividade.html">Atividade</a>
+      </div>
+    </li>
   </ul>
   <span id="navAuthSlot"></span>
 </nav>
@@ -91,8 +96,9 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, montarNavMais, mensagemAmigavel } from './js/agoraAuth.js';
 
+montarNavMais();
 montarNavAuth();
 const session = await getSession();
 const listEl = document.getElementById('decreesList');
