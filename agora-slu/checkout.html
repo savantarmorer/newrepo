@@ -62,6 +62,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -146,9 +147,10 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, montarNavAuth, montarNavMais } from './js/agoraAuth.js';
+import { sb, getSession, montarNavAuth, montarNavMais, montarNavMobile } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 const session = await getSession();
 if (session?.user?.email) document.getElementById('emailInput').value = session.user.email;

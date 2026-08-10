@@ -83,6 +83,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -111,9 +112,10 @@
 </div>
 
 <script type="module">
-import { montarNavAuth, montarNavMais, fetchDiscordChannels, fetchDiscordMessages, mensagemAmigavel } from './js/agoraAuth.js';
+import { montarNavAuth, montarNavMais, montarNavMobile, fetchDiscordChannels, fetchDiscordMessages, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 
 const guildId = window.AGORA_DISCORD_GUILD_ID || null;

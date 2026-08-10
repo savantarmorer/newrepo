@@ -69,6 +69,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -130,9 +131,10 @@
 </footer>
 
 <script type="module">
-import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 
 const session = await requireAuth('login.html');

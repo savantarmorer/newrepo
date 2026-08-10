@@ -387,6 +387,18 @@ export function montarNavMais() {
   document.addEventListener('click', () => menu.classList.remove('open'));
 }
 
+// Liga o botão hamburguer que aparece só em telas estreitas (ver
+// .nav-mobile-toggle em cultus.css) — sem isso, o <ul> principal do
+// .cultus-nav some no mobile sem nenhum jeito de abrir a navegação.
+export function montarNavMobile() {
+  const btn = document.getElementById('navMobileToggle');
+  const menu = document.querySelector('.cultus-nav > ul');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('open'); });
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+  document.addEventListener('click', () => menu.classList.remove('open'));
+}
+
 // Preenche o slot de login/perfil na barra de navegação (elemento com id="navAuthSlot")
 // com um menu de perfil (Meu Painel / Sair), acessível em qualquer página.
 export async function montarNavAuth() {

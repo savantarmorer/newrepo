@@ -65,6 +65,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -125,10 +126,11 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, montarNavAuth, montarNavMais, adicionarInvestigacao, listarNotasInvestigacao,
+import { sb, getSession, getProfile, montarNavAuth, montarNavMais, montarNavMobile, adicionarInvestigacao, listarNotasInvestigacao,
          registrarNotaInvestigacao, atualizarStatusInvestigacao, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 const session = await getSession();
 const profile = session ? await getProfile(session.user.id) : null;

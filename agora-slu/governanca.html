@@ -61,6 +61,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -103,9 +104,10 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, montarNavMais, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, montarNavMais, montarNavMobile, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 const session = await getSession();
 const listEl = document.getElementById('decreesList');

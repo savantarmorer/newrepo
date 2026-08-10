@@ -56,6 +56,7 @@
     <li><a href="investigacoes.html">Investigações</a></li>
     <li><a href="atividade.html">Atividade</a></li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -99,8 +100,9 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, montarNavAuth, listarFichasProvida, listarAtribuicoesProvida } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, montarNavAuth, montarNavMobile, listarFichasProvida, listarAtribuicoesProvida } from './js/agoraAuth.js';
 
+montarNavMobile();
 montarNavAuth();
 
 const SEALS = ['seal-lux-vael','seal-umbra-kael','seal-chronos-phanes','seal-aether-sophia','seal-ignis-architectus','seal-noesis-vesper'];

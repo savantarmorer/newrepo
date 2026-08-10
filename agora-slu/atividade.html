@@ -61,6 +61,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -95,9 +96,10 @@
 </footer>
 
 <script type="module">
-import { montarNavAuth, montarNavMais, obterAtividadeRecente, mensagemAmigavel } from './js/agoraAuth.js';
+import { montarNavAuth, montarNavMais, montarNavMobile, obterAtividadeRecente, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 
 const ICONES = {

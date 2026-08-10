@@ -141,6 +141,7 @@
   <ul>
     <li><a href="dashboard.html">← Voltar ao Painel</a></li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -232,7 +233,9 @@
 </footer>
 
 <script type="module">
-import { getSession, montarNavAuth, enviarPedidoAeon, obterMeuPedidoAeon, mensagemAmigavel } from './js/agoraAuth.js';
+import { getSession, montarNavAuth, montarNavMobile, enviarPedidoAeon, obterMeuPedidoAeon, mensagemAmigavel } from './js/agoraAuth.js';
+
+montarNavMobile();
 
 montarNavAuth();
 const session = await getSession();

@@ -77,6 +77,11 @@
   .consent-row label { font-size:var(--text-sm); color:var(--color-text-primary); }
   .modulo-card { margin-bottom:var(--space-6); border-color:var(--border-active); }
   .modulo-card h3 { font-size:var(--text-md); margin-bottom:var(--space-2); }
+  .tips-card { background:var(--bg-surface-elevated); }
+  .tips-list { list-style:none; padding:0; margin:0; font-size:var(--text-sm); color:var(--color-text-secondary); }
+  .tips-list li { position:relative; padding-left:var(--space-5); margin-bottom:var(--space-2); }
+  .tips-list li:last-child { margin-bottom:0; }
+  .tips-list li::before { content:"→"; position:absolute; left:0; color:var(--brand-action); }
   .atrib-row { display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); padding:var(--space-2) 0; border-bottom:1px solid var(--border-subtle); font-size:var(--text-sm); flex-wrap:wrap; }
   .atrib-row:last-child { border-bottom:none; }
 </style>
@@ -107,6 +112,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -137,7 +143,16 @@
     <p class="text-secondary" style="font-size:var(--text-sm);" id="moduloTexto"></p>
     <a href="#" target="_blank" rel="noopener" class="btn btn-primary" id="moduloLink" style="font-size:var(--text-xs);">Abrir pasta no Drive →</a>
   </div>
-  <p class="text-secondary" style="margin-bottom:var(--space-6);">Registre o que o documento diz e como ele age sobre quem ouve. Separe sempre <strong>[DIZ]</strong> (o que está no texto) de <strong>[INTERP]</strong> (sua leitura). Não souber algo? Deixe em branco — nunca invente. Enviar uma ficha concede XP real.</p>
+
+  <div class="card tips-card" style="margin-bottom:var(--space-6);">
+    <h3 style="font-size:var(--text-sm); margin-bottom:var(--space-2);">Como preencher</h3>
+    <ul class="tips-list">
+      <li>Abra a pasta do seu módulo, escolha um arquivo, e comece pelo <strong>Modo Rápido</strong> — ele já dá uma ficha útil só com o essencial.</li>
+      <li>Separe sempre <strong>[DIZ]</strong> (o que está escrito no texto) de <strong>[INTERP]</strong> (sua leitura sobre aquilo).</li>
+      <li>Não sabe ou não tem certeza de algo? Deixe em branco — nunca invente ou suponha.</li>
+      <li>Tudo salva sozinho enquanto você digita — pode fechar e voltar depois sem perder nada.</li>
+    </ul>
+  </div>
 
   <div id="draftBanner">
     <strong>Você tem um rascunho não enviado</strong> <span id="draftInfo"></span>.
@@ -173,10 +188,11 @@
         <p class="group-hint">O núcleo rápido de preencher — dá pra registrar uma ficha útil só com isto.</p>
 
         <div class="subsection">
-          <h3>1. Identificação</h3>
+          <h3>Identificação</h3>
           <div class="field">
             <label for="fDocId">ID do documento (ex: PV-B01) *</label>
             <input type="text" id="fDocId" required autocomplete="off">
+            <div class="hint">Um jeito curto de identificar este arquivo específico dentro do seu módulo — o nome do arquivo ou algo como "AVAN2-Aula03" já resolve. Serve pra não analisar o mesmo arquivo duas vezes.</div>
             <div id="docIdWarning"></div>
           </div>
           <div class="field"><label for="fTitulo">Título / como se identifica</label><input type="text" id="fTitulo"></div>
@@ -204,7 +220,7 @@
         </div>
 
         <div class="subsection">
-          <h3>2. Resumo e função no funil</h3>
+          <h3>Resumo e função no funil</h3>
           <div class="field"><label for="fResumo">Do que trata (2–4 linhas)</label><textarea id="fResumo" rows="3" placeholder="Ex: aula introdutória que promete acesso a conhecimento oculto vetado pela ciência oficial..."></textarea></div>
           <div class="field">
             <label>Função da peça</label>
@@ -221,7 +237,7 @@
         </div>
 
         <div class="subsection">
-          <h3>4. Técnicas de persuasão / controle mental</h3>
+          <h3>Técnicas de persuasão / controle mental</h3>
           <p class="text-muted hint">Marque o que aparecer e cole o trecho que evidencia (localização abreviada) — não precisa parar pra escrever muito, um apontamento rápido já ajuda.</p>
           <div id="tecnicasList"></div>
         </div>
@@ -232,7 +248,7 @@
         <p class="group-hint">Exige mais tempo/pesquisa — vale a pena quando você já conhece bem o material.</p>
 
         <div class="subsection">
-          <h3>3. Estrutura retórica</h3>
+          <h3>Estrutura retórica</h3>
           <div class="field">
             <label>Como o texto conduz o ouvinte, na ordem em que aparece</label>
             <textarea id="fEstrutura" rows="3" placeholder="ex: diagnóstico do mundo → descredibiliza alternativas → solução exclusiva → prova/promessa → exercício"></textarea>
@@ -240,21 +256,21 @@
         </div>
 
         <div class="subsection">
-          <h3>5. Afirmações "científicas" e factuais — checagem</h3>
+          <h3>Afirmações "científicas" e factuais — checagem</h3>
           <p class="text-muted hint">Toda alegação apresentada como fato ou ciência.</p>
           <div id="afirmacoesList"></div>
           <button type="button" class="btn btn-secondary" id="addAfirmacao" style="font-size:var(--text-xs);">+ Adicionar afirmação</button>
         </div>
 
         <div class="subsection">
-          <h3>6. Material apropriado de terceiros</h3>
+          <h3>Material apropriado de terceiros</h3>
           <p class="text-muted hint">De onde o conteúdo "secreto" realmente vem.</p>
           <div id="materialList"></div>
           <button type="button" class="btn btn-secondary" id="addMaterial" style="font-size:var(--text-xs);">+ Adicionar item</button>
         </div>
 
         <div class="subsection">
-          <h3>7. Léxico interno (glossário-doutrina)</h3>
+          <h3>Léxico interno (glossário-doutrina)</h3>
           <p class="text-muted hint">Termos próprios do grupo — alimenta o glossário cumulativo da investigação.</p>
           <div id="lexicoList"></div>
           <button type="button" class="btn btn-secondary" id="addLexico" style="font-size:var(--text-xs);">+ Adicionar termo</button>
@@ -266,13 +282,13 @@
         <p class="group-hint">Liga esta peça ao resto da investigação coletiva.</p>
 
         <div class="subsection">
-          <h3>8. Pessoas, entidades e datas</h3>
+          <h3>Pessoas, entidades e datas</h3>
           <div class="field"><label for="fPessoas">Pessoas / nomes iniciáticos, entidades e ramificações</label><textarea id="fPessoas" rows="2"></textarea></div>
           <div class="field"><label for="fDatas">Datas, locais, eventos</label><textarea id="fDatas" rows="2"></textarea></div>
         </div>
 
         <div class="subsection">
-          <h3>9. Trechos-chave (citação literal)</h3>
+          <h3>Trechos-chave (citação literal)</h3>
           <div class="field">
             <label for="fTrechos">Transcreva exatamente, com localização (página/parágrafo)</label>
             <textarea id="fTrechos" rows="4" placeholder="«...» — (localização)"></textarea>
@@ -280,7 +296,7 @@
         </div>
 
         <div class="subsection">
-          <h3>10. Conexões</h3>
+          <h3>Conexões</h3>
           <div class="field"><label for="fConexoes">Liga com quais outras aulas/documentos? Confirma ou contradiz algo já visto?</label><textarea id="fConexoes" rows="2"></textarea></div>
         </div>
       </section>
@@ -289,7 +305,7 @@
         <h2>Avaliação Final</h2>
 
         <div class="subsection">
-          <h3>11. Relevância editorial</h3>
+          <h3>Relevância editorial</h3>
           <div class="field">
             <label>Importância</label>
             <div class="radio-row">
@@ -313,7 +329,7 @@
         </div>
 
         <div class="subsection">
-          <h3>12. Pendências, verificações e confiança</h3>
+          <h3>Pendências, verificações e confiança</h3>
           <div class="field"><label for="fPendencias">A verificar</label><textarea id="fPendencias" rows="2"></textarea></div>
           <div class="field">
             <label>Confiança do analista nesta ficha</label>
@@ -350,10 +366,11 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, montarNavAuth, montarNavMais, enviarFichaProvida, listarFichasProvida,
+import { sb, getSession, montarNavAuth, montarNavMais, montarNavMobile, enviarFichaProvida, listarFichasProvida,
          atribuirModuloProvida, listarAtribuicoesProvida, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 const session = await getSession();
 const DRAFT_KEY = 'agora_provida_draft_v1';

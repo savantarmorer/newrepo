@@ -80,6 +80,7 @@
       </div>
     </li>
   </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
   <span id="navAuthSlot"></span>
 </nav>
 
@@ -147,9 +148,10 @@
 
 <script type="module">
 import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile,
-         registrarLoginDiario, signOut, montarNavAuth, montarNavMais, concluirMissao, obterAtividadeRecente } from './js/agoraAuth.js';
+         registrarLoginDiario, signOut, montarNavAuth, montarNavMais, montarNavMobile, concluirMissao, obterAtividadeRecente } from './js/agoraAuth.js';
 
 montarNavMais();
+montarNavMobile();
 montarNavAuth();
 
 const SEALS_BY_GRAU = [
