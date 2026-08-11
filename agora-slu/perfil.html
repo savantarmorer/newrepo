@@ -68,6 +68,8 @@
         <a href="tarefas.html">Tarefas</a>
         <a href="eventos.html">Eventos</a>
         <a href="calendario.html">Calendário</a>
+        <a href="membros.html">Membros</a>
+        <a href="mensagens.html">Mensagens</a>
         <a href="atividade.html">Atividade</a>
       </div>
     </li>
@@ -79,7 +81,10 @@
 <main class="cultus-shell" id="perfilContent" style="display:none; max-width:760px;">
   <div class="visita-banner" id="visitaBanner">
     <span>Você está vendo o perfil de outro Iniciado.</span>
-    <a href="perfil.html" class="btn btn-secondary" style="font-size:var(--text-xs);">← Ver meu perfil</a>
+    <div style="display:flex; gap:var(--space-2);">
+      <a href="#" id="enviarMensagemBtn" class="btn btn-primary" style="font-size:var(--text-xs);">💬 Enviar Mensagem</a>
+      <a href="perfil.html" class="btn btn-secondary" style="font-size:var(--text-xs);">← Ver meu perfil</a>
+    </div>
   </div>
 
   <div class="perfil-header">
@@ -186,6 +191,7 @@ if (session) {
 function ativarModoVisita() {
   document.title = 'Ágora — Perfil de um Iniciado';
   document.getElementById('visitaBanner').style.display = 'flex';
+  document.getElementById('enviarMensagemBtn').href = `mensagens.html?com=${idVisitado}`;
   document.getElementById('onboardingCard').style.display = 'none';
   document.getElementById('bioEditRow').style.display = 'none';
   document.getElementById('bioHint').style.display = 'none';

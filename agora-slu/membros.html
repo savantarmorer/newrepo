@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
+<title>Ágora — Membros</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  .membros-toolbar { display:flex; gap:var(--space-3); margin: var(--space-6) 0; flex-wrap:wrap; align-items:center; }
+  .membros-toolbar input { flex:1; min-width:220px; }
+  .membros-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4); }
+  .membro-card { text-align:center; text-decoration:none; color:inherit; position:relative; }
+  .membro-card:hover { border-color: var(--border-active); text-decoration:none; }
+  .membro-avatar { width:64px; height:64px; border-radius:50%; border:2px solid var(--brand-action); box-shadow:var(--glow-gold); overflow:hidden; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:var(--text-lg); color:var(--brand-action); background:var(--bg-surface-elevated); margin:0 auto var(--space-3); }
+  .membro-avatar img { width:100%; height:100%; object-fit:cover; }
+  .membro-avatar.frame-rara { border-color:#60a5fa; box-shadow:0 0 16px rgba(96,165,250,.4); }
+  .membro-avatar.frame-epica { border-color:#a78bfa; box-shadow:0 0 20px rgba(167,139,250,.5); }
+  .membro-avatar.frame-lendaria { border-color:#facc15; box-shadow:0 0 24px rgba(250,204,21,.55); }
+  .membro-online-dot { position:absolute; top:6px; right:6px; width:12px; height:12px; border-radius:50%; background:#34D399; border:2px solid var(--brand-surface); }
+  .membro-nome { color:#fff; font-weight:600; font-size:var(--text-sm); margin-bottom:2px; }
+  .membro-titulo { font-size:11px; color:var(--color-text-gold); margin-bottom:4px; }
+  .membro-meta { font-size:var(--text-xs); color:var(--color-text-muted); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+    <li class="nav-more">
+      <button type="button" id="navMoreBtn" class="nav-more-btn active">Mais <span class="caret">▾</span></button>
+      <div id="navMoreMenu" class="nav-more-menu">
+        <a href="tarefas.html">Tarefas</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="calendario.html">Calendário</a>
+        <a href="membros.html" class="active">Membros</a>
+        <a href="mensagens.html">Mensagens</a>
+        <a href="atividade.html">Atividade</a>
+      </div>
+    </li>
+  </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<main class="cultus-shell" style="padding-top:var(--space-6); padding-bottom:var(--space-16);">
+  <h1 style="font-size:var(--text-lg);">Membros da Ágora</h1>
+  <p class="text-secondary" style="max-width:640px;">Todo Iniciado com conta na comunidade. <span id="onlineCount"></span></p>
+
+  <div class="membros-toolbar">
+    <input type="text" id="buscaInput" placeholder="Buscar por nome...">
+    <div class="filters" style="margin:0;">
+      <button type="button" class="active" data-ordem="xp">Mais XP</button>
+      <button type="button" data-ordem="online">Online agora</button>
+    </div>
+  </div>
+
+  <div class="membros-grid" id="membrosGrid"><p class="text-muted">Consultando a Egrégora...</p></div>
+</main>
+
+<footer class="cultus-footer">
+  Ágora, por SLU — Sociedade das Luzes Ocultas.
+  <div style="margin-top:8px;"><a href="/privacidade.html">Privacidade</a> · <a href="/termos.html">Termos de Uso</a></div>
+</footer>
+
+<script type="module">
+import { sb, montarNavAuth, montarNavMais, montarNavMobile, calcularGrau, obterOnlineAgora, mensagemAmigavel } from './js/agoraAuth.js';
+
+montarNavMais();
+montarNavMobile();
+montarNavAuth();
+
+const grid = document.getElementById('membrosGrid');
+let membros = [];
+let onlineIds = new Set();
+let ordemAtual = 'xp';
+let buscaAtual = '';
+
+async function carregar() {
+  const [{ data, error }, online] = await Promise.all([
+    sb.from('agora_profiles').select('id, nome_exibicao, avatar_url, xp, streak_atual, titulo:agora_conquistas(nome, icone, raridade)'),
+    obterOnlineAgora(),
+  ]);
+  if (error) { grid.innerHTML = `<p class="text-muted">${mensagemAmigavel(error, 'carregar os membros')}</p>`; return; }
+  membros = data || [];
+  onlineIds = new Set(online.map(o => o.id));
+  document.getElementById('onlineCount').textContent = online.length ? `· ${online.length} online agora` : '';
+  render();
+}
+
+function render() {
+  let lista = membros.filter(m => !buscaAtual || (m.nome_exibicao || '').toLowerCase().includes(buscaAtual));
+  if (ordemAtual === 'xp') lista = [...lista].sort((a, b) => (b.xp || 0) - (a.xp || 0));
+  else lista = [...lista].sort((a, b) => Number(onlineIds.has(b.id)) - Number(onlineIds.has(a.id)) || (b.xp || 0) - (a.xp || 0));
+
+  if (!lista.length) { grid.innerHTML = `<p class="text-muted">Nenhum Iniciado encontrado.</p>`; return; }
+
+  grid.innerHTML = lista.map(m => {
+    const nome = m.nome_exibicao || 'Um Iniciado';
+    const grau = calcularGrau(m.xp || 0);
+    const raridadeTitulo = m.titulo?.raridade;
+    const frame = raridadeTitulo && raridadeTitulo !== 'comum' ? `frame-${raridadeTitulo}` : '';
+    return `
+      <a href="perfil.html?user=${m.id}" class="card membro-card">
+        ${onlineIds.has(m.id) ? '<div class="membro-online-dot" title="Online agora"></div>' : ''}
+        <div class="membro-avatar ${frame}">${m.avatar_url ? `<img src="${m.avatar_url}" alt="">` : nome.charAt(0).toUpperCase()}</div>
+        <div class="membro-nome">${nome}</div>
+        ${m.titulo ? `<div class="membro-titulo">${m.titulo.icone} ${m.titulo.nome}</div>` : ''}
+        <div class="membro-meta">${grau.nome} · ${(m.xp || 0).toLocaleString('pt-BR')} XP</div>
+      </a>`;
+  }).join('');
+}
+
+document.getElementById('buscaInput').addEventListener('input', e => {
+  buscaAtual = e.target.value.trim().toLowerCase();
+  render();
+});
+
+document.querySelector('.filters').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-ordem]');
+  if (!btn) return;
+  document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  ordemAtual = btn.dataset.ordem;
+  render();
+});
+
+await carregar();
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14121A">
+<meta name="robots" content="noindex">
+<title>Ágora — Mensagens</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/cultus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<style>
+  body { padding:0; }
+  .msg-shell { display:grid; grid-template-columns: 280px 1fr; height: calc(100vh - 65px); }
+  @media (max-width: 720px) { .msg-shell { grid-template-columns: 1fr; } .msg-shell.tem-conversa-aberta .conversas-col { display:none; } .msg-shell:not(.tem-conversa-aberta) .thread-col { display:none; } }
+  .conversas-col { border-right:1px solid var(--border-subtle); overflow-y:auto; background:var(--brand-surface); }
+  .conversa-item { display:flex; gap:var(--space-3); align-items:center; padding:var(--space-3) var(--space-4); cursor:pointer; border-bottom:1px solid var(--border-subtle); }
+  .conversa-item:hover, .conversa-item.active { background:var(--bg-surface-elevated); }
+  .conversa-item .av { width:40px; height:40px; border-radius:50%; background:var(--bg-surface-elevated); border:1px solid var(--border-medium); overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); color:var(--brand-action); }
+  .conversa-item .av img { width:100%; height:100%; object-fit:cover; }
+  .conversa-item .info { flex:1; min-width:0; }
+  .conversa-item .nome { font-size:var(--text-sm); font-weight:600; color:#fff; }
+  .conversa-item .preview { font-size:var(--text-xs); color:var(--color-text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .conversa-item .badge-nao-lida { background:var(--brand-alert); color:#fff; font-size:10px; min-width:18px; height:18px; border-radius:999px; display:flex; align-items:center; justify-content:center; padding:0 4px; font-weight:700; flex-shrink:0; }
+  .thread-col { display:flex; flex-direction:column; }
+  .thread-header { padding:var(--space-3) var(--space-4); border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; gap:var(--space-3); }
+  .thread-header a.voltar { display:none; font-size:var(--text-xs); color:var(--color-text-muted); }
+  @media (max-width: 720px) { .thread-header a.voltar { display:inline; } }
+  .thread-body { flex:1; overflow-y:auto; padding:var(--space-6); display:flex; flex-direction:column; gap:var(--space-3); }
+  .bolha { max-width:70%; padding:var(--space-3) var(--space-4); border-radius:var(--radius-md); font-size:var(--text-sm); white-space:pre-wrap; }
+  .bolha.minha { align-self:flex-end; background:var(--brand-action); color:var(--brand-text); }
+  .bolha.dele { align-self:flex-start; background:var(--bg-surface-elevated); }
+  .bolha .quando { display:block; font-size:10px; opacity:.6; margin-top:4px; }
+  .thread-footer { padding:var(--space-4); border-top:1px solid var(--border-subtle); display:flex; gap:var(--space-3); }
+  .thread-footer textarea { flex:1; resize:none; }
+  .thread-empty, .conversas-empty { text-align:center; color:var(--color-text-muted); padding:var(--space-12); font-size:var(--text-sm); }
+</style>
+</head>
+<body>
+
+<nav class="cultus-nav">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 200 200" class="seal-icon"><use href="assets/seals.svg#seal-lux-vael"/></svg>
+    ÁGORA <span style="color:var(--color-text-secondary); font-weight:400; font-size:var(--text-xs);">· SLU</span>
+  </a>
+  <ul>
+    <li><a href="index.html">Início</a></li>
+    <li><a href="perfil.html">Perfil</a></li>
+    <li><a href="discord.html">Discord</a></li>
+    <li><a href="provida.html">Pró-Vida</a></li>
+    <li><a href="dashboard.html">Painel</a></li>
+    <li><a href="codex.html">Códice</a></li>
+    <li><a href="governanca.html">Conselho</a></li>
+    <li><a href="investigacoes.html">Investigações</a></li>
+    <li class="nav-more">
+      <button type="button" id="navMoreBtn" class="nav-more-btn active">Mais <span class="caret">▾</span></button>
+      <div id="navMoreMenu" class="nav-more-menu">
+        <a href="tarefas.html">Tarefas</a>
+        <a href="eventos.html">Eventos</a>
+        <a href="calendario.html">Calendário</a>
+        <a href="membros.html">Membros</a>
+        <a href="mensagens.html" class="active">Mensagens</a>
+        <a href="atividade.html">Atividade</a>
+      </div>
+    </li>
+  </ul>
+  <button type="button" id="navMobileToggle" class="nav-mobile-toggle" aria-label="Menu">☰</button>
+  <span id="navAuthSlot"></span>
+</nav>
+
+<div class="msg-shell" id="msgShell">
+  <div class="conversas-col" id="conversasCol"><div class="conversas-empty">Carregando conversas...</div></div>
+  <div class="thread-col">
+    <div class="thread-header" id="threadHeader" style="display:none;">
+      <a href="#" class="voltar" id="voltarBtn">← Conversas</a>
+      <div class="av" id="threadAvatar" style="width:36px;height:36px;"></div>
+      <a id="threadNome" style="color:#fff; font-weight:600; text-decoration:none;"></a>
+    </div>
+    <div class="thread-body" id="threadBody"><div class="thread-empty">Escolha uma conversa ao lado, ou visite o perfil de alguém e clique em "Enviar Mensagem".</div></div>
+    <div class="thread-footer" id="threadFooter" style="display:none;">
+      <textarea id="msgInput" rows="1" maxlength="2000" placeholder="Escreva uma mensagem..."></textarea>
+      <button class="btn btn-primary" id="msgSendBtn">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { requireAuth, montarNavAuth, montarNavMais, montarNavMobile, obterConversas, obterMensagens, enviarMensagem,
+         marcarMensagensLidas, obterPerfilPublico, mensagemAmigavel } from './js/agoraAuth.js';
+
+montarNavMais();
+montarNavMobile();
+montarNavAuth();
+
+const session = await requireAuth('login.html');
+if (session) {
+const meuId = session.user.id;
+
+let conversas = [];
+let outroAtual = null;
+let outroAtualNome = 'Iniciado';
+let pollTimer = null;
+
+async function carregarConversas() {
+  conversas = await obterConversas(meuId);
+  renderConversas();
+}
+
+function renderConversas() {
+  const el = document.getElementById('conversasCol');
+  if (!conversas.length) { el.innerHTML = `<div class="conversas-empty">Nenhuma conversa ainda.</div>`; return; }
+  el.innerHTML = conversas.map(c => `
+    <div class="conversa-item ${c.outro_id === outroAtual ? 'active' : ''}" data-id="${c.outro_id}" data-nome="${escapeHtml(c.nome_exibicao || 'Iniciado')}">
+      <div class="av">${c.avatar_url ? `<img src="${c.avatar_url}" alt="">` : (c.nome_exibicao || 'I').charAt(0).toUpperCase()}</div>
+      <div class="info">
+        <div class="nome">${escapeHtml(c.nome_exibicao || 'Um Iniciado')}</div>
+        <div class="preview">${escapeHtml(c.ultima_mensagem)}</div>
+      </div>
+      ${c.nao_lidas > 0 ? `<div class="badge-nao-lida">${c.nao_lidas > 9 ? '9+' : c.nao_lidas}</div>` : ''}
+    </div>
+  `).join('');
+  el.querySelectorAll('.conversa-item').forEach(item => {
+    item.addEventListener('click', () => abrirConversa(item.dataset.id, item.dataset.nome));
+  });
+}
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+async function abrirConversa(outroId, nomeConhecido) {
+  outroAtual = outroId;
+  outroAtualNome = nomeConhecido || 'Iniciado';
+  document.getElementById('msgShell').classList.add('tem-conversa-aberta');
+  document.getElementById('threadHeader').style.display = 'flex';
+  document.getElementById('threadFooter').style.display = 'flex';
+  document.getElementById('threadNome').textContent = outroAtualNome;
+  document.getElementById('threadNome').href = `perfil.html?user=${outroId}`;
+
+  const perfil = await obterPerfilPublico(outroId);
+  if (perfil) {
+    outroAtualNome = perfil.nome_exibicao || outroAtualNome;
+    document.getElementById('threadNome').textContent = outroAtualNome;
+    document.getElementById('threadAvatar').innerHTML = perfil.avatar_url ? `<img src="${perfil.avatar_url}" alt="">` : outroAtualNome.charAt(0).toUpperCase();
+  }
+
+  await carregarThread();
+  await marcarMensagensLidas(meuId, outroId);
+  await carregarConversas();
+}
+
+async function carregarThread() {
+  if (!outroAtual) return;
+  const mensagens = await obterMensagens(meuId, outroAtual);
+  const el = document.getElementById('threadBody');
+  if (!mensagens.length) {
+    el.innerHTML = `<div class="thread-empty">Nenhuma mensagem ainda — diga oi.</div>`;
+    return;
+  }
+  el.innerHTML = mensagens.map(m => `
+    <div class="bolha ${m.remetente_id === meuId ? 'minha' : 'dele'}">
+      ${escapeHtml(m.texto)}
+      <span class="quando">${new Date(m.created_at).toLocaleString('pt-BR')}</span>
+    </div>
+  `).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+document.getElementById('voltarBtn').addEventListener('click', e => {
+  e.preventDefault();
+  document.getElementById('msgShell').classList.remove('tem-conversa-aberta');
+});
+
+document.getElementById('msgSendBtn').addEventListener('click', enviar);
+document.getElementById('msgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); enviar(); }
+});
+
+async function enviar() {
+  const input = document.getElementById('msgInput');
+  const texto = input.value.trim();
+  if (!texto || !outroAtual) return;
+  const btn = document.getElementById('msgSendBtn');
+  btn.disabled = true;
+  try {
+    const result = await enviarMensagem(meuId, outroAtual, texto);
+    if (!result.ok) { alert(result.mensagem); return; }
+    input.value = '';
+    await carregarThread();
+    await carregarConversas();
+  } catch (e) {
+    alert(mensagemAmigavel(e, 'enviar a mensagem'));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+await carregarConversas();
+
+// Chegou via link de notificação ou do botão "Enviar Mensagem" do perfil.
+const comId = new URLSearchParams(location.search).get('com');
+if (comId && comId !== meuId) {
+  const existente = conversas.find(c => c.outro_id === comId);
+  await abrirConversa(comId, existente?.nome_exibicao);
+}
+
+// Sem realtime neste site (multi-página, sem conexão persistente) —
+// um refresh leve enquanto a página de mensagens fica aberta já resolve.
+pollTimer = setInterval(async () => {
+  await carregarConversas();
+  if (outroAtual) await carregarThread();
+}, 8000);
+window.addEventListener('beforeunload', () => clearInterval(pollTimer));
+}
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>

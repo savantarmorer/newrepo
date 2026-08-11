@@ -52,6 +52,12 @@
   .feed-item .quem { color:var(--color-text-gold); font-weight:600; }
   .feed-item .xp { color:#34D399; font-size:var(--text-xs); white-space:nowrap; }
   .feed-item .quando { display:block; color:var(--color-text-muted); font-size:var(--text-xs); margin-top:2px; }
+  .online-strip { display:flex; gap:var(--space-3); overflow-x:auto; padding-bottom:4px; }
+  .online-membro { text-align:center; text-decoration:none; color:inherit; flex-shrink:0; width:64px; }
+  .online-membro .av { position:relative; width:48px; height:48px; border-radius:50%; background:var(--bg-surface-elevated); border:1px solid var(--border-medium); overflow:hidden; margin:0 auto 4px; display:flex; align-items:center; justify-content:center; font-family:var(--font-display); color:var(--brand-action); }
+  .online-membro .av img { width:100%; height:100%; object-fit:cover; }
+  .online-membro .dot { position:absolute; bottom:0; right:0; width:11px; height:11px; border-radius:50%; background:#34D399; border:2px solid var(--brand-surface); }
+  .online-membro .nome { font-size:10px; color:var(--color-text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style>
 </head>
 <body>
@@ -76,6 +82,8 @@
         <a href="tarefas.html">Tarefas</a>
         <a href="eventos.html">Eventos</a>
         <a href="calendario.html">Calendário</a>
+        <a href="membros.html">Membros</a>
+        <a href="mensagens.html">Mensagens</a>
         <a href="atividade.html">Atividade</a>
       </div>
     </li>
@@ -115,6 +123,11 @@
     <div class="sub">Um braço de ensino da Ágora aguarda quem estiver pronto para questionar. Sem hierarquias. Sem líderes. Apenas o primeiro passo.</div>
   </a>
 
+  <div class="card" id="onlineCard" style="margin-bottom:var(--space-6); display:none;">
+    <h3 style="font-size:var(--text-md);">🟢 Online Agora</h3>
+    <div class="online-strip" id="onlineStrip"></div>
+  </div>
+
   <div class="grid grid-2">
     <div class="card">
       <h3 style="font-size:var(--text-md);">Selos Desbloqueados</h3>
@@ -150,7 +163,7 @@
 <script type="module">
 import { sb, GRAUS, calcularGrau, proximoGrau, requireAuth, getProfile,
          registrarLoginDiario, signOut, montarNavAuth, montarNavMais, montarNavMobile, concluirMissao, obterAtividadeRecente,
-         verificarConquistas, mostrarConquistasDesbloqueadas } from './js/agoraAuth.js';
+         verificarConquistas, mostrarConquistasDesbloqueadas, obterOnlineAgora } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -211,9 +224,25 @@ async function render(userId) {
   await renderMissions(userId);
   await renderFeed();
   await renderHall();
+  await renderOnline();
 
   const resultado = await verificarConquistas(userId);
   mostrarConquistasDesbloqueadas(resultado.novas);
+}
+
+async function renderOnline() {
+  const online = await obterOnlineAgora();
+  const card = document.getElementById('onlineCard');
+  if (!online.length) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+  document.getElementById('onlineStrip').innerHTML = online.map(o => {
+    const nome = o.nome_exibicao || 'Iniciado';
+    return `
+      <a href="perfil.html?user=${o.id}" class="online-membro">
+        <div class="av">${o.avatar_url ? `<img src="${o.avatar_url}" alt="">` : nome.charAt(0).toUpperCase()}<span class="dot"></span></div>
+        <div class="nome">${nome}</div>
+      </a>`;
+  }).join('');
 }
 
 async function renderFeed() {

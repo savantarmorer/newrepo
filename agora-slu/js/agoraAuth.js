@@ -217,11 +217,43 @@ export async function listarNotasInvestigacao(investigacaoId) {
   return data || [];
 }
 
-export async function registrarNotaInvestigacao(userId, investigacaoId, autorNome, nota) {
+export async function registrarNotaInvestigacao(userId, investigacaoId, autorNome, nota, respostaA = null) {
   const { error } = await sb.from('agora_investigacao_notas').insert({
-    investigacao_id: investigacaoId, user_id: userId, autor_nome: autorNome, nota,
+    investigacao_id: investigacaoId, user_id: userId, autor_nome: autorNome, nota, resposta_a: respostaA,
   });
   if (error) throw new Error(error.message);
+}
+
+// ── Reações em notas de investigação (toggle: reagir de novo remove) ───
+export async function reagirNota(userId, notaId, emoji) {
+  const { data: existente } = await sb.from('agora_investigacao_nota_reacoes')
+    .select('id').eq('nota_id', notaId).eq('user_id', userId).eq('emoji', emoji).maybeSingle();
+  if (existente) {
+    const { error } = await sb.from('agora_investigacao_nota_reacoes').delete().eq('id', existente.id);
+    if (error) throw new Error(error.message);
+    return { adicionou: false };
+  }
+  const { error } = await sb.from('agora_investigacao_nota_reacoes').insert({ nota_id: notaId, user_id: userId, emoji });
+  if (error) throw new Error(error.message);
+  return { adicionou: true };
+}
+
+// Devolve um mapa notaId -> [{ emoji, total, minha }] pra um conjunto de notas.
+export async function listarReacoesNotas(notaIds, userId) {
+  if (!notaIds.length) return {};
+  const { data, error } = await sb.from('agora_investigacao_nota_reacoes')
+    .select('nota_id, user_id, emoji').in('nota_id', notaIds);
+  if (error) { console.warn('listarReacoesNotas:', error.message); return {}; }
+  const mapa = {};
+  (data || []).forEach(r => {
+    mapa[r.nota_id] = mapa[r.nota_id] || {};
+    mapa[r.nota_id][r.emoji] = mapa[r.nota_id][r.emoji] || { emoji: r.emoji, total: 0, minha: false };
+    mapa[r.nota_id][r.emoji].total++;
+    if (r.user_id === userId) mapa[r.nota_id][r.emoji].minha = true;
+  });
+  const resultado = {};
+  Object.entries(mapa).forEach(([notaId, porEmoji]) => { resultado[notaId] = Object.values(porEmoji); });
+  return resultado;
 }
 
 // Admin: muda o status de uma investigação (em_analise/decifrado/confirmado)
@@ -396,6 +428,41 @@ export async function sincronizarPerfilPublico(userId, nomeExibicao, avatarUrl) 
     .eq('id', userId).then(({ error }) => { if (error) console.warn('sincronizarPerfilPublico:', error.message); });
 }
 
+// ── Presença "online agora" ─────────────────────────────────────────────
+export function registrarPresenca(userId) {
+  sb.rpc('registrar_presenca', { uid: userId }).then(({ error }) => { if (error) console.warn('registrar_presenca:', error.message); });
+}
+
+export async function obterOnlineAgora() {
+  const { data, error } = await sb.rpc('obter_online_agora');
+  if (error) { console.warn('obter_online_agora:', error.message); return []; }
+  return data || [];
+}
+
+// ── Mensagens diretas ────────────────────────────────────────────────
+export async function enviarMensagem(remetenteId, destinatarioId, texto) {
+  const { data, error } = await sb.rpc('enviar_mensagem', { remetente: remetenteId, p_destinatario_id: destinatarioId, p_texto: texto });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function obterConversas(userId) {
+  const { data, error } = await sb.rpc('obter_conversas', { uid: userId });
+  if (error) { console.warn('obter_conversas:', error.message); return []; }
+  return data || [];
+}
+
+export async function obterMensagens(userId, outroId) {
+  const { data, error } = await sb.rpc('obter_mensagens', { uid: userId, outro_id: outroId });
+  if (error) { console.warn('obter_mensagens:', error.message); return []; }
+  return data || [];
+}
+
+export async function marcarMensagensLidas(userId, outroId) {
+  const { error } = await sb.rpc('marcar_mensagens_lidas', { uid: userId, outro_id: outroId });
+  if (error) console.warn('marcar_mensagens_lidas:', error.message);
+}
+
 export async function obterPerfilPublico(userId) {
   const { data, error } = await sb.from('agora_profiles')
     .select('*, titulo:agora_conquistas(id, nome, icone, raridade)')
@@ -511,6 +578,7 @@ export async function montarNavAuth() {
   const grau = calcularGrau(profile?.xp || 0);
   const nomeExibicao = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
   sincronizarPerfilPublico(session.user.id, nomeExibicao, session.user.user_metadata?.avatar_url);
+  registrarPresenca(session.user.id);
 
   const notificacoes = await obterNotificacoes(session.user.id);
   const ultimaVista = obterUltimaVisualizacaoNotificacoes(session.user.id);

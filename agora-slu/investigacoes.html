@@ -31,6 +31,16 @@
   .status-confirmado { color:var(--color-text-gold); }
   .note { border-top:1px solid var(--border-subtle); padding-top:var(--space-3); margin-top:var(--space-3); font-size:var(--text-sm); }
   .note .who { color:var(--color-text-gold); font-size:var(--text-xs); font-weight:700; }
+  .note .who a { color:inherit; }
+  .note-actions { display:flex; align-items:center; gap:6px; margin-top:var(--space-2); flex-wrap:wrap; }
+  .reacao-chip { display:inline-flex; align-items:center; gap:3px; font-size:11px; border:1px solid var(--border-subtle); border-radius:var(--radius-full); padding:2px 8px; background:transparent; color:var(--color-text-secondary); cursor:pointer; }
+  .reacao-chip:hover { border-color:var(--border-active); }
+  .reacao-chip.minha { border-color:var(--border-active); background:rgba(212,175,55,.12); color:var(--color-text-gold); }
+  .reacao-add-btn { font-size:11px; color:var(--color-text-muted); background:none; border:none; cursor:pointer; padding:2px 6px; }
+  .reacao-picker { display:none; gap:2px; }
+  .reacao-picker.open { display:inline-flex; }
+  .responder-btn { font-size:11px; color:var(--color-text-muted); background:none; border:none; cursor:pointer; padding:2px 6px; text-decoration:underline; }
+  .note-reply { margin-left:var(--space-6); border-left:2px solid var(--border-subtle); padding-left:var(--space-3); }
   .item-detalhe { background:var(--bg-surface-elevated); border-radius:var(--radius-sm); padding:var(--space-4); margin-bottom:var(--space-4); }
   .item-detalhe .campo { margin-bottom:var(--space-2); }
   .item-detalhe .campo:last-child { margin-bottom:0; }
@@ -67,6 +77,8 @@
         <a href="tarefas.html">Tarefas</a>
         <a href="eventos.html">Eventos</a>
         <a href="calendario.html">Calendário</a>
+        <a href="membros.html">Membros</a>
+        <a href="mensagens.html">Mensagens</a>
         <a href="atividade.html">Atividade</a>
       </div>
     </li>
@@ -97,7 +109,10 @@
     <h3 style="font-size:var(--text-md);" id="modalTitle">Inspecionar Item</h3>
     <div id="modalDetalhe" class="item-detalhe"></div>
     <div id="modalNotesTitulo">Diário de Bordo</div>
-    <div id="modalNotes" style="margin:var(--space-2) 0 var(--space-4); max-height:200px; overflow-y:auto;"></div>
+    <div id="modalNotes" style="margin:var(--space-2) 0 var(--space-4); max-height:280px; overflow-y:auto;"></div>
+    <div id="respondendoRow" style="display:none; font-size:var(--text-xs); color:var(--color-text-gold); margin-bottom:var(--space-2);">
+      Respondendo a <span id="respondendoNome"></span> — <button type="button" id="cancelarRespostaBtn" style="background:none; border:none; color:var(--color-text-muted); text-decoration:underline; cursor:pointer; font-size:inherit; padding:0;">cancelar</button>
+    </div>
     <textarea id="notaInput" placeholder="Registre sua análise deste item..." rows="3"></textarea>
     <div style="display:flex; gap:var(--space-3); margin-top:var(--space-4);">
       <button class="btn btn-primary" id="saveNoteBtn" style="flex:1;">Registrar no Diário de Bordo</button>
@@ -137,7 +152,7 @@
 <script type="module">
 import { sb, getSession, getProfile, montarNavAuth, montarNavMais, montarNavMobile, adicionarInvestigacao, listarNotasInvestigacao,
          registrarNotaInvestigacao, atualizarStatusInvestigacao, verificarConquistas, mostrarConquistasDesbloqueadas,
-         obterPerfilPublico, mensagemAmigavel } from './js/agoraAuth.js';
+         obterPerfilPublico, reagirNota, listarReacoesNotas, mensagemAmigavel } from './js/agoraAuth.js';
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -229,6 +244,46 @@ async function renderDetalhe(item) {
   `;
 }
 
+const REACOES_RAPIDAS = ['👍', '🔍', '❓', '💡'];
+let respostaAtual = null;
+
+function construirArvoreNotas(notas) {
+  const porId = new Map(notas.map(n => [n.id, n]));
+  const raizes = [];
+  const respostasPorPai = new Map();
+  notas.forEach(n => {
+    if (n.resposta_a && porId.has(n.resposta_a)) {
+      if (!respostasPorPai.has(n.resposta_a)) respostasPorPai.set(n.resposta_a, []);
+      respostasPorPai.get(n.resposta_a).push(n);
+    } else {
+      raizes.push(n);
+    }
+  });
+  respostasPorPai.forEach(lista => lista.sort((a, b) => new Date(a.created_at) - new Date(b.created_at)));
+  return { raizes, respostasPorPai };
+}
+
+function renderReacoes(notaId, reacoesPorNota) {
+  const existentes = reacoesPorNota[notaId] || [];
+  const chips = existentes.map(r => `<button type="button" class="reacao-chip ${r.minha ? 'minha' : ''}" data-nota-id="${notaId}" data-emoji="${r.emoji}">${r.emoji} ${r.total}</button>`).join('');
+  const jaTem = new Set(existentes.map(r => r.emoji));
+  const rapidos = REACOES_RAPIDAS.filter(e => !jaTem.has(e))
+    .map(e => `<button type="button" class="reacao-chip" data-nota-id="${notaId}" data-emoji="${e}" style="opacity:.5;">${e}</button>`).join('');
+  return chips + rapidos;
+}
+
+function renderNota(n, reacoesPorNota, ehRaiz) {
+  return `
+    <div class="note ${ehRaiz ? '' : 'note-reply'}" data-id="${n.id}">
+      <div class="who"><a href="perfil.html?user=${n.user_id}">${escapeHtml(n.autor_nome) || 'Investigador'}</a> · ${new Date(n.created_at).toLocaleDateString('pt-BR')}</div>
+      <div class="text-secondary">${escapeHtml(n.nota)}</div>
+      <div class="note-actions">
+        ${renderReacoes(n.id, reacoesPorNota)}
+        ${ehRaiz ? `<button type="button" class="responder-btn" data-nota-id="${n.id}" data-nome="${escapeHtml(n.autor_nome || 'Investigador')}">Responder</button>` : ''}
+      </div>
+    </div>`;
+}
+
 async function carregarNotas() {
   const notas = await listarNotasInvestigacao(itemAtual);
   const el = document.getElementById('modalNotes');
@@ -236,17 +291,47 @@ async function carregarNotas() {
     el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma análise registrada ainda. Seja o primeiro investigador.</p>`;
     return;
   }
-  el.innerHTML = notas.map(n => `
-    <div class="note">
-      <div class="who">${escapeHtml(n.autor_nome) || 'Investigador'} · ${new Date(n.created_at).toLocaleDateString('pt-BR')}</div>
-      <div class="text-secondary">${escapeHtml(n.nota)}</div>
-    </div>
-  `).join('');
+  const reacoesPorNota = await listarReacoesNotas(notas.map(n => n.id), session?.user?.id);
+  const { raizes, respostasPorPai } = construirArvoreNotas(notas);
+  el.innerHTML = raizes.map(n => {
+    const respostas = (respostasPorPai.get(n.id) || []).map(r => renderNota(r, reacoesPorNota, false)).join('');
+    return renderNota(n, reacoesPorNota, true) + respostas;
+  }).join('');
+
+  el.querySelectorAll('.reacao-chip').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!session) { window.location.href = 'login.html?next=investigacoes.html'; return; }
+      btn.disabled = true;
+      try {
+        await reagirNota(session.user.id, btn.dataset.notaId, btn.dataset.emoji);
+        await carregarNotas();
+      } catch (e) {
+        alert(mensagemAmigavel(e, 'reagir'));
+        btn.disabled = false;
+      }
+    });
+  });
+
+  el.querySelectorAll('.responder-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      respostaAtual = btn.dataset.notaId;
+      document.getElementById('respondendoNome').textContent = btn.dataset.nome;
+      document.getElementById('respondendoRow').style.display = 'block';
+      document.getElementById('notaInput').focus();
+    });
+  });
 }
+
+document.getElementById('cancelarRespostaBtn').addEventListener('click', () => {
+  respostaAtual = null;
+  document.getElementById('respondendoRow').style.display = 'none';
+});
 
 document.getElementById('closeModalBtn').addEventListener('click', () => {
   document.getElementById('modalBg').style.display = 'none';
   document.getElementById('notaInput').value = '';
+  respostaAtual = null;
+  document.getElementById('respondendoRow').style.display = 'none';
 });
 
 document.getElementById('saveNoteBtn').addEventListener('click', async () => {
@@ -257,8 +342,10 @@ document.getElementById('saveNoteBtn').addEventListener('click', async () => {
   btn.disabled = true;
   const autorNome = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
   try {
-    await registrarNotaInvestigacao(session.user.id, itemAtual, autorNome, texto);
+    await registrarNotaInvestigacao(session.user.id, itemAtual, autorNome, texto, respostaAtual);
     document.getElementById('notaInput').value = '';
+    respostaAtual = null;
+    document.getElementById('respondendoRow').style.display = 'none';
     await carregarNotas();
     const conquistas = await verificarConquistas(session.user.id);
     mostrarConquistasDesbloqueadas(conquistas.novas);
