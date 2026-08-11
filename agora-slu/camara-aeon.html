@@ -123,10 +123,29 @@ function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
 
+// Declarados antes de qualquer await pra não ficar em temporal dead zone
+// caso o carregamento de dados abaixo rejeite — senão até os cliques nas
+// abas param de responder (o script inteiro para no primeiro erro).
+let meuNivel = 1;
+let membrosMuroCache = [];
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+// ── Tabs (registrado cedo, independente do carregamento de dados) ─────
+document.querySelectorAll('.aeon-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aeon-tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.aeon-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`painel-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
 // Sem cultus-nav aqui de propósito — a Câmara não usa o chrome do resto
 // do site. "Painel" no topo já leva de volta ao resto da Ágora.
 const session = await requireAuth('login.html');
-let meuNivel = 1;
 
 if (session) {
   const autorizado = await souIniciadoAeon();
@@ -157,23 +176,7 @@ function renderNivelStrip(m) {
   document.getElementById('seloWrap').innerHTML = renderSeloAeonSvg(m?.selo_estagio || 0, true);
 }
 
-// ── Tabs ─────────────────────────────────────────────────────────────
-document.querySelectorAll('.aeon-tabs button').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.aeon-tabs button').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.aeon-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(`painel-${btn.dataset.tab}`).classList.add('active');
-  });
-});
-
 // ── O Muro: alvenaria real — mais velhos na base, novos aceitos no topo ─
-let membrosMuroCache = [];
-function debounce(fn, ms) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
-}
-
 async function renderMuro() {
   membrosMuroCache = await listarMuroAeon();
   desenharMuro();

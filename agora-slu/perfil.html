@@ -108,7 +108,7 @@
     <div class="card mini-stat"><div class="v" id="grauValue">0</div><div class="l">Grau</div></div>
   </div>
 
-  <a href="novo-aeon.html" class="aeon-shimmer-btn" style="margin-bottom:var(--space-6);">
+  <a href="novo-aeon.html" class="aeon-shimmer-btn" id="aeonPortalLink" style="margin-bottom:var(--space-6);">
     <svg class="seal-spin" viewBox="0 0 200 200"><use href="assets/seals.svg#seal-chronos-phanes"/></svg>
     <span class="titulo">Entrar no Novo Æon</span>
     <span class="sub">Um braço de ensino da Ágora aguarda quem estiver pronto para questionar. Sem hierarquias. Sem líderes. Apenas o primeiro passo.</span>
@@ -168,7 +168,7 @@
 <script type="module">
 import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile,
          verificarConquistas, definirTituloPerfil, listarConquistasComStatus, mostrarConquistasDesbloqueadas, atualizarBio,
-         obterPerfilPublico, maiorRaridadeDesbloqueada, mensagemAmigavel } from './js/agoraAuth.js';
+         obterPerfilPublico, maiorRaridadeDesbloqueada, souIniciadoAeon, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -280,6 +280,20 @@ async function render(session) {
   renderGridConquistas(conquistas, profile?.titulo_ativo_id || null, true, user.id);
   atualizarTituloBadge(conquistas.find(c => c.id === profile?.titulo_ativo_id));
   aplicarMolduraAvatar(conquistas);
+
+  const souIniciado = await souIniciadoAeon();
+  aplicarPortalAeon(souIniciado);
+}
+
+// Quem já foi aceito no Æon não precisa mais passar pelo convite em
+// novo-aeon.html — o cartão vira um portal direto pra Câmara.
+function aplicarPortalAeon(aceito) {
+  if (!aceito) return;
+  const el = document.getElementById('aeonPortalLink');
+  if (!el) return;
+  el.href = 'camara-aeon.html';
+  el.className = 'aeon-portal-btn';
+  el.innerHTML = '<span class="titulo">Æon</span>';
 }
 
 function renderGridConquistas(conquistas, tituloAtivoId, selecionavel, uid) {
