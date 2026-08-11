@@ -128,7 +128,7 @@
 
 <script type="module">
 import { sb, getSession, getProfile, montarNavAuth, montarNavMais, montarNavMobile, adicionarInvestigacao, listarNotasInvestigacao,
-         registrarNotaInvestigacao, atualizarStatusInvestigacao, mensagemAmigavel } from './js/agoraAuth.js';
+         registrarNotaInvestigacao, atualizarStatusInvestigacao, verificarConquistas, mostrarConquistasDesbloqueadas, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -224,6 +224,8 @@ document.getElementById('saveNoteBtn').addEventListener('click', async () => {
     await registrarNotaInvestigacao(session.user.id, itemAtual, autorNome, texto);
     document.getElementById('notaInput').value = '';
     await carregarNotas();
+    const conquistas = await verificarConquistas(session.user.id);
+    mostrarConquistasDesbloqueadas(conquistas.novas);
   } catch (e) {
     alert(mensagemAmigavel(e, 'registrar a análise'));
   } finally {

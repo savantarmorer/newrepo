@@ -196,6 +196,19 @@ const DATASETS = [
     ],
   },
   {
+    key: 'conquistas', table: 'agora_conquistas', label: 'Conquistas', order: 'raridade',
+    columns: [
+      { key: 'nome', label: 'Nome', type: 'text', required: true },
+      { key: 'descricao', label: 'Descrição', type: 'textarea', wide: true },
+      { key: 'icone', label: 'Ícone (emoji)', type: 'text', default: '🏅' },
+      { key: 'raridade', label: 'Raridade', type: 'select', options: ['comum','rara','epica','lendaria'] },
+      { key: 'criterio_tipo', label: 'Critério', type: 'select', options: ['ficha_provida_count','investigacao_nota_count','voto_decreto_count','tarefa_concluida_count','codex_nota_count','streak_atual','streak_recorde','aeon_pedido','modulo_atribuido','grau_atual'] },
+      { key: 'criterio_valor', label: 'Valor necessário', type: 'number', default: 1 },
+      { key: 'xp_bonus', label: 'XP Bônus (deixe 0 pra cosmético puro)', type: 'number', default: 0 },
+      { key: 'ativo', label: 'Ativa', type: 'boolean', default: true },
+    ],
+  },
+  {
     key: 'modulos', table: 'agora_provida_modulos', label: 'Módulos Pró-Vida', order: 'nome',
     columns: [
       { key: 'nome', label: 'Nome', type: 'text', required: true },

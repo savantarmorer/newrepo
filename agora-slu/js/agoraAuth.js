@@ -337,6 +337,68 @@ export async function obterMeuPedidoAeon(userId) {
   return data || null;
 }
 
+// ── Conquistas (badges cosméticos — nunca por autodeclaração) ──────────
+// Idempotente: só desbloqueia o que o critério real já cumpre. Chame
+// depois de ações relevantes (enviar ficha, votar, concluir tarefa) ou
+// no load de perfil.html/dashboard.html pra pegar as baseadas em streak.
+export async function verificarConquistas(userId) {
+  const { data, error } = await sb.rpc('verificar_conquistas', { uid: userId });
+  if (error) { console.warn('verificar_conquistas:', error.message); return { ok: false, novas: [] }; }
+  return data;
+}
+
+export async function definirTituloPerfil(userId, conquistaId) {
+  const { data, error } = await sb.rpc('definir_titulo_perfil', { uid: userId, p_conquista_id: conquistaId });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Catálogo completo + quais o usuário já desbloqueou (pra montar a
+// grade de badges no perfil, bloqueados e desbloqueados lado a lado).
+export async function listarConquistasComStatus(userId) {
+  const [{ data: todas }, { data: minhas }] = await Promise.all([
+    sb.from('agora_conquistas').select('*').order('raridade'),
+    sb.from('agora_conquistas_desbloqueadas').select('conquista_id, desbloqueada_em').eq('user_id', userId),
+  ]);
+  const desbloqueadasPorId = new Map((minhas || []).map(m => [m.conquista_id, m.desbloqueada_em]));
+  return (todas || []).map(c => ({ ...c, desbloqueada_em: desbloqueadasPorId.get(c.id) || null }));
+}
+
+export async function atualizarBio(userId, bio) {
+  const { error } = await sb.from('agora_profiles').update({ bio: bio.slice(0, 280) }).eq('id', userId);
+  if (error) throw new Error(error.message);
+}
+
+// Toast de "drop" — some sozinho depois de alguns segundos. Cria o
+// próprio container na primeira chamada, então não exige markup extra
+// em cada página; basta chamar depois de verificarConquistas().
+export function mostrarConquistasDesbloqueadas(novas) {
+  if (!novas || !novas.length) return;
+  let wrap = document.getElementById('conquistaToastWrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'conquistaToastWrap';
+    wrap.className = 'conquista-toast-wrap';
+    document.body.appendChild(wrap);
+  }
+  novas.forEach((c, i) => {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = `conquista-toast raridade-${c.raridade}`;
+      el.innerHTML = `
+        <div class="ic">${c.icone}</div>
+        <div class="txt">
+          <div class="tag">Conquista Desbloqueada</div>
+          <div class="nome">${c.nome}</div>
+          <div class="desc">${c.descricao || ''}</div>
+        </div>`;
+      wrap.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); }, 6000);
+    }, i * 900);
+  });
+}
+
 // ── Missões ──────────────────────────────────────────────────────────
 export async function concluirMissao(userId, missionId) {
   const { data, error } = await sb.rpc('concluir_missao', { uid: userId, p_mission_id: missionId });

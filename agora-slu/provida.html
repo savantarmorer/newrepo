@@ -368,7 +368,7 @@
 
 <script type="module">
 import { sb, getSession, montarNavAuth, montarNavMais, montarNavMobile, enviarFichaProvida, listarFichasProvida,
-         atribuirModuloProvida, listarAtribuicoesProvida, mensagemAmigavel } from './js/agoraAuth.js';
+         atribuirModuloProvida, listarAtribuicoesProvida, verificarConquistas, mostrarConquistasDesbloqueadas, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -734,6 +734,8 @@ document.getElementById('fichaForm').addEventListener('submit', async e => {
     const result = await enviarFichaProvida(session.user.id, ficha);
     if (!result.ok) { status.textContent = result.mensagem; return; }
     status.textContent = `Ficha registrada! +${result.xp_ganho} XP. Confira seu Painel.`;
+    const conquistas = await verificarConquistas(session.user.id);
+    mostrarConquistasDesbloqueadas(conquistas.novas);
     limparRascunho();
     document.getElementById('fichaForm').reset();
     document.getElementById('afirmacoesList').innerHTML = '';

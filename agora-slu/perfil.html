@@ -41,6 +41,8 @@
   .onboard-item.done .txt { color:var(--color-text-muted); text-decoration:line-through; }
   .onboard-item .txt strong { display:block; color:#fff; font-weight:600; }
   .onboard-item.done .txt strong { color:var(--color-text-muted); font-weight:400; text-decoration:line-through; }
+  .bio-row { display:flex; gap:var(--space-3); align-items:flex-start; flex-wrap:wrap; }
+  .bio-row .perfil-bio { flex:1; min-width:220px; }
 </style>
 </head>
 <body>
@@ -79,6 +81,7 @@
     <div>
       <h1 style="font-size:var(--text-lg); margin-bottom:2px;" id="nomeExibicao">Iniciado</h1>
       <span class="badge" id="grauBadge">Neófito</span>
+      <div id="tituloAtivoBadge" class="titulo-ativo-badge" style="display:none;"></div>
       <div id="providerChips" style="margin-top:var(--space-2);"></div>
     </div>
   </div>
@@ -100,6 +103,25 @@
     <span class="sub">Um braço de ensino da Ágora aguarda quem estiver pronto para questionar. Sem hierarquias. Sem líderes. Apenas o primeiro passo.</span>
     <span class="cta">Atravessar a Soleira →</span>
   </a>
+
+  <div class="card" style="margin-bottom:var(--space-6);">
+    <h3 style="font-size:var(--text-md);">Sobre Você</h3>
+    <p class="text-muted" style="font-size:var(--text-xs); margin-bottom:var(--space-3);">Uma bio curta, visível pra outros Iniciados que virem seu perfil.</p>
+    <div class="bio-row">
+      <textarea class="perfil-bio" id="bioInput" maxlength="280" rows="2" placeholder="Fale um pouco sobre você..."></textarea>
+      <button class="btn btn-secondary" id="bioSaveBtn" style="font-size:var(--text-xs);">Salvar</button>
+    </div>
+    <p class="text-muted" id="bioStatus" style="font-size:var(--text-xs); margin-top:var(--space-2); min-height:16px;"></p>
+  </div>
+
+  <div class="card" style="margin-bottom:var(--space-6);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:var(--space-2);">
+      <h3 style="font-size:var(--text-md); margin:0;">Conquistas</h3>
+      <span class="text-muted" style="font-size:var(--text-xs);" id="conquistasProgresso"></span>
+    </div>
+    <p class="text-muted" style="font-size:var(--text-xs); margin:var(--space-2) 0 var(--space-4);">Desbloqueiam sozinhas quando você cumpre o critério de verdade — clique numa desbloqueada pra usá-la como seu título.</p>
+    <div class="conquista-grid" id="conquistaGrid"></div>
+  </div>
 
   <div class="card" style="margin-bottom:var(--space-6);">
     <h3 style="font-size:var(--text-md);">Dados da Conta</h3>
@@ -132,7 +154,8 @@
 </footer>
 
 <script type="module">
-import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile,
+         verificarConquistas, definirTituloPerfil, listarConquistasComStatus, mostrarConquistasDesbloqueadas, atualizarBio, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -163,6 +186,7 @@ async function render(session) {
   document.getElementById('infoEmail').textContent = user.email || '—';
   document.getElementById('infoDesde').textContent = profile?.created_at
     ? new Date(profile.created_at).toLocaleDateString('pt-BR') : '—';
+  document.getElementById('bioInput').value = profile?.bio || '';
 
   if (avatarUrl) document.getElementById('avatarRing').innerHTML = `<img src="${avatarUrl}" alt="avatar">`;
   else document.getElementById('avatarRing').textContent = nomeExibicao.charAt(0).toUpperCase();
@@ -176,6 +200,52 @@ async function render(session) {
   if (dsync) renderDiscord(dsync);
 
   await renderOnboarding(user.id, Boolean(dsync));
+
+  // Verifica conquistas com critérios já cumpridos (ex: streak que passou
+  // do limiar desde a última visita) e mostra o "drop" de quem for nova.
+  const resultado = await verificarConquistas(user.id);
+  mostrarConquistasDesbloqueadas(resultado.novas);
+  await renderConquistas(user.id, profile?.titulo_ativo_id || null);
+}
+
+async function renderConquistas(uid, tituloAtivoId) {
+  const conquistas = await listarConquistasComStatus(uid);
+  const desbloqueadas = conquistas.filter(c => c.desbloqueada_em);
+  document.getElementById('conquistasProgresso').textContent = `${desbloqueadas.length} de ${conquistas.length} desbloqueadas`;
+
+  document.getElementById('conquistaGrid').innerHTML = conquistas.map(c => {
+    const unlocked = Boolean(c.desbloqueada_em);
+    const isActive = c.id === tituloAtivoId;
+    return `
+      <div class="conquista-slot ${unlocked ? 'unlocked selectable' : 'locked'} raridade-${c.raridade} ${isActive ? 'active-title' : ''}"
+           data-id="${c.id}" data-unlocked="${unlocked}" title="${unlocked ? c.descricao : 'Ainda não desbloqueada'}">
+        <div class="ic">${unlocked ? c.icone : '🔒'}</div>
+        <div class="nome">${c.nome}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('conquistaGrid').querySelectorAll('.conquista-slot.selectable').forEach(el => {
+    el.addEventListener('click', async () => {
+      const jaAtiva = el.classList.contains('active-title');
+      try {
+        await definirTituloPerfil(uid, jaAtiva ? null : el.dataset.id);
+        const profile = await getProfile(uid);
+        atualizarTituloBadge(conquistas.find(c => c.id === profile?.titulo_ativo_id));
+        await renderConquistas(uid, profile?.titulo_ativo_id || null);
+      } catch (e) {
+        alert(mensagemAmigavel(e, 'definir título'));
+      }
+    });
+  });
+
+  atualizarTituloBadge(conquistas.find(c => c.id === tituloAtivoId));
+}
+
+function atualizarTituloBadge(conquista) {
+  const el = document.getElementById('tituloAtivoBadge');
+  if (!conquista) { el.style.display = 'none'; return; }
+  el.innerHTML = `${conquista.icone} ${conquista.nome}`;
+  el.style.display = 'inline-flex';
 }
 
 async function renderOnboarding(uid, jaSincronizou) {
@@ -232,6 +302,20 @@ document.getElementById('syncBtn').addEventListener('click', async () => {
     renderDiscord(result.discord);
   } catch (e) {
     status.textContent = mensagemAmigavel(e, 'sincronizar com o Discord') + ' Verifique se sua conta tem o Discord vinculado.';
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('bioSaveBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('bioSaveBtn');
+  const status = document.getElementById('bioStatus');
+  btn.disabled = true;
+  try {
+    await atualizarBio(session.user.id, document.getElementById('bioInput').value.trim());
+    status.textContent = 'Bio salva.';
+  } catch (e) {
+    status.textContent = mensagemAmigavel(e, 'salvar a bio');
   } finally {
     btn.disabled = false;
   }

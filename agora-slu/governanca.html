@@ -105,7 +105,8 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, montarNavMais, montarNavMobile, mensagemAmigavel } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, votarDecreto, obterTallyDecreto, criarDecreto, definirStatusDecreto, montarNavAuth, montarNavMais, montarNavMobile,
+         verificarConquistas, mostrarConquistasDesbloqueadas, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -220,6 +221,8 @@ function buildDecreeCard(d, counts, meuVoto) {
         const novoCounts = { sim: 0, nao: 0, abster: 0 };
         novoTally.forEach(t => { novoCounts[t.escolha] = Number(t.total); });
         card.replaceWith(buildDecreeCard(d, novoCounts, btn.dataset.escolha));
+        const conquistas = await verificarConquistas(session.user.id);
+        mostrarConquistasDesbloqueadas(conquistas.novas);
       } catch (e) {
         card.querySelector('.vote-confirm').textContent = mensagemAmigavel(e, 'votação');
       } finally {
