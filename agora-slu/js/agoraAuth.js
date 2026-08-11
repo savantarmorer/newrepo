@@ -501,6 +501,153 @@ export function mostrarConquistasDesbloqueadas(novas) {
   });
 }
 
+// ── Câmara do Æon (área restrita a Iniciados aceitos manualmente) ──────
+export async function souIniciadoAeon() {
+  const { data, error } = await sb.rpc('is_aeon_iniciado');
+  if (error) { console.warn('is_aeon_iniciado:', error.message); return false; }
+  return Boolean(data);
+}
+
+export async function souGuardiaoAeon() {
+  const { data, error } = await sb.rpc('is_guardiao_aeon');
+  if (error) { console.warn('is_guardiao_aeon:', error.message); return false; }
+  return Boolean(data);
+}
+
+export async function listarMuroAeon() {
+  const { data, error } = await sb.from('agora_aeon_membros').select('*').order('aceito_em', { ascending: true });
+  if (error) { console.warn('listarMuroAeon:', error.message); return []; }
+  return data || [];
+}
+
+export async function listarExerciciosAeon() {
+  const { data, error } = await sb.from('agora_aeon_exercicios').select('*').eq('ativo', true).order('numero');
+  if (error) { console.warn('listarExerciciosAeon:', error.message); return []; }
+  return data || [];
+}
+
+export async function listarRespostasExercicio(exercicioId) {
+  const { data, error } = await sb.from('agora_aeon_respostas').select('*').eq('exercicio_id', exercicioId).order('created_at', { ascending: false });
+  if (error) { console.warn('listarRespostasExercicio:', error.message); return []; }
+  return data || [];
+}
+
+export async function responderExercicioAeon(userId, exercicioId, resposta) {
+  const { data, error } = await sb.rpc('responder_exercicio_aeon', { uid: userId, p_exercicio_id: exercicioId, p_resposta: resposta });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function criarExercicioAeon(numero, titulo, prompt, criadoPor) {
+  const { error } = await sb.from('agora_aeon_exercicios').insert({ numero, titulo, prompt, criado_por: criadoPor });
+  if (error) throw new Error(error.message);
+}
+
+export async function listarGlossarioAeon() {
+  const { data, error } = await sb.from('agora_aeon_glossario').select('*').order('termo');
+  if (error) { console.warn('listarGlossarioAeon:', error.message); return []; }
+  return data || [];
+}
+
+export async function proporTermoGlossario(userId, nomeProponente, termo, pratica, esoterica) {
+  const { error } = await sb.from('agora_aeon_glossario').insert({
+    termo, interpretacao_pratica: pratica, interpretacao_esoterica: esoterica,
+    proposto_por: userId, proponente_nome: nomeProponente,
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function aprovarTermoGlossario(termoId, aprovado) {
+  const { error } = await sb.from('agora_aeon_glossario').update({ aprovado }).eq('id', termoId);
+  if (error) throw new Error(error.message);
+}
+
+export async function aceitarIniciadoAeon(guardiaoId, applicationId, tituloSincromatico) {
+  const { data, error } = await sb.rpc('aceitar_iniciado_aeon', { quem: guardiaoId, p_application_id: applicationId, p_titulo_sincromatico: tituloSincromatico });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function definirGuardiaoAeon(adminId, alvoId, valor) {
+  const { data, error } = await sb.rpc('definir_guardiao_aeon', { quem: adminId, alvo_id: alvoId, valor });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export function calcularNivelAeon(pontos) {
+  if (pontos >= 300) return 6;
+  if (pontos >= 180) return 5;
+  if (pontos >= 100) return 4;
+  if (pontos >= 50) return 3;
+  if (pontos >= 20) return 2;
+  return 1;
+}
+export const NIVEL_AEON_NOME = { 1: 'Buscador', 2: 'Aprendiz do Véu', 3: 'Discípulo da Sombra', 4: 'Arquiteto do Inconsciente', 5: 'Portador da Chama', 6: 'Iniciado Pleno' };
+export const NIVEL_AEON_LIMIAR = { 1: 0, 2: 20, 3: 50, 4: 100, 5: 180, 6: 300 };
+
+export async function obterMeuMuroAeon(userId) {
+  const { data, error } = await sb.from('agora_aeon_membros').select('*').eq('user_id', userId).maybeSingle();
+  if (error) { console.warn('obterMeuMuroAeon:', error.message); return null; }
+  return data;
+}
+
+export async function enviarMonografiaAeon(userId, titulo, conteudo, midias, esquema) {
+  const { data, error } = await sb.rpc('enviar_monografia_aeon', { uid: userId, p_titulo: titulo, p_conteudo: conteudo, p_midias: midias, p_esquema: esquema });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function listarMonografiasAeon() {
+  const { data, error } = await sb.from('agora_aeon_monografias').select('*').order('created_at', { ascending: false });
+  if (error) { console.warn('listarMonografiasAeon:', error.message); return []; }
+  return data || [];
+}
+
+export async function obterMonografiaAeon(id) {
+  const { data, error } = await sb.from('agora_aeon_monografias').select('*').eq('id', id).maybeSingle();
+  if (error) { console.warn('obterMonografiaAeon:', error.message); return null; }
+  return data;
+}
+
+export async function listarAvaliacoesMonografia(monografiaId) {
+  const { data, error } = await sb.from('agora_aeon_avaliacoes').select('*').eq('monografia_id', monografiaId).order('created_at');
+  if (error) { console.warn('listarAvaliacoesMonografia:', error.message); return []; }
+  return data || [];
+}
+
+export async function avaliarMonografiaPar(userId, monografiaId, tipo, texto) {
+  const { data, error } = await sb.rpc('avaliar_monografia_par', { uid: userId, p_monografia_id: monografiaId, p_tipo: tipo, p_texto: texto });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function avaliarMonografiaAdmin(adminId, monografiaId, nota, comentario) {
+  const { data, error } = await sb.rpc('avaliar_monografia', { admin_uid: adminId, p_monografia_id: monografiaId, p_nota: nota, p_comentario: comentario });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function aprovarTermoGlossarioComNiveis(termoId, niveis) {
+  const { error } = await sb.from('agora_aeon_glossario').update({ aprovado: true, ...niveis }).eq('id', termoId);
+  if (error) throw new Error(error.message);
+}
+
+// Selo progressivo — um pentagrama que vai se completando traço a traço
+// (estágio 0 a 5) conforme o Iniciado ajuda a avaliar/expandir o
+// trabalho de outros. mono=true usa tinta preta (tema da Câmara).
+export function renderSeloAeonSvg(estagio, mono = true) {
+  const pts = [[50, 12], [86.1, 38.3], [72.3, 80.7], [27.7, 80.7], [13.9, 38.3]];
+  const segs = [[0, 2], [2, 4], [4, 1], [1, 3], [3, 0]];
+  const cor = mono ? '#111111' : '#D4AF37';
+  const fraco = mono ? 'rgba(17,17,17,.15)' : 'rgba(212,175,55,.18)';
+  const linhas = segs.map(([a, b], i) => {
+    const ativo = estagio > i;
+    return `<line x1="${pts[a][0]}" y1="${pts[a][1]}" x2="${pts[b][0]}" y2="${pts[b][1]}" stroke="${ativo ? cor : fraco}" stroke-width="2" stroke-linecap="round"/>`;
+  }).join('');
+  const centro = estagio >= 5 ? `<circle cx="50" cy="50" r="3" fill="${cor}"/>` : '';
+  return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="${fraco}" stroke-width="1.5"/>${linhas}${centro}</svg>`;
+}
+
 // ── Missões ──────────────────────────────────────────────────────────
 export async function concluirMissao(userId, missionId) {
   const { data, error } = await sb.rpc('concluir_missao', { uid: userId, p_mission_id: missionId });

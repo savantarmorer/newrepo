@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#EDE9E0">
+<meta name="robots" content="noindex">
+<title>Ágora — Câmara do Æon</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aeon.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+</head>
+<body class="aeon-tema">
+
+<nav class="aeon-nav">
+  <div class="marca">ÁGORA <span>· Câmara do Æon</span></div>
+  <div class="links">
+    <a href="novo-aeon.html">← O Novo Æon</a>
+    <a href="aeon-monografias.html">Monografias</a>
+    <a href="dashboard.html">Painel</a>
+  </div>
+</nav>
+
+<main id="conteudo" style="display:none;">
+
+  <div class="aeon-hero-min">
+    <div class="eyebrow">Sem hierarquias · Sem líderes</div>
+    <h1>A Câmara</h1>
+    <p>O que se constrói aqui é de todos os Iniciados, em conjunto. Seu nível cresce pela qualidade do que você produz; seu selo cresce por quanto você ajuda a elevar o trabalho alheio.</p>
+  </div>
+
+  <div class="aeon-nivel-strip">
+    <div class="item">
+      <div class="n" id="nivelNumero">1</div>
+      <div class="l" id="nivelNome">Buscador</div>
+    </div>
+    <div class="item" style="max-width:200px;">
+      <div class="l" id="nivelProgresso">0 / 20 pontos</div>
+    </div>
+    <div class="item">
+      <div id="seloWrap"></div>
+      <div class="l">Selo de Experiência</div>
+    </div>
+  </div>
+
+  <div class="aeon-shell">
+    <div class="aeon-tabs">
+      <button type="button" class="active" data-tab="muro">O Muro</button>
+      <button type="button" data-tab="exercicios">Exercícios Noemáticos</button>
+      <button type="button" data-tab="glossario">Glossário Noemático</button>
+    </div>
+
+    <div class="aeon-panel active" id="painel-muro">
+      <p style="color:var(--ae-ink-70); font-size:14px; margin-bottom:24px;">Cada tijolo é a expressão de um Iniciado — o que encontrou na meditação, em suas próprias palavras. A parede cresce, fileira por fileira, a cada novo aceito.</p>
+      <div class="aeon-muro-contador" id="muroContador"></div>
+      <div class="aeon-muro-parede" id="muroGrid"><p style="opacity:.6;">Consultando a estrutura...</p></div>
+    </div>
+
+    <div class="aeon-panel" id="painel-exercicios">
+      <div id="guardiaoNovoExercicio" style="display:none; margin-bottom:32px;">
+        <div class="aeon-card sutil">
+          <h3 style="font-size:16px;">Propor Novo Exercício (Guardião)</h3>
+          <div class="aeon-field"><label>Número</label><input type="number" id="exNumero"></div>
+          <div class="aeon-field"><label>Título</label><input type="text" id="exTitulo"></div>
+          <div class="aeon-field"><label>Instruções</label><textarea id="exPrompt" rows="3"></textarea></div>
+          <button class="aeon-btn ghost" id="exCriarBtn">Publicar Exercício</button>
+          <p class="aeon-hint" id="exStatus"></p>
+        </div>
+      </div>
+      <div id="exerciciosList"><p>Consultando os exercícios...</p></div>
+    </div>
+
+    <div class="aeon-panel" id="painel-glossario">
+      <p style="color:var(--ae-ink-70); font-size:14px; margin-bottom:24px;">Todo termo tem duas vertentes — a prática e a esotérica. Conceitos mais profundos exigem nível para se revelar.</p>
+      <div id="glossarioList"><p>Consultando o glossário...</p></div>
+
+      <div class="aeon-card sutil" style="margin-top:32px;">
+        <h3 style="font-size:16px;">Propor um Termo</h3>
+        <div class="aeon-field"><label>Termo</label><input type="text" id="gTermo"></div>
+        <div class="aeon-field"><label>Interpretação Prática</label><textarea id="gPratica" rows="2"></textarea></div>
+        <div class="aeon-field"><label>Interpretação Esotérica</label><textarea id="gEsoterica" rows="2"></textarea></div>
+        <button class="aeon-btn ghost" id="gProporBtn">Propor ao Glossário</button>
+        <p class="aeon-hint" id="gStatus"></p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="negado" style="display:none;" class="aeon-shell">
+  <div style="text-align:center; padding:96px 24px;">
+    <h1 style="font-size:32px;">Esta Câmara é restrita</h1>
+    <p style="color:var(--ae-ink-70); max-width:48ch; margin:0 auto 24px;">Só Iniciados aceitos manualmente por um Guardião do Æon podem entrar aqui.</p>
+    <a href="novo-aeon.html" class="aeon-btn">Ver o Novo Æon →</a>
+  </div>
+</div>
+
+<div id="modalBg" style="display:none; position:fixed; inset:0; background:rgba(17,17,17,.75); z-index:100; align-items:center; justify-content:center; padding:24px;">
+  <div class="aeon-card" style="max-width:560px; width:100%; max-height:85vh; overflow-y:auto; background:var(--ae-bg);">
+    <div id="modalConteudo"></div>
+    <button class="aeon-btn ghost" id="modalFechar" style="margin-top:16px; width:100%;">Fechar</button>
+  </div>
+</div>
+
+<footer class="aeon-footer">Ágora, por SLU — Sociedade das Luzes Ocultas</footer>
+
+<script type="module">
+import { requireAuth, souIniciadoAeon, souGuardiaoAeon, listarMuroAeon, obterMeuMuroAeon,
+         listarExerciciosAeon, listarRespostasExercicio, responderExercicioAeon, criarExercicioAeon,
+         listarGlossarioAeon, proporTermoGlossario, aprovarTermoGlossarioComNiveis,
+         calcularNivelAeon, NIVEL_AEON_NOME, NIVEL_AEON_LIMIAR, renderSeloAeonSvg, mensagemAmigavel } from './js/agoraAuth.js';
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+// Sem cultus-nav aqui de propósito — a Câmara não usa o chrome do resto
+// do site. "Painel" no topo já leva de volta ao resto da Ágora.
+const session = await requireAuth('login.html');
+let meuNivel = 1;
+
+if (session) {
+  const autorizado = await souIniciadoAeon();
+  if (!autorizado) {
+    document.getElementById('negado').style.display = 'block';
+  } else {
+    document.getElementById('conteudo').style.display = 'block';
+    const guardiao = await souGuardiaoAeon();
+    if (guardiao) document.getElementById('guardiaoNovoExercicio').style.display = 'block';
+
+    const meuMuro = await obterMeuMuroAeon(session.user.id);
+    meuNivel = meuMuro?.nivel || 1;
+    renderNivelStrip(meuMuro);
+
+    await Promise.all([renderMuro(), renderExercicios(guardiao), renderGlossario(guardiao)]);
+  }
+}
+
+function renderNivelStrip(m) {
+  const pontos = m?.pontos_nivel || 0;
+  const nivel = m?.nivel || 1;
+  const proximoLimiar = NIVEL_AEON_LIMIAR[nivel + 1];
+  document.getElementById('nivelNumero').textContent = nivel;
+  document.getElementById('nivelNome').textContent = NIVEL_AEON_NOME[nivel];
+  document.getElementById('nivelProgresso').textContent = proximoLimiar
+    ? `${pontos} / ${proximoLimiar} pontos até ${NIVEL_AEON_NOME[nivel + 1]}`
+    : `${pontos} pontos — nível máximo`;
+  document.getElementById('seloWrap').innerHTML = renderSeloAeonSvg(m?.selo_estagio || 0, true);
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.aeon-tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aeon-tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.aeon-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`painel-${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+// ── O Muro: alvenaria real — mais velhos na base, novos aceitos no topo ─
+let membrosMuroCache = [];
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+async function renderMuro() {
+  membrosMuroCache = await listarMuroAeon();
+  desenharMuro();
+  window.addEventListener('resize', debounce(desenharMuro, 200));
+}
+
+function desenharMuro() {
+  const el = document.getElementById('muroGrid');
+  const contador = document.getElementById('muroContador');
+  if (!membrosMuroCache.length) { el.innerHTML = `<p>Nenhum tijolo assentado ainda.</p>`; contador.textContent = ''; return; }
+
+  contador.textContent = `${membrosMuroCache.length} tijolo${membrosMuroCache.length === 1 ? '' : 's'} assentado${membrosMuroCache.length === 1 ? '' : 's'} na estrutura eterna`;
+
+  const brickW = window.innerWidth <= 640 ? 138 : 184;
+  const gap = 7;
+  const largura = el.clientWidth || 900;
+  const perRow = Math.max(2, Math.floor((largura - 40 + gap) / (brickW + gap)) - 1);
+
+  const fileiras = [];
+  for (let i = 0; i < membrosMuroCache.length; i += perRow) fileiras.push(membrosMuroCache.slice(i, i + perRow));
+
+  el.innerHTML = fileiras.map((fileira, fi) => `
+    <div class="aeon-muro-fileira ${fi % 2 === 1 ? 'deslocada' : ''}">
+      ${fileira.map((m, bi) => `
+        <div class="aeon-tijolo" style="animation-delay:${(fi * 0.1 + bi * 0.035).toFixed(2)}s"
+             data-nome="${escapeHtml(m.nome_exibicao || 'Um Iniciado')}" data-titulo="${escapeHtml(m.titulo_sincromatico || '')}" data-expressao="${escapeHtml(m.expressao || 'Sem expressão registrada.')}">
+          <div class="nome">${escapeHtml(m.nome_exibicao || 'Um Iniciado')}</div>
+          ${m.titulo_sincromatico ? `<div class="titulo">${escapeHtml(m.titulo_sincromatico)}</div>` : ''}
+          <div class="trecho">${escapeHtml(m.expressao || 'Sem expressão registrada.')}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.aeon-tijolo').forEach(t => {
+    t.addEventListener('click', () => {
+      document.getElementById('modalConteudo').innerHTML = `
+        <h3 style="font-size:20px;">${t.dataset.nome}</h3>
+        ${t.dataset.titulo ? `<div style="font-size:12px; color:var(--ae-ink-45); margin-bottom:12px;">${t.dataset.titulo}</div>` : ''}
+        <p style="white-space:pre-wrap; font-size:14px; color:var(--ae-ink-70);">${t.dataset.expressao}</p>`;
+      document.getElementById('modalBg').style.display = 'flex';
+    });
+  });
+}
+document.getElementById('modalFechar').addEventListener('click', () => { document.getElementById('modalBg').style.display = 'none'; });
+
+// ── Exercícios Noemáticos ────────────────────────────────────────────
+async function renderExercicios(souGuardiaoDaCena) {
+  const exercicios = await listarExerciciosAeon();
+  const el = document.getElementById('exerciciosList');
+  if (!exercicios.length) { el.innerHTML = `<p>Nenhum exercício publicado ainda.</p>`; return; }
+
+  el.innerHTML = exercicios.map(ex => `
+    <div class="aeon-card" data-id="${ex.id}">
+      <div style="font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ae-ink-45);">Exercício Nº ${ex.numero}</div>
+      <h3 style="font-size:20px;">${escapeHtml(ex.titulo)}</h3>
+      <div style="font-size:14px; color:var(--ae-ink-70); white-space:pre-wrap; margin-bottom:16px;">${escapeHtml(ex.prompt)}</div>
+      <textarea class="minha-resposta" rows="3" placeholder="Sua resposta..."></textarea>
+      <button class="aeon-btn ghost enviar-resposta-btn" style="margin-top:12px;">Registrar Resposta</button>
+      <p class="aeon-hint resposta-status"></p>
+      <button type="button" class="aeon-btn ghost toggle-respostas" data-id="${ex.id}" style="margin-top:8px;">Ver Respostas de Outros Iniciados</button>
+      <div class="respostas-outros" style="display:none; margin-top:16px;"></div>
+    </div>
+  `).join('');
+
+  el.querySelectorAll('.enviar-resposta-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const card = btn.closest('.aeon-card');
+      const texto = card.querySelector('.minha-resposta').value.trim();
+      const status = card.querySelector('.resposta-status');
+      if (!texto) return;
+      btn.disabled = true;
+      try {
+        await responderExercicioAeon(session.user.id, card.dataset.id, texto);
+        status.textContent = 'Registrado — pontos somados ao seu nível.';
+        const m = await obterMeuMuroAeon(session.user.id);
+        renderNivelStrip(m);
+      } catch (e) {
+        status.textContent = mensagemAmigavel(e, 'registrar sua resposta');
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  });
+
+  el.querySelectorAll('.toggle-respostas').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const wrap = btn.nextElementSibling;
+      if (wrap.style.display === 'block') { wrap.style.display = 'none'; return; }
+      wrap.innerHTML = 'Carregando...';
+      wrap.style.display = 'block';
+      const respostas = await listarRespostasExercicio(btn.dataset.id);
+      wrap.innerHTML = respostas.length ? respostas.map(r => `
+        <div style="border-top:1px solid var(--ae-ink-20); padding-top:10px; margin-top:10px; font-size:13px;">
+          <div style="font-size:11px; text-transform:uppercase; color:var(--ae-ink-45);">${r.user_id === session.user.id ? 'Você' : 'Um Iniciado'} · ${new Date(r.created_at).toLocaleDateString('pt-BR')}</div>
+          <div style="color:var(--ae-ink-70);">${escapeHtml(r.resposta)}</div>
+        </div>
+      `).join('') : '<p style="font-size:13px; color:var(--ae-ink-45);">Ninguém respondeu ainda.</p>';
+    });
+  });
+
+  if (souGuardiaoDaCena) {
+    document.getElementById('exCriarBtn').addEventListener('click', async () => {
+      const status = document.getElementById('exStatus');
+      const numero = Number(document.getElementById('exNumero').value);
+      const titulo = document.getElementById('exTitulo').value.trim();
+      const prompt = document.getElementById('exPrompt').value.trim();
+      if (!numero || !titulo || !prompt) { status.textContent = 'Preencha número, título e instruções.'; return; }
+      try {
+        await criarExercicioAeon(numero, titulo, prompt, session.user.id);
+        status.textContent = 'Exercício publicado.';
+        document.getElementById('exNumero').value = '';
+        document.getElementById('exTitulo').value = '';
+        document.getElementById('exPrompt').value = '';
+        await renderExercicios(souGuardiaoDaCena);
+      } catch (e) {
+        status.textContent = mensagemAmigavel(e, 'publicar o exercício');
+      }
+    });
+  }
+}
+
+// ── Glossário Noemático em camadas ──────────────────────────────────
+async function renderGlossario(souGuardiaoDaCena) {
+  const termos = (await listarGlossarioAeon()).filter(t => t.aprovado || souGuardiaoDaCena);
+  const el = document.getElementById('glossarioList');
+  if (!termos.length) { el.innerHTML = `<p>Nenhum termo proposto ainda.</p>`; return; }
+
+  el.innerHTML = termos.map(t => {
+    const oculto = meuNivel < t.nivel_revelacao && !souGuardiaoDaCena;
+    if (oculto) {
+      return `<div class="aeon-termo oculto bloqueado">
+        <h4>?</h4>
+        <div class="tooltip-bloqueio">Um conceito ainda não revelado a você.</div>
+      </div>`;
+    }
+    const praticaBloqueada = meuNivel < t.nivel_pratica && !souGuardiaoDaCena;
+    const esotericaBloqueada = meuNivel < t.nivel_esoterica && !souGuardiaoDaCena;
+    return `<div class="aeon-termo">
+      <h4>${escapeHtml(t.termo)} ${!t.aprovado ? '<span style="font-size:10px; text-transform:uppercase; color:var(--ae-ink-45);">(pendente)</span>' : ''}</h4>
+      <div class="vertente ${praticaBloqueada ? 'bloqueado' : ''}">
+        <div class="k">Interpretação Prática ${praticaBloqueada ? `<span class="cadeado">🔒</span><span class="tooltip-bloqueio">Evolua para o Nível ${t.nivel_pratica} para liberar</span>` : ''}</div>
+        <div class="v">${praticaBloqueada ? '···' : (escapeHtml(t.interpretacao_pratica) || '—')}</div>
+      </div>
+      <div class="vertente ${esotericaBloqueada ? 'bloqueado' : ''}">
+        <div class="k">Interpretação Esotérica ${esotericaBloqueada ? `<span class="cadeado">🔒</span><span class="tooltip-bloqueio">Evolua para o Nível ${t.nivel_esoterica} para liberar</span>` : ''}</div>
+        <div class="v">${esotericaBloqueada ? '···' : (escapeHtml(t.interpretacao_esoterica) || '—')}</div>
+      </div>
+      ${souGuardiaoDaCena ? `<div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+        <input type="number" class="nivel-input" data-campo="nivel_pratica" placeholder="Nv. prática" value="${t.nivel_pratica}" style="width:100px; border:1px solid var(--ae-ink-20); padding:4px 8px; font-size:12px;">
+        <input type="number" class="nivel-input" data-campo="nivel_esoterica" placeholder="Nv. esotérica" value="${t.nivel_esoterica}" style="width:100px; border:1px solid var(--ae-ink-20); padding:4px 8px; font-size:12px;">
+        <input type="number" class="nivel-input" data-campo="nivel_revelacao" placeholder="Nv. revelação" value="${t.nivel_revelacao}" style="width:100px; border:1px solid var(--ae-ink-20); padding:4px 8px; font-size:12px;">
+        <button class="aeon-btn ghost salvar-niveis-btn" data-id="${t.id}" style="padding:6px 12px;">${t.aprovado ? 'Salvar Níveis' : 'Aprovar'}</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+
+  if (souGuardiaoDaCena) {
+    el.querySelectorAll('.salvar-niveis-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.aeon-termo');
+        const niveis = {};
+        card.querySelectorAll('.nivel-input').forEach(inp => { niveis[inp.dataset.campo] = Number(inp.value) || 0; });
+        btn.disabled = true;
+        try {
+          await aprovarTermoGlossarioComNiveis(btn.dataset.id, niveis);
+          await renderGlossario(souGuardiaoDaCena);
+        } catch (e) {
+          alert(mensagemAmigavel(e, 'salvar o termo'));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+}
+
+document.getElementById('gProporBtn').addEventListener('click', async () => {
+  const status = document.getElementById('gStatus');
+  const termo = document.getElementById('gTermo').value.trim();
+  const pratica = document.getElementById('gPratica').value.trim();
+  const esoterica = document.getElementById('gEsoterica').value.trim();
+  if (!termo) { status.textContent = 'Escreva o termo antes de propor.'; return; }
+  const nome = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+  try {
+    await proporTermoGlossario(session.user.id, nome, termo, pratica, esoterica);
+    status.textContent = 'Termo proposto — aguardando um Guardião.';
+    document.getElementById('gTermo').value = '';
+    document.getElementById('gPratica').value = '';
+    document.getElementById('gEsoterica').value = '';
+    const guardiao = await souGuardiaoAeon();
+    await renderGlossario(guardiao);
+  } catch (e) {
+    status.textContent = mensagemAmigavel(e, 'propor o termo');
+  }
+});
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>

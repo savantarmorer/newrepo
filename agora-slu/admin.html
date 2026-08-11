@@ -120,7 +120,9 @@
 </footer>
 
 <script type="module">
-import { sb, getSession, getProfile, montarNavAuth, montarNavMobile, listarFichasProvida, listarAtribuicoesProvida } from './js/agoraAuth.js';
+import { sb, getSession, getProfile, montarNavAuth, montarNavMobile, listarFichasProvida, listarAtribuicoesProvida,
+         listarMuroAeon, aceitarIniciadoAeon, definirGuardiaoAeon, listarMonografiasAeon, avaliarMonografiaAdmin,
+         mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMobile();
 montarNavAuth();
@@ -237,13 +239,13 @@ const DATASETS = [
     ],
   },
   {
-    key: 'aeon', table: 'agora_aeon_applications', label: 'Novo Æon', order: 'created_at',
+    key: 'aeon', table: 'agora_aeon_applications', label: 'Novo Æon — Pedidos', order: 'created_at',
     noInsert: true, noDelete: true,
     columns: [
       { key: 'nome', label: 'Nome', type: 'text', readonly: true },
       { key: 'email', label: 'E-mail', type: 'text', readonly: true },
       { key: 'telefone', label: 'Telefone', type: 'text', readonly: true },
-      { key: 'status', label: 'Status', type: 'select', options: ['pendente','aceito','recusado'] },
+      { key: 'status', label: 'Status (aceitar é na aba Câmara do Æon →)', type: 'select', options: ['pendente','recusado'] },
       { key: 'expressao', label: 'Expressão (exercício Noemático)', type: 'textarea', wide: true, readonly: true },
     ],
   },
@@ -535,10 +537,141 @@ async function montarAtribuicoesModeracao() {
   });
 }
 
+// ── Câmara do Æon: aceitar pedidos como Iniciados + gerenciar Guardiões ─
+async function montarCamaraAeonModeracao() {
+  const panel = document.getElementById('panel_camara_aeon');
+  panel.innerHTML = `
+    <h2 style="font-size:var(--text-md);">Aceitar Iniciados no Æon</h2>
+    <div id="pedidosPendentesList">Carregando...</div>
+    <h2 style="font-size:var(--text-md); margin-top:var(--space-8);">O Muro (Iniciados aceitos) e Guardiões</h2>
+    <div id="muroAeonList">Carregando...</div>
+  `;
+
+  const [{ data: pendentes }, membros] = await Promise.all([
+    sb.from('agora_aeon_applications').select('*').eq('status', 'pendente').order('created_at'),
+    listarMuroAeon(),
+  ]);
+
+  const pendEl = document.getElementById('pedidosPendentesList');
+  if (!pendentes || !pendentes.length) {
+    pendEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhum pedido pendente.</p>`;
+  } else {
+    pendEl.innerHTML = pendentes.map(p => `
+      <div class="card" style="margin-bottom:var(--space-4);">
+        <strong>${escapeHtml(p.nome)}</strong> — ${escapeHtml(p.email)}
+        <p class="text-secondary" style="font-size:var(--text-sm); white-space:pre-wrap;">${escapeHtml(p.expressao) || '(sem expressão)'}</p>
+        <div class="crud-form-grid">
+          <div class="field wide"><label>Título Sincromático (opcional)</label><input type="text" class="titulo-sincromatico-input" placeholder="ex: Portador da Chama Cinzenta"></div>
+        </div>
+        <button class="btn btn-primary aceitar-iniciado-btn" data-id="${p.id}" style="font-size:var(--text-xs);">Aceitar como Iniciado</button>
+        <p class="crud-status" style=""></p>
+      </div>
+    `).join('');
+    pendEl.querySelectorAll('.aceitar-iniciado-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('.card');
+        const titulo = card.querySelector('.titulo-sincromatico-input').value.trim();
+        const status = card.querySelector('.crud-status');
+        btn.disabled = true;
+        try {
+          const admin = await getSession();
+          const result = await aceitarIniciadoAeon(admin.user.id, btn.dataset.id, titulo);
+          if (!result.ok) { status.textContent = result.mensagem; btn.disabled = false; return; }
+          await montarCamaraAeonModeracao();
+        } catch (e) {
+          status.textContent = mensagemAmigavel(e, 'aceitar o iniciado');
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  const muroEl = document.getElementById('muroAeonList');
+  if (!membros.length) {
+    muroEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Ninguém aceito ainda.</p>`;
+  } else {
+    const { data: perfis } = await sb.from('agora_profiles').select('id, is_guardiao_aeon').in('id', membros.map(m => m.user_id));
+    const guardiaoPorId = new Map((perfis || []).map(p => [p.id, p.is_guardiao_aeon]));
+    muroEl.innerHTML = membros.map(m => {
+      const ehGuardiao = guardiaoPorId.get(m.user_id) || false;
+      return `
+      <div class="card" style="margin-bottom:var(--space-3); display:flex; justify-content:space-between; align-items:center; gap:var(--space-3); flex-wrap:wrap;">
+        <div>
+          <strong>${escapeHtml(m.nome_exibicao || 'Um Iniciado')}</strong>
+          ${m.titulo_sincromatico ? ` — <span class="text-gold">${escapeHtml(m.titulo_sincromatico)}</span>` : ''}
+          ${ehGuardiao ? ' <span class="badge">Guardião</span>' : ''}
+        </div>
+        <button class="btn btn-secondary toggle-guardiao-btn" data-uid="${m.user_id}" data-valor="${!ehGuardiao}" style="font-size:var(--text-xs);">${ehGuardiao ? 'Remover Guardião' : 'Tornar Guardião'}</button>
+      </div>`;
+    }).join('');
+    muroEl.querySelectorAll('.toggle-guardiao-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.disabled = true;
+        try {
+          const admin = await getSession();
+          await definirGuardiaoAeon(admin.user.id, btn.dataset.uid, btn.dataset.valor === 'true');
+          await montarCamaraAeonModeracao();
+        } catch (e) {
+          alert(mensagemAmigavel(e, 'atualizar o Guardião'));
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+}
+
+// ── Monografias do Æon: avaliação de qualidade (só admin de verdade) ───
+async function montarMonografiasAeonModeracao() {
+  const panel = document.getElementById('panel_monografias_aeon');
+  panel.innerHTML = `<h2 style="font-size:var(--text-md);">Monografias do Æon</h2><div id="monografiasAeonList">Carregando...</div>`;
+  const listEl = document.getElementById('monografiasAeonList');
+  const monografias = await listarMonografiasAeon();
+  if (!monografias.length) { listEl.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma monografia enviada ainda.</p>`; return; }
+
+  listEl.innerHTML = monografias.map(m => `
+    <div class="card" style="margin-bottom:var(--space-4);">
+      <div style="display:flex; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap;">
+        <div>
+          <strong>${escapeHtml(m.titulo)}</strong>
+          <div class="text-muted" style="font-size:var(--text-xs);">${escapeHtml(m.autor_nome || 'Um Iniciado')} · ${new Date(m.created_at).toLocaleDateString('pt-BR')}</div>
+        </div>
+        <span class="badge ${m.status === 'avaliada' ? '' : 'warn'}">${m.status === 'avaliada' ? `Avaliada · ${m.nota_admin}/10` : 'Em avaliação'}</span>
+      </div>
+      <p class="text-secondary" style="font-size:var(--text-sm); white-space:pre-wrap; margin-top:var(--space-3); max-height:160px; overflow-y:auto;">${escapeHtml(m.conteudo)}</p>
+      ${m.esquema ? `<img src="${m.esquema}" alt="Esquema" style="max-width:200px; border:1px solid var(--border-subtle); margin-top:var(--space-2);">` : ''}
+      <div class="crud-form-grid" style="margin-top:var(--space-3);">
+        <div class="field"><label>Nota (0-10)</label><input type="number" class="nota-input" min="0" max="10" value="${m.nota_admin ?? ''}"></div>
+        <div class="field wide"><label>Comentário do Guardião</label><textarea class="comentario-input" rows="2">${escapeHtml(m.comentario_admin) || ''}</textarea></div>
+      </div>
+      <button class="btn btn-primary avaliar-mono-btn" data-id="${m.id}" style="font-size:var(--text-xs);">${m.status === 'avaliada' ? 'Reavaliar' : 'Avaliar'}</button>
+      <p class="crud-status"></p>
+    </div>
+  `).join('');
+
+  listEl.querySelectorAll('.avaliar-mono-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const card = btn.closest('.card');
+      const nota = Number(card.querySelector('.nota-input').value);
+      const comentario = card.querySelector('.comentario-input').value.trim();
+      const status = card.querySelector('.crud-status');
+      btn.disabled = true;
+      try {
+        const admin = await getSession();
+        const result = await avaliarMonografiaAdmin(admin.user.id, btn.dataset.id, nota, comentario);
+        if (!result.ok) { status.textContent = result.mensagem; btn.disabled = false; return; }
+        await montarMonografiasAeonModeracao();
+      } catch (e) {
+        status.textContent = mensagemAmigavel(e, 'avaliar a monografia');
+        btn.disabled = false;
+      }
+    });
+  });
+}
+
 function montarTabs() {
   const tabsEl = document.getElementById('adminTabs');
   const panelsEl = document.getElementById('adminPanels');
-  const allTabs = [...DATASETS.map(d => ({ key: d.key, label: d.label })), { key: 'provida', label: 'Pró-Vida' }, { key: 'atribuicoes', label: 'Atribuições Pró-Vida' }];
+  const allTabs = [...DATASETS.map(d => ({ key: d.key, label: d.label })), { key: 'provida', label: 'Pró-Vida' }, { key: 'atribuicoes', label: 'Atribuições Pró-Vida' }, { key: 'camara_aeon', label: 'Câmara do Æon' }, { key: 'monografias_aeon', label: 'Monografias do Æon' }];
 
   tabsEl.innerHTML = allTabs.map((t, i) => `<button data-tab="${t.key}" class="${i === 0 ? 'active' : ''}">${t.label}</button>`).join('');
   panelsEl.innerHTML = allTabs.map((t, i) => `<div class="admin-panel${i === 0 ? ' active' : ''}" id="panel_${t.key}"></div>`).join('');
@@ -555,6 +688,8 @@ function montarTabs() {
   DATASETS.forEach(montarCRUD);
   montarProvidaModeracao();
   montarAtribuicoesModeracao();
+  montarCamaraAeonModeracao();
+  montarMonografiasAeonModeracao();
 }
 
 // ── Login / gate ─────────────────────────────────────────────────────

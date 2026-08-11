@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#EDE9E0">
+<meta name="robots" content="noindex">
+<title>Ágora — Monografia</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aeon.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+</head>
+<body class="aeon-tema">
+
+<nav class="aeon-nav">
+  <div class="marca">ÁGORA <span>· Câmara do Æon</span></div>
+  <div class="links">
+    <a href="aeon-monografias.html">← Monografias</a>
+    <a href="camara-aeon.html">A Câmara</a>
+  </div>
+</nav>
+
+<main id="conteudo" style="display:none;">
+  <div class="aeon-shell" style="padding-top:40px; padding-bottom:80px; max-width:760px;">
+    <span class="aeon-status-tag" id="statusTag"></span>
+    <h1 id="tituloEl" style="font-size:clamp(1.8rem,5vw,2.6rem); margin-top:12px;"></h1>
+    <div class="meta" id="metaEl" style="font-size:13px; color:var(--ae-ink-45); margin-bottom:24px;"></div>
+
+    <div id="avaliacaoAdminBox" style="display:none;" class="aeon-card sutil"></div>
+
+    <div id="conteudoEl" style="font-size:16px; line-height:1.8; white-space:pre-wrap; margin:24px 0;"></div>
+
+    <div id="midiasEl"></div>
+    <div id="esquemaEl"></div>
+
+    <hr style="border:none; border-top:2px solid var(--ae-line); margin:48px 0 32px;">
+
+    <h2 style="font-size:20px;">Avaliação da Câmara</h2>
+    <p style="color:var(--ae-ink-70); font-size:14px; margin-bottom:24px;">Comente ou expanda esta monografia. Expandir vale mais pro seu selo de experiência.</p>
+
+    <div id="formAvaliacao" class="aeon-card sutil" style="display:none;">
+      <div class="aeon-field">
+        <label>Tipo</label>
+        <select id="avTipo"><option value="comentario">Comentário</option><option value="expansao">Expansão</option></select>
+      </div>
+      <div class="aeon-field"><label>Texto</label><textarea id="avTexto" rows="4"></textarea></div>
+      <button class="aeon-btn ghost" id="avEnviarBtn">Registrar</button>
+      <p class="aeon-hint" id="avStatus"></p>
+    </div>
+    <p id="avAutorAviso" style="display:none; color:var(--ae-ink-45); font-size:13px;">Você não pode avaliar sua própria monografia.</p>
+
+    <div id="avaliacoesList" style="margin-top:24px;"></div>
+  </div>
+</main>
+
+<div id="negado" style="display:none;" class="aeon-shell">
+  <div style="text-align:center; padding:96px 24px;">
+    <h1 style="font-size:32px;">Restrito a Iniciados</h1>
+    <a href="novo-aeon.html" class="aeon-btn">Ver o Novo Æon →</a>
+  </div>
+</div>
+
+<footer class="aeon-footer">Ágora, por SLU — Sociedade das Luzes Ocultas</footer>
+
+<script type="module">
+import { requireAuth, souIniciadoAeon, obterMonografiaAeon, listarAvaliacoesMonografia, avaliarMonografiaPar, mensagemAmigavel } from './js/agoraAuth.js';
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+function youtubeEmbedUrl(url) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+
+const monografiaId = new URLSearchParams(location.search).get('id');
+const session = await requireAuth('login.html');
+let monografia = null;
+
+if (session && monografiaId) {
+  const autorizado = await souIniciadoAeon();
+  if (!autorizado) {
+    document.getElementById('negado').style.display = 'block';
+  } else {
+    document.getElementById('conteudo').style.display = 'block';
+    monografia = await obterMonografiaAeon(monografiaId);
+    if (!monografia) {
+      document.getElementById('conteudo').innerHTML = '<div class="aeon-shell" style="padding:80px 24px;"><p>Monografia não encontrada.</p></div>';
+    } else {
+      renderMonografia(monografia);
+      if (monografia.user_id === session.user.id) {
+        document.getElementById('avAutorAviso').style.display = 'block';
+      } else {
+        document.getElementById('formAvaliacao').style.display = 'block';
+      }
+      await renderAvaliacoes();
+    }
+  }
+}
+
+function renderMonografia(m) {
+  document.getElementById('statusTag').textContent = m.status === 'avaliada' ? `Avaliada · ${m.nota_admin}/10` : 'Em avaliação';
+  document.getElementById('statusTag').classList.toggle('avaliada', m.status === 'avaliada');
+  document.getElementById('tituloEl').textContent = m.titulo;
+  document.getElementById('metaEl').textContent = `${m.autor_nome || 'Um Iniciado'} · ${new Date(m.created_at).toLocaleDateString('pt-BR')}`;
+  document.getElementById('conteudoEl').textContent = m.conteudo;
+
+  if (m.status === 'avaliada') {
+    document.getElementById('avaliacaoAdminBox').style.display = 'block';
+    document.getElementById('avaliacaoAdminBox').innerHTML = `
+      <div class="aeon-nota">${m.nota_admin}/10</div>
+      ${m.comentario_admin ? `<p style="font-size:14px; color:var(--ae-ink-70); margin-top:8px;">${escapeHtml(m.comentario_admin)}</p>` : ''}
+      <div class="aeon-hint">+${m.pontos_concedidos} pontos de nível concedidos</div>`;
+  }
+
+  const midias = Array.isArray(m.midias) ? m.midias : [];
+  document.getElementById('midiasEl').innerHTML = midias.map(md => {
+    if (md.tipo === 'imagem') {
+      return `<div class="aeon-midia-embed"><img src="${escapeHtml(md.url)}" alt="${escapeHtml(md.legenda || '')}">${md.legenda ? `<div class="legenda">${escapeHtml(md.legenda)}</div>` : ''}</div>`;
+    }
+    const embed = youtubeEmbedUrl(md.url);
+    return `<div class="aeon-midia-embed">${embed
+      ? `<iframe src="${embed}" allowfullscreen loading="lazy"></iframe>`
+      : `<a href="${escapeHtml(md.url)}" target="_blank" rel="noopener">▶ Assistir vídeo →</a>`}
+      ${md.legenda ? `<div class="legenda">${escapeHtml(md.legenda)}</div>` : ''}</div>`;
+  }).join('');
+
+  if (m.esquema) {
+    document.getElementById('esquemaEl').innerHTML = `<div class="aeon-midia-embed"><img src="${m.esquema}" alt="Esquema"><div class="legenda">Esquematização anexada pelo autor</div></div>`;
+  }
+}
+
+async function renderAvaliacoes() {
+  const avaliacoes = await listarAvaliacoesMonografia(monografiaId);
+  const el = document.getElementById('avaliacoesList');
+  if (!avaliacoes.length) { el.innerHTML = '<p style="font-size:13px; color:var(--ae-ink-45);">Ninguém avaliou ainda.</p>'; return; }
+  el.innerHTML = avaliacoes.map(a => `
+    <div class="aeon-avaliacao-item">
+      <div class="quem">${escapeHtml(a.autor_nome || 'Um Iniciado')} · ${new Date(a.created_at).toLocaleDateString('pt-BR')} ${a.tipo === 'expansao' ? '· <span class="tipo-expansao">Expansão</span>' : ''}</div>
+      <div style="font-size:14px; color:var(--ae-ink-70); white-space:pre-wrap;">${escapeHtml(a.texto)}</div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('avEnviarBtn').addEventListener('click', async () => {
+  const status = document.getElementById('avStatus');
+  const tipo = document.getElementById('avTipo').value;
+  const texto = document.getElementById('avTexto').value.trim();
+  if (!texto) { status.textContent = 'Escreva algo antes de enviar.'; return; }
+  const btn = document.getElementById('avEnviarBtn');
+  btn.disabled = true;
+  try {
+    const result = await avaliarMonografiaPar(session.user.id, monografiaId, tipo, texto);
+    if (!result.ok) { status.textContent = result.mensagem; btn.disabled = false; return; }
+    document.getElementById('avTexto').value = '';
+    status.textContent = 'Registrado — seu selo de experiência cresceu.';
+    await renderAvaliacoes();
+  } catch (e) {
+    status.textContent = mensagemAmigavel(e, 'registrar sua avaliação');
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>

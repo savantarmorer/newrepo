@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "qtu6mq5g1k");
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#EDE9E0">
+<meta name="robots" content="noindex">
+<title>Ágora — Monografias do Æon</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/aeon.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+</head>
+<body class="aeon-tema">
+
+<nav class="aeon-nav">
+  <div class="marca">ÁGORA <span>· Câmara do Æon</span></div>
+  <div class="links">
+    <a href="camara-aeon.html">← A Câmara</a>
+    <a href="dashboard.html">Painel</a>
+  </div>
+</nav>
+
+<main id="conteudo" style="display:none;">
+  <div class="aeon-hero-min">
+    <div class="eyebrow">Lore, prática e questionamento</div>
+    <h1>Monografias</h1>
+    <p>O que você descobriu, praticou ou construiu. Uma monografia pode ser um texto, uma prática documentada, um esquema, ou tudo isso junto. Um administrador avalia a qualidade — a nota vira pontos pro seu nível.</p>
+  </div>
+
+  <div class="aeon-shell" style="padding-top:32px; padding-bottom:80px;">
+
+    <div class="aeon-card" style="margin-bottom:40px;">
+      <h3 style="font-size:18px;">Enviar Nova Monografia</h3>
+      <div class="aeon-field"><label>Título</label><input type="text" id="mTitulo"></div>
+      <div class="aeon-field"><label>Conteúdo</label><textarea id="mConteudo" rows="8" placeholder="Desenvolva seu lore, sua prática, sua análise..."></textarea></div>
+
+      <div class="aeon-field">
+        <label>Mídias (vídeo ou imagem por link)</label>
+        <div id="midiasRows"></div>
+        <button type="button" class="aeon-btn ghost" id="addMidiaBtn" style="margin-top:8px;">+ Adicionar Mídia</button>
+      </div>
+
+      <div class="aeon-field">
+        <label>Esquematização (opcional — desenhe localmente)</label>
+        <div class="aeon-canvas-wrap">
+          <canvas id="esquemaCanvas" height="260"></canvas>
+          <div class="aeon-canvas-tools">
+            <button type="button" class="aeon-btn ghost" id="canvasLimpar" style="padding:6px 14px;">Limpar</button>
+            <button type="button" class="aeon-btn ghost" id="canvasDesfazer" style="padding:6px 14px;">Desfazer Traço</button>
+            <label style="display:flex; align-items:center; gap:6px; font-size:12px;">Espessura <input type="range" id="canvasEspessura" min="1" max="10" value="3" style="width:80px;"></label>
+          </div>
+        </div>
+        <div class="aeon-hint">O esquema é anexado como uma imagem à sua monografia.</div>
+      </div>
+
+      <button class="aeon-btn" id="mEnviarBtn">Enviar Monografia</button>
+      <p class="aeon-hint" id="mStatus"></p>
+    </div>
+
+    <h2 style="font-size:22px; border-top:2px solid var(--ae-line); padding-top:32px;">Monografias da Câmara</h2>
+    <div id="monografiasList"><p>Carregando...</p></div>
+  </div>
+</main>
+
+<div id="negado" style="display:none;" class="aeon-shell">
+  <div style="text-align:center; padding:96px 24px;">
+    <h1 style="font-size:32px;">Restrito a Iniciados</h1>
+    <a href="novo-aeon.html" class="aeon-btn">Ver o Novo Æon →</a>
+  </div>
+</div>
+
+<footer class="aeon-footer">Ágora, por SLU — Sociedade das Luzes Ocultas</footer>
+
+<script type="module">
+import { requireAuth, souIniciadoAeon, enviarMonografiaAeon, listarMonografiasAeon, mensagemAmigavel } from './js/agoraAuth.js';
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+const session = await requireAuth('login.html');
+if (session) {
+  const autorizado = await souIniciadoAeon();
+  if (!autorizado) {
+    document.getElementById('negado').style.display = 'block';
+  } else {
+    document.getElementById('conteudo').style.display = 'block';
+    iniciarCanvas();
+    adicionarMidiaRow();
+    await renderMonografias();
+  }
+}
+
+// ── Mídias repetíveis (vídeo/imagem por link) ──────────────────────────
+function adicionarMidiaRow() {
+  const row = document.createElement('div');
+  row.className = 'aeon-midia-row';
+  row.innerHTML = `
+    <select class="midia-tipo"><option value="imagem">Imagem</option><option value="video">Vídeo</option></select>
+    <input type="text" class="midia-url" placeholder="URL">
+    <input type="text" class="midia-legenda" placeholder="Legenda (opcional)">
+    <button type="button" class="aeon-btn ghost remover-midia-btn" style="padding:8px 12px;">✕</button>
+  `;
+  row.querySelector('.remover-midia-btn').addEventListener('click', () => row.remove());
+  document.getElementById('midiasRows').appendChild(row);
+}
+document.getElementById('addMidiaBtn').addEventListener('click', adicionarMidiaRow);
+
+function coletarMidias() {
+  return [...document.querySelectorAll('.aeon-midia-row')].map(row => ({
+    tipo: row.querySelector('.midia-tipo').value,
+    url: row.querySelector('.midia-url').value.trim(),
+    legenda: row.querySelector('.midia-legenda').value.trim(),
+  })).filter(m => m.url);
+}
+
+// ── Canvas de esquematização (traço livre, preto sobre branco) ────────
+let historico = [];
+function iniciarCanvas() {
+  const canvas = document.getElementById('esquemaCanvas');
+  const ctx = canvas.getContext('2d');
+  function ajustarTamanho() {
+    const largura = canvas.parentElement.clientWidth;
+    const dados = canvas.width ? canvas.toDataURL() : null;
+    canvas.width = largura; canvas.height = 260;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (dados) { const img = new Image(); img.onload = () => ctx.drawImage(img, 0, 0); img.src = dados; }
+  }
+  ajustarTamanho();
+  window.addEventListener('resize', ajustarTamanho);
+
+  let desenhando = false;
+  function pos(e) {
+    const r = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX - r.left, y: p.clientY - r.top };
+  }
+  function iniciar(e) {
+    desenhando = true;
+    historico.push(canvas.toDataURL());
+    const { x, y } = pos(e);
+    ctx.beginPath(); ctx.moveTo(x, y);
+  }
+  function desenhar(e) {
+    if (!desenhando) return;
+    e.preventDefault();
+    const { x, y } = pos(e);
+    ctx.lineWidth = document.getElementById('canvasEspessura').value;
+    ctx.lineCap = 'round'; ctx.strokeStyle = '#111';
+    ctx.lineTo(x, y); ctx.stroke();
+  }
+  function parar() { desenhando = false; }
+
+  canvas.addEventListener('mousedown', iniciar);
+  canvas.addEventListener('mousemove', desenhar);
+  window.addEventListener('mouseup', parar);
+  canvas.addEventListener('touchstart', iniciar);
+  canvas.addEventListener('touchmove', desenhar);
+  canvas.addEventListener('touchend', parar);
+
+  document.getElementById('canvasLimpar').addEventListener('click', () => {
+    historico.push(canvas.toDataURL());
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  });
+  document.getElementById('canvasDesfazer').addEventListener('click', () => {
+    const anterior = historico.pop();
+    if (!anterior) return;
+    const img = new Image();
+    img.onload = () => { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0); };
+    img.src = anterior;
+  });
+}
+
+function canvasEstaVazio() {
+  const canvas = document.getElementById('esquemaCanvas');
+  const ctx = canvas.getContext('2d');
+  const dados = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  for (let i = 0; i < dados.length; i += 4) {
+    if (dados[i] !== 255 || dados[i + 1] !== 255 || dados[i + 2] !== 255) return false;
+  }
+  return true;
+}
+
+// ── Enviar monografia ────────────────────────────────────────────────
+document.getElementById('mEnviarBtn').addEventListener('click', async () => {
+  const status = document.getElementById('mStatus');
+  const titulo = document.getElementById('mTitulo').value.trim();
+  const conteudo = document.getElementById('mConteudo').value.trim();
+  if (!titulo || !conteudo) { status.textContent = 'Título e conteúdo são obrigatórios.'; return; }
+
+  const btn = document.getElementById('mEnviarBtn');
+  btn.disabled = true;
+  status.textContent = 'Registrando...';
+  try {
+    const midias = coletarMidias();
+    const esquema = canvasEstaVazio() ? null : document.getElementById('esquemaCanvas').toDataURL('image/png');
+    const result = await enviarMonografiaAeon(session.user.id, titulo, conteudo, midias, esquema);
+    if (!result.ok) { status.textContent = result.mensagem; btn.disabled = false; return; }
+    window.location.href = `aeon-monografia.html?id=${result.id}`;
+  } catch (e) {
+    status.textContent = mensagemAmigavel(e, 'enviar a monografia');
+    btn.disabled = false;
+  }
+});
+
+// ── Lista ────────────────────────────────────────────────────────────
+async function renderMonografias() {
+  const monografias = await listarMonografiasAeon();
+  const el = document.getElementById('monografiasList');
+  if (!monografias.length) { el.innerHTML = `<p>Nenhuma monografia enviada ainda.</p>`; return; }
+  el.innerHTML = monografias.map(m => `
+    <a href="aeon-monografia.html?id=${m.id}" class="aeon-mono-item" style="display:block; text-decoration:none; color:inherit;">
+      <span class="aeon-status-tag ${m.status === 'avaliada' ? 'avaliada' : ''}">${m.status === 'avaliada' ? `Avaliada · ${m.nota_admin}/10` : 'Em avaliação'}</span>
+      <h3>${escapeHtml(m.titulo)}</h3>
+      <div class="meta">${escapeHtml(m.autor_nome || 'Um Iniciado')} · ${new Date(m.created_at).toLocaleDateString('pt-BR')}</div>
+    </a>
+  `).join('');
+}
+</script>
+
+<script>if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {})); }</script>
+</body>
+</html>
