@@ -132,7 +132,7 @@ function renderItens(itens, { limpar }) {
     <div class="feed-item">
       <div class="ic">${ICONES[a.fonte_tipo] || '•'}</div>
       <div class="corpo">
-        <div><span class="quem">${a.autor_nome || 'Um Iniciado'}</span> — ${a.motivo}</div>
+        <div><a href="perfil.html?user=${a.user_id}" class="quem">${a.autor_nome || 'Um Iniciado'}</a> — ${a.motivo}</div>
         <div class="quando" title="${new Date(a.created_at).toLocaleString('pt-BR')}">${tempoRelativo(a.created_at)}</div>
       </div>
       ${a.xp > 0 ? `<span class="xp">+${a.xp} XP</span>` : ''}

@@ -429,7 +429,7 @@ async function carregarAtribuicoes() {
   const escapeHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   el.innerHTML = lista.map(a => `
     <div class="atrib-row">
-      <span><strong class="text-gold">${escapeHtml(a.analista_nome || 'Iniciado')}</strong> investigando <strong>${escapeHtml(a.agora_provida_modulos?.nome || '—')}</strong></span>
+      <span><a href="perfil.html?user=${a.user_id}" class="text-gold" style="font-weight:700;">${escapeHtml(a.analista_nome || 'Iniciado')}</a> investigando <strong>${escapeHtml(a.agora_provida_modulos?.nome || '—')}</strong></span>
       <span class="text-muted" style="font-size:var(--text-xs);">desde ${new Date(a.atribuido_em).toLocaleDateString('pt-BR')}</span>
     </div>
   `).join('');
@@ -735,7 +735,9 @@ document.getElementById('fichaForm').addEventListener('submit', async e => {
     if (!result.ok) { status.textContent = result.mensagem; return; }
     status.textContent = `Ficha registrada! +${result.xp_ganho} XP. Confira seu Painel.`;
     const conquistas = await verificarConquistas(session.user.id);
-    mostrarConquistasDesbloqueadas(conquistas.novas);
+    const novasConquistas = [...(result.conquista_modulo ? [result.conquista_modulo] : []), ...conquistas.novas];
+    mostrarConquistasDesbloqueadas(novasConquistas);
+    if (result.conquista_modulo) await carregarAtribuicoes();
     limparRascunho();
     document.getElementById('fichaForm').reset();
     document.getElementById('afirmacoesList').innerHTML = '';

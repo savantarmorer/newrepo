@@ -222,7 +222,7 @@ async function renderFeed() {
   if (!atividades.length) { el.innerHTML = `<p class="text-muted" style="font-size:var(--text-sm);">Nenhuma atividade registrada ainda — seja o primeiro.</p>`; return; }
   el.innerHTML = atividades.map(a => `
     <div class="feed-item">
-      <div><span class="quem">${a.autor_nome || 'Um Iniciado'}</span> — ${a.motivo}
+      <div><a href="perfil.html?user=${a.user_id}" class="quem">${a.autor_nome || 'Um Iniciado'}</a> — ${a.motivo}
         <span class="quando">${new Date(a.created_at).toLocaleString('pt-BR')}</span>
       </div>
       <span class="xp">+${a.xp} XP</span>

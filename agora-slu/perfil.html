@@ -43,6 +43,7 @@
   .onboard-item.done .txt strong { color:var(--color-text-muted); font-weight:400; text-decoration:line-through; }
   .bio-row { display:flex; gap:var(--space-3); align-items:flex-start; flex-wrap:wrap; }
   .bio-row .perfil-bio { flex:1; min-width:220px; }
+  .visita-banner { display:none; align-items:center; justify-content:space-between; gap:var(--space-3); flex-wrap:wrap; background:var(--bg-surface-elevated); border:1px solid var(--border-medium); border-radius:var(--radius-sm); padding:var(--space-3) var(--space-4); margin-bottom:var(--space-6); font-size:var(--text-sm); }
 </style>
 </head>
 <body>
@@ -76,6 +77,11 @@
 </nav>
 
 <main class="cultus-shell" id="perfilContent" style="display:none; max-width:760px;">
+  <div class="visita-banner" id="visitaBanner">
+    <span>Você está vendo o perfil de outro Iniciado.</span>
+    <a href="perfil.html" class="btn btn-secondary" style="font-size:var(--text-xs);">← Ver meu perfil</a>
+  </div>
+
   <div class="perfil-header">
     <div class="perfil-avatar" id="avatarRing">I</div>
     <div>
@@ -105,9 +111,10 @@
   </a>
 
   <div class="card" style="margin-bottom:var(--space-6);">
-    <h3 style="font-size:var(--text-md);">Sobre Você</h3>
-    <p class="text-muted" style="font-size:var(--text-xs); margin-bottom:var(--space-3);">Uma bio curta, visível pra outros Iniciados que virem seu perfil.</p>
-    <div class="bio-row">
+    <h3 style="font-size:var(--text-md);">Sobre</h3>
+    <p class="text-muted" id="bioHint" style="font-size:var(--text-xs); margin-bottom:var(--space-3);">Uma bio curta, visível pra outros Iniciados que virem seu perfil.</p>
+    <p class="text-secondary" id="bioDisplay" style="display:none; font-size:var(--text-sm);"></p>
+    <div class="bio-row" id="bioEditRow">
       <textarea class="perfil-bio" id="bioInput" maxlength="280" rows="2" placeholder="Fale um pouco sobre você..."></textarea>
       <button class="btn btn-secondary" id="bioSaveBtn" style="font-size:var(--text-xs);">Salvar</button>
     </div>
@@ -119,11 +126,11 @@
       <h3 style="font-size:var(--text-md); margin:0;">Conquistas</h3>
       <span class="text-muted" style="font-size:var(--text-xs);" id="conquistasProgresso"></span>
     </div>
-    <p class="text-muted" style="font-size:var(--text-xs); margin:var(--space-2) 0 var(--space-4);">Desbloqueiam sozinhas quando você cumpre o critério de verdade — clique numa desbloqueada pra usá-la como seu título.</p>
+    <p class="text-muted" id="conquistasHint" style="font-size:var(--text-xs); margin:var(--space-2) 0 var(--space-4);">Desbloqueiam sozinhas quando você cumpre o critério de verdade — clique numa desbloqueada pra usá-la como seu título.</p>
     <div class="conquista-grid" id="conquistaGrid"></div>
   </div>
 
-  <div class="card" style="margin-bottom:var(--space-6);">
+  <div class="card" id="contaCard" style="margin-bottom:var(--space-6);">
     <h3 style="font-size:var(--text-md);">Dados da Conta</h3>
     <div class="info-row"><span class="k">Nome</span><span class="v" id="infoNome">—</span></div>
     <div class="info-row"><span class="k">Usuário</span><span class="v" id="infoUsuario">—</span></div>
@@ -142,7 +149,7 @@
     <p class="text-muted" id="syncStatus" style="font-size:var(--text-xs); margin-top:var(--space-3);"></p>
   </div>
 
-  <div style="text-align:center; margin: var(--space-12) 0;">
+  <div style="text-align:center; margin: var(--space-12) 0;" id="acoesFinais">
     <a href="dashboard.html" class="btn btn-primary" style="margin-right:var(--space-3);">Ir ao Painel →</a>
     <button class="btn btn-secondary" id="logoutBtn">Sair do Círculo</button>
   </div>
@@ -155,16 +162,74 @@
 
 <script type="module">
 import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile,
-         verificarConquistas, definirTituloPerfil, listarConquistasComStatus, mostrarConquistasDesbloqueadas, atualizarBio, mensagemAmigavel } from './js/agoraAuth.js';
+         verificarConquistas, definirTituloPerfil, listarConquistasComStatus, mostrarConquistasDesbloqueadas, atualizarBio,
+         obterPerfilPublico, maiorRaridadeDesbloqueada, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
 montarNavAuth();
 
 const session = await requireAuth('login.html');
+const idVisitado = new URLSearchParams(location.search).get('user');
+const estaVisitando = Boolean(session && idVisitado && idVisitado !== session.user.id);
+
 if (session) {
   document.getElementById('perfilContent').style.display = 'block';
-  await render(session);
+  if (estaVisitando) {
+    ativarModoVisita();
+    await renderVisitante(idVisitado);
+  } else {
+    await render(session);
+  }
+}
+
+function ativarModoVisita() {
+  document.title = 'Ágora — Perfil de um Iniciado';
+  document.getElementById('visitaBanner').style.display = 'flex';
+  document.getElementById('onboardingCard').style.display = 'none';
+  document.getElementById('bioEditRow').style.display = 'none';
+  document.getElementById('bioHint').style.display = 'none';
+  document.getElementById('conquistasHint').textContent = 'Conquistas que este Iniciado já desbloqueou (e o quanto falta pras que ainda não).';
+  document.getElementById('contaCard').style.display = 'none';
+  document.getElementById('discordCard').style.display = 'none';
+  document.getElementById('acoesFinais').style.display = 'none';
+}
+
+function aplicarMolduraAvatar(conquistas) {
+  const raridade = maiorRaridadeDesbloqueada(conquistas);
+  const el = document.getElementById('avatarRing');
+  el.classList.remove('frame-rara', 'frame-epica', 'frame-lendaria');
+  if (raridade && raridade !== 'comum') el.classList.add(`frame-${raridade}`);
+}
+
+async function renderVisitante(uid) {
+  const profile = await obterPerfilPublico(uid);
+  if (!profile) {
+    document.getElementById('perfilContent').innerHTML = '<p class="text-muted" style="padding:var(--space-8) 0;">Este Iniciado não foi encontrado.</p>';
+    return;
+  }
+  const xp = profile.xp || 0;
+  const grau = calcularGrau(xp);
+  const nome = profile.nome_exibicao || 'Um Iniciado';
+
+  document.getElementById('nomeExibicao').textContent = nome;
+  document.getElementById('grauBadge').textContent = `${grau.nome} · Grau ${grau.grau}`;
+  document.getElementById('xpValue').textContent = xp.toLocaleString('pt-BR');
+  document.getElementById('streakValue').textContent = `🔥 ${profile.streak_atual ?? 0}`;
+  document.getElementById('grauValue').textContent = grau.grau;
+  document.getElementById('providerChips').innerHTML = '';
+
+  if (profile.avatar_url) document.getElementById('avatarRing').innerHTML = `<img src="${profile.avatar_url}" alt="avatar">`;
+  else document.getElementById('avatarRing').textContent = nome.charAt(0).toUpperCase();
+
+  const bioDisplay = document.getElementById('bioDisplay');
+  bioDisplay.textContent = profile.bio || 'Este Iniciado ainda não escreveu uma bio.';
+  bioDisplay.style.display = 'block';
+
+  const conquistas = await listarConquistasComStatus(uid);
+  renderGridConquistas(conquistas, profile.titulo_ativo_id, false, uid);
+  atualizarTituloBadge(conquistas.find(c => c.id === profile.titulo_ativo_id));
+  aplicarMolduraAvatar(conquistas);
 }
 
 async function render(session) {
@@ -205,24 +270,34 @@ async function render(session) {
   // do limiar desde a última visita) e mostra o "drop" de quem for nova.
   const resultado = await verificarConquistas(user.id);
   mostrarConquistasDesbloqueadas(resultado.novas);
-  await renderConquistas(user.id, profile?.titulo_ativo_id || null);
+  const conquistas = await listarConquistasComStatus(user.id);
+  renderGridConquistas(conquistas, profile?.titulo_ativo_id || null, true, user.id);
+  atualizarTituloBadge(conquistas.find(c => c.id === profile?.titulo_ativo_id));
+  aplicarMolduraAvatar(conquistas);
 }
 
-async function renderConquistas(uid, tituloAtivoId) {
-  const conquistas = await listarConquistasComStatus(uid);
+function renderGridConquistas(conquistas, tituloAtivoId, selecionavel, uid) {
   const desbloqueadas = conquistas.filter(c => c.desbloqueada_em);
   document.getElementById('conquistasProgresso').textContent = `${desbloqueadas.length} de ${conquistas.length} desbloqueadas`;
 
   document.getElementById('conquistaGrid').innerHTML = conquistas.map(c => {
     const unlocked = Boolean(c.desbloqueada_em);
     const isActive = c.id === tituloAtivoId;
+    const podeClicar = selecionavel && unlocked;
+    const progressoHtml = (!unlocked && c.criterio_valor > 1) ? `
+      <div class="progresso">${c.valor_atual} de ${c.criterio_valor}</div>
+      <div class="progresso-track"><div class="progresso-fill" style="width:${Math.min(100, Math.round((c.valor_atual / c.criterio_valor) * 100))}%;"></div></div>
+    ` : '';
     return `
-      <div class="conquista-slot ${unlocked ? 'unlocked selectable' : 'locked'} raridade-${c.raridade} ${isActive ? 'active-title' : ''}"
-           data-id="${c.id}" data-unlocked="${unlocked}" title="${unlocked ? c.descricao : 'Ainda não desbloqueada'}">
+      <div class="conquista-slot ${unlocked ? 'unlocked' : 'locked'} ${podeClicar ? 'selectable' : ''} raridade-${c.raridade} ${isActive ? 'active-title' : ''}"
+           data-id="${c.id}" title="${unlocked ? c.descricao : 'Ainda não desbloqueada'}">
         <div class="ic">${unlocked ? c.icone : '🔒'}</div>
         <div class="nome">${c.nome}</div>
+        ${progressoHtml}
       </div>`;
   }).join('');
+
+  if (!selecionavel) return;
 
   document.getElementById('conquistaGrid').querySelectorAll('.conquista-slot.selectable').forEach(el => {
     el.addEventListener('click', async () => {
@@ -231,14 +306,12 @@ async function renderConquistas(uid, tituloAtivoId) {
         await definirTituloPerfil(uid, jaAtiva ? null : el.dataset.id);
         const profile = await getProfile(uid);
         atualizarTituloBadge(conquistas.find(c => c.id === profile?.titulo_ativo_id));
-        await renderConquistas(uid, profile?.titulo_ativo_id || null);
+        renderGridConquistas(conquistas, profile?.titulo_ativo_id || null, true, uid);
       } catch (e) {
         alert(mensagemAmigavel(e, 'definir título'));
       }
     });
   });
-
-  atualizarTituloBadge(conquistas.find(c => c.id === tituloAtivoId));
 }
 
 function atualizarTituloBadge(conquista) {

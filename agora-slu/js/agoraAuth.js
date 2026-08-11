@@ -266,7 +266,7 @@ export async function atribuirModuloProvida(userId) {
 // Tabela pública: quem está analisando qual módulo agora.
 export async function listarAtribuicoesProvida() {
   const { data, error } = await sb.from('agora_provida_atribuicoes')
-    .select('analista_nome, atribuido_em, agora_provida_modulos(nome, link_drive)')
+    .select('user_id, analista_nome, atribuido_em, agora_provida_modulos(nome, link_drive)')
     .order('atribuido_em', { ascending: false });
   if (error) { console.warn('agora_provida_atribuicoes:', error.message); return []; }
   return data || [];
@@ -355,18 +355,53 @@ export async function definirTituloPerfil(userId, conquistaId) {
 
 // Catálogo completo + quais o usuário já desbloqueou (pra montar a
 // grade de badges no perfil, bloqueados e desbloqueados lado a lado).
+// "raridade" ordinal — usado pra achar a mais alta entre as
+// desbloqueadas (molduras de avatar) e pra ordenar a grade.
+export const ORDEM_RARIDADE = ['comum', 'rara', 'epica', 'lendaria'];
+
 export async function listarConquistasComStatus(userId) {
-  const [{ data: todas }, { data: minhas }] = await Promise.all([
-    sb.from('agora_conquistas').select('*').order('raridade'),
+  const [{ data: todas }, { data: minhas }, { data: progresso }] = await Promise.all([
+    sb.from('agora_conquistas').select('*'),
     sb.from('agora_conquistas_desbloqueadas').select('conquista_id, desbloqueada_em').eq('user_id', userId),
+    sb.rpc('obter_progresso_conquistas', { uid: userId }),
   ]);
   const desbloqueadasPorId = new Map((minhas || []).map(m => [m.conquista_id, m.desbloqueada_em]));
-  return (todas || []).map(c => ({ ...c, desbloqueada_em: desbloqueadasPorId.get(c.id) || null }));
+  const progressoPorId = new Map((progresso || []).map(p => [p.conquista_id, p.valor_atual]));
+  return (todas || [])
+    .map(c => ({ ...c, desbloqueada_em: desbloqueadasPorId.get(c.id) || null, valor_atual: progressoPorId.get(c.id) ?? 0 }))
+    .sort((a, b) => ORDEM_RARIDADE.indexOf(a.raridade) - ORDEM_RARIDADE.indexOf(b.raridade));
+}
+
+// A maior raridade entre as conquistas desbloqueadas — usada pra dar
+// uma moldura cosmética ao avatar (ver .perfil-avatar.frame-* no CSS).
+export function maiorRaridadeDesbloqueada(conquistas) {
+  const desbloqueadas = (conquistas || []).filter(c => c.desbloqueada_em);
+  if (!desbloqueadas.length) return null;
+  return desbloqueadas.reduce((maior, c) =>
+    ORDEM_RARIDADE.indexOf(c.raridade) > ORDEM_RARIDADE.indexOf(maior) ? c.raridade : maior, 'comum');
 }
 
 export async function atualizarBio(userId, bio) {
   const { error } = await sb.from('agora_profiles').update({ bio: bio.slice(0, 280) }).eq('id', userId);
   if (error) throw new Error(error.message);
+}
+
+// ── Perfis públicos ──────────────────────────────────────────────────
+// auth.users nunca é exposto ao cliente pra OUTROS usuários — por isso
+// mantemos uma cópia pública (nome_exibicao/avatar_url) em agora_profiles,
+// atualizada oportunisticamente sempre que o dono da conta navega o site.
+export async function sincronizarPerfilPublico(userId, nomeExibicao, avatarUrl) {
+  if (!nomeExibicao && !avatarUrl) return;
+  sb.from('agora_profiles').update({ nome_exibicao: nomeExibicao || null, avatar_url: avatarUrl || null })
+    .eq('id', userId).then(({ error }) => { if (error) console.warn('sincronizarPerfilPublico:', error.message); });
+}
+
+export async function obterPerfilPublico(userId) {
+  const { data, error } = await sb.from('agora_profiles')
+    .select('*, titulo:agora_conquistas(id, nome, icone, raridade)')
+    .eq('id', userId).maybeSingle();
+  if (error) { console.warn('obterPerfilPublico:', error.message); return null; }
+  return data;
 }
 
 // Toast de "drop" — some sozinho depois de alguns segundos. Cria o
@@ -475,6 +510,7 @@ export async function montarNavAuth() {
   const profile = await getProfile(session.user.id);
   const grau = calcularGrau(profile?.xp || 0);
   const nomeExibicao = session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email;
+  sincronizarPerfilPublico(session.user.id, nomeExibicao, session.user.user_metadata?.avatar_url);
 
   const notificacoes = await obterNotificacoes(session.user.id);
   const ultimaVista = obterUltimaVisualizacaoNotificacoes(session.user.id);
