@@ -28,6 +28,21 @@ test.describe('Login e gate de autenticação', () => {
     await page.waitForURL(/login\.html/, { timeout: 10_000 });
   });
 
+  test('camara-aeon.html redireciona pra login.html sem sessão', async ({ page }) => {
+    await page.goto('/agora-slu/camara-aeon.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/login\.html/, { timeout: 10_000 });
+  });
+
+  test('aeon-monografias.html redireciona pra login.html sem sessão', async ({ page }) => {
+    await page.goto('/agora-slu/aeon-monografias.html', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/login\.html/, { timeout: 10_000 });
+  });
+
+  test('aeon-monografia.html redireciona pra login.html sem sessão', async ({ page }) => {
+    await page.goto('/agora-slu/aeon-monografia.html?id=teste', { waitUntil: 'domcontentloaded' });
+    await page.waitForURL(/login\.html/, { timeout: 10_000 });
+  });
+
   test('admin.html mostra o formulário de login (não o painel) sem sessão', async ({ page }) => {
     await page.goto('/agora-slu/admin.html', { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#loginBox')).toBeVisible();
@@ -41,17 +56,11 @@ test.describe('Navegação e páginas públicas', () => {
     await expect(page.locator('nav.cultus-nav a[href="perfil.html"]')).toHaveCount(1);
     await expect(page.locator('nav.cultus-nav a[href="investigacoes.html"]')).toHaveCount(1);
     await expect(page.locator('nav.cultus-nav a[href="provida.html"]')).toHaveCount(1);
-    await expect(page.locator('nav.cultus-nav a[href="busca.html"]')).toHaveCount(1);
   });
 
   test('investigacoes.html carrega sem exigir login (visualização pública)', async ({ page }) => {
     await page.goto('/agora-slu/investigacoes.html', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: /Investigação Coletiva de Arquivos/i })).toBeVisible();
-  });
-
-  test('busca.html tem o campo de busca', async ({ page }) => {
-    await page.goto('/agora-slu/busca.html', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('#q')).toBeVisible();
   });
 
   test('novo-aeon.html carrega o texto e o formulário de ingresso', async ({ page }) => {
@@ -62,8 +71,8 @@ test.describe('Navegação e páginas públicas', () => {
     await expect(page.locator('#aTelefone')).toBeVisible();
   });
 
-  test('páginas removidas (terminal, evidencias, mobile, grafo, clube-do-livro) não existem mais', async ({ request }) => {
-    for (const pagina of ['terminal.html', 'evidencias.html', 'mobile.html', 'grafo.html', 'clube-do-livro.html']) {
+  test('páginas removidas (terminal, evidencias, mobile, grafo, clube-do-livro, busca) não existem mais', async ({ request }) => {
+    for (const pagina of ['terminal.html', 'evidencias.html', 'mobile.html', 'grafo.html', 'clube-do-livro.html', 'busca.html']) {
       const res = await request.get(`/agora-slu/${pagina}`);
       expect(res.status(), `${pagina} deveria retornar 404`).toBe(404);
     }

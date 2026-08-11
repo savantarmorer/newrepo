@@ -117,7 +117,8 @@
 import { requireAuth, souIniciadoAeon, souGuardiaoAeon, listarMuroAeon, obterMeuMuroAeon,
          listarExerciciosAeon, listarRespostasExercicio, responderExercicioAeon, criarExercicioAeon,
          listarGlossarioAeon, proporTermoGlossario, aprovarTermoGlossarioComNiveis,
-         calcularNivelAeon, NIVEL_AEON_NOME, NIVEL_AEON_LIMIAR, renderSeloAeonSvg, mensagemAmigavel } from './js/agoraAuth.js';
+         calcularNivelAeon, NIVEL_AEON_NOME, NIVEL_AEON_LIMIAR, renderSeloAeonSvg,
+         verificarConquistas, mostrarConquistasDesbloqueadas, mensagemAmigavel } from './js/agoraAuth.js';
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -161,6 +162,12 @@ if (session) {
     renderNivelStrip(meuMuro);
 
     await Promise.all([renderMuro(), renderExercicios(guardiao), renderGlossario(guardiao)]);
+
+    // Pega conquistas do Æon cumpridas por ações em outras páginas (ex:
+    // ser aceito) ou aqui mesmo (nível/selo já podem ter passado do
+    // limiar antes desta visita).
+    const resultado = await verificarConquistas(session.user.id);
+    mostrarConquistasDesbloqueadas(resultado.novas);
   }
 }
 
@@ -254,6 +261,8 @@ async function renderExercicios(souGuardiaoDaCena) {
         status.textContent = 'Registrado — pontos somados ao seu nível.';
         const m = await obterMeuMuroAeon(session.user.id);
         renderNivelStrip(m);
+        const resultado = await verificarConquistas(session.user.id);
+        mostrarConquistasDesbloqueadas(resultado.novas);
       } catch (e) {
         status.textContent = mensagemAmigavel(e, 'registrar sua resposta');
       } finally {

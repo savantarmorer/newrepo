@@ -42,6 +42,7 @@
 
     <div id="midiasEl"></div>
     <div id="esquemaEl"></div>
+    <div id="historicoEl"></div>
 
     <hr style="border:none; border-top:2px solid var(--ae-line); margin:48px 0 32px;">
 
@@ -73,7 +74,8 @@
 <footer class="aeon-footer">Ágora, por SLU — Sociedade das Luzes Ocultas</footer>
 
 <script type="module">
-import { requireAuth, souIniciadoAeon, obterMonografiaAeon, listarAvaliacoesMonografia, avaliarMonografiaPar, mensagemAmigavel } from './js/agoraAuth.js';
+import { requireAuth, souIniciadoAeon, obterMonografiaAeon, listarAvaliacoesMonografia, avaliarMonografiaPar,
+         verificarConquistas, mostrarConquistasDesbloqueadas, mensagemAmigavel } from './js/agoraAuth.js';
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
@@ -117,11 +119,32 @@ function renderMonografia(m) {
   document.getElementById('conteudoEl').textContent = m.conteudo;
 
   if (m.status === 'avaliada') {
+    const souAutor = session.user.id === m.user_id;
+    const notaBaixa = souAutor && m.nota_admin < 6;
     document.getElementById('avaliacaoAdminBox').style.display = 'block';
     document.getElementById('avaliacaoAdminBox').innerHTML = `
       <div class="aeon-nota">${m.nota_admin}/10</div>
       ${m.comentario_admin ? `<p style="font-size:14px; color:var(--ae-ink-70); margin-top:8px;">${escapeHtml(m.comentario_admin)}</p>` : ''}
-      <div class="aeon-hint">+${m.pontos_concedidos} pontos de nível concedidos</div>`;
+      <div class="aeon-hint">+${m.pontos_concedidos} pontos de nível concedidos</div>
+      ${notaBaixa ? `<a href="aeon-monografias.html?editar=${m.id}" class="aeon-btn ghost" style="margin-top:16px; display:inline-block;">Reenviar uma versão melhorada →</a>` : ''}`;
+  }
+
+  const historico = Array.isArray(m.historico) ? m.historico : [];
+  if (historico.length) {
+    document.getElementById('historicoEl').innerHTML = `
+      <details style="margin:16px 0;">
+        <summary style="cursor:pointer; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--ae-ink-45);">
+          Versões anteriores (${historico.length})
+        </summary>
+        ${historico.map(v => `
+          <div class="aeon-avaliacao-item" style="margin-top:12px;">
+            <div class="quem">${new Date(v.avaliado_em).toLocaleDateString('pt-BR')} · nota ${v.nota_admin}/10</div>
+            <div style="font-size:13px; font-weight:700; margin:4px 0;">${escapeHtml(v.titulo)}</div>
+            <div style="font-size:13px; color:var(--ae-ink-70); white-space:pre-wrap;">${escapeHtml(v.conteudo)}</div>
+            ${v.comentario_admin ? `<div style="font-size:12px; color:var(--ae-ink-45); margin-top:6px;">"${escapeHtml(v.comentario_admin)}"</div>` : ''}
+          </div>
+        `).join('')}
+      </details>`;
   }
 
   const midias = Array.isArray(m.midias) ? m.midias : [];
@@ -166,6 +189,8 @@ document.getElementById('avEnviarBtn').addEventListener('click', async () => {
     document.getElementById('avTexto').value = '';
     status.textContent = 'Registrado — seu selo de experiência cresceu.';
     await renderAvaliacoes();
+    const resultadoConquistas = await verificarConquistas(session.user.id);
+    mostrarConquistasDesbloqueadas(resultadoConquistas.novas);
   } catch (e) {
     status.textContent = mensagemAmigavel(e, 'registrar sua avaliação');
   } finally {

@@ -92,6 +92,7 @@
     <div>
       <h1 style="font-size:var(--text-lg); margin-bottom:2px;" id="nomeExibicao">Iniciado</h1>
       <span class="badge" id="grauBadge">Neófito</span>
+      <div id="aeonNivelBadge" class="titulo-ativo-badge" style="display:none;"></div>
       <div id="tituloAtivoBadge" class="titulo-ativo-badge" style="display:none;"></div>
       <div id="providerChips" style="margin-top:var(--space-2);"></div>
     </div>
@@ -168,7 +169,7 @@
 <script type="module">
 import { sb, requireAuth, getProfile, getDiscordSync, calcularGrau, sincronizarDiscord, signOut, montarNavAuth, montarNavMais, montarNavMobile,
          verificarConquistas, definirTituloPerfil, listarConquistasComStatus, mostrarConquistasDesbloqueadas, atualizarBio,
-         obterPerfilPublico, maiorRaridadeDesbloqueada, souIniciadoAeon, mensagemAmigavel } from './js/agoraAuth.js';
+         obterPerfilPublico, maiorRaridadeDesbloqueada, souIniciadoAeon, obterMeuMuroAeon, NIVEL_AEON_NOME, mensagemAmigavel } from './js/agoraAuth.js';
 
 montarNavMais();
 montarNavMobile();
@@ -235,6 +236,7 @@ async function renderVisitante(uid) {
   const conquistas = await listarConquistasComStatus(uid);
   renderGridConquistas(conquistas, profile.titulo_ativo_id, false, uid);
   atualizarTituloBadge(conquistas.find(c => c.id === profile.titulo_ativo_id));
+  aplicarNivelAeonBadge(uid);
   aplicarMolduraAvatar(conquistas);
 }
 
@@ -280,6 +282,7 @@ async function render(session) {
   renderGridConquistas(conquistas, profile?.titulo_ativo_id || null, true, user.id);
   atualizarTituloBadge(conquistas.find(c => c.id === profile?.titulo_ativo_id));
   aplicarMolduraAvatar(conquistas);
+  aplicarNivelAeonBadge(user.id);
 
   const souIniciado = await souIniciadoAeon();
   aplicarPortalAeon(souIniciado);
@@ -294,6 +297,17 @@ function aplicarPortalAeon(aceito) {
   el.href = 'camara-aeon.html';
   el.className = 'aeon-portal-btn';
   el.innerHTML = '<span class="titulo">Æon</span>';
+}
+
+// obterMeuMuroAeon(uid) só retorna linha se QUEM ESTÁ OLHANDO for
+// Iniciado (RLS de agora_aeon_membros) — pra quem não é, vem null e o
+// badge simplesmente não aparece, sem revelar nada sobre o dono do perfil.
+async function aplicarNivelAeonBadge(uid) {
+  const muro = await obterMeuMuroAeon(uid);
+  if (!muro) return;
+  const el = document.getElementById('aeonNivelBadge');
+  el.textContent = `✦ Nível ${muro.nivel || 1} — ${NIVEL_AEON_NOME[muro.nivel || 1]}`;
+  el.style.display = 'inline-flex';
 }
 
 function renderGridConquistas(conquistas, tituloAtivoId, selecionavel, uid) {

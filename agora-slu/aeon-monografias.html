@@ -33,14 +33,14 @@
 <main id="conteudo" style="display:none;">
   <div class="aeon-hero-min">
     <div class="eyebrow">Lore, prática e questionamento</div>
-    <h1>Monografias</h1>
-    <p>O que você descobriu, praticou ou construiu. Uma monografia pode ser um texto, uma prática documentada, um esquema, ou tudo isso junto. Um administrador avalia a qualidade — a nota vira pontos pro seu nível.</p>
+    <h1 id="heroTitulo">Monografias</h1>
+    <p id="heroTexto">O que você descobriu, praticou ou construiu. Uma monografia pode ser um texto, uma prática documentada, um esquema, ou tudo isso junto. Um administrador avalia a qualidade — a nota vira pontos pro seu nível.</p>
   </div>
 
   <div class="aeon-shell" style="padding-top:32px; padding-bottom:80px;">
 
     <div class="aeon-card" style="margin-bottom:40px;">
-      <h3 style="font-size:18px;">Enviar Nova Monografia</h3>
+      <h3 style="font-size:18px;" id="formTitulo">Enviar Nova Monografia</h3>
       <div class="aeon-field"><label>Título</label><input type="text" id="mTitulo"></div>
       <div class="aeon-field"><label>Conteúdo</label><textarea id="mConteudo" rows="8" placeholder="Desenvolva seu lore, sua prática, sua análise..."></textarea></div>
 
@@ -67,8 +67,10 @@
       <p class="aeon-hint" id="mStatus"></p>
     </div>
 
-    <h2 style="font-size:22px; border-top:2px solid var(--ae-line); padding-top:32px;">Monografias da Câmara</h2>
-    <div id="monografiasList"><p>Carregando...</p></div>
+    <div id="listaWrap">
+      <h2 style="font-size:22px; border-top:2px solid var(--ae-line); padding-top:32px;">Monografias da Câmara</h2>
+      <div id="monografiasList"><p>Carregando...</p></div>
+    </div>
   </div>
 </main>
 
@@ -82,11 +84,15 @@
 <footer class="aeon-footer">Ágora, por SLU — Sociedade das Luzes Ocultas</footer>
 
 <script type="module">
-import { requireAuth, souIniciadoAeon, enviarMonografiaAeon, listarMonografiasAeon, mensagemAmigavel } from './js/agoraAuth.js';
+import { requireAuth, souIniciadoAeon, enviarMonografiaAeon, reenviarMonografiaAeon, obterMonografiaAeon,
+         listarMonografiasAeon, mensagemAmigavel } from './js/agoraAuth.js';
 
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
 }
+
+const editarId = new URLSearchParams(location.search).get('editar');
+let monografiaEditando = null;
 
 const session = await requireAuth('login.html');
 if (session) {
@@ -96,8 +102,42 @@ if (session) {
   } else {
     document.getElementById('conteudo').style.display = 'block';
     iniciarCanvas();
-    adicionarMidiaRow();
+
+    if (editarId) await entrarModoEdicao(editarId);
+    if (!monografiaEditando) adicionarMidiaRow();
+
     await renderMonografias();
+  }
+}
+
+// Só entra em modo edição se a monografia for mesmo do usuário e a nota
+// for baixa — mesma checagem que o servidor faz em reenviar_monografia_aeon,
+// duplicada aqui só pra decidir o que mostrar na tela (o servidor é quem
+// de fato garante a regra).
+async function entrarModoEdicao(id) {
+  const m = await obterMonografiaAeon(id);
+  if (!m || m.user_id !== session.user.id || m.status !== 'avaliada' || m.nota_admin >= 6) return;
+
+  monografiaEditando = m;
+  document.getElementById('heroTitulo').textContent = 'Reenviar Monografia';
+  document.getElementById('heroTexto').textContent = 'Uma versão melhorada substitui o conteúdo e volta pra fila de avaliação. A versão anterior fica guardada no histórico da monografia.';
+  document.getElementById('formTitulo').textContent = `Reenviando: nota anterior ${m.nota_admin}/10`;
+  document.getElementById('mEnviarBtn').textContent = 'Reenviar Versão';
+  document.getElementById('listaWrap').style.display = 'none';
+
+  document.getElementById('mTitulo').value = m.titulo;
+  document.getElementById('mConteudo').value = m.conteudo;
+  const midias = Array.isArray(m.midias) ? m.midias : [];
+  if (midias.length) {
+    midias.forEach(md => {
+      adicionarMidiaRow();
+      const row = document.getElementById('midiasRows').lastElementChild;
+      row.querySelector('.midia-tipo').value = md.tipo || 'imagem';
+      row.querySelector('.midia-url').value = md.url || '';
+      row.querySelector('.midia-legenda').value = md.legenda || '';
+    });
+  } else {
+    adicionarMidiaRow();
   }
 }
 
@@ -203,12 +243,20 @@ document.getElementById('mEnviarBtn').addEventListener('click', async () => {
   status.textContent = 'Registrando...';
   try {
     const midias = coletarMidias();
-    const esquema = canvasEstaVazio() ? null : document.getElementById('esquemaCanvas').toDataURL('image/png');
-    const result = await enviarMonografiaAeon(session.user.id, titulo, conteudo, midias, esquema);
+    // Canvas em branco não apaga um esquema já anexado numa reenvio — só
+    // troca se a pessoa de fato desenhou algo novo.
+    const esquema = canvasEstaVazio()
+      ? (monografiaEditando?.esquema || null)
+      : document.getElementById('esquemaCanvas').toDataURL('image/png');
+
+    const result = monografiaEditando
+      ? await reenviarMonografiaAeon(session.user.id, monografiaEditando.id, titulo, conteudo, midias, esquema)
+      : await enviarMonografiaAeon(session.user.id, titulo, conteudo, midias, esquema);
+
     if (!result.ok) { status.textContent = result.mensagem; btn.disabled = false; return; }
-    window.location.href = `aeon-monografia.html?id=${result.id}`;
+    window.location.href = `aeon-monografia.html?id=${monografiaEditando ? monografiaEditando.id : result.id}`;
   } catch (e) {
-    status.textContent = mensagemAmigavel(e, 'enviar a monografia');
+    status.textContent = mensagemAmigavel(e, monografiaEditando ? 'reenviar a monografia' : 'enviar a monografia');
     btn.disabled = false;
   }
 });

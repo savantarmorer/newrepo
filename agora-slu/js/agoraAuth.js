@@ -597,6 +597,16 @@ export async function enviarMonografiaAeon(userId, titulo, conteudo, midias, esq
   return data;
 }
 
+// Só funciona (checado no servidor) se a monografia for do próprio uid,
+// já avaliada, e com nota abaixo de 6 — ver reenviar_monografia_aeon().
+export async function reenviarMonografiaAeon(userId, monografiaId, titulo, conteudo, midias, esquema) {
+  const { data, error } = await sb.rpc('reenviar_monografia_aeon', {
+    uid: userId, p_monografia_id: monografiaId, p_titulo: titulo, p_conteudo: conteudo, p_midias: midias, p_esquema: esquema,
+  });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function listarMonografiasAeon() {
   const { data, error } = await sb.from('agora_aeon_monografias').select('*').order('created_at', { ascending: false });
   if (error) { console.warn('listarMonografiasAeon:', error.message); return []; }
