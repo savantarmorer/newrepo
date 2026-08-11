@@ -39,6 +39,15 @@
   .row-actions button { font-size:var(--text-xs); }
   .crud-status { font-size:var(--text-xs); min-height:18px; margin-top:var(--space-2); }
   #loginBox, #deniedBox { max-width:420px; margin:var(--space-16) auto; text-align:center; }
+  #fichaModalBg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:100; align-items:center; justify-content:center; padding:var(--space-6); }
+  #fichaModalBg .card { max-width:700px; width:100%; max-height:88vh; overflow-y:auto; }
+  .ficha-detalhe h4 { font-size:var(--text-sm); color:var(--color-text-gold); text-transform:uppercase; letter-spacing:.05em; margin:var(--space-6) 0 var(--space-2); border-bottom:1px solid var(--border-subtle); padding-bottom:var(--space-1); }
+  .ficha-detalhe h4:first-child { margin-top:0; }
+  .ficha-detalhe .campo { margin-bottom:var(--space-3); }
+  .ficha-detalhe .campo .k { font-size:var(--text-xs); color:var(--color-text-muted); text-transform:uppercase; letter-spacing:.05em; display:block; margin-bottom:2px; }
+  .ficha-detalhe .campo .v { font-size:var(--text-sm); color:var(--color-text-primary); white-space:pre-wrap; }
+  .ficha-detalhe .campo .v:empty::before, .ficha-detalhe .campo .v.vazio { color:var(--color-text-muted); font-style:italic; }
+  .ficha-detalhe .item-lista { border-left:2px solid var(--border-subtle); padding-left:var(--space-3); margin-bottom:var(--space-2); font-size:var(--text-sm); }
 </style>
 </head>
 <body>
@@ -91,6 +100,16 @@
     <div class="admin-shell">
       <div class="admin-tabs" id="adminTabs"></div>
       <div id="adminPanels"></div>
+    </div>
+  </div>
+
+  <div id="fichaModalBg">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:var(--space-3);">
+        <h3 id="fichaModalTitulo" style="font-size:var(--text-md); margin:0;">Ficha</h3>
+        <button class="btn btn-secondary" id="fichaModalCloseBtn" style="font-size:var(--text-xs); flex-shrink:0;">Fechar</button>
+      </div>
+      <div id="fichaModalBody" class="ficha-detalhe" style="margin-top:var(--space-4);"></div>
     </div>
   </div>
 </main>
@@ -404,10 +423,19 @@ async function montarProvidaModeracao() {
           <strong>${escapeHtml(f.titulo || '(sem título)')}</strong>
           <div class="text-muted" style="font-size:var(--text-xs);">${escapeHtml(f.analista_tag || 'Iniciado')} · ${new Date(f.created_at).toLocaleDateString('pt-BR')}</div>
         </div>
-        <button class="btn btn-alert delete-ficha-btn" data-id="${f.id}" style="font-size:var(--text-xs); height:fit-content;">Apagar</button>
+        <div style="display:flex; gap:var(--space-2); height:fit-content;">
+          <button class="btn btn-secondary ver-ficha-btn" data-id="${f.id}" style="font-size:var(--text-xs);">Ver Completa</button>
+          <button class="btn btn-alert delete-ficha-btn" data-id="${f.id}" style="font-size:var(--text-xs);">Apagar</button>
+        </div>
       </div>
     </div>
   `).join('');
+  listEl.querySelectorAll('.ver-ficha-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ficha = fichas.find(f => String(f.id) === btn.dataset.id);
+      if (ficha) abrirFichaModal(ficha);
+    });
+  });
   listEl.querySelectorAll('.delete-ficha-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       if (!confirm('Apagar esta ficha Pró-Vida? Não dá pra desfazer.')) return;
@@ -417,6 +445,69 @@ async function montarProvidaModeracao() {
     });
   });
 }
+
+// ── Modal com o conteúdo completo de uma Ficha Pró-Vida ─────────────────
+function campoHtml(rotulo, valor) {
+  const v = (valor === null || valor === undefined || valor === '') ? '<span class="vazio">— não preenchido —</span>' : escapeHtml(valor);
+  return `<div class="campo"><span class="k">${rotulo}</span><span class="v">${v}</span></div>`;
+}
+function listaHtml(rotulo, itens, montarLinha) {
+  if (!itens || !itens.length) return campoHtml(rotulo, null);
+  return `<div class="campo"><span class="k">${rotulo}</span>${itens.map(montarLinha).join('')}</div>`;
+}
+const TECNICAS_MARCADAS = t => (t || []).filter(x => x.aparece || x.trecho);
+
+function abrirFichaModal(f) {
+  document.getElementById('fichaModalTitulo').textContent = `${f.documento_id} — ${f.titulo || '(sem título)'}`;
+  document.getElementById('fichaModalBody').innerHTML = `
+    <h4>Identificação</h4>
+    ${campoHtml('Analista', f.analista_tag)}
+    ${campoHtml('Tipo de peça', [f.tipo_peca, f.tipo_peca_outro].filter(Boolean).join(' — '))}
+    ${campoHtml('Curso e posição', f.curso_posicao)}
+    ${campoHtml('Procedência', f.procedencia)}
+
+    <h4>Resumo e Função no Funil</h4>
+    ${campoHtml('Do que trata', f.resumo)}
+    ${campoHtml('Função da peça', [f.funcao_funil, f.funcao_funil_outra].filter(Boolean).join(' — '))}
+    ${campoHtml('Público-alvo', f.publico_alvo)}
+
+    <h4>Técnicas de Persuasão / Controle Mental</h4>
+    ${listaHtml('Marcadas', TECNICAS_MARCADAS(f.tecnicas), t => `<div class="item-lista"><strong>${escapeHtml(t.tecnica)}</strong>${t.trecho ? ' — ' + escapeHtml(t.trecho) : ''}</div>`)}
+
+    <h4>Estrutura Retórica</h4>
+    ${campoHtml('Como o texto conduz', f.estrutura_retorica)}
+
+    <h4>Afirmações "Científicas" — Checagem</h4>
+    ${listaHtml('Afirmações', f.afirmacoes, a => `<div class="item-lista"><strong>${escapeHtml(a.afirmacao)}</strong> (${escapeHtml(a.categoria)})${a.fonte_real ? ' — fonte real provável: ' + escapeHtml(a.fonte_real) : ''}</div>`)}
+
+    <h4>Material Apropriado de Terceiros</h4>
+    ${listaHtml('Itens', f.material_terceiros, m => `<div class="item-lista"><strong>${escapeHtml(m.elemento)}</strong>${m.origem_real ? ' — origem real: ' + escapeHtml(m.origem_real) : ''}${m.trecho ? ' (' + escapeHtml(m.trecho) + ')' : ''}</div>`)}
+
+    <h4>Léxico Interno</h4>
+    ${listaHtml('Termos', f.lexico, l => `<div class="item-lista"><strong>${escapeHtml(l.termo)}</strong>${l.definicao_texto ? ' — "' + escapeHtml(l.definicao_texto) + '"' : ''}${l.origem_externa ? ' (equivalente: ' + escapeHtml(l.origem_externa) + ')' : ''}</div>`)}
+
+    <h4>Pessoas, Entidades, Datas e Conexões</h4>
+    ${campoHtml('Pessoas / entidades', f.pessoas_entidades)}
+    ${campoHtml('Datas / locais', f.datas_locais)}
+    ${campoHtml('Trechos-chave', f.trechos_chave)}
+    ${campoHtml('Conexões', f.conexoes)}
+
+    <h4>Avaliação Final</h4>
+    ${campoHtml('Relevância', f.relevancia ? `${f.relevancia}/5${f.relevancia_motivo ? ' — ' + f.relevancia_motivo : ''}` : null)}
+    ${campoHtml('Gancho de conteúdo', (f.gancho_conteudo || []).join(', '))}
+    ${campoHtml('Pendências', f.pendencias)}
+    ${campoHtml('Confiança do analista', f.confianca)}
+    ${campoHtml('Observações', f.observacoes)}
+    ${campoHtml('Enviada em', new Date(f.created_at).toLocaleString('pt-BR'))}
+  `;
+  document.getElementById('fichaModalBg').style.display = 'flex';
+}
+document.getElementById('fichaModalCloseBtn').addEventListener('click', () => {
+  document.getElementById('fichaModalBg').style.display = 'none';
+});
+document.getElementById('fichaModalBg').addEventListener('click', e => {
+  if (e.target.id === 'fichaModalBg') e.currentTarget.style.display = 'none';
+});
 
 // ── Pró-Vida: atribuições de módulo (ver + resetar pra forçar novo sorteio) ─
 async function montarAtribuicoesModeracao() {
