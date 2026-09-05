@@ -14,6 +14,7 @@ RewriteRule ^biblioteca/?$ /biblioteca.html [L]
 RewriteRule ^login/?$ /login.html [L]
 RewriteRule ^sobre/?$ /sobre.html [L]
 RewriteRule ^blog/?$ /blog.html [L]
+RewriteRule ^jarro/?$ /jarro.html [L]
 </IfModule>
 
 # Compression
