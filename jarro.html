@@ -324,7 +324,7 @@ const params   = new URLSearchParams(location.search);
 const FORCE_DEMO = params.get('demo') === '1';
 // URL do servidor Node.js que retransmite eventos da LIVE
 // Prioridade: ?server= na URL > variável abaixo > localhost (uso local)
-const SERVER_URL = params.get('server') || 'https://jarro-tiktok.onrender.com';
+const SERVER_URL = params.get('server') || 'https://newrepo-wsnj.onrender.com';
 const META     = Math.max(50, parseInt(params.get('meta') || '2000', 10));
 const TITULO   = params.get('titulo');
 if (TITULO) document.getElementById('title').textContent = TITULO;
