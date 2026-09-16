@@ -32,8 +32,7 @@ canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#05040a
  border:2px solid #221b33;border-radius:3px;background:#0a0811;font-size:9px;line-height:1.85;color:#968cae}
 .panel k{color:var(--gold);font-style:normal}
 .panel i{color:#5c5572;font-style:normal}
-#pad{position:fixed;inset:auto 0 0 0;height:200px;display:none;pointer-events:none;z-index:5}
-body.touch #pad{display:block}
+#pad{position:fixed;inset:auto 0 0 0;height:200px;display:block;pointer-events:none;z-index:5}
 .btn{position:absolute;border-radius:50%;border:2px solid rgba(224,181,58,.5);background:rgba(22,16,36,.62);
  color:var(--gold);font-family:inherit;font-size:8px;display:flex;align-items:center;justify-content:center;
  pointer-events:auto;backdrop-filter:blur(3px);-webkit-tap-highlight-color:transparent}
@@ -122,8 +121,7 @@ addEventListener('keydown',e=>{const a=Input.map[e.code];if(a){e.preventDefault(
 addEventListener('keyup',e=>{const a=Input.map[e.code];if(a){e.preventDefault();Input.release(a);}},{passive:false});
 addEventListener('blur',()=>{for(const k in Input.down) Input.down[k]=false;});
 (function pad(){
-  if(!matchMedia('(hover:none) and (pointer:coarse)').matches) return;
-  document.body.classList.add('touch');
+  /* comandos touch sempre presentes - nao depende de deteccao de "mobile" */
   const el=document.getElementById('pad');
   const L=[['left','&larr;','dp',12,72],['right','&rarr;','dp',140,72],['up','&uarr;','dp',76,12],['down','&darr;','dp',76,132]];
   const R=[['atk','GOLPE','a',14,62],['jump','PULO','a',100,22],['guard','GUARDA','s',186,88],
@@ -131,11 +129,13 @@ addEventListener('blur',()=>{for(const k in Input.down) Input.down[k]=false;});
   const mk=(a,label,cls,side,v1,v2)=>{
     const b=document.createElement('button'); b.className='btn '+cls; b.innerHTML=label;
     b.style[side]=v1+'px'; b.style.bottom=v2+'px';
+    b.style.touchAction='none';
     const on=e=>{e.preventDefault();b.classList.add('on');Input.press(a);Input.press('start');};
     const off=e=>{e.preventDefault();b.classList.remove('on');Input.release(a);};
-    b.addEventListener('touchstart',on,{passive:false});
-    b.addEventListener('touchend',off,{passive:false});
-    b.addEventListener('touchcancel',off,{passive:false});
+    b.addEventListener('pointerdown',on);
+    b.addEventListener('pointerup',off);
+    b.addEventListener('pointercancel',off);
+    b.addEventListener('pointerleave',off);
     el.appendChild(b);
   };
   L.forEach(([a,l,c,x,y])=>mk(a,l,c,'left',x,y));
@@ -2371,7 +2371,7 @@ function frame(now){
   while(acc>=FR&&guard++<4){ update(FR); acc-=FR; }
   render();
 }
-['pointerdown','keydown','touchstart'].forEach(ev=>
+['pointerdown','keydown'].forEach(ev=>
   addEventListener(ev,()=>{ Sfx.init(); Sfx.resume(); },{once:true,passive:true}));
 Game.stageObj=STAGE_DATABASE[0];
 loadArt().then(()=>{ if(Game.mode==='load') Game.mode='title'; });
