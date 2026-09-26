@@ -1,5 +1,7 @@
--- Estado operacional do curso JIP.
+-- Estado do aluno no curso JIP (perfil, registros opcionais, gate do catálogo).
 -- Rode depois de curso-jip.sql e curso-jip-alunos.sql.
+-- Colunas vertente/opsec_score/codinome permanecem por compatibilidade; a UI
+-- não faz mais triagem OpSec e marca onboarding_completed no primeiro acesso.
 
 create table if not exists public.curso_jip_perfis (
   user_id uuid primary key references auth.users (id) on delete cascade,

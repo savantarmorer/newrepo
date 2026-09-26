@@ -1,4 +1,4 @@
-# Sala de Investigação JIP
+# Curso JIP — área do aluno
 
 ## Arquitetura
 
@@ -11,14 +11,16 @@ stateDiagram-v2
   Visitante --> Autenticado: senha / Google / magic link
   Visitante --> Recuperacao: redefinir senha
   Autenticado --> AcessoPendente: e-mail fora de curso_jip_alunos
-  Autenticado --> Triagem: e-mail autorizado e perfil incompleto
-  Triagem --> Operacao: perfil salvo no Supabase
-  Operacao --> Aula
-  Operacao --> Dossie
-  Operacao --> Evidencias
-  Aula --> Operacao: progresso/notas salvos
+  Autenticado --> Inicio: e-mail autorizado
+  Inicio --> Aula
+  Inicio --> Ferramentas
+  Aula --> Inicio: progresso/notas salvos
   Autenticado --> Visitante: logout
 ```
+
+Não há triagem OpSec, quiz de segurança nem “credencial” antes do conteúdo. No
+primeiro acesso pago, `onboarding_completed` é marcado automaticamente (ou o
+gate é ignorado se a gravação falhar).
 
 ### Limites de confiança
 
@@ -70,11 +72,11 @@ Mensagens de login/recuperação evitam enumerar usuários.
 
 ## Persistência
 
-- Perfil, triagem e OpSec: `curso_jip_perfis`
-- Pauta: `curso_jip_pautas`
+- Perfil (`onboarding_completed` automático): `curso_jip_perfis`
+- Pauta (opcional, em Minha conta): `curso_jip_pautas`
 - Notas/exercícios: `curso_jip_exercicios`
 - Progresso: `curso_jip_progresso`
-- Quadro de evidências: `curso_jip_evidencias`
+- Registros opcionais: `curso_jip_evidencias`
 
 Não existe fallback para `localStorage`; uma falha de gravação é exibida e não é
 rotulada como sincronizada.
@@ -91,7 +93,7 @@ interface com o JWT do aluno:
 Não existem cópias públicas em `/jornalismo/downloads/`.
 
 O vídeo não é simulado. Sem URL real, a aula mostra “Vídeo ainda não publicado”
-e oferece o roteiro pesquisável, notas privadas e ferramentas reais.
+e oferece o roteiro, ferramentas da aula e notas privadas.
 
 ## Verificação
 
@@ -99,5 +101,5 @@ e oferece o roteiro pesquisável, notas privadas e ferramentas reais.
 npm test -- tests/jornalismo-curso.spec.ts
 ```
 
-Os testes cobrem rotas públicas, guarda de autenticação, autorização, triagem
-persistida, estado salvo e ausência do catálogo pago no diretório público.
+Os testes cobrem rotas públicas, guarda de autenticação, autorização, início
+sem OpSec, estado salvo e ausência do catálogo pago no diretório público.

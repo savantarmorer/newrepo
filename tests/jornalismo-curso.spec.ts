@@ -13,6 +13,8 @@ test('landing do curso tem SEO de Course', async ({ page }) => {
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://iuripiragibe.net/jornalismo/');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /index/i);
   await expect(page.getByText('Sem documento, é lenda').first()).toBeVisible();
+  await expect(page.getByRole('link', { name: /Comprar/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Entrar/i }).first()).toBeVisible();
   const json = await page.locator('script[type="application/ld+json"]').first().textContent();
   expect(json).toContain('"@type": "Course"');
 });
@@ -26,7 +28,7 @@ test('aula aberta 3.2 e 3.3 abre sem login', async ({ page }) => {
 test('guarda de rota leva visitante ao login', async ({ page }) => {
   await page.goto('/jornalismo/app.html#/sala', { waitUntil: 'networkidle' });
   await expect(page).toHaveURL(/#\/entrar$/);
-  await expect(page.getByRole('heading', { name: /Entrar na sala/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /^Entrar$/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /O que é apuração/i })).toHaveCount(0);
 });
 
@@ -59,14 +61,16 @@ test('recursos fornecidos existem apenas no bundle privado', async ({ request })
 const catalog = {
   title: 'Jornalismo Investigativo na Prática',
   modules: [{ id: 1, title: 'Mentalidade investigativa', blurb: 'Pauta e hipótese.' }],
-  toolbox: {},
+  toolbox: {
+    falabr: { name: 'Fala.BR — pedido LAI', url: 'https://falabr.cgu.gov.br/', kind: 'prática' }
+  },
   aulas: [{
     id: '1.1',
     module: 1,
     title: 'O que é apuração',
     duration: '10 min',
     objective: 'separar pista de prova',
-    tools: [],
+    tools: ['falabr'],
     contentHtml: '<h3>ABERTURA</h3><p>Apuração exige verificação.</p>',
     exerciseHtml: '<p>Registre sua primeira pergunta.</p>',
     closingHtml: '<p>Agora teste a hipótese.</p>'
@@ -126,35 +130,35 @@ async function mockAuthorizedSupabase(page, profile: null | {
   });
 }
 
-test('aluno autorizado conclui onboarding persistido', async ({ page }) => {
+test('aluno autorizado cai no início sem OpSec e marca onboarding', async ({ page }) => {
   await mockAuthorizedSupabase(page, null);
   await page.goto('/jornalismo/app.html#/inicio', { waitUntil: 'networkidle' });
-  await expect(page).toHaveURL(/#\/onboarding$/);
-  await page.getByRole('button', { name: /^OSINT/ }).click();
-  await page.getByLabel(/Guardar o original/i).check();
-  await page.getByLabel(/Remove o dado do arquivo final/i).check();
-  await page.getByRole('button', { name: /Calcular diagnóstico/i }).click();
-  await page.getByRole('button', { name: /Liberar primeira missão/i }).click();
-  await expect(page).toHaveURL(/#\/aula\/1\.1$/);
+  await expect(page).toHaveURL(/#\/inicio$/);
+  await expect(page.getByRole('link', { name: /Continuar aula/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Ver aulas/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /^Ferramentas$/i }).first()).toBeVisible();
+  await expect(page.getByText(/Triagem operacional|OpSec|Credencial|Diagnóstico de segurança/i)).toHaveCount(0);
   const writes = await page.evaluate(() => window.__dbWrites);
   expect(writes).toContainEqual(expect.objectContaining({
     table: 'curso_jip_perfis',
-    value: expect.objectContaining({ onboarding_completed: true, vertente: 'osint', opsec_score: 100 })
+    value: expect.objectContaining({ onboarding_completed: true })
   }));
 });
 
 test('notas da aula são persistidas e não simulam vídeo', async ({ page }) => {
   await mockAuthorizedSupabase(page, {
     user_id: '00000000-0000-4000-8000-000000000001',
-    codinome: 'Repórter',
+    codinome: 'Aluno',
     vertente: 'financeira',
-    opsec_score: 100,
+    opsec_score: 0,
     onboarding_completed: true
   });
   await page.goto('/jornalismo/app.html#/aula/1.1', { waitUntil: 'networkidle' });
   await expect(page.getByText('Vídeo ainda não publicado')).toBeVisible();
   await expect(page.locator('video')).toHaveCount(0);
-  await page.getByRole('tab', { name: /Notas privadas/i }).click();
+  await expect(page.getByRole('heading', { name: /Ferramentas desta aula/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Fala\.BR/i })).toBeVisible();
+  await page.getByText(/Notas e exercício/i).click();
   await page.locator('#lesson-notes').fill('Hipótese baseada no contrato público.');
   await page.getByRole('button', { name: /Salvar notas/i }).click();
   await expect(page.getByRole('status')).toContainText(/salvas/i);

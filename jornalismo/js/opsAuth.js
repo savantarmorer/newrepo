@@ -28,7 +28,7 @@ export function displayName(session, profile) {
     || user?.user_metadata?.full_name
     || user?.user_metadata?.name
     || user?.email?.split('@')[0]
-    || 'Repórter';
+    || 'Aluno';
 }
 
 export function friendlyAuthError(error) {
@@ -87,15 +87,12 @@ export async function signInPassword(email, password) {
   if (error) throw error;
 }
 
-export async function signUp({ email, password, codinome }) {
+export async function signUp({ email, password }) {
   if (!sb) throw new Error('Serviço de autenticação indisponível.');
   const { data, error } = await sb.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: redirectUrl(),
-      data: { codinome: codinome || null }
-    }
+    options: { emailRedirectTo: redirectUrl() }
   });
   if (error) throw error;
   return data;
@@ -205,14 +202,15 @@ export async function loadWorkspace(session) {
 }
 
 export async function saveProfile(session, profile) {
-  const { data, error } = await sb.from('curso_jip_perfis').upsert({
+  const row = {
     user_id: session.user.id,
-    codinome: profile.codinome || null,
-    vertente: profile.vertente,
-    opsec_score: profile.opsec_score,
-    onboarding_completed: profile.onboarding_completed,
+    onboarding_completed: Boolean(profile.onboarding_completed),
     updated_at: new Date().toISOString()
-  }).select().single();
+  };
+  if ('codinome' in profile) row.codinome = profile.codinome || null;
+  if (profile.vertente) row.vertente = profile.vertente;
+  if ('opsec_score' in profile) row.opsec_score = Number(profile.opsec_score) || 0;
+  const { data, error } = await sb.from('curso_jip_perfis').upsert(row).select().single();
   if (error) throw error;
   return data;
 }
