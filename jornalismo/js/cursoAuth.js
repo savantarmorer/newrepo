@@ -22,12 +22,46 @@ export function toast(msg) {
 
 export async function getSession() {
   if (!sb) return null;
+  const pending = location.search.includes('code=') || location.hash.includes('access_token');
+  if (pending) {
+    await new Promise((resolve) => {
+      let done = false;
+      const { data: sub } = sb.auth.onAuthStateChange((_e, sess) => {
+        if (sess && !done) {
+          done = true;
+          sub.subscription.unsubscribe();
+          resolve(sess);
+        }
+      });
+      setTimeout(() => {
+        if (!done) {
+          done = true;
+          sub.subscription.unsubscribe();
+          resolve(null);
+        }
+      }, 4000);
+    });
+  }
   const { data } = await sb.auth.getSession();
   return data.session;
 }
 
 export function redirectTo() {
-  return `${location.origin}/jornalismo/app.html#/sala`;
+  return `${location.origin}/jornalismo/app.html#/inicio`;
+}
+
+export function displayName(session) {
+  const u = session?.user;
+  if (!u) return 'Aluno';
+  const meta = u.user_metadata || {};
+  return meta.full_name || meta.name || (u.email ? u.email.split('@')[0] : 'Aluno');
+}
+
+export function initials(session) {
+  const n = displayName(session).trim();
+  const parts = n.split(/\s+/);
+  const letters = (parts[0]?.[0] || 'A') + (parts[1]?.[0] || '');
+  return letters.toUpperCase();
 }
 
 export async function sendMagicLink(email) {
@@ -51,6 +85,7 @@ export async function signInOAuth(provider) {
 export async function signOut() {
   await sb?.auth.signOut();
   location.hash = '#/entrar';
+  location.reload();
 }
 
 export async function ensureEnrolled(session) {
@@ -75,12 +110,14 @@ function readLs(key, fallback) {
 }
 
 export async function loadState(session) {
+  const empty = { pauta: { titulo: '', dados: {} }, progress: [], exercises: {}, cloud: false };
+  if (!session) return empty;
   const local = {
     pauta: readLs(LS.pauta, { titulo: '', dados: {} }),
     progress: readLs(LS.progress, []),
     exercises: readLs(LS.exercises, {})
   };
-  if (!sb || !session) return { ...local, cloud: false };
+  if (!sb) return { ...local, cloud: false };
   try {
     await ensureEnrolled(session);
     const uid = session.user.id;
@@ -162,6 +199,37 @@ export async function sendFeedback(session, userId, aulaId, comentario, status) 
     status
   });
   if (error) throw error;
+}
+
+export async function hasPaidAccess(session, isTeacherFlag) {
+  if (!session) return false;
+  if (isTeacherFlag) return true;
+  if (!sb) return false;
+  const email = (session.user.email || '').toLowerCase();
+  if (!email) return false;
+  const { data, error } = await sb
+    .from('curso_jip_alunos')
+    .select('email')
+    .eq('email', email)
+    .maybeSingle();
+  if (error) return false;
+  return Boolean(data);
+}
+
+export async function grantAluno(email, fonte = 'manual') {
+  if (!sb) throw new Error('Supabase indisponível');
+  const { error } = await sb.from('curso_jip_alunos').upsert({
+    email: email.trim().toLowerCase(),
+    fonte
+  });
+  if (error) throw error;
+}
+
+export async function listAlunos() {
+  if (!sb) return [];
+  const { data, error } = await sb.from('curso_jip_alunos').select('email, fonte, created_at').order('created_at', { ascending: false });
+  if (error) return [];
+  return data || [];
 }
 
 export function exportDossie(pauta, exercises, aulas) {

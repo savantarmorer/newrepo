@@ -1,0 +1,56 @@
+{
+  "title": "Jornalismo Investigativo na Prática",
+  "slogan": "Sem documento, é lenda.",
+  "toolbox": {
+    "falabr": {
+      "name": "Fala.BR — pedido LAI",
+      "url": "https://falabr.cgu.gov.br/",
+      "kind": "prática"
+    },
+    "informabr": {
+      "name": "InformaBR — prazos LAI",
+      "url": "https://informabr.cgu.gov.br/entenda-os-prazos",
+      "kind": "consulta"
+    },
+    "cmri": {
+      "name": "CMRI — recursos",
+      "url": "https://www.gov.br/acessoainformacao/pt-br/lai-para-sic/cmri",
+      "kind": "consulta"
+    }
+  },
+  "aulas": [
+    {
+      "id": "3.2",
+      "module": 3,
+      "title": "O pedido que não dá para enrolar",
+      "duration": "12 min",
+      "objective": "redigir um pedido específico e protocolá-lo",
+      "screen": "Fala.BR ao vivo, modelo A dos bônus",
+      "open": true,
+      "tools": [
+        "falabr",
+        "informabr"
+      ],
+      "contentHtml": "<h3 class=\"jip-block\">ABERTURA</h3>\n<p>Pedido vago recebe resposta vaga. Pedido cirúrgico recebe planilha.</p>\n<p>A diferença entre os dois é uma frase bem escrita.</p>\n<h3 class=\"jip-block\">BLOCO 1 — A anatomia do pedido</h3>\n<aside class=\"jip-tela\">TELA: estrutura do pedido em cinco partes</aside>\n<p>Um: o objeto. O que exatamente você quer. “Cópia integral dos contratos”, não “informações sobre contratos”.</p>\n<p>Dois: o período. De quando a quando.</p>\n<p>Três: o recorte. Qual órgão, qual unidade, qual empresa, com CNPJ.</p>\n<p>Quatro: o formato. Planilha em formato aberto, .csv ou .xlsx. Documento em PDF pesquisável, que quer dizer: com texto que dá para selecionar e buscar, não uma foto escaneada.</p>\n<p>Cinco: o pedido subsidiário. Subsidiário é o pedido reserva, para o caso de o principal ser negado. “Havendo parte sigilosa, requeiro acesso à parte não sigilosa.”</p>\n<p>Isso está no artigo 7º, parágrafo 2º. Com essa frase, o órgão não pode negar tudo só porque uma parte é restrita.</p>\n<p>E um sexto item, opcional: “caso o órgão não detenha a informação, indique quem a detém”. O artigo 11 obriga o órgão a fazer isso.</p>\n<h3 class=\"jip-block\">BLOCO 2 — Ruim e bom</h3>\n<aside class=\"jip-tela\">TELA: os dois pedidos lado a lado</aside>\n<p>Ruim: “Quero todas as informações sobre os gastos da prefeitura com a empresa X.”</p>\n<p>Bom: “Solicito cópia integral dos contratos, termos aditivos e notas de empenho firmados entre a Secretaria Municipal de Educação e a empresa X, CNPJ tal, de 1º de janeiro de 2023 a 31 de dezembro de 2025, em formato aberto. Havendo parte sigilosa, requeiro acesso à parte não sigilosa, com indicação do fundamento legal.”</p>\n<p>O primeiro dá margem para “pedido genérico”. O segundo não dá margem para nada.</p>\n<h3 class=\"jip-block\">BLOCO 3 — As três palavras que matam um pedido</h3>\n<p>O Decreto 7.724, no artigo 13, lista três tipos de pedido que o órgão federal pode deixar de atender. Muitos estados e municípios copiaram a regra.</p>\n<p>Genérico: não dá para saber o que você quer.</p>\n<p>Desproporcional ou desarrazoado: você pede tanto que atender paralisaria o órgão.</p>\n<p>Trabalho adicional: você pede que o órgão analise, interprete ou consolide dados. Que produza um relatório que não existe.</p>\n<p>Como fugir das três. Recorte: período, unidade, tipo de documento. Peça o dado “tal como existe”: você não quer uma tabela nova, quer a que eles já usam. E aceite entrega em partes. Se o volume é grande, divida em vários pedidos menores.</p>\n<p>No caso do trabalho adicional, o próprio decreto, no parágrafo único do artigo 13, manda o órgão indicar onde estão os dados brutos, para você mesmo fazer a consolidação. Use isso.</p>\n<h3 class=\"jip-block\">BLOCO 4 — Protocolando no Fala.BR</h3>\n<aside class=\"jip-note\">DEMONSTRAÇÃO AO VIVO: protocolar um pedido real no Fala.BR, narrando cada passo</aside>\n<ul><li>entrar com a conta gov.br;</li>\n<li>escolher “Acesso à Informação” e o órgão destinatário;</li>\n<li>colar o texto do pedido, feito a partir do modelo A;</li>\n<li>mostrar a opção de preservar a identidade, prevista no parágrafo único do art. 12 do Decreto 7.724, incluído em 2023: o órgão vê só um número, não os seus dados. Quem marca abre mão de ser contatado pelo SIC para esclarecimentos;</li>\n<li>concluir e mostrar o número de protocolo e o e-mail de confirmação;</li>\n<li>anotar a data: é dela que corre o prazo.</li>\n</ul><aside class=\"jip-warn\">⚠️ CONFERIR ANTES DE GRAVAR: como a opção de preservar a identidade aparece na tela do Fala.BR no dia da gravação.</aside>\n<p>Anote o número e a data. A partir de agora, o relógio trabalha para você.</p>\n<h3 class=\"jip-block\">BLOCO 5 — Quatro cuidados</h3>\n<p>Educado e neutro. O pedido é lido por um servidor. Tom agressivo não acelera nada.</p>\n<p>Não revele sua hipótese. Você não precisa justificar. Então não justifique.</p>\n<p>Específico no documento, discreto no alvo. Em pauta sensível, um pedido que aponta só para a empresa X pode avisar a empresa X. Peça todos os contratos da secretaria no período. O alvo fica no meio dos outros.</p>\n<p>E mande o pedido para mais de um lugar quando o documento puder estar em mais de um lugar. A prefeitura tem o contrato. O tribunal de contas também pode ter.</p>",
+      "exerciseHtml": "<p>Protocole um pedido de verdade para a sua pauta, usando o modelo A dos bônus.</p>\n<p>Guarde o número de protocolo e a data na aba “Log” da planilha.</p>",
+      "closingHtml": "<p>O relógio começou a correr.</p>\n<p>Na próxima aula: o que fazer quando o prazo vence, quando a resposta enrola e quando vem um “não”.</p>"
+    },
+    {
+      "id": "3.3",
+      "module": 3,
+      "title": "Prazos e recursos: do órgão à CMRI",
+      "duration": "12 min",
+      "objective": "dominar prazos, respostas evasivas e a escada de recursos no governo federal",
+      "screen": "linha do tempo dos prazos, exemplos de respostas evasivas",
+      "open": true,
+      "tools": [
+        "falabr",
+        "informabr",
+        "cmri"
+      ],
+      "contentHtml": "<h3 class=\"jip-block\">ABERTURA</h3>\n<p>Quem desiste na primeira negativa perde metade do que conseguiria.</p>\n<p>A primeira resposta de um órgão público, muitas vezes, não é a resposta. É um teste. Para ver se você volta.</p>\n<h3 class=\"jip-block\">BLOCO 1 — O prazo</h3>\n<aside class=\"jip-tela\">TELA: linha do tempo — dia 0, pedido · dia 20 · dia 30</aside>\n<p>O órgão tem até 20 dias para responder. Pode prorrogar por mais 10, desde que justifique e avise você. Artigo 11, parágrafos 1º e 2º.</p>\n<p>Os dias são corridos, não úteis. Conta sábado, domingo e feriado.</p>\n<p>Se a informação estiver disponível, a regra é entregar na hora. Os 20 dias são o limite, não a meta.</p>\n<h3 class=\"jip-block\">BLOCO 2 — O catálogo da enrolação</h3>\n<p>Agora, as respostas que você vai receber. E o que fazer com cada uma.</p>\n<aside class=\"jip-tela\">TELA: cada resposta evasiva aparece como um print, seguida da reação</aside>\n<p>“A informação está disponível no site.” Se não diz onde, está errado. O artigo 11, parágrafo 6º, manda informar por escrito o lugar e a forma de acessar. Recorra pedindo o caminho exato.</p>\n<p>“Não temos essa informação.” O artigo 11 manda o órgão indicar quem tem, se souber, ou encaminhar o pedido. Recorra pedindo isso. E pergunte-se se faz sentido um órgão não ter o próprio contrato.</p>\n<p>“Pedido genérico.” Recorte e recorra, mostrando que o pedido especifica objeto, período e órgão.</p>\n<p>“Documento preparatório.” É o documento usado para tomar uma decisão ainda não tomada. O artigo 7º, parágrafo 3º, garante o acesso quando a decisão sai. Se já saiu, recorra.</p>\n<p>“Informação pessoal.” É o assunto da próxima aula. E é a desculpa preferida.</p>\n<p>Por fim, a resposta que responde outra pergunta. Você pediu contratos e recebeu o link da página de licitações. Isso é negativa disfarçada. Recorra.</p>\n<h3 class=\"jip-block\">BLOCO 3 — A escada de recursos no governo federal</h3>\n<aside class=\"jip-tela\">TELA: escada com quatro degraus e os prazos de cada um</aside>\n<p>Primeira instância: você tem 10 dias, contados da ciência da resposta, para recorrer à autoridade hierarquicamente superior a quem respondeu. Ela tem 5 dias para decidir. LAI, artigo 15, e Decreto 7.724, artigo 21.</p>\n<p>Segunda instância: se negar de novo, mais 10 dias para recorrer à autoridade máxima do órgão, que tem 5 dias. Decreto 7.724, artigo 21, parágrafo único.</p>\n<p>Terceira instância: a Controladoria-Geral da União, a CGU. Mais 10 dias para recorrer. LAI, artigo 16, e decreto, artigo 23.</p>\n<p>Na CGU, pela Portaria Normativa 101, de 2023, são 5 dias para admitir o recurso e 5 para decidir. Se a CGU pedir esclarecimentos ao órgão, o prazo passa a 30 dias, prorrogáveis por mais 30.</p>\n<p>Quarta instância: a Comissão Mista de Reavaliação de Informações, a CMRI, na Casa Civil. Mais 10 dias para recorrer. Decreto, artigo 24.</p>\n<p>Um detalhe que pouca gente sabe: a CMRI costuma não analisar recurso quando não houve negativa formal. Por isso, em cada degrau, exija uma negativa por escrito, com fundamento. “Não” com fundamento é recorrível. Resposta vaga é areia movediça.</p>\n<h3 class=\"jip-block\">BLOCO 4 — Quando não respondem nada</h3>\n<p>Se o prazo vence e não vem nada, o caminho não é recurso. É reclamação.</p>\n<p>Você reclama à autoridade de monitoramento da LAI dentro do órgão, prevista no artigo 40 da lei. O prazo para reclamar começa 30 dias depois do pedido e dura 10 dias. A autoridade tem 5 dias para se manifestar. Decreto 7.724, artigo 22.</p>\n<p>Se a reclamação não resolver, sobe para a CGU.</p>\n<p>E guarde isto. O artigo 32 da LAI considera conduta ilícita do servidor recusar informação, retardar deliberadamente o fornecimento ou fornecê-la de forma incorreta, incompleta ou imprecisa.</p>\n<p>Não é para ameaçar ninguém. É para lembrar, com educação, que a lei leva isso a sério.</p>\n<h3 class=\"jip-block\">BLOCO 5 — Fora do governo federal</h3>\n<p>Em estados e municípios, os prazos da LAI são os mesmos: 20 mais 10. O que muda são os degraus de recurso, definidos pela norma local.</p>\n<p>Quando o sistema local simplesmente não funciona, existem saídas fora dele. Representação ao Ministério Público. Representação ao tribunal de contas. E, com advogado, mandado de segurança, que é a ação para proteger um direito claro contra ato ilegal de autoridade.</p>\n<p>Às vezes, a própria omissão vira pauta. “Prefeitura ignora a Lei de Acesso há seis meses” também é notícia.</p>",
+      "exerciseHtml": "<p>Monte o calendário do seu pedido: data do protocolo, dia 20, dia 30 e as datas-limite de cada recurso, caso seja preciso.</p>\n<p>Coloque no seu calendário de verdade, com alerta.</p>",
+      "closingHtml": "<p>Você conhece a escada inteira.</p>\n<p>Na próxima aula, o degrau mais escorregadio: o sigilo. Os famosos 100 anos e a LGPD usada como escudo.</p>"
+    }
+  ]
+}

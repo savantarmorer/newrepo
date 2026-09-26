@@ -208,7 +208,7 @@ for (let i = 0; i < matches.length; i++) {
 
 const payload = {
   title: 'Jornalismo Investigativo na Prática',
-  minutes: 367,
+  minutes: 340,
   lessons: 31,
   slogan: 'Sem documento, é lenda.',
   modules: Object.values(MODULES),
@@ -217,4 +217,18 @@ const payload = {
 };
 
 writeFileSync(join(root, 'content', 'aulas.json'), JSON.stringify(payload, null, 2), 'utf8');
-console.log(`Wrote ${aulas.length} lessons`);
+const abertoIds = new Set(['3.2', '3.3']);
+const abertoAulas = aulas.filter((a) => abertoIds.has(a.id));
+const abertoTools = {};
+for (const a of abertoAulas) {
+  for (const id of a.tools) {
+    if (payload.toolbox[id]) abertoTools[id] = payload.toolbox[id];
+  }
+}
+writeFileSync(join(root, 'content', 'aberto.json'), JSON.stringify({
+  title: payload.title,
+  slogan: payload.slogan,
+  toolbox: abertoTools,
+  aulas: abertoAulas
+}, null, 2), 'utf8');
+console.log(`Wrote ${aulas.length} lessons + open class`);
