@@ -43,6 +43,9 @@ export async function getSession() {
     });
   }
   const { data } = await sb.auth.getSession();
+  if (!data.session) return null;
+  const { data: fresh } = await sb.auth.getUser();
+  if (fresh?.user) data.session.user = fresh.user;
   return data.session;
 }
 
@@ -93,12 +96,25 @@ export async function ensureEnrolled(session) {
   await sb.from('curso_jip_inscricoes').upsert({ user_id: session.user.id });
 }
 
+export function sessionEmails(session) {
+  const u = session?.user;
+  if (!u) return [];
+  const raw = [
+    u.email,
+    u.user_metadata?.email,
+    u.app_metadata?.email,
+    ...(u.identities || []).flatMap((i) => [i.identity_data?.email, i.email])
+  ];
+  return [...new Set(raw.filter(Boolean).map((e) => String(e).trim().toLowerCase()))];
+}
+
 export async function isTeacher(session) {
-  const email = session?.user?.email?.toLowerCase() || '';
-  if (email === TEACHER_FALLBACK) return true;
-  if (!sb || !session) return false;
-  const { data } = await sb.from('curso_jip_professores').select('email').eq('email', email).maybeSingle();
-  return Boolean(data);
+  const emails = sessionEmails(session);
+  if (emails.includes(TEACHER_FALLBACK)) return true;
+  if (!sb || !session || !emails.length) return false;
+  const { data } = await sb.from('curso_jip_professores').select('email');
+  const allowed = (data || []).map((r) => String(r.email).toLowerCase());
+  return emails.some((e) => allowed.includes(e));
 }
 
 function readLs(key, fallback) {
@@ -205,15 +221,14 @@ export async function hasPaidAccess(session, isTeacherFlag) {
   if (!session) return false;
   if (isTeacherFlag) return true;
   if (!sb) return false;
-  const email = (session.user.email || '').toLowerCase();
-  if (!email) return false;
-  const { data, error } = await sb
-    .from('curso_jip_alunos')
-    .select('email')
-    .eq('email', email)
-    .maybeSingle();
-  if (error) return false;
-  return Boolean(data);
+  const { data: rpc, error: rpcErr } = await sb.rpc('curso_jip_tem_acesso');
+  if (!rpcErr && rpc === true) return true;
+  const emails = sessionEmails(session);
+  if (!emails.length) return false;
+  const { data, error } = await sb.from('curso_jip_alunos').select('email');
+  if (error || !data) return false;
+  const allowed = data.map((r) => String(r.email).toLowerCase());
+  return emails.some((e) => allowed.includes(e));
 }
 
 export async function grantAluno(email, fonte = 'manual') {

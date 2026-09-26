@@ -523,6 +523,11 @@ async function boot() {
     return;
   }
 
+  if (session && paid && (route.name === 'comprar' || route.name === 'entrar')) {
+    location.hash = '#/inicio';
+    return;
+  }
+
   if (!session && !PUBLIC.has(route.name)) {
     renderLock();
     return;
