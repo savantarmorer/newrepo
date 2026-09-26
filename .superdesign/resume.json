@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/jornalismo/app.html#/inicio": {
+      "targetKind": "existing-ui",
+      "projectId": "5276e5b5-9cb9-4578-bc5d-a80325624320",
+      "baselineDraftId": "e589b087-a375-49f9-a8ec-07f28a1afb7d",
+      "activeDraftId": "e589b087-a375-49f9-a8ec-07f28a1afb7d",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "jornalismo/app.html",
+        "jornalismo/js/opsApp.js",
+        "jornalismo/js/opsAuth.js",
+        "jornalismo/css/ops.css"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "jornalismo/app.html": "c675d3d9b1cda97537457e569e7e7d12a1f358f55c27d3ffa9efc8c8bde84cc8",
+        "jornalismo/js/opsApp.js": "20479268e75d35fbae5b60562b5e7cf1985da5e9962caaf41b03b95c1c73796e",
+        "jornalismo/js/opsAuth.js": "df6bf23c57b6ae2b10d7535f5b22a531025206c583557bf0636de13e0846556f",
+        "jornalismo/css/ops.css": "979d4244a734fc158fbf051c04e1e877f2a0530db958014205b9bb009d1176cc"
+      },
+      "drafts": {
+        "e589b087-a375-49f9-a8ec-07f28a1afb7d": {
+          "title": "Mesa de operações investigativas JIP",
+          "visualDirection": "editorial operations desk",
+          "currentVersion": 2
+        }
+      },
+      "updatedAt": "2026-09-26T16:35:35.861Z"
+    },
+    "/": {
+      "targetKind": "existing-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "index.html:191:350"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "index.html": "aca7a6e1b3d7fbe4e7dac37177b0c5751c78f651ec8a300666edf6a47f936fc0"
+      },
+      "drafts": {
+        "8e2d5393-69a9-42f7-8c27-b0b331ce27e4": {
+          "title": "Iuri Piragibe | Brutalist Investigation",
+          "visualDirection": "brutalist investigation black gold",
+          "currentVersion": 1
+        },
+        "d297ca6e-7cae-42a8-ae8c-e59f8313813b": {
+          "title": "Iuri Piragibe | Cyber-Investigation Portfolio",
+          "visualDirection": "cyber investigation"
+        },
+        "7cbca676-76b4-41cb-b7ce-1831dc56f1d9": {
+          "title": "Iuri Piragibe | Editorial de Investigação de Luxo",
+          "visualDirection": "luxury editorial"
+        },
+        "55e4f35c-0d43-42fa-8a3e-8d581af77502": {
+          "title": "Iuri Piragibe - Reimagined Investigative Experience",
+          "visualDirection": "reimagined investigative"
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    },
+    "/jornalismo/": {
+      "targetKind": "new-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "99f99e60-4cb6-4952-a743-9b44245b262c",
+      "sourceTarget": "/",
+      "sourceDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "jornalismo/index.html"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "jornalismo/index.html": "459bd6e7f62af1fa6838a49188ddd7975d38525f02edefdc22274629d8ab795c"
+      },
+      "drafts": {
+        "99f99e60-4cb6-4952-a743-9b44245b262c": {
+          "title": "Curso — Jornalismo Investigativo na Prática",
+          "visualDirection": "brutalist investigation black gold",
+          "parentDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    },
+    "/login.html": {
+      "targetKind": "new-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "8398d8da-7484-43c2-83ef-08ac21b73532",
+      "sourceTarget": "/",
+      "sourceDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "login.html"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "login.html": "e5caec1c143b43154a6926714f84b7da05b35d9aefb78392f403b6740823f8fb"
+      },
+      "drafts": {
+        "8398d8da-7484-43c2-83ef-08ac21b73532": {
+          "title": "Acesso — A.M.O.Q.",
+          "visualDirection": "brutalist investigation black gold",
+          "parentDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    },
+    "/sobre.html": {
+      "targetKind": "new-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "a9ae72b3-ac31-4eec-88ab-3dd6f5ec2335",
+      "sourceTarget": "/",
+      "sourceDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "sobre.html"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "sobre.html": "28c82a41d91088cee03e4d7b9271dfe9d6ee7320738042d3de18fbb7d3ca5df6"
+      },
+      "drafts": {
+        "a9ae72b3-ac31-4eec-88ab-3dd6f5ec2335": {
+          "title": "Sobre — Iuri Piragibe",
+          "visualDirection": "brutalist investigation black gold",
+          "parentDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    },
+    "/biblioteca.html": {
+      "targetKind": "new-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "840c8955-6900-4d9d-bbdc-66000c2828ce",
+      "sourceTarget": "/",
+      "sourceDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "biblioteca.html:1:220"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "biblioteca.html": "300a930dffaaae8d38f518e460582de88d97a078f6f439e7c1d556846570fe64"
+      },
+      "drafts": {
+        "840c8955-6900-4d9d-bbdc-66000c2828ce": {
+          "title": "Biblioteca de Documentos",
+          "visualDirection": "brutalist investigation black gold",
+          "parentDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    },
+    "/jornalismo/app.html#/inicio-brutalist": {
+      "targetKind": "new-ui",
+      "projectId": "666f679b-7db9-4254-8aa5-37cd39b95592",
+      "activeDraftId": "088d2db2-226b-4485-b546-a1caa3ec6411",
+      "sourceTarget": "/",
+      "sourceDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+      "designSystemPath": ".superdesign/design-system.md",
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "jornalismo/app.html",
+        "jornalismo/js/opsApp.js",
+        "jornalismo/css/ops.css"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "ebeaef09ba6934dbe1bd9a14193dac454938b2b18a647d4855806115a6060838",
+        "jornalismo/app.html": "c675d3d9b1cda97537457e569e7e7d12a1f358f55c27d3ffa9efc8c8bde84cc8",
+        "jornalismo/js/opsApp.js": "20479268e75d35fbae5b60562b5e7cf1985da5e9962caaf41b03b95c1c73796e",
+        "jornalismo/css/ops.css": "979d4244a734fc158fbf051c04e1e877f2a0530db958014205b9bb009d1176cc"
+      },
+      "drafts": {
+        "088d2db2-226b-4485-b546-a1caa3ec6411": {
+          "title": "Sala JIP — Mesa de operações",
+          "visualDirection": "brutalist investigation black gold",
+          "parentDraftId": "8e2d5393-69a9-42f7-8c27-b0b331ce27e4",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-26T17:00:00.000Z"
+    }
+  }
+}

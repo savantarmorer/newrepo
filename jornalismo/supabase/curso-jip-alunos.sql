@@ -68,3 +68,4 @@ as $$
 $$;
 
 grant execute on function public.curso_jip_tem_acesso() to anon, authenticated;
+grant select, insert, delete on table public.curso_jip_alunos to authenticated;

@@ -1,17 +1,28 @@
 :root {
-  --jip-bg: #050508;
-  --jip-card: rgba(18, 18, 24, 0.92);
-  --jip-line: #27272a;
-  --jip-text: #fafafa;
-  --jip-muted: #a1a1aa;
-  --jip-accent: #818cf8;
-  --jip-gold: #eab308;
-  --jip-ok: #34d399;
-  --jip-radius: 18px;
+  --color-bg: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-2: #050505;
+  --color-accent: #FFB800;
+  --color-text: #FFFFFF;
+  --color-muted: #9ca3af;
+  --color-faint: #6b7280;
+  --color-border: #1a1a1a;
+  --color-ok: #22c55e;
+  --color-danger: #f87171;
+  --jip-bg: var(--color-bg);
+  --jip-card: var(--color-surface);
+  --jip-line: var(--color-border);
+  --jip-text: var(--color-text);
+  --jip-muted: var(--color-muted);
+  --jip-accent: var(--color-accent);
+  --jip-gold: var(--color-accent);
+  --jip-ok: var(--color-ok);
+  --jip-radius: 0;
   --jip-tap: 48px;
-  --jip-max: 1120px;
-  --jip-sans: Inter, system-ui, sans-serif;
-  --jip-mono: "Space Mono", ui-monospace, monospace;
+  --jip-max: 1440px;
+  --jip-sans: "Space Grotesk", system-ui, sans-serif;
+  --jip-mono: "Space Grotesk", system-ui, sans-serif;
+  --jip-display: "Archivo Black", Impact, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -19,10 +30,7 @@ html { overflow-x: clip; }
 body.jip {
   margin: 0;
   font-family: var(--jip-sans);
-  background:
-    radial-gradient(1200px 500px at 10% -10%, rgba(99, 102, 241, 0.18), transparent 55%),
-    radial-gradient(900px 400px at 100% 0%, rgba(234, 179, 8, 0.08), transparent 50%),
-    var(--jip-bg);
+  background: var(--jip-bg);
   color: var(--jip-text);
   line-height: 1.6;
   min-height: 100dvh;
@@ -39,25 +47,26 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
   display: flex; align-items: center; gap: 12px;
   padding: 12px 18px;
   padding-top: calc(12px + env(safe-area-inset-top));
-  background: rgba(5, 5, 8, 0.86);
-  backdrop-filter: blur(16px);
+  background: #000;
   border-bottom: 1px solid var(--jip-line);
 }
 .jip-brand {
-  color: inherit; text-decoration: none; font-weight: 800;
-  letter-spacing: 0.12em; font-size: 0.82rem;
+  color: inherit; text-decoration: none;
+  font-family: var(--jip-display);
+  letter-spacing: -0.04em; font-size: 0.95rem;
+  text-transform: uppercase;
 }
 .jip-brand span { color: var(--jip-gold); }
 .jip-top nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; align-items: center; }
 .jip-top a {
   color: var(--jip-muted); text-decoration: none; font-size: 0.84rem; font-weight: 600;
-  padding: 8px 12px; border-radius: 999px;
+  padding: 8px 12px; border-radius: 0;
 }
 .jip-top a[aria-current="page"] { color: #fff; background: #18181b; }
 .jip-avatar {
   width: 36px; height: 36px; border-radius: 50%;
   display: grid; place-items: center;
-  background: linear-gradient(135deg, #4f46e5, #eab308);
+  background: var(--jip-gold); color: #000;
   color: #fff; font-weight: 800; font-size: 0.75rem; text-decoration: none;
 }
 
@@ -68,19 +77,24 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
   font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; margin: 0;
 }
 .jip-hero h1, .jip-display {
+  font-family: var(--jip-display);
   font-size: clamp(2rem, 5vw, 3.4rem);
-  line-height: 1.08; letter-spacing: -0.03em; margin: 10px 0 14px; font-weight: 800;
+  line-height: 0.95; letter-spacing: -0.05em; margin: 10px 0 14px; font-weight: 400;
+  text-transform: uppercase;
 }
 .jip-lead { color: var(--jip-muted); font-size: 1.12rem; max-width: 40rem; }
 .jip-cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
 .jip-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  border: 0; border-radius: 12px; padding: 0 18px; font-weight: 700; text-decoration: none;
+  border: 0; border-radius: 0; padding: 0 18px; font-weight: 700; text-decoration: none;
 }
 .jip-btn-primary {
-  background: linear-gradient(135deg, #818cf8, #6366f1);
-  color: #050508; box-shadow: 0 8px 28px rgba(99, 102, 241, 0.35);
+  background: var(--jip-gold);
+  color: #000;
+  font-family: var(--jip-display);
+  text-transform: uppercase;
 }
+.jip-btn-primary:hover { transform: translate(-4px, -4px); box-shadow: 4px 4px 0 #fff; }
 .jip-btn-ghost { background: #18181b; color: #fff; border: 1px solid var(--jip-line); }
 .jip-btn-gold { background: var(--jip-gold); color: #111; }
 
@@ -98,7 +112,6 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
   border: 1px solid var(--jip-line);
   border-radius: var(--jip-radius);
   padding: 20px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
 }
 .jip-card h2, .jip-card h3 { margin: 0 0 8px; letter-spacing: -0.02em; }
 .jip-muted { color: var(--jip-muted); font-size: 0.95rem; }
@@ -107,15 +120,15 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
   border-left: 3px solid var(--jip-gold); padding-left: 14px; margin: 0;
 }
 
-.jip-progress { height: 10px; background: #18181b; border-radius: 99px; overflow: hidden; }
-.jip-progress > span { display: block; height: 100%; background: linear-gradient(90deg, #34d399, #eab308); }
+.jip-progress { height: 4px; background: #1a1a1a; border-radius: 0; overflow: hidden; }
+.jip-progress > span { display: block; height: 100%; background: var(--jip-gold); }
 
 .jip-continue {
   display: block; text-decoration: none; color: inherit;
-  background: linear-gradient(180deg, #16161d, #101014);
-  border: 1px solid #2e2e38;
+  background: var(--jip-card);
+  border: 1px solid var(--jip-line);
   padding: 22px;
-  border-radius: 20px;
+  border-radius: 0;
 }
 .jip-continue:hover { border-color: var(--jip-accent); }
 
@@ -127,23 +140,24 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
 .jip-mod > summary::-webkit-details-marker { display: none; }
 .jip-lesson {
   display: flex; gap: 12px; align-items: flex-start;
-  padding: 12px; border-radius: 14px; text-decoration: none; color: inherit;
+  padding: 12px; border-radius: 0; text-decoration: none; color: inherit;
   border: 1px solid transparent;
 }
 .jip-lesson:hover { background: #141418; border-color: #2a2a32; }
 .jip-badge {
-  flex: 0 0 auto; min-width: 46px; height: 46px; border-radius: 12px;
-  display: grid; place-items: center; font-weight: 800; background: #1b1b24; font-size: 0.78rem;
+  flex: 0 0 auto; min-width: 46px; height: 46px; border-radius: 0;
+  display: grid; place-items: center; font-weight: 800; background: #111; font-size: 0.78rem;
+  border: 1px solid var(--jip-line);
 }
-.jip-badge.done { background: #14532d; color: #bbf7d0; }
-.jip-badge.next { background: #312e81; color: #c7d2fe; }
+.jip-badge.done { background: #052e16; color: #86efac; }
+.jip-badge.next { background: var(--jip-gold); color: #000; }
 
 .jip-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; }
 .jip-tabs button {
-  border: 1px solid var(--jip-line); background: #14141c; color: var(--jip-muted);
-  border-radius: 999px; padding: 8px 14px; white-space: nowrap;
+  border: 1px solid var(--jip-line); background: #0a0a0a; color: var(--jip-muted);
+  border-radius: 0; padding: 8px 14px; white-space: nowrap;
 }
-.jip-tabs button[aria-selected="true"] { color: #fff; border-color: var(--jip-accent); background: #1e1b4b; }
+.jip-tabs button[aria-selected="true"] { color: #000; border-color: var(--jip-accent); background: var(--jip-gold); }
 
 .jip-prose h3.jip-block {
   margin: 1.5rem 0 0.5rem; font-size: 0.72rem; letter-spacing: 0.1em;
@@ -152,7 +166,7 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
 .jip-prose p { margin: 0 0 0.9rem; }
 .jip-prose aside {
   border-left: 3px solid var(--jip-accent);
-  padding: 10px 14px; margin: 0 0 1rem; background: #12121a; border-radius: 0 12px 12px 0;
+  padding: 10px 14px; margin: 0 0 1rem; background: #0a0a0a; border-radius: 0;
   color: var(--jip-muted); font-size: 0.92rem;
 }
 .jip-prose .jip-warn { border-color: #f59e0b; }
@@ -161,7 +175,7 @@ button, .jip-btn { min-height: var(--jip-tap); font: inherit; cursor: pointer; }
 
 textarea, input, select {
   width: 100%; background: #09090b; color: #fff; border: 1px solid var(--jip-line);
-  border-radius: 12px; padding: 14px; font: inherit;
+  border-radius: 0; padding: 14px; font: inherit;
 }
 label { display: block; font-weight: 650; margin: 14px 0 6px; }
 .jip-tool {
@@ -185,7 +199,7 @@ label { display: block; font-weight: 650; margin: 14px 0 6px; }
 .jip-toast {
   position: fixed; bottom: calc(84px + env(safe-area-inset-bottom)); left: 50%;
   transform: translateX(-50%); background: #fff; color: #111; padding: 10px 16px;
-  border-radius: 999px; font-weight: 700; font-size: 0.85rem; z-index: 40;
+  border-radius: 0; font-weight: 700; font-size: 0.85rem; z-index: 40;
 }
 .jip-faq details { border-bottom: 1px solid var(--jip-line); padding: 10px 0; }
 .jip-faq summary { cursor: pointer; font-weight: 700; min-height: var(--jip-tap); display: flex; align-items: center; }
@@ -198,8 +212,8 @@ label { display: block; font-weight: 650; margin: 14px 0 6px; }
 .jip-step::before {
   counter-increment: s; content: counter(s);
   position: absolute; left: 0; top: 0;
-  width: 32px; height: 32px; border-radius: 50%;
-  background: #1e1b4b; color: #c7d2fe; display: grid; place-items: center; font-weight: 800;
+  width: 32px; height: 32px; border-radius: 0;
+  background: var(--jip-gold); color: #000; display: grid; place-items: center; font-weight: 800;
 }
 .jip-dots { display: flex; gap: 8px; justify-content: center; margin: 18px 0; }
 .jip-dots span { width: 8px; height: 8px; border-radius: 50%; background: #3f3f46; }

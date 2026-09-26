@@ -96,4 +96,13 @@ create policy curso_jip_fb_teacher on public.curso_jip_feedback
 
 drop policy if exists curso_jip_prof_read on public.curso_jip_professores;
 create policy curso_jip_prof_read on public.curso_jip_professores
-  for select using (true);
+  for select using (public.curso_jip_is_teacher());
+
+grant execute on function public.curso_jip_is_teacher() to anon, authenticated;
+grant select, insert, update, delete on table public.curso_jip_inscricoes to authenticated;
+grant select, insert, update, delete on table public.curso_jip_pautas to authenticated;
+grant select, insert, update, delete on table public.curso_jip_exercicios to authenticated;
+grant select, insert, update, delete on table public.curso_jip_progresso to authenticated;
+grant select on table public.curso_jip_feedback to authenticated;
+grant insert on table public.curso_jip_feedback to authenticated;
+grant select on table public.curso_jip_professores to authenticated;

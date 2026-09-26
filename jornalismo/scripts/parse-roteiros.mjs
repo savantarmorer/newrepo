@@ -216,7 +216,9 @@ const payload = {
   aulas
 };
 
-writeFileSync(join(root, 'content', 'aulas.json'), JSON.stringify(payload, null, 2), 'utf8');
+// O catálogo pago é empacotado apenas na Edge Function autenticada.
+// Não grave este arquivo dentro de jornalismo/: tudo ali é público no Netlify.
+writeFileSync(join(root, '..', 'supabase', 'functions', 'curso-catalog', 'aulas.json'), JSON.stringify(payload, null, 2), 'utf8');
 const abertoIds = new Set(['3.2', '3.3']);
 const abertoAulas = aulas.filter((a) => abertoIds.has(a.id));
 const abertoTools = {};

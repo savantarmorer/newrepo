@@ -10,50 +10,42 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{
-      --bg0:#05050a;--bg1:#08080f;--bg2:#0d0d1a;
-      --border:rgba(255,255,255,.07);--border2:rgba(255,255,255,.14);
-      --fg1:#f0eef8;--fg2:#9993b8;--fg3:#5f5b7a;
-      --gold:#c9a227;--goldg:rgba(201,162,39,.18);
-      --t:200ms cubic-bezier(.4,0,.2,1);
+      --bg0:#000;--bg1:#0a0a0a;--bg2:#050505;
+      --border:#1a1a1a;--border2:#1a1a1a;
+      --fg1:#fff;--fg2:#9ca3af;--fg3:#6b7280;
+      --gold:#FFB800;--goldg:rgba(255,184,0,.18);
+      --t:120ms ease;
     }
     html,body{height:100%}
     body{
-      font-family:'Inter',sans-serif;
+      font-family:'Space Grotesk',sans-serif;
       background:var(--bg0);
       color:var(--fg1);
       display:flex;align-items:center;justify-content:center;
       min-height:100vh;
       overflow:hidden;
     }
-    /* Radial glow */
-    body::before{
-      content:'';position:fixed;inset:0;
-      background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,162,39,.06) 0%,transparent 70%);
-      pointer-events:none;
-    }
-    /* Subtle grid */
     body::after{
       content:'';position:fixed;inset:0;
       background-image:
-        linear-gradient(rgba(201,162,39,.025) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(201,162,39,.025) 1px,transparent 1px);
-      background-size:60px 60px;
+        linear-gradient(#1a1a1a 1px,transparent 1px),
+        linear-gradient(90deg,#1a1a1a 1px,transparent 1px);
+      background-size:40px 40px;
+      opacity:.35;
       pointer-events:none;
     }
     .card{
       position:relative;z-index:1;
       width:min(400px,92vw);
-      background:rgba(8,8,15,.95);
+      background:var(--bg1);
       border:1px solid var(--border2);
-      border-radius:20px;
+      border-radius:0;
       padding:44px 40px 36px;
       text-align:center;
-      backdrop-filter:blur(20px);
-      box-shadow:0 40px 80px rgba(0,0,0,.7),0 0 0 1px rgba(201,162,39,.06);
     }
     /* Seal */
     .seal-wrap{
@@ -65,9 +57,10 @@
       50%{transform:translateY(-5px);filter:drop-shadow(0 0 20px rgba(201,162,39,.6))}
     }
     .title{
-      font-family:'Cinzel',serif;
-      font-size:26px;font-weight:700;
-      color:var(--gold);letter-spacing:5px;
+      font-family:'Archivo Black',Impact,sans-serif;
+      font-size:26px;font-weight:400;
+      color:var(--gold);letter-spacing:-0.04em;
+      text-transform:uppercase;
       margin-bottom:4px;
     }
     .subtitle{
@@ -88,31 +81,31 @@
     }
     .field input{
       width:100%;background:rgba(255,255,255,.04);
-      border:1px solid var(--border2);border-radius:8px;
-      color:var(--fg1);font-family:'Inter',sans-serif;font-size:14px;
-      outline:none;padding:11px 14px;transition:var(--t);
+      border:1px solid var(--border2);border-radius:0;
+      color:var(--fg1);font-family:'Space Grotesk',sans-serif;font-size:14px;
+      outline:none;padding:11px 14px;transition:var(--t);border-radius:0;
     }
     .field input:focus{
       border-color:var(--gold);
-      background:rgba(201,162,39,.05);
-      box-shadow:0 0 0 3px var(--goldg);
+      background:rgba(255,184,0,.05);
+      box-shadow:none;
     }
     .field input::placeholder{color:var(--fg3)}
     .btn{
       width:100%;background:var(--gold);
-      border:none;border-radius:8px;
-      color:#070703;cursor:pointer;
-      font-family:'Cinzel',serif;font-size:12px;font-weight:700;
-      letter-spacing:2.5px;margin-top:4px;
+      border:none;border-radius:0;
+      color:#000;cursor:pointer;
+      font-family:'Archivo Black',Impact,sans-serif;font-size:12px;font-weight:400;
+      letter-spacing:0.04em;margin-top:4px;
       padding:13px 24px;transition:var(--t);
       text-transform:uppercase;
     }
-    .btn:hover{background:#d4aa28;box-shadow:0 0 24px rgba(201,162,39,.4)}
+    .btn:hover{transform:translate(-4px,-4px);box-shadow:4px 4px 0 #fff}
     .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
     /* Message */
     .msg{
       font-size:12.5px;padding:10px 14px;
-      border-radius:8px;margin-top:16px;
+      border-radius:0;margin-top:16px;
       display:none;text-align:left;line-height:1.5;
     }
     .msg.err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#f87171}
@@ -140,17 +133,17 @@
   <!-- Pentagram seal -->
   <div class="seal-wrap">
     <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="100" cy="100" r="93" stroke="#c9a227" stroke-width="1.5"/>
-      <circle cx="100" cy="100" r="86" stroke="#c9a227" stroke-width="0.5" opacity="0.35"/>
+      <circle cx="100" cy="100" r="93" stroke="#FFB800" stroke-width="1.5"/>
+      <circle cx="100" cy="100" r="86" stroke="#FFB800" stroke-width="0.5" opacity="0.35"/>
       <!-- Pentagram: connect every other vertex of regular pentagon -->
       <polygon points="100,20 147,165 24,75 176,75 53,165"
-        fill="none" stroke="#c9a227" stroke-width="1.5" stroke-linejoin="round"/>
+        fill="none" stroke="#FFB800" stroke-width="1.5" stroke-linejoin="miter"/>
       <!-- Inner pentagon -->
       <polygon points="100,59 134,84 121,122 79,122 66,84"
-        fill="none" stroke="#c9a227" stroke-width="0.7" opacity="0.45"/>
+        fill="none" stroke="#FFB800" stroke-width="0.7" opacity="0.45"/>
       <!-- Center -->
-      <circle cx="100" cy="100" r="6" fill="#c9a227" opacity="0.9"/>
-      <circle cx="100" cy="100" r="14" fill="none" stroke="#c9a227" stroke-width="0.5" opacity="0.4"/>
+      <circle cx="100" cy="100" r="6" fill="#FFB800" opacity="0.9"/>
+      <circle cx="100" cy="100" r="14" fill="none" stroke="#FFB800" stroke-width="0.5" opacity="0.4"/>
     </svg>
   </div>
 

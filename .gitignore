@@ -28,6 +28,9 @@ Thumbs.db
 # History
 .history/
 
+# Superdesign temp HTML
+.superdesign/tmp/
+
 # Build
 dist/
 build/
