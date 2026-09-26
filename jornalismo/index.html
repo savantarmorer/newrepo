@@ -92,10 +92,57 @@
       </div>
       <p class="jip-muted">Já comprou? Entre com o e-mail da compra. Preço cheio R$ 297.</p>
     </section>
-    <section class="jip-grid jip-grid-3">
-      <article class="jip-card"><h2>1. Entrar</h2><p class="jip-muted">Login com o e-mail da compra. Google também libera se o e-mail estiver autorizado.</p></article>
-      <article class="jip-card"><h2>2. Assistir</h2><p class="jip-muted">Continuar a próxima aula, ver a grade completa e ler o roteiro. Sem quiz antes do conteúdo.</p></article>
-      <article class="jip-card"><h2>3. Ferramentas</h2><p class="jip-muted">Planilha, PDF de bônus e links oficiais (Fala.BR, Transparência, etc.) num lugar só.</p></article>
+    <section class="jip-explode" data-jip-explode data-phase="1" aria-labelledby="jip-explode-title">
+      <div class="jip-explode-track">
+        <div class="jip-explode-pin">
+          <div class="jip-explode-head">
+            <p class="jip-kicker">Percurso do aluno</p>
+            <h2 id="jip-explode-title">O curso por dentro</h2>
+            <p class="jip-muted">Role para ver as partes da área do aluno se abrirem e se encaixarem em Entrar → Assistir → Ferramentas.</p>
+            <span class="jip-explode-phase" data-jip-explode-phase aria-live="polite">Curso montado</span>
+          </div>
+          <div class="jip-explode-stage" aria-hidden="false">
+            <div class="jip-x-piece jip-x-frame" data-x="frame" aria-hidden="false">
+              <div class="jip-x-chrome">
+                <div class="jip-x-chrome-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+                <span>Jornalismo Investigativo na Prática</span>
+              </div>
+              <div class="jip-x-frame-body" aria-hidden="true"></div>
+            </div>
+            <article class="jip-x-piece jip-x-login" data-x="login">
+              <p class="jip-x-eyebrow">1 · Entrar</p>
+              <h3>Entrar</h3>
+              <p class="jip-muted">Login com o e-mail da compra. Google também libera se o e-mail estiver autorizado.</p>
+              <span class="jip-x-fake-btn" aria-hidden="true">Entrar</span>
+            </article>
+            <article class="jip-x-piece jip-x-lesson" data-x="lesson">
+              <p class="jip-x-eyebrow">2 · Assistir</p>
+              <h3>Assistir</h3>
+              <p class="jip-muted">Continuar a próxima aula, ver a grade completa e ler o roteiro. Sem quiz antes do conteúdo.</p>
+              <div class="jip-x-continue">
+                <span class="jip-x-eyebrow" style="margin:0">Continuar aula</span>
+                <strong>1.1 · O que é apuração</strong>
+                <small>10 min · separar pista de prova</small>
+              </div>
+              <div class="jip-x-video">
+                <strong>Vídeo ainda não publicado</strong>
+                <p>O roteiro completo está abaixo. Não há player fictício.</p>
+              </div>
+            </article>
+            <article class="jip-x-piece jip-x-tools" data-x="tools">
+              <p class="jip-x-eyebrow">3 · Ferramentas</p>
+              <h3>Ferramentas</h3>
+              <p class="jip-muted">Planilha, PDF de bônus e links oficiais (Fala.BR, Transparência, etc.) num lugar só.</p>
+              <div class="jip-x-tool-row" aria-hidden="true">
+                <span>Planilha de cruzamento</span>
+                <span>Modelos LAI</span>
+                <span>Sites oficiais</span>
+              </div>
+            </article>
+          </div>
+          <p class="jip-explode-note">Depois do encaixe, siga pelos módulos e pelas perguntas abaixo. Os botões de compra e login ficam no topo.</p>
+        </div>
+      </div>
     </section>
     <h2 style="margin:28px 0 12px">Módulos</h2>
     <div class="jip-grid">
@@ -115,5 +162,6 @@
       <details><summary>E os bônus?</summary><p class="jip-muted">Modelos de pedido e recurso, checklist pré-publicação, planilha de cruzamento com 13 abas e glossário. Os arquivos saem da área autenticada, em Ferramentas.</p></details>
     </section>
   </main>
+  <script src="/jornalismo/js/explode.js" defer></script>
 </body>
 </html>

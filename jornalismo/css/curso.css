@@ -224,6 +224,243 @@ label { display: block; font-weight: 650; margin: 14px 0 6px; }
   min-height: 50vh; display: grid; place-items: center; text-align: center; padding: 40px 16px;
 }
 
+/* —— Scroll-driven exploded view (landing) —— */
+.jip-explode {
+  margin: 36px 0 8px;
+  --frame-fade: 1;
+}
+.jip-explode-track {
+  height: 280vh;
+  position: relative;
+}
+.jip-explode-pin {
+  position: sticky;
+  top: 0;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: calc(64px + env(safe-area-inset-top)) 0 28px;
+  z-index: 1;
+}
+.jip-explode-head {
+  max-width: 40rem;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+.jip-explode-head h2 {
+  font-family: var(--jip-display);
+  font-size: clamp(1.45rem, 3.2vw, 2.2rem);
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  margin: 8px 0 10px;
+  font-weight: 400;
+  line-height: 1;
+}
+.jip-explode-head p { margin: 0 auto; max-width: 34rem; }
+.jip-explode-phase {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 4px 10px;
+  border: 1px solid var(--jip-line);
+  background: #0a0a0a;
+  color: var(--jip-gold);
+  font-family: var(--jip-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.jip-explode-stage {
+  position: relative;
+  width: min(980px, 100%);
+  height: min(460px, 52dvh);
+  margin: 0 auto;
+  isolation: isolate;
+}
+.jip-x-piece {
+  position: absolute;
+  left: 50%;
+  top: 36%;
+  width: min(300px, 84vw);
+  margin-left: calc(min(300px, 84vw) / -2);
+  background: var(--jip-card);
+  border: 1px solid var(--jip-line);
+  padding: 14px 16px;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+.jip-x-frame {
+  width: min(320px, 88vw);
+  margin-left: calc(min(320px, 88vw) / -2);
+  top: 22%;
+  padding: 0;
+  background: #050505;
+  border-color: #2a2a2a;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--frame-fade, 1);
+}
+.jip-x-chrome {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--jip-line);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.jip-x-chrome-dots {
+  display: flex;
+  gap: 5px;
+}
+.jip-x-chrome-dots span {
+  width: 8px;
+  height: 8px;
+  background: #2a2a2a;
+}
+.jip-x-chrome-dots span:nth-child(2) { background: var(--jip-gold); }
+.jip-x-frame-body {
+  min-height: 220px;
+  background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+}
+.jip-x-login { z-index: 4; }
+.jip-x-lesson { z-index: 3; }
+.jip-x-tools { z-index: 2; }
+.jip-x-eyebrow {
+  margin: 0 0 6px;
+  color: var(--jip-gold);
+  font-family: var(--jip-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.jip-x-piece h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.jip-x-piece p { margin: 0; }
+.jip-x-login .jip-x-fake-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  min-height: 36px;
+  padding: 0 14px;
+  background: var(--jip-gold);
+  color: #000;
+  font-family: var(--jip-display);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+.jip-x-continue {
+  border: 1px solid var(--jip-line);
+  padding: 10px;
+  margin-top: 8px;
+  background: #090909;
+}
+.jip-x-continue strong { display: block; font-size: 0.88rem; }
+.jip-x-continue small { color: var(--jip-muted); font-size: 0.74rem; }
+.jip-x-video {
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px dashed #333;
+  background: #070707;
+}
+.jip-x-video strong { display: block; font-size: 0.84rem; }
+.jip-x-video p { color: var(--jip-muted); font-size: 0.76rem; margin-top: 4px; }
+.jip-explode[data-phase="1"] .jip-x-lesson .jip-x-video,
+.jip-explode[data-phase="1"] .jip-x-tools .jip-x-tool-row {
+  opacity: 0.72;
+}
+.jip-x-tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.jip-x-tool-row span {
+  border: 1px solid var(--jip-line);
+  padding: 6px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--jip-muted);
+  background: #090909;
+}
+.jip-explode[data-phase="3"] .jip-x-piece:not(.jip-x-frame) {
+  border-color: #2f2f2f;
+}
+.jip-explode.is-locked .jip-x-piece:not(.jip-x-frame) {
+  box-shadow: 6px 6px 0 #FFB800;
+}
+.jip-explode-note {
+  text-align: center;
+  margin: 16px auto 0;
+  max-width: 32rem;
+  color: var(--jip-faint, var(--jip-muted));
+  font-size: 0.85rem;
+}
+
+.jip-explode.is-locked .jip-explode-stage {
+  height: auto;
+  min-height: 0;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.jip-explode.is-locked .jip-x-frame {
+  display: none !important;
+}
+.jip-explode.is-locked .jip-x-piece {
+  position: relative;
+  left: auto;
+  top: auto;
+  width: auto;
+  margin: 0;
+  transform: none !important;
+  opacity: 1 !important;
+}
+.jip-explode.is-locked .jip-explode-note { margin-top: 18px; }
+
+@media (min-width: 860px) {
+  .jip-explode-stage { height: min(420px, 50dvh); width: min(980px, 100%); }
+  .jip-x-piece { width: 286px; margin-left: -143px; }
+  .jip-x-frame { width: 304px; margin-left: -152px; }
+  .jip-explode.is-locked .jip-explode-stage {
+    grid-template-columns: repeat(3, 1fr);
+    height: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { scroll-behavior: auto !important; transition: none !important; }
+  .jip-explode-track { height: auto !important; }
+  .jip-explode-pin {
+    position: static !important;
+    min-height: 0 !important;
+    padding: 8px 0 12px !important;
+  }
+  .jip-explode-stage {
+    height: auto !important;
+    display: grid;
+    gap: 14px;
+  }
+  .jip-x-frame { display: none !important; }
+  .jip-x-piece {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+  .jip-explode.is-reduced .jip-explode-phase { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 860px) {
+  .jip-explode-stage { grid-template-columns: repeat(3, 1fr); }
 }
