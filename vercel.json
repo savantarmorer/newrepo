@@ -50,6 +50,9 @@
     { "source": "/sobre",                    "destination": "/sobre.html" },
     { "source": "/mapa-dinastias",           "destination": "/mapa-dinastias.html" },
     { "source": "/mapa-magico",              "destination": "/mapa-magico.html" },
-    { "source": "/investigacao-hub",         "destination": "/investigacao-hub.html" }
+    { "source": "/investigacao-hub",         "destination": "/investigacao-hub.html" },
+    { "source": "/jornalismo",               "destination": "/jornalismo/index.html" },
+    { "source": "/jornalismo/",              "destination": "/jornalismo/index.html" },
+    { "source": "/jornalismo/aberto",        "destination": "/jornalismo/app.html" }
   ]
 }

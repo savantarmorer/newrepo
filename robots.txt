@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /jornalismo/app.html
 
 Sitemap: https://iuripiragibe.net/sitemap.xml

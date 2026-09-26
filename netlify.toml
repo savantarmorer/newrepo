@@ -2,6 +2,31 @@
   publish = "."
 
 [[redirects]]
+  from = "/jornalismo"
+  to = "/jornalismo/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/jornalismo/"
+  to = "/jornalismo/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/jornalismo/aberto"
+  to = "/jornalismo/app.html?v=aberto"
+  status = 200
+
+[[redirects]]
+  from = "/jornalismo/aberto/"
+  to = "/jornalismo/app.html?v=aberto"
+  status = 200
+
+[[redirects]]
+  from = "/jornalismo/sala"
+  to = "/jornalismo/app.html"
+  status = 200
+
+[[redirects]]
   from = "/api/create-pix"
   to = "/.netlify/functions/create-pix"
   status = 200

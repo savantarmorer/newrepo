@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sala — Jornalismo Investigativo na Prática</title>
+  <meta name="robots" content="noindex,follow">
+  <meta name="theme-color" content="#07070c">
+  <link rel="canonical" href="https://iuripiragibe.net/jornalismo/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/jornalismo/css/curso.css">
+</head>
+<body class="jip">
+  <div id="jip-root"><p class="jip-wrap jip-muted">Carregando a sala…</p></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const v = new URLSearchParams(location.search).get('v');
+    if (v && !location.hash) location.replace(location.pathname + location.search + '#/' + v);
+    else if (!location.hash) location.replace(location.pathname + '#/sala');
+  </script>
+  <script type="module" src="/jornalismo/js/app.js"></script>
+</body>
+</html>

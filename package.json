@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "http-server . -p 4173 -c-1",
+    "parse:curso": "node jornalismo/scripts/parse-roteiros.mjs",
     "server": "node server.js",
     "start": "node server.js",
     "test": "playwright test",
