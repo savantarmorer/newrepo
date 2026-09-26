@@ -8,16 +8,29 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Verificar secrets FTP
+        id: ftp
+        env:
+          SERVER: ${{ secrets.FTP_SERVER }}
+        run: |
+          if [ -z "$SERVER" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "FTP_SERVER ausente. O site público é o Netlify; o deploy FTP fica desligado até cadastrar os secrets."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.ftp.outputs.skip != 'true'
 
       - name: Deploy via FTP
+        if: steps.ftp.outputs.skip != 'true'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_DIR }}
-          # Exclui arquivos que não devem ir pro servidor
           exclude: |
             **/.git*
             **/.git*/**
@@ -37,3 +50,4 @@ jobs:
             **/README*
             **/newrepo-0.md
             agora-slu/supabase/**
+            jornalismo/supabase/**
