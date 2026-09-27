@@ -70,20 +70,21 @@
   }
   </script>
 </head>
-<body class="jip" style="padding-bottom:24px">
+<body class="jip jip-landing">
+  <a class="jip-skip" href="#conteudo">Ir ao conteúdo</a>
   <header class="jip-top">
     <a class="jip-brand" href="/">IURI<span>PIRAGIBE</span></a>
-    <nav>
+    <nav aria-label="Curso">
       <a href="/jornalismo/app.html?v=aberto#/aberto">Aula aberta</a>
       <a href="/jornalismo/app.html#/entrar">Entrar</a>
       <a href="/sobre.html">Autor</a>
     </nav>
   </header>
-  <main class="jip-wrap">
+  <main class="jip-wrap" id="conteudo">
     <section class="jip-hero">
       <p class="jip-kicker">31 aulas · ~5h40 de vídeo · 8 módulos</p>
       <h1>Jornalismo Investigativo na Prática</h1>
-      <p class="jip-quote" style="margin:18px 0 0">Sem documento, é lenda.</p>
+      <p class="jip-quote">Sem documento, é lenda.</p>
       <p class="jip-lead">Apuração, LAI e dados públicos em 31 aulas. Você entra, assiste, baixa a planilha e os modelos, e pratica numa pauta sua. Conteúdo educativo — não substitui advogado. Regras válidas em setembro de 2026.</p>
       <div class="jip-cta-row">
         <a class="jip-btn jip-btn-primary" href="/jornalismo/app.html#/comprar">Comprar · R$ 197 pré-venda</a>
@@ -92,76 +93,59 @@
       </div>
       <p class="jip-muted">Já comprou? Entre com o e-mail da compra. Preço cheio R$ 297.</p>
     </section>
-    <section class="jip-explode" data-jip-explode data-phase="1" aria-labelledby="jip-explode-title">
-      <div class="jip-explode-track">
-        <div class="jip-explode-pin">
-          <div class="jip-explode-head">
-            <p class="jip-kicker">Percurso do aluno</p>
-            <h2 id="jip-explode-title">O curso por dentro</h2>
-            <p class="jip-muted">Role para ver as partes da área do aluno se abrirem e se encaixarem em Entrar → Assistir → Ferramentas.</p>
-            <span class="jip-explode-phase" data-jip-explode-phase aria-live="polite">Curso montado</span>
-          </div>
-          <div class="jip-explode-stage" aria-hidden="false">
-            <div class="jip-x-piece jip-x-frame" data-x="frame" aria-hidden="false">
-              <div class="jip-x-chrome">
-                <div class="jip-x-chrome-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-                <span>Jornalismo Investigativo na Prática</span>
-              </div>
-              <div class="jip-x-frame-body" aria-hidden="true"></div>
-            </div>
-            <article class="jip-x-piece jip-x-login" data-x="login">
-              <p class="jip-x-eyebrow">1 · Entrar</p>
-              <h3>Entrar</h3>
-              <p class="jip-muted">Login com o e-mail da compra. Google também libera se o e-mail estiver autorizado.</p>
-              <span class="jip-x-fake-btn" aria-hidden="true">Entrar</span>
-            </article>
-            <article class="jip-x-piece jip-x-lesson" data-x="lesson">
-              <p class="jip-x-eyebrow">2 · Assistir</p>
-              <h3>Assistir</h3>
-              <p class="jip-muted">Continuar a próxima aula, ver a grade completa e ler o roteiro. Sem quiz antes do conteúdo.</p>
-              <div class="jip-x-continue">
-                <span class="jip-x-eyebrow" style="margin:0">Continuar aula</span>
-                <strong>1.1 · O que é apuração</strong>
-                <small>10 min · separar pista de prova</small>
-              </div>
-              <div class="jip-x-video">
-                <strong>Vídeo ainda não publicado</strong>
-                <p>O roteiro completo está abaixo. Não há player fictício.</p>
-              </div>
-            </article>
-            <article class="jip-x-piece jip-x-tools" data-x="tools">
-              <p class="jip-x-eyebrow">3 · Ferramentas</p>
-              <h3>Ferramentas</h3>
-              <p class="jip-muted">Planilha, PDF de bônus e links oficiais (Fala.BR, Transparência, etc.) num lugar só.</p>
-              <div class="jip-x-tool-row" aria-hidden="true">
-                <span>Planilha de cruzamento</span>
-                <span>Modelos LAI</span>
-                <span>Sites oficiais</span>
-              </div>
-            </article>
-          </div>
-          <p class="jip-explode-note">Depois do encaixe, siga pelos módulos e pelas perguntas abaixo. Os botões de compra e login ficam no topo.</p>
-        </div>
+
+    <section class="jip-path" aria-labelledby="jip-path-title">
+      <p class="jip-kicker">Percurso do aluno</p>
+      <h2 id="jip-path-title">Como funciona</h2>
+      <p class="jip-lead jip-path-intro">Entrar → Assistir → Ferramentas. Sem quiz antes do conteúdo.</p>
+      <ol class="jip-path-grid">
+        <li class="jip-path-step">
+          <span class="jip-path-num" aria-hidden="true">1</span>
+          <h3>Entrar</h3>
+          <p class="jip-muted">Login com o e-mail da compra. Google também libera se o e-mail estiver autorizado.</p>
+        </li>
+        <li class="jip-path-step">
+          <span class="jip-path-num" aria-hidden="true">2</span>
+          <h3>Assistir</h3>
+          <p class="jip-muted">Continuar a próxima aula, ver a grade completa e ler o roteiro. Sem quiz antes do conteúdo.</p>
+        </li>
+        <li class="jip-path-step">
+          <span class="jip-path-num" aria-hidden="true">3</span>
+          <h3>Ferramentas</h3>
+          <p class="jip-muted">Planilha, PDF de bônus e links oficiais (Fala.BR, Transparência, etc.) num lugar só.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="jip-modules" aria-labelledby="jip-modules-title">
+      <h2 id="jip-modules-title">Módulos</h2>
+      <div class="jip-mod-list">
+        <article class="jip-mod-row"><strong>1 Mentalidade</strong><span>apuração, denúncia, hipótese, FENAJ</span></article>
+        <article class="jip-mod-row"><strong>2 Fontes</strong><span>on/off, sigilo (ADPF 601), metadados, segurança</span></article>
+        <article class="jip-mod-row"><strong>3 LAI</strong><span>Fala.BR, prazos, CMRI, sigilo e LGPD</span></article>
+        <article class="jip-mod-row"><strong>4 Dados</strong><span>DOU, PNCP, CNPJ, TSE, DataJud, CruzaGrafos</span></article>
+        <article class="jip-mod-row"><strong>5 Checagem</strong><span>indício, status processual, delação, redação</span></article>
+        <article class="jip-mod-row"><strong>6 Risco jurídico</strong><span>honra, STF, assédio, eleições 2026</span></article>
+        <article class="jip-mod-row"><strong>7 Matéria</strong><span>roteiro de vídeo e outro lado</span></article>
+        <article class="jip-mod-row"><strong>8 Estudo de caso</strong><span>template até publicar</span></article>
       </div>
     </section>
-    <h2 style="margin:28px 0 12px">Módulos</h2>
-    <div class="jip-grid">
-      <article class="jip-card"><strong>1 Mentalidade</strong> — apuração, denúncia, hipótese, FENAJ</article>
-      <article class="jip-card"><strong>2 Fontes</strong> — on/off, sigilo (ADPF 601), metadados, segurança</article>
-      <article class="jip-card"><strong>3 LAI</strong> — Fala.BR, prazos, CMRI, sigilo e LGPD</article>
-      <article class="jip-card"><strong>4 Dados</strong> — DOU, PNCP, CNPJ, TSE, DataJud, CruzaGrafos</article>
-      <article class="jip-card"><strong>5 Checagem</strong> — indício, status processual, delação, redação</article>
-      <article class="jip-card"><strong>6 Risco jurídico</strong> — honra, STF, assédio, eleições 2026</article>
-      <article class="jip-card"><strong>7 Matéria</strong> — roteiro de vídeo e outro lado</article>
-      <article class="jip-card"><strong>8 Estudo de caso</strong> — template até publicar</article>
-    </div>
-    <section class="jip-card jip-faq" style="margin-top:24px">
-      <h2>Perguntas</h2>
-      <details><summary>Quais sites eu pratico junto?</summary><p class="jip-muted">Fala.BR, InformaBR, Querido Diário, Portal da Transparência, PNCP, Minha Receita, BrasilAPI, DivulgaCand, DataJud, ONR, CruzaGrafos e os códigos da FENAJ e da LAI. Cada aula lista só o que ela usa.</p></details>
-      <details><summary>As aulas são públicas?</summary><p class="jip-muted">Não. Só a aula aberta (3.2 e 3.3, sem exercício) é aberta. Roteiros, exercícios e bônus exigem login com o e-mail da compra.</p></details>
-      <details><summary>E os bônus?</summary><p class="jip-muted">Modelos de pedido e recurso, checklist pré-publicação, planilha de cruzamento com 13 abas e glossário. Os arquivos saem da área autenticada, em Ferramentas.</p></details>
+
+    <section class="jip-faq" aria-labelledby="jip-faq-title">
+      <h2 id="jip-faq-title">Perguntas</h2>
+      <details>
+        <summary>Quais sites eu pratico junto?</summary>
+        <p class="jip-muted">Fala.BR, InformaBR, Querido Diário, Portal da Transparência, PNCP, Minha Receita, BrasilAPI, DivulgaCand, DataJud, ONR, CruzaGrafos e os códigos da FENAJ e da LAI. Cada aula lista só o que ela usa.</p>
+      </details>
+      <details>
+        <summary>As aulas são públicas?</summary>
+        <p class="jip-muted">Não. Só a aula aberta (3.2 e 3.3, sem exercício) é aberta. Roteiros, exercícios e bônus exigem login com o e-mail da compra.</p>
+      </details>
+      <details>
+        <summary>E os bônus?</summary>
+        <p class="jip-muted">Modelos de pedido e recurso, checklist pré-publicação, planilha de cruzamento com 13 abas e glossário. Os arquivos saem da área autenticada, em Ferramentas.</p>
+      </details>
     </section>
   </main>
-  <script src="/jornalismo/js/explode.js" defer></script>
 </body>
 </html>

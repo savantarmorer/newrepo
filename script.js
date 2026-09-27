@@ -284,8 +284,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileMenuBtn && navLinks) {
         mobileMenuBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            mobileMenuBtn.classList.toggle('active');
+            const open = mobileMenuBtn.classList.toggle('active');
             navLinks.classList.toggle('active');
+            mobileMenuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            mobileMenuBtn.setAttribute('aria-label', open ? 'Fechar menu' : 'Abrir menu');
         });
         
         // Close menu when clicking link
@@ -293,6 +295,8 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', () => {
                 mobileMenuBtn.classList.remove('active');
                 navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.setAttribute('aria-label', 'Abrir menu');
             });
         });
 
@@ -301,6 +305,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
                 mobileMenuBtn.classList.remove('active');
                 navLinks.classList.remove('active');
+                mobileMenuBtn.setAttribute('aria-expanded', 'false');
+                mobileMenuBtn.setAttribute('aria-label', 'Abrir menu');
             }
         });
     }
@@ -310,10 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropdown = document.querySelector('.nav-dropdown');
     if (dropdownToggle && dropdown) {
         dropdownToggle.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 980) {
                 e.preventDefault();
                 e.stopPropagation();
                 dropdown.classList.toggle('active');
+                dropdownToggle.setAttribute('aria-expanded', dropdown.classList.contains('active') ? 'true' : 'false');
             }
         });
     }
