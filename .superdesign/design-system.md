@@ -34,34 +34,41 @@ or invented evidence.
 
 ## Color tokens
 
+Shared by `/styles.css`, `/jornalismo/css/curso.css` and `/jornalismo/css/ops.css`.
+Contrast ratios measured against `--bg` (WCAG 2.x).
+
 ```css
---color-bg: #000000;
---color-surface: #0a0a0a;
---color-surface-2: #050505;
---color-accent: #FFB800;
---color-text: #FFFFFF;
---color-muted: #9ca3af;
---color-faint: #6b7280;
---color-border: #1a1a1a;
---color-ok: #22c55e;
---color-danger: #f87171;
+--bg: #0C0C0D;          /* canvas */
+--surface-1: #141416;   /* cards, sidebar */
+--surface-2: #1C1C1F;   /* hover, active row */
+--border: #2A2A2F;      /* decorative dividers */
+--border-ui: #66666F;   /* input / ghost-button outlines, ≥ 3:1 (WCAG 1.4.11) */
+--ink: #F4F1EA;         /* 17.3:1 */
+--ink-2: #A9A59C;       /* 8.0:1 secondary copy */
+--ink-3: #8A867D;       /* ≈ 5:1 on surface-1, metadata floor */
+--action: #FFB800;      /* ONLY primary CTA, progress and current lesson */
+--link: #8FB8FF;        /* inline/navigation links, 9.8:1 */
+--ok: #4ADE80;          /* completed, always with ✓ */
+--danger: #FF6B5E;      /* real errors */
+--paper: #F5F1E8;       /* reading mode surface */
+--paper-ink: #1C1A17;   /* 15.4:1 on paper */
+--paper-accent: #7A5400;/* links on paper (gold fails there) */
 ```
 
-Gold marks CTAs and selected context. Green is only for a live/synced state.
-Red is only for real errors. Never communicate state by color alone.
+Rules: gold fills at most one element per viewport (the primary CTA).
+Eyebrows and kickers are neutral (`--ink-3`), never gold. Links are
+`--link`, so "navigate" never looks like "buy". Never communicate state by
+color alone.
 
 ## Typography
 
-- Display: Archivo Black, uppercase, tracking -0.05em.
-- Body / UI: Space Grotesk, 300–700.
-- Data labels: Space Grotesk 600, 0.75rem, uppercase, tracking 0.1em.
-
-Scale:
-- Hero display: clamp(3rem, 7vw, 8rem), line-height 0.9.
-- Section H2: 3–3.75rem Archivo Black.
-- Card H3: 1.5rem Archivo Black.
-- Body: 1–1.25rem Space Grotesk, muted gray for supporting copy.
-- Nav: 0.75rem, weight 600, uppercase, tracking 0.1em.
+- Display: Archivo Black, uppercase, tracking -0.04em — page H1 and section
+  titles only. Never for lesson titles.
+- UI / body: Space Grotesk 400–700. Lesson titles: 700, sentence case.
+- Long reading (lesson scripts, open lesson): Source Serif 4, 18–19px,
+  line-height 1.7, max 68ch.
+- Data (lesson numbers, durations, prices meta): JetBrains Mono 500–600.
+- Minimum sizes: 12px labels, 14px UI text.
 
 ## Spacing and shape
 

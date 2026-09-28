@@ -14,6 +14,9 @@ test('landing do curso tem SEO de Course', async ({ page }) => {
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /index/i);
   await expect(page.getByText('Sem documento, é lenda').first()).toBeVisible();
   await expect(page.getByRole('link', { name: /Comprar/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Garantir vaga/i }).first()).toBeVisible();
+  await expect(page.locator('#programa details')).toHaveCount(8);
+  await expect(page.locator('#programa li')).toHaveCount(31);
   await expect(page.getByRole('link', { name: /Entrar/i }).first()).toBeVisible();
   const json = await page.locator('script[type="application/ld+json"]').first().textContent();
   expect(json).toContain('"@type": "Course"');
@@ -134,7 +137,7 @@ test('aluno autorizado cai no início sem OpSec e marca onboarding', async ({ pa
   await mockAuthorizedSupabase(page, null);
   await page.goto('/jornalismo/app.html#/inicio', { waitUntil: 'networkidle' });
   await expect(page).toHaveURL(/#\/inicio$/);
-  await expect(page.getByRole('link', { name: /Continuar aula/i })).toBeVisible();
+  await expect(page.getByRole('link', { name: /Continuar aula|Começar pela aula/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /Ver aulas/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /^Ferramentas$/i }).first()).toBeVisible();
   await expect(page.getByText(/Triagem operacional|OpSec|Credencial|Diagnóstico de segurança/i)).toHaveCount(0);
@@ -154,11 +157,12 @@ test('notas da aula são persistidas e não simulam vídeo', async ({ page }) =>
     onboarding_completed: true
   });
   await page.goto('/jornalismo/app.html#/aula/1.1', { waitUntil: 'networkidle' });
-  await expect(page.getByText('Vídeo ainda não publicado')).toBeVisible();
+  await expect(page.getByText(/Roteiro de leitura/i)).toBeVisible();
   await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('.ops-player')).toHaveCount(0);
   await expect(page.getByRole('heading', { name: /Ferramentas desta aula/i })).toBeVisible();
   await expect(page.getByRole('link', { name: /Fala\.BR/i })).toBeVisible();
-  await page.getByText(/Notas e exercício/i).click();
+  await expect(page.getByRole('heading', { name: /Exercício da aula 1\.1/i })).toBeVisible();
   await page.locator('#lesson-notes').fill('Hipótese baseada no contrato público.');
   await page.getByRole('button', { name: /Salvar notas/i }).click();
   await expect(page.getByRole('status')).toContainText(/salvas/i);
@@ -167,4 +171,24 @@ test('notas da aula são persistidas e não simulam vídeo', async ({ page }) =>
     table: 'curso_jip_exercicios',
     value: expect.objectContaining({ aula_id: '1.1' })
   }));
+});
+
+test('compra sem checkout configurado oferece reserva por e-mail', async ({ page }) => {
+  await page.goto('/jornalismo/app.html#/comprar', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('heading', { level: 1 })).toContainText(/Jornalismo Investigativo/i);
+  await expect(page.getByRole('link', { name: /Reservar vaga por e-mail/i })).toHaveAttribute('href', /^mailto:iuri@piragibe\.com\.br/);
+});
+
+test('grade de aulas abre o módulo pedido e marca estados', async ({ page }) => {
+  await mockAuthorizedSupabase(page, {
+    user_id: '00000000-0000-4000-8000-000000000001',
+    codinome: 'Aluno',
+    vertente: 'financeira',
+    opsec_score: 0,
+    onboarding_completed: true
+  });
+  await page.goto('/jornalismo/app.html#/sala/1', { waitUntil: 'networkidle' });
+  await expect(page.locator('#modulo-1')).toHaveAttribute('open', '');
+  await expect(page.getByRole('link', { name: /1\.1 · O que é apuração/i })).toBeVisible();
+  await expect(page.getByRole('progressbar').first()).toBeVisible();
 });

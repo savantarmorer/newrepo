@@ -8,11 +8,11 @@
   <meta name="robots" content="index,follow,max-image-preview:large">
   <meta name="author" content="Iuri Piragibe">
   <link rel="canonical" href="https://iuripiragibe.net/jornalismo/">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#0C0C0D">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://iuripiragibe.net/jornalismo/">
   <meta property="og:title" content="Jornalismo Investigativo na Prática — Iuri Piragibe">
-  <meta property="og:description" content="31 aulas, cerca de 5h40. Apuração, LAI e dados. Aula aberta: pedido LAI (~20 min).">
+  <meta property="og:description" content="31 aulas, cerca de 6 horas. Apuração, LAI, dados públicos e risco jurídico. Aula aberta grátis: pedido LAI (~24 min).">
   <meta property="og:image" content="https://iuripiragibe.net/og-image.svg">
   <meta property="og:locale" content="pt_BR">
   <meta name="twitter:card" content="summary_large_image">
@@ -23,8 +23,9 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/jornalismo/css/curso.css">
+  <script src="/jornalismo/js/checkout.js" defer></script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -59,7 +60,7 @@
       {
         "@type": "Question",
         "name": "O que é a aula aberta?",
-        "acceptedAnswer": { "@type": "Answer", "text": "As aulas 3.2 e 3.3 juntas, sem exercícios, cerca de 20 minutos: pedido de LAI e prazos até a CMRI." }
+        "acceptedAnswer": { "@type": "Answer", "text": "As aulas 3.2 e 3.3 juntas, sem exercícios, cerca de 24 minutos: pedido de LAI e prazos até a CMRI. É grátis e não pede cadastro." }
       },
       {
         "@type": "Question",
@@ -72,80 +73,318 @@
 </head>
 <body class="jip jip-landing">
   <a class="jip-skip" href="#conteudo">Ir ao conteúdo</a>
-  <header class="jip-top">
-    <a class="jip-brand" href="/">IURI<span>PIRAGIBE</span></a>
-    <nav aria-label="Curso">
-      <a href="/jornalismo/app.html?v=aberto#/aberto">Aula aberta</a>
-      <a href="/jornalismo/app.html#/entrar">Entrar</a>
-      <a href="/sobre.html">Autor</a>
-    </nav>
+  <header class="jl-top">
+    <div class="jl-top-inner">
+      <a class="jip-brand" href="/">IURI<span>PIRAGIBE</span></a>
+      <nav class="jl-top-nav" aria-label="Curso">
+        <a href="#programa">Programa</a>
+        <a href="#oferta">Preço</a>
+        <a href="#perguntas">Perguntas</a>
+      </nav>
+      <div class="jl-top-actions">
+        <a class="jl-top-link" href="/jornalismo/app.html#/entrar">Entrar</a>
+        <a class="jip-btn jip-btn-primary jl-top-cta" href="/jornalismo/app.html#/comprar" data-checkout>Comprar</a>
+      </div>
+    </div>
   </header>
-  <main class="jip-wrap" id="conteudo">
-    <section class="jip-hero">
-      <p class="jip-kicker">31 aulas · ~5h40 de vídeo · 8 módulos</p>
-      <h1>Jornalismo Investigativo na Prática</h1>
-      <p class="jip-quote">Sem documento, é lenda.</p>
-      <p class="jip-lead">Apuração, LAI e dados públicos em 31 aulas. Você entra, assiste, baixa a planilha e os modelos, e pratica numa pauta sua. Conteúdo educativo — não substitui advogado. Regras válidas em setembro de 2026.</p>
-      <div class="jip-cta-row">
-        <a class="jip-btn jip-btn-primary" href="/jornalismo/app.html#/comprar">Comprar · R$ 197 pré-venda</a>
-        <a class="jip-btn jip-btn-ghost" href="/jornalismo/app.html?v=aberto#/aberto">Aula aberta de LAI (~20 min)</a>
-        <a class="jip-btn jip-btn-ghost" href="/jornalismo/app.html#/entrar">Entrar</a>
-      </div>
-      <p class="jip-muted">Já comprou? Entre com o e-mail da compra. Preço cheio R$ 297.</p>
-    </section>
 
-    <section class="jip-path" aria-labelledby="jip-path-title">
-      <p class="jip-kicker">Percurso do aluno</p>
-      <h2 id="jip-path-title">Como funciona</h2>
-      <p class="jip-lead jip-path-intro">Entrar → Assistir → Ferramentas. Sem quiz antes do conteúdo.</p>
-      <ol class="jip-path-grid">
-        <li class="jip-path-step">
-          <span class="jip-path-num" aria-hidden="true">1</span>
-          <h3>Entrar</h3>
-          <p class="jip-muted">Login com o e-mail da compra. Google também libera se o e-mail estiver autorizado.</p>
-        </li>
-        <li class="jip-path-step">
-          <span class="jip-path-num" aria-hidden="true">2</span>
-          <h3>Assistir</h3>
-          <p class="jip-muted">Continuar a próxima aula, ver a grade completa e ler o roteiro. Sem quiz antes do conteúdo.</p>
-        </li>
-        <li class="jip-path-step">
-          <span class="jip-path-num" aria-hidden="true">3</span>
-          <h3>Ferramentas</h3>
-          <p class="jip-muted">Planilha, PDF de bônus e links oficiais (Fala.BR, Transparência, etc.) num lugar só.</p>
-        </li>
-      </ol>
-    </section>
-
-    <section class="jip-modules" aria-labelledby="jip-modules-title">
-      <h2 id="jip-modules-title">Módulos</h2>
-      <div class="jip-mod-list">
-        <article class="jip-mod-row"><strong>1 Mentalidade</strong><span>apuração, denúncia, hipótese, FENAJ</span></article>
-        <article class="jip-mod-row"><strong>2 Fontes</strong><span>on/off, sigilo (ADPF 601), metadados, segurança</span></article>
-        <article class="jip-mod-row"><strong>3 LAI</strong><span>Fala.BR, prazos, CMRI, sigilo e LGPD</span></article>
-        <article class="jip-mod-row"><strong>4 Dados</strong><span>DOU, PNCP, CNPJ, TSE, DataJud, CruzaGrafos</span></article>
-        <article class="jip-mod-row"><strong>5 Checagem</strong><span>indício, status processual, delação, redação</span></article>
-        <article class="jip-mod-row"><strong>6 Risco jurídico</strong><span>honra, STF, assédio, eleições 2026</span></article>
-        <article class="jip-mod-row"><strong>7 Matéria</strong><span>roteiro de vídeo e outro lado</span></article>
-        <article class="jip-mod-row"><strong>8 Estudo de caso</strong><span>template até publicar</span></article>
+  <main id="conteudo">
+    <section class="jl-hero">
+      <div class="jl-wrap jl-hero-grid">
+        <div class="jl-hero-copy">
+          <p class="jl-eyebrow"><span class="jl-pill">Pré-venda</span> 31 aulas · 8 módulos · ~6 h</p>
+          <h1>Jornalismo Investigativo na Prática</h1>
+          <p class="jl-lead">Transforme suspeita em pauta documentada: da hipótese ao pedido de LAI, dos dados públicos à publicação com risco jurídico sob controle.</p>
+          <div class="jl-cta-row">
+            <a class="jip-btn jip-btn-primary jl-cta-lg" href="/jornalismo/app.html#/comprar" data-checkout>Garantir vaga · R$ 197</a>
+            <a class="jl-textlink" href="/jornalismo/app.html?v=aberto#/aberto">Ver a aula aberta grátis <span aria-hidden="true">→</span></a>
+          </div>
+          <p class="jl-fine">R$ 297 depois da pré-venda · 7 dias para desistir (CDC, art. 49) · Já comprou? <a href="/jornalismo/app.html#/entrar">Entre com o e-mail da compra</a></p>
+        </div>
+        <aside class="jl-hero-card" aria-label="Aula aberta">
+          <p class="jl-card-kicker">Aula aberta · sem cadastro</p>
+          <blockquote class="jl-quote">Sem documento, é lenda.</blockquote>
+          <ol class="jl-mini">
+            <li><span>3.2</span> O pedido que não dá para enrolar <em>12 min</em></li>
+            <li><span>3.3</span> Prazos e recursos: do órgão à CMRI <em>12 min</em></li>
+          </ol>
+          <a class="jip-btn jip-btn-ghost jl-block" href="/jornalismo/app.html?v=aberto#/aberto">Ler a aula aberta</a>
+        </aside>
       </div>
     </section>
 
-    <section class="jip-faq" aria-labelledby="jip-faq-title">
-      <h2 id="jip-faq-title">Perguntas</h2>
-      <details>
-        <summary>Quais sites eu pratico junto?</summary>
-        <p class="jip-muted">Fala.BR, InformaBR, Querido Diário, Portal da Transparência, PNCP, Minha Receita, BrasilAPI, DivulgaCand, DataJud, ONR, CruzaGrafos e os códigos da FENAJ e da LAI. Cada aula lista só o que ela usa.</p>
-      </details>
-      <details>
-        <summary>As aulas são públicas?</summary>
-        <p class="jip-muted">Não. Só a aula aberta (3.2 e 3.3, sem exercício) é aberta. Roteiros, exercícios e bônus exigem login com o e-mail da compra.</p>
-      </details>
-      <details>
-        <summary>E os bônus?</summary>
-        <p class="jip-muted">Modelos de pedido e recurso, checklist pré-publicação, planilha de cruzamento com 13 abas e glossário. Os arquivos saem da área autenticada, em Ferramentas.</p>
-      </details>
+    <section class="jl-proof" aria-label="Sobre o instrutor em números">
+      <ul class="jl-wrap jl-proof-list">
+        <li><strong>630K</strong><span>seguidores no Instagram e TikTok</span></li>
+        <li><strong>6M</strong><span>visualizações por mês</span></li>
+        <li><strong>100+</strong><span>investigações publicadas</span></li>
+        <li><strong>2</strong><span>livros investigativos</span></li>
+      </ul>
+    </section>
+
+    <section class="jl-section" aria-labelledby="entregas-title">
+      <div class="jl-wrap">
+        <p class="jl-eyebrow">O que você leva</p>
+        <h2 id="entregas-title">Você termina com uma pauta pronta para publicar</h2>
+        <p class="jl-sub">Na aula 1.1 você escolhe uma investigação. Cada módulo avança essa mesma pauta até o módulo 8.</p>
+        <ul class="jl-deliver">
+          <li>
+            <span class="jl-deliver-num">01</span>
+            <h3>Pedido de LAI protocolado</h3>
+            <p>Modelo de pedido e de recurso, prazos até a CMRI e o que fazer quando o órgão alega sigilo.</p>
+          </li>
+          <li>
+            <span class="jl-deliver-num">02</span>
+            <h3>Planilha de cruzamento</h3>
+            <p>13 abas para cruzar DOU, PNCP, CNPJ, TSE e DataJud e enxergar vínculos com documento.</p>
+          </li>
+          <li>
+            <span class="jl-deliver-num">03</span>
+            <h3>Checklist pré-publicação</h3>
+            <p>Redação proporcional, outro lado e protocolo de risco jurídico — inclusive para eleições 2026.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="jl-section" id="programa" aria-labelledby="programa-title">
+      <div class="jl-wrap jl-narrow">
+        <p class="jl-eyebrow">Programa</p>
+        <h2 id="programa-title">8 módulos, 31 aulas</h2>
+        <p class="jl-sub">Cada aula tem roteiro completo, ferramentas oficiais linkadas e um exercício aplicado à sua pauta.</p>
+        <div class="jl-mods">
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">01</span>
+              <span class="jl-mod-main"><strong>Mentalidade investigativa</strong><small>Pauta, hipótese e ética. Ao final você escolhe a investigação do curso.</small></span>
+              <span class="jl-mod-meta">4 aulas · 44 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">1.1</span><span class="jl-title">O que é apuração (e o que não é)</span><span class="jl-dur">10 min</span></li>
+              <li><span class="jl-num">1.2</span><span class="jl-title">Pauta vs. denúncia e vazamento</span><span class="jl-dur">10 min</span></li>
+              <li><span class="jl-num">1.3</span><span class="jl-title">Hipótese: investigação a partir de histórias</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">1.4</span><span class="jl-title">Ética aplicada: FENAJ, interesse público e métodos</span><span class="jl-dur">12 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">02</span>
+              <span class="jl-mod-main"><strong>Fontes e documentos</strong><small>On, off, background, sigilo da fonte e autenticidade.</small></span>
+              <span class="jl-mod-meta">4 aulas · 47 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">2.1</span><span class="jl-title">Fontes humanas: on, off, background</span><span class="jl-dur">11 min</span></li>
+              <li><span class="jl-num">2.2</span><span class="jl-title">Sigilo da fonte e denunciantes</span><span class="jl-dur">11 min</span></li>
+              <li><span class="jl-num">2.3</span><span class="jl-title">Documentos: autenticidade, metadados, vazamentos</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">2.4</span><span class="jl-title">Segurança digital e física</span><span class="jl-dur">13 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod" open>
+            <summary>
+              <span class="jl-mod-num">03</span>
+              <span class="jl-mod-main"><strong>Lei de Acesso à Informação</strong><small>Pedido no Fala.BR, prazos, recursos e sigilo.</small></span>
+              <span class="jl-mod-meta">5 aulas · 58 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">3.1</span><span class="jl-title">LAI: quem responde e o que pedir</span><span class="jl-dur">10 min</span></li>
+              <li class="is-open"><span class="jl-num">3.2</span><span class="jl-title">O pedido que não dá para enrolar <em class="jl-badge">Aula aberta</em></span><span class="jl-dur">12 min</span></li>
+              <li class="is-open"><span class="jl-num">3.3</span><span class="jl-title">Prazos e recursos: do órgão à CMRI <em class="jl-badge">Aula aberta</em></span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">3.4</span><span class="jl-title">Sigilo, “100 anos” e LGPD</span><span class="jl-dur">14 min</span></li>
+              <li><span class="jl-num">3.5</span><span class="jl-title">Estados, municípios e casos reais</span><span class="jl-dur">10 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">04</span>
+              <span class="jl-mod-main"><strong>Dados públicos e cruzamento</strong><small>Diários, CNPJ, TSE, processos e grafos.</small></span>
+              <span class="jl-mod-meta">7 aulas · 84 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">4.1</span><span class="jl-title">Diários oficiais: DOU e Querido Diário</span><span class="jl-dur">10 min</span></li>
+              <li><span class="jl-num">4.2</span><span class="jl-title">Portal da Transparência, sanções e PNCP</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">4.3</span><span class="jl-title">Empresas e sócios: CNPJ e juntas comerciais</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">4.4</span><span class="jl-title">Políticos: TSE, Câmara, Senado e tribunais de contas</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">4.5</span><span class="jl-title">Processos, imóveis e aeronaves</span><span class="jl-dur">11 min</span></li>
+              <li><span class="jl-num">4.6</span><span class="jl-title">Cruzamento: PROCX, tabela dinâmica e CruzaGrafos</span><span class="jl-dur">14 min</span></li>
+              <li><span class="jl-num">4.7</span><span class="jl-title">OSINT e limites legais</span><span class="jl-dur">13 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">05</span>
+              <span class="jl-mod-main"><strong>Checagem e padrão de prova</strong><small>Indício, status processual e redação proporcional.</small></span>
+              <span class="jl-mod-meta">4 aulas · 44 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">5.1</span><span class="jl-title">Indício, prova e versão</span><span class="jl-dur">11 min</span></li>
+              <li><span class="jl-num">5.2</span><span class="jl-title">Investigado, indiciado, denunciado, réu, condenado</span><span class="jl-dur">12 min</span></li>
+              <li><span class="jl-num">5.3</span><span class="jl-title">Delação premiada</span><span class="jl-dur">9 min</span></li>
+              <li><span class="jl-num">5.4</span><span class="jl-title">Checagem e redação proporcional</span><span class="jl-dur">12 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">06</span>
+              <span class="jl-mod-main"><strong>Risco jurídico</strong><small>Honra, STF, assédio judicial e eleições 2026.</small></span>
+              <span class="jl-mod-meta">4 aulas · 51 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">6.1</span><span class="jl-title">Calúnia, difamação e injúria</span><span class="jl-dur">13 min</span></li>
+              <li><span class="jl-num">6.2</span><span class="jl-title">Responsabilidade civil e as teses do STF</span><span class="jl-dur">13 min</span></li>
+              <li><span class="jl-num">6.3</span><span class="jl-title">Assédio judicial, direito de resposta e remoção de conteúdo</span><span class="jl-dur">13 min</span></li>
+              <li><span class="jl-num">6.4</span><span class="jl-title">Eleições 2026 e o protocolo pré-publicação</span><span class="jl-dur">12 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">07</span>
+              <span class="jl-mod-main"><strong>Construção da matéria</strong><small>Roteiro de vídeo, documento na tela e outro lado.</small></span>
+              <span class="jl-mod-meta">2 aulas · 24 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">7.1</span><span class="jl-title">Estrutura e roteiro de vídeo</span><span class="jl-dur">13 min</span></li>
+              <li><span class="jl-num">7.2</span><span class="jl-title">Documento na tela e outro lado</span><span class="jl-dur">11 min</span></li>
+            </ol>
+          </details>
+          <details class="jl-mod">
+            <summary>
+              <span class="jl-mod-num">08</span>
+              <span class="jl-mod-main"><strong>Estudo de caso</strong><small>Template da pauta até a publicação.</small></span>
+              <span class="jl-mod-meta">1 aula · 15 min</span>
+            </summary>
+            <ol class="jl-lessons">
+              <li><span class="jl-num">8.1</span><span class="jl-title">Estudo de caso completo</span><span class="jl-dur">15 min</span></li>
+            </ol>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="jl-section" aria-labelledby="ferramentas-title">
+      <div class="jl-wrap">
+        <p class="jl-eyebrow">Na prática</p>
+        <h2 id="ferramentas-title">Sites oficiais que você usa nas aulas</h2>
+        <ul class="jl-tools">
+          <li>Fala.BR</li><li>InformaBR</li><li>Querido Diário</li><li>Portal da Transparência</li><li>PNCP</li><li>Minha Receita</li><li>BrasilAPI</li><li>DivulgaCand</li><li>DataJud</li><li>ONR</li><li>CruzaGrafos</li><li>Código FENAJ</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="jl-section" aria-labelledby="autor-title">
+      <div class="jl-wrap jl-author">
+        <div>
+          <p class="jl-eyebrow">Instrutor</p>
+          <h2 id="autor-title">Iuri Piragibe</h2>
+        </div>
+        <div>
+          <p class="jl-sub">Jornalista investigativo e autor de <em>O Livro dos Iniciados</em> e <em>A Deusa da Discórdia</em>. Investiga dinastias políticas, sociedades secretas e o Brasil subterrâneo para uma audiência de mais de 630 mil pessoas — com documento na tela.</p>
+          <a class="jl-textlink" href="/sobre.html">Conhecer a trajetória <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="jl-section" id="oferta" aria-labelledby="oferta-title">
+      <div class="jl-wrap jl-narrow">
+        <div class="jl-offer">
+          <div>
+            <p class="jl-eyebrow"><span class="jl-pill">Pré-venda</span></p>
+            <h2 id="oferta-title">Jornalismo Investigativo na Prática</h2>
+            <ul class="jl-checks">
+              <li>31 aulas em 8 módulos (~6 h)</li>
+              <li>Roteiro completo e busca dentro de cada aula</li>
+              <li>Exercícios aplicados à sua própria pauta, com notas privadas</li>
+              <li>Modelos de pedido e recurso de LAI</li>
+              <li>Planilha de cruzamento com 13 abas e glossário</li>
+              <li>Checklist pré-publicação e protocolo jurídico</li>
+            </ul>
+          </div>
+          <div class="jl-offer-price">
+            <p class="jl-price"><s>R$ 297</s><strong>R$ 197</strong></p>
+            <a class="jip-btn jip-btn-primary jl-cta-lg jl-block" href="/jornalismo/app.html#/comprar" data-checkout>Garantir vaga</a>
+            <p class="jl-fine">7 dias para desistir (CDC, art. 49). Conteúdo educativo — não substitui advogado.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="jl-section jip-faq" id="perguntas" aria-labelledby="jip-faq-title">
+      <div class="jl-wrap jl-narrow">
+        <p class="jl-eyebrow">Perguntas</p>
+        <h2 id="jip-faq-title">Antes de comprar</h2>
+        <details>
+          <summary>Preciso trabalhar em redação para fazer o curso?</summary>
+          <p class="jip-muted">Não. Você escolhe uma pauta na aula 1.1 e leva a mesma investigação até o módulo 8.</p>
+        </details>
+        <details>
+          <summary>As aulas são em vídeo ou em texto?</summary>
+          <p class="jip-muted">Cada aula tem o roteiro completo, com as ferramentas e o exercício. Os vídeos entram na área do aluno à medida que são publicados; o roteiro já cobre todo o conteúdo.</p>
+        </details>
+        <details>
+          <summary>O que é a aula aberta?</summary>
+          <p class="jip-muted">As aulas 3.2 e 3.3 juntas, sem exercícios, cerca de 24 minutos: pedido de LAI e prazos até a CMRI. É grátis e não pede cadastro.</p>
+        </details>
+        <details>
+          <summary>Quais sites eu pratico junto?</summary>
+          <p class="jip-muted">Fala.BR, InformaBR, Querido Diário, Portal da Transparência, PNCP, Minha Receita, BrasilAPI, DivulgaCand, DataJud, ONR, CruzaGrafos e os códigos da FENAJ e da LAI. Cada aula lista só o que ela usa.</p>
+        </details>
+        <details>
+          <summary>E os bônus?</summary>
+          <p class="jip-muted">Modelos de pedido e recurso, checklist pré-publicação, planilha de cruzamento com 13 abas e glossário. Os arquivos ficam na área do aluno, em Ferramentas.</p>
+        </details>
+        <details>
+          <summary>Como eu acesso depois de comprar?</summary>
+          <p class="jip-muted">Entre com o e-mail usado na compra, com senha ou com Google. O acesso é liberado para esse e-mail.</p>
+        </details>
+        <details>
+          <summary>O curso substitui advogado?</summary>
+          <p class="jip-muted">Não. É conteúdo educativo, com regras válidas em setembro de 2026. Caso concreto continua com advogado.</p>
+        </details>
+        <details>
+          <summary>E se eu desistir?</summary>
+          <p class="jip-muted">Compras on-line têm 7 dias de direito de arrependimento pelo Código de Defesa do Consumidor (art. 49). Escreva para iuri@piragibe.com.br.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="jl-final" aria-labelledby="final-title">
+      <div class="jl-wrap jl-narrow">
+        <h2 id="final-title">Comece pela sua primeira pauta hoje.</h2>
+        <div class="jl-cta-row jl-center">
+          <a class="jip-btn jip-btn-primary jl-cta-lg" href="/jornalismo/app.html#/comprar" data-checkout>Garantir vaga · R$ 197</a>
+          <a class="jl-textlink" href="/jornalismo/app.html?v=aberto#/aberto">Ver a aula aberta grátis <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
     </section>
   </main>
+
+  <footer class="jl-footer">
+    <div class="jl-wrap">
+      <a class="jip-brand" href="/">IURI<span>PIRAGIBE</span></a>
+      <nav aria-label="Rodapé">
+        <a href="/">Início</a>
+        <a href="/sobre.html">Autor</a>
+        <a href="mailto:iuri@piragibe.com.br">Contato</a>
+        <a href="/termos.html">Termos</a>
+        <a href="/privacidade.html">Privacidade</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="jl-sticky" aria-hidden="true" data-sticky>
+    <span><s>R$ 297</s> <strong>R$ 197</strong></span>
+    <a class="jip-btn jip-btn-primary" href="/jornalismo/app.html#/comprar" data-checkout tabindex="-1">Garantir vaga</a>
+  </div>
+  <script>
+    (function () {
+      var bar = document.querySelector('[data-sticky]');
+      var hero = document.querySelector('.jl-hero');
+      var offer = document.getElementById('oferta');
+      if (!bar || !hero || !('IntersectionObserver' in window)) return;
+      var heroVisible = true, offerVisible = false;
+      function sync() { bar.classList.toggle('is-on', !heroVisible && !offerVisible); }
+      new IntersectionObserver(function (e) { heroVisible = e[0].isIntersecting; sync(); }).observe(hero);
+      new IntersectionObserver(function (e) { offerVisible = e[0].isIntersecting; sync(); }).observe(offer);
+    })();
+  </script>
 </body>
 </html>

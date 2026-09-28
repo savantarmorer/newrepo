@@ -5,16 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Curso — Jornalismo Investigativo na Prática</title>
   <meta name="robots" content="noindex,follow">
-  <meta name="theme-color" content="#000000">
+  <meta name="theme-color" content="#0C0C0D">
   <link rel="canonical" href="https://iuripiragibe.net/jornalismo/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/jornalismo/css/ops.css">
 </head>
 <body class="jip">
-  <div id="jip-root"><p class="jip-wrap jip-muted">Carregando o curso…</p></div>
+  <div id="jip-root"><p class="ops-loading">Carregando o curso…</p></div>
+  <script src="/jornalismo/js/checkout.js"></script>
+  <script>
+    if (window.JIP_CHECKOUT_URL && location.hash === '#/comprar') location.replace(window.JIP_CHECKOUT_URL);
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const v = new URLSearchParams(location.search).get('v');

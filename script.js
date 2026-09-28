@@ -19,13 +19,14 @@ let lastScroll = 0;
 const navbar = document.querySelector('.navbar');
 
 window.addEventListener('scroll', () => {
+    if (!navbar) return;
     const currentScroll = window.pageYOffset;
     
     if (currentScroll > 100) {
-        navbar.style.background = 'rgba(10, 10, 15, 0.95)';
-        navbar.style.boxShadow = '0 4px 24px rgba(0, 0, 0, 0.4)';
+        navbar.style.background = 'rgba(12, 12, 13, 0.97)';
+        navbar.style.boxShadow = '0 1px 0 rgba(255, 255, 255, 0.04)';
     } else {
-        navbar.style.background = 'rgba(10, 10, 15, 0.8)';
+        navbar.style.background = 'rgba(12, 12, 13, 0.92)';
         navbar.style.boxShadow = 'none';
     }
     
@@ -68,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para gerenciar a exibição de vídeos
     function manageVideosDisplay(category) {
+        if (!expandContainer || !expandBtn) return;
         const visibleCards = Array.from(videoCards).filter(card => {
             if (category === 'todos') {
                 return !card.classList.contains('hidden');

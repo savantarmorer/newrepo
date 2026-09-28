@@ -76,14 +76,46 @@ function toast(message, type = 'info') {
   setTimeout(() => element.remove(), 3600);
 }
 
+function checkoutHref() {
+  return window.JIP_CHECKOUT_URL || '#/comprar';
+}
+
+function progressBar(value, label = '') {
+  const pct = Math.max(0, Math.min(100, Math.round(value)));
+  return `<div class="ops-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"${label ? ` aria-label="${escapeHtml(label)}"` : ''}><span style="width:${pct}%"></span></div>`;
+}
+
+function moduleStats(moduleId) {
+  const lessons = state.catalog.aulas.filter((lesson) => lesson.module === moduleId);
+  const completed = lessons.filter((lesson) => state.workspace.progress.includes(lesson.id)).length;
+  const minutes = lessons.reduce((sum, lesson) => sum + (parseInt(lesson.duration, 10) || 0), 0);
+  return { lessons, completed, minutes, pct: lessons.length ? (completed / lessons.length) * 100 : 0 };
+}
+
+function lessonState(lesson, currentId = '') {
+  if (lesson.id === currentId) return { key: 'current', icon: '●', label: 'Aula atual' };
+  if (state.workspace.progress.includes(lesson.id)) return { key: 'done', icon: '✓', label: 'Concluída' };
+  if (lesson.id === nextLesson().id) return { key: 'next', icon: '▶', label: 'Próxima' };
+  return { key: 'todo', icon: '○', label: 'Não iniciada' };
+}
+
+function safeVideoEmbed(value) {
+  const url = safeUrl(value);
+  if (!url) return '';
+  const { hostname, pathname } = new URL(url);
+  const allowed = (hostname === 'www.youtube-nocookie.com' || hostname === 'www.youtube.com') && pathname.startsWith('/embed/')
+    || hostname === 'player.vimeo.com';
+  return allowed ? url : '';
+}
+
 function button(label, id, variant = 'primary', type = 'button') {
   return `<button class="ops-btn ops-btn-${variant}" id="${id}" type="${type}">${label}</button>`;
 }
 
 function publicHeader() {
   return `<header class="ops-public-header">
-    <a class="ops-wordmark" href="/jornalismo/">JIP <span>/ CURSO</span></a>
-    <nav aria-label="Acesso"><a href="#/aberto">Aula aberta</a><a href="#/entrar">Entrar</a></nav>
+    <a class="ops-wordmark" href="/jornalismo/">IURI<span>PIRAGIBE</span></a>
+    <nav aria-label="Acesso"><a href="#/aberto">Aula aberta</a><a href="#/entrar">Entrar</a><a class="ops-btn ops-btn-primary ops-public-cta" href="${escapeHtml(checkoutHref())}">Garantir vaga</a></nav>
   </header>`;
 }
 
@@ -96,14 +128,20 @@ function shell(current, content, context = '') {
   ];
   const navigation = items.map(([key, label]) =>
     `<a href="#/${key}" ${current === key ? 'aria-current="page"' : ''}>${label}</a>`).join('');
+  const hasProgress = Boolean(state.catalog && state.workspace);
+  const pct = hasProgress ? percentage() : 0;
+  const progress = hasProgress
+    ? `<div class="ops-side-progress"><span>Progresso</span><strong>${state.workspace.progress.length}/${state.catalog.aulas.length} aulas</strong>${progressBar(pct)}</div>`
+    : '';
   return `<a class="ops-skip" href="#conteudo">Pular para o conteúdo</a>
   <div class="ops-shell">
     <aside class="ops-sidebar">
       <a class="ops-brand" href="#/inicio"><span>JIP</span>Jornalismo Investigativo</a>
       <nav aria-label="Principal">${navigation}</nav>
-      <footer><span class="ops-status-dot"></span> Conta ativa<br><small>Acesso liberado</small></footer>
+      ${progress}
+      <footer><a href="/jornalismo/">Página do curso</a><a href="/">iuripiragibe.net</a></footer>
     </aside>
-    <header class="ops-mobile-head"><a href="#/inicio">JIP / CURSO</a><span><i></i> Online</span></header>
+    <header class="ops-mobile-head"><a href="#/inicio">IURI<span>PIRAGIBE</span></a>${hasProgress ? `<span>${pct}% concluído</span>` : ''}</header>
     <div class="ops-stage ${context ? 'has-context' : ''}">
       <main id="conteudo" class="ops-main">${content}</main>
       ${context ? `<aside class="ops-context">${context}</aside>` : ''}
@@ -273,37 +311,45 @@ function renderDashboard() {
   const lesson = nextLesson();
   const done = state.workspace.progress.length;
   const total = state.catalog.aulas.length;
-  const modulesPreview = state.catalog.modules.slice(0, 4).map((module) => {
-    const lessons = state.catalog.aulas.filter((item) => item.module === module.id);
-    const completed = lessons.filter((item) => state.workspace.progress.includes(item.id)).length;
-    return `<a class="ops-lesson-row" href="#/sala"><b>M${module.id}</b><span><strong>${escapeHtml(module.title)}</strong><small>${completed}/${lessons.length} aulas · ${escapeHtml(module.blurb)}</small></span><em>Ver →</em></a>`;
+  const started = done > 0;
+  const modulesGrid = state.catalog.modules.map((module) => {
+    const stats = moduleStats(module.id);
+    const status = stats.completed === stats.lessons.length ? '✓ Concluído' : stats.completed ? 'Em andamento' : 'Não iniciado';
+    return `<a class="ops-module-card${stats.completed === stats.lessons.length ? ' is-done' : ''}" href="#/sala/${module.id}"><b>${String(module.id).padStart(2, '0')}</b><strong>${escapeHtml(module.title)}</strong><small>${stats.lessons.length} aulas · ${stats.minutes} min</small>${progressBar(stats.pct, `Módulo ${module.id}`)}<em>${status} · ${stats.completed}/${stats.lessons.length}</em></a>`;
   }).join('');
-  const content = `<header class="ops-page-head"><div><p class="ops-eyebrow">Seu curso</p><h1>Olá, ${escapeHtml(auth.displayName(state.session, state.workspace.profile))}</h1><p>${done} de ${total} aulas concluídas · ${percentage()}%</p></div></header>
+  const content = `<header class="ops-page-head"><div><p class="ops-eyebrow">Seu curso</p><h1>Olá, ${escapeHtml(auth.displayName(state.session, state.workspace.profile))}</h1><p>${done} de ${total} aulas concluídas · ${percentage()}%</p>${progressBar(percentage(), 'Progresso do curso')}</div></header>
     <section class="ops-home-cta">
-      <a class="ops-action" href="#/aula/${lesson.id}"><span>Continuar aula</span><strong>${lesson.id} · ${escapeHtml(lesson.title)}</strong><small>${escapeHtml(lesson.duration)} · ${escapeHtml(lesson.objective)}</small></a>
+      <a class="ops-action" href="#/aula/${lesson.id}"><span>${started ? 'Continuar aula' : 'Começar pela aula'} ${lesson.id}</span><strong>${escapeHtml(lesson.title)}</strong><small>Módulo ${lesson.module} · ${escapeHtml(lesson.duration)} · ${escapeHtml(lesson.objective)}</small><i aria-hidden="true">▶</i></a>
       <div class="ops-home-links">
         <a class="ops-btn ops-btn-secondary" href="#/sala">Ver aulas</a>
         <a class="ops-btn ops-btn-secondary" href="#/bonus">Ferramentas</a>
       </div>
     </section>
-    <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Módulos</p><h2>O que você vai estudar</h2></div><a href="#/sala">Grade completa</a></div>${modulesPreview}</section>`;
+    <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Módulos</p><h2>Sua trilha</h2></div><a href="#/sala">Grade completa</a></div><div class="ops-module-grid">${modulesGrid}</div></section>`;
   const context = `<section><div class="ops-context-head"><h2>Arquivos do curso</h2></div>
     <button class="ops-resource-mini" data-resource="planilha" data-filename="planilha-de-cruzamento.xlsx">Planilha de cruzamento <span>XLSX</span></button>
     <button class="ops-resource-mini" data-resource="bonus" data-filename="materiais-bonus.pdf">Materiais bônus <span>PDF</span></button>
     <button class="ops-resource-mini" data-resource="documento" data-filename="documento-completo-curso.md">Documento completo <span>MD</span></button>
-    <p class="ops-legal" style="border:0;padding-top:12px;margin:0"><a href="#/bonus">Ver todas as ferramentas →</a></p></section>`;
+    <p class="ops-context-more"><a href="#/bonus">Ver todas as ferramentas →</a></p></section>
+    <section><div class="ops-context-head"><h2>Sua pauta</h2></div><p class="ops-context-text">${state.workspace.pauta?.titulo ? escapeHtml(state.workspace.pauta.titulo) : 'Escolha a investigação que você vai levar até o módulo 8.'}</p><p class="ops-context-more"><a href="#/pauta">${state.workspace.pauta?.titulo ? 'Abrir caderno' : 'Definir minha pauta'} →</a></p></section>`;
   root.innerHTML = shell('inicio', content, context);
   bindResourceDownloads();
 }
 
-function renderCurriculum() {
+function renderCurriculum(focusId = '') {
+  const focus = Number(focusId) || 0;
+  const current = nextLesson();
   const modules = state.catalog.modules.map((module) => {
-    const lessons = state.catalog.aulas.filter((lesson) => lesson.module === module.id);
-    const completed = lessons.filter((lesson) => state.workspace.progress.includes(lesson.id)).length;
-    return `<details class="ops-module" ${completed < lessons.length ? 'open' : ''}><summary><span>M${module.id}</span><div><strong>${escapeHtml(module.title)}</strong><small>${escapeHtml(module.blurb)}</small></div><em>${completed}/${lessons.length}</em></summary>
-      ${lessons.map((lesson) => `<a href="#/aula/${lesson.id}" class="ops-curriculum-row"><b>${lesson.id}</b><span><strong>${escapeHtml(lesson.title)}</strong><small>${escapeHtml(lesson.duration)} · ${escapeHtml(lesson.objective)}</small></span><em>${state.workspace.progress.includes(lesson.id) ? 'Concluída' : 'Abrir'}</em></a>`).join('')}</details>`;
+    const stats = moduleStats(module.id);
+    const open = focus ? focus === module.id : module.id === current.module;
+    return `<details class="ops-module" id="modulo-${module.id}" ${open ? 'open' : ''}><summary><span>${String(module.id).padStart(2, '0')}</span><div><strong>${escapeHtml(module.title)}</strong><small>${escapeHtml(module.blurb)}</small>${progressBar(stats.pct, `Módulo ${module.id}`)}</div><em>${stats.completed}/${stats.lessons.length} · ${stats.minutes} min</em></summary>
+      ${stats.lessons.map((lesson) => {
+        const status = lessonState(lesson);
+        return `<a href="#/aula/${lesson.id}" class="ops-curriculum-row is-${status.key}"><i aria-hidden="true">${status.icon}</i><span><strong>${lesson.id} · ${escapeHtml(lesson.title)}</strong><small>${escapeHtml(lesson.duration)} · ${escapeHtml(lesson.objective)}</small></span><em>${status.label}</em></a>`;
+      }).join('')}</details>`;
   }).join('');
-  root.innerHTML = shell('sala', `<header class="ops-page-head"><div><p class="ops-eyebrow">31 aulas · 8 módulos</p><h1>Aulas</h1></div><strong>${percentage()}%</strong></header>${modules}`);
+  root.innerHTML = shell('sala', `<header class="ops-page-head"><div><p class="ops-eyebrow">${state.catalog.aulas.length} aulas · ${state.catalog.modules.length} módulos</p><h1>Aulas</h1>${progressBar(percentage(), 'Progresso do curso')}</div><strong class="ops-pct">${percentage()}%</strong></header>${modules}`);
+  if (focus) document.getElementById(`modulo-${focus}`)?.scrollIntoView({ block: 'start' });
 }
 
 function toolLinks(tools) {
@@ -322,16 +368,53 @@ function renderLesson(id) {
   const script = sanitizedLessonHtml(`${lesson.contentHtml || ''}${lesson.closingHtml || ''}`);
   const exercise = sanitizedLessonHtml(lesson.exerciseHtml || '<p>Registre o que você aplicou à sua pauta.</p>');
   const tools = (lesson.tools || []).map((toolId) => state.catalog.toolbox[toolId]).filter(Boolean);
-  const content = `<header class="ops-lesson-head"><div><p class="ops-eyebrow">Módulo ${lesson.module} · Aula ${lesson.id} · ${escapeHtml(lesson.duration)}</p><h1>${escapeHtml(lesson.title)}</h1><p>${escapeHtml(lesson.objective)}</p></div><button id="focus-toggle" class="ops-btn ops-btn-secondary">Modo foco</button></header>
-    <div class="ops-video-empty"><strong>Vídeo ainda não publicado</strong><p>O roteiro completo está abaixo. Não há player fictício.</p></div>
+  const module = state.catalog.modules.find((item) => item.id === lesson.module);
+  const done = state.workspace.progress.includes(lesson.id);
+  const video = safeVideoEmbed(lesson.video);
+  const media = video
+    ? `<div class="ops-player"><iframe src="${escapeHtml(video)}" title="Vídeo da aula ${lesson.id}" allow="encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`
+    : `<div class="ops-cover"><span>Aula ${lesson.id}</span><strong>Roteiro de leitura · ${escapeHtml(lesson.duration)} de aula</strong><p>O conteúdo completo desta aula está no roteiro abaixo.</p><a href="#script-content">Começar a leitura ↓</a></div>`;
+  const outline = state.catalog.modules.map((item) => {
+    const stats = moduleStats(item.id);
+    return `<details ${item.id === lesson.module ? 'open' : ''}><summary><span>${String(item.id).padStart(2, '0')}</span>${escapeHtml(item.title)}<em>${stats.completed}/${stats.lessons.length}</em></summary>
+      ${stats.lessons.map((entry) => {
+        const status = lessonState(entry, lesson.id);
+        return `<a href="#/aula/${entry.id}" class="is-${status.key}" ${entry.id === lesson.id ? 'aria-current="page"' : ''}><i aria-hidden="true">${status.icon}</i><span>${entry.id} · ${escapeHtml(entry.title)}</span></a>`;
+      }).join('')}</details>`;
+  }).join('');
+  const content = `<div class="ops-lesson-layout">
+    <nav class="ops-outline" aria-label="Sumário do curso"><div class="ops-outline-head"><strong>Sumário</strong><span>${percentage()}%</span>${progressBar(percentage(), 'Progresso do curso')}</div>${outline}</nav>
+    <div class="ops-lesson-body">
+    <header class="ops-lesson-head"><div><p class="ops-crumbs"><a href="#/sala/${lesson.module}">Módulo ${lesson.module} · ${escapeHtml(module?.title || '')}</a> › Aula ${lesson.id} · ${escapeHtml(lesson.duration)}</p><h1>${escapeHtml(lesson.title)}</h1><p>${escapeHtml(lesson.objective)}</p></div><div class="ops-lesson-tools"><button id="paper-toggle" class="ops-btn ops-btn-quiet" aria-pressed="false">Modo papel</button><button id="focus-toggle" class="ops-btn ops-btn-quiet" aria-pressed="false">Modo foco</button></div></header>
+    ${media}
     <section class="ops-tools ops-tools-inline"><h2>Ferramentas desta aula</h2>${toolLinks(tools)}</section>
     <article class="ops-script"><label class="ops-search">Buscar no roteiro<input id="script-search" type="search" placeholder="termo, lei ou ferramenta"></label><div id="script-content">${script}</div></article>
-    <details class="ops-notes-block"><summary>Notas e exercício (opcional)</summary>
-      <section class="ops-notes">${exercise}<label class="ops-field"><span>Notas privadas</span><textarea id="lesson-notes" rows="10">${escapeHtml(saved)}</textarea><small>Salvas na sua conta com acesso só seu (RLS). Não registre dados que identifiquem fontes.</small></label>${button('Salvar notas', 'save-notes')}</section>
-    </details>
-    <footer class="ops-lesson-footer">${previous ? `<a href="#/aula/${previous.id}">← Aula ${previous.id}</a>` : '<span></span>'}${button(state.workspace.progress.includes(lesson.id) ? 'Aula concluída' : 'Marcar como concluída', 'complete', state.workspace.progress.includes(lesson.id) ? 'secondary' : 'primary')}${next ? `<a href="#/aula/${next.id}">Aula ${next.id} →</a>` : '<a href="#/inicio">Voltar ao início</a>'}</footer>`;
+    <section class="ops-practice" aria-labelledby="practice-title">
+      <p class="ops-eyebrow">Pratique na sua pauta</p>
+      <h2 id="practice-title">Exercício da aula ${lesson.id}</h2>
+      <div class="ops-practice-task">${exercise}</div>
+      <label class="ops-field"><span>Suas notas</span><textarea id="lesson-notes" rows="8">${escapeHtml(saved)}</textarea><small>Salvas na sua conta com acesso só seu (RLS). Não registre dados que identifiquem fontes.</small></label>
+      <div class="ops-practice-actions">${button('Salvar notas', 'save-notes', 'secondary')}${button(done ? '✓ Aula concluída' : 'Concluir aula', 'complete', done ? 'secondary' : 'primary')}</div>
+    </section>
+    <footer class="ops-lesson-footer">${previous ? `<a href="#/aula/${previous.id}"><small>Anterior</small>← ${previous.id} · ${escapeHtml(previous.title)}</a>` : '<span></span>'}${next ? `<a class="is-next" href="#/aula/${next.id}"><small>Próxima</small>${next.id} · ${escapeHtml(next.title)} →</a>` : '<a class="is-next" href="#/inicio"><small>Fim do curso</small>Voltar ao início →</a>'}</footer>
+    </div></div>`;
   root.innerHTML = shell('sala', content);
-  document.getElementById('focus-toggle').onclick = () => document.body.classList.toggle('ops-focus');
+  let paper = false;
+  try { paper = localStorage.getItem('jip-paper') === '1'; } catch { /* sem storage */ }
+  const applyPaper = () => {
+    document.body.classList.toggle('ops-paper', paper);
+    document.getElementById('paper-toggle').setAttribute('aria-pressed', String(paper));
+  };
+  applyPaper();
+  document.getElementById('paper-toggle').onclick = () => {
+    paper = !paper;
+    try { localStorage.setItem('jip-paper', paper ? '1' : '0'); } catch { /* sem storage */ }
+    applyPaper();
+  };
+  document.getElementById('focus-toggle').onclick = (event) => {
+    const on = document.body.classList.toggle('ops-focus');
+    event.currentTarget.setAttribute('aria-pressed', String(on));
+  };
   document.getElementById('script-search').oninput = (event) => {
     const query = event.target.value.trim().toLocaleLowerCase('pt-BR');
     root.querySelectorAll('#script-content p, #script-content li, #script-content h3').forEach((element) => {
@@ -353,8 +436,13 @@ function renderLesson(id) {
     try {
       await auth.markComplete(state.session, lesson.id);
       state.workspace.progress.push(lesson.id);
-      toast('Aula concluída.', 'success');
+      const stats = moduleStats(lesson.module);
+      const total = state.catalog.aulas.length;
+      toast(stats.completed === stats.lessons.length
+        ? `Módulo ${lesson.module} concluído · ${state.workspace.progress.length}/${total} aulas`
+        : `Aula ${lesson.id} concluída · ${state.workspace.progress.length}/${total} aulas`, 'success');
       if (next) location.hash = `#/aula/${next.id}`;
+      else renderLesson(lesson.id);
     } catch {
       toast('Não foi possível salvar o progresso.', 'error');
     }
@@ -524,7 +612,24 @@ async function renderOpenLesson() {
 }
 
 function renderPurchase() {
-  root.innerHTML = `${publicHeader()}<main class="ops-open"><header><p class="ops-eyebrow">Inscrição</p><h1>Jornalismo Investigativo na Prática</h1><p>31 aulas, materiais e exercícios aplicados a uma pauta sua. Pré-venda R$ 197 · preço cheio R$ 297. Conteúdo educativo; não substitui advogado.</p><a class="ops-btn ops-btn-primary" href="mailto:iuri@piragibe.com.br?subject=Compra%20curso%20JIP">Comprar</a><a class="ops-btn ops-btn-secondary" href="#/entrar">Já comprei — Entrar</a></header></main>`;
+  if (window.JIP_CHECKOUT_URL) {
+    location.replace(window.JIP_CHECKOUT_URL);
+    return;
+  }
+  const subject = encodeURIComponent('Reserva de vaga — Jornalismo Investigativo na Prática');
+  const body = encodeURIComponent('Olá, Iuri! Quero reservar minha vaga na pré-venda (R$ 197).\n\nNome:\nE-mail para acesso:');
+  root.innerHTML = `${publicHeader()}<main class="ops-open ops-purchase"><header><p class="ops-eyebrow">Inscrição · Pré-venda</p><h1>Jornalismo Investigativo na Prática</h1><p>31 aulas em 8 módulos, roteiros completos, exercícios aplicados à sua pauta, modelos de LAI, planilha de cruzamento e checklist jurídico.</p></header>
+    <section class="ops-purchase-card">
+      <p class="ops-price"><s>R$ 297</s> <strong>R$ 197</strong></p>
+      <ol class="ops-purchase-steps">
+        <li><strong>Reserve a vaga</strong> pelo botão abaixo, informando o e-mail que vai usar no curso.</li>
+        <li><strong>Receba as instruções de pagamento</strong> por e-mail.</li>
+        <li><strong>Entre com esse e-mail</strong> — o acesso é liberado assim que o pagamento é confirmado.</li>
+      </ol>
+      <a class="ops-btn ops-btn-primary ops-btn-lg" href="mailto:iuri@piragibe.com.br?subject=${subject}&body=${body}">Reservar vaga por e-mail</a>
+      <p class="ops-fine">7 dias para desistir (CDC, art. 49). Conteúdo educativo; não substitui advogado.</p>
+      <p class="ops-fine"><a href="#/entrar">Já comprei — entrar</a> · <a href="#/aberto">Ler a aula aberta grátis</a></p>
+    </section></main>`;
 }
 
 function renderCatalogBlocker() {
@@ -581,7 +686,7 @@ async function boot() {
     else if (current.name === 'aberto') await renderOpenLesson();
     else if (current.name === 'comprar') renderPurchase();
     else if (current.name === 'inicio') renderDashboard();
-    else if (current.name === 'sala') renderCurriculum();
+    else if (current.name === 'sala') renderCurriculum(current.id);
     else if (current.name === 'aula') renderLesson(current.id);
     else if (current.name === 'pauta') renderPauta();
     else if (current.name === 'evidencias') renderEvidence();
