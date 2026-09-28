@@ -429,3 +429,15 @@ body.ops-paper .ops-search input { background: #fff; color: var(--paper-ink); bo
   .ops-curriculum-row { grid-template-columns: 28px 1fr; }
   .ops-public-header nav a:not(.ops-btn) { font-size: 13px; }
 }
+
+/* Medalhas */
+.ops-module-card { position: relative; }
+.ops-module-medal { position: absolute; top: 14px; right: 14px; opacity: .55; }
+.ops-module-card.is-done .ops-module-medal { opacity: 1; }
+.ops-medals { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.ops-medals li { display: grid; justify-items: center; gap: 6px; padding: 18px 10px; border: 1px solid var(--border); background: var(--surface-1); text-align: center; }
+.ops-medals li strong { font-size: 13px; line-height: 1.3; color: var(--muted); }
+.ops-medals li small { color: var(--faint); font-size: 12px; }
+.ops-medals li.is-earned { border-color: rgba(255, 184, 0, .45); }
+.ops-medals li.is-earned strong { color: var(--ink); }
+.ops-medals li.is-earned small { color: var(--emerald); }

@@ -192,3 +192,41 @@ test('grade de aulas abre o módulo pedido e marca estados', async ({ page }) =>
   await expect(page.getByRole('link', { name: /1\.1 · O que é apuração/i })).toBeVisible();
   await expect(page.getByRole('progressbar').first()).toBeVisible();
 });
+
+test('painel mostra medalhas por módulo', async ({ page }) => {
+  await mockAuthorizedSupabase(page, {
+    user_id: '00000000-0000-4000-8000-000000000001',
+    codinome: 'Aluno',
+    vertente: 'financeira',
+    opsec_score: 0,
+    onboarding_completed: true
+  });
+  await page.goto('/jornalismo/app.html#/inicio', { waitUntil: 'networkidle' });
+  await expect(page.locator('.ops-medals li')).toHaveCount(1);
+  await expect(page.locator('.ops-medals li.is-earned')).toHaveCount(0);
+  await expect(page.getByText(/Medalhas · 0\/1/)).toBeVisible();
+});
+
+test('landing mostra plataforma real, números e medalhas; depoimentos só com dados', async ({ page }) => {
+  await page.goto('/jornalismo/', { waitUntil: 'networkidle' });
+  await expect(page.locator('.jl-mock img').first()).toHaveAttribute('src', '/jornalismo/img/plataforma-painel.jpg');
+  const broken = await page.locator('img').evaluateAll((imgs) =>
+    imgs.filter((img) => img.getAttribute('src')?.startsWith('/jornalismo/img/plataforma') && img.complete && img.naturalWidth === 0).map((img) => img.getAttribute('src')));
+  expect(broken).toEqual([]);
+  await expect(page.locator('.jl-num-grid li')).toHaveCount(6);
+  await expect(page.locator('.jl-medals li')).toHaveCount(8);
+  await expect(page.locator('#depoimentos')).toBeHidden();
+  await expect(page.locator('#autoridade-title')).toContainText(/caso Master e a mineração predatória na Serra do Curral/);
+  await expect(page.locator('a.jl-video')).toHaveAttribute('href', 'https://www.youtube.com/watch?v=pe1e8sq1UP8');
+});
+
+test('depoimentos aparecem quando o JSON tem relatos', async ({ page }) => {
+  await page.route('**/jornalismo/content/depoimentos.json', (route) => route.fulfill({
+    contentType: 'application/json',
+    body: JSON.stringify([{ nome: 'Maria Silva', papel: 'Repórter', texto: 'Meu primeiro pedido de LAI foi respondido.', resultado: 'LAI respondida' }])
+  }));
+  await page.goto('/jornalismo/', { waitUntil: 'networkidle' });
+  await expect(page.locator('#depoimentos')).toBeVisible();
+  await expect(page.locator('.jl-quote-card')).toHaveCount(1);
+  await expect(page.locator('.jl-quote-avatar')).toHaveText('MS');
+});

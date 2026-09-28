@@ -1,4 +1,5 @@
 import * as auth from './opsAuth.js';
+import { MEDALS, medalSvg } from './medals.js';
 
 const OPEN_CATALOG_URL = new URL('../content/aberto.json', import.meta.url).href;
 const root = document.getElementById('jip-root');
@@ -312,10 +313,18 @@ function renderDashboard() {
   const done = state.workspace.progress.length;
   const total = state.catalog.aulas.length;
   const started = done > 0;
+  const medalData = state.catalog.modules.map((module) => {
+    const stats = moduleStats(module.id);
+    return { module, earned: stats.lessons.length > 0 && stats.completed === stats.lessons.length };
+  });
+  const earnedCount = medalData.filter((item) => item.earned).length;
+  const medals = medalData.map(({ module, earned }) =>
+    `<li class="${earned ? 'is-earned' : ''}">${medalSvg(module.id, earned)}<strong>${escapeHtml(MEDALS[module.id] || module.title)}</strong><small>${earned ? 'Conquistada' : `Conclua o módulo ${module.id}`}</small></li>`).join('');
   const modulesGrid = state.catalog.modules.map((module) => {
     const stats = moduleStats(module.id);
     const status = stats.completed === stats.lessons.length ? '✓ Concluído' : stats.completed ? 'Em andamento' : 'Não iniciado';
-    return `<a class="ops-module-card${stats.completed === stats.lessons.length ? ' is-done' : ''}" href="#/sala/${module.id}"><b>${String(module.id).padStart(2, '0')}</b><strong>${escapeHtml(module.title)}</strong><small>${stats.lessons.length} aulas · ${stats.minutes} min</small>${progressBar(stats.pct, `Módulo ${module.id}`)}<em>${status} · ${stats.completed}/${stats.lessons.length}</em></a>`;
+    const earned = stats.completed === stats.lessons.length;
+    return `<a class="ops-module-card${earned ? ' is-done' : ''}" href="#/sala/${module.id}"><span class="ops-module-medal">${medalSvg(module.id, earned, 36)}</span><b>${String(module.id).padStart(2, '0')}</b><strong>${escapeHtml(module.title)}</strong><small>${stats.lessons.length} aulas · ${stats.minutes} min</small>${progressBar(stats.pct, `Módulo ${module.id}`)}<em>${status} · ${stats.completed}/${stats.lessons.length}</em></a>`;
   }).join('');
   const content = `<header class="ops-page-head"><div><p class="ops-eyebrow">Seu curso</p><h1>Olá, ${escapeHtml(auth.displayName(state.session, state.workspace.profile))}</h1><p>${done} de ${total} aulas concluídas · ${percentage()}%</p>${progressBar(percentage(), 'Progresso do curso')}</div></header>
     <section class="ops-home-cta">
@@ -325,7 +334,8 @@ function renderDashboard() {
         <a class="ops-btn ops-btn-secondary" href="#/bonus">Ferramentas</a>
       </div>
     </section>
-    <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Módulos</p><h2>Sua trilha</h2></div><a href="#/sala">Grade completa</a></div><div class="ops-module-grid">${modulesGrid}</div></section>`;
+    <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Módulos</p><h2>Sua trilha</h2></div><a href="#/sala">Grade completa</a></div><div class="ops-module-grid">${modulesGrid}</div></section>
+    <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Conquistas</p><h2>Medalhas · ${earnedCount}/${state.catalog.modules.length}</h2></div></div><ul class="ops-medals">${medals}</ul></section>`;
   const context = `<section><div class="ops-context-head"><h2>Arquivos do curso</h2></div>
     <button class="ops-resource-mini" data-resource="planilha" data-filename="planilha-de-cruzamento.xlsx">Planilha de cruzamento <span>XLSX</span></button>
     <button class="ops-resource-mini" data-resource="bonus" data-filename="materiais-bonus.pdf">Materiais bônus <span>PDF</span></button>
@@ -439,7 +449,7 @@ function renderLesson(id) {
       const stats = moduleStats(lesson.module);
       const total = state.catalog.aulas.length;
       toast(stats.completed === stats.lessons.length
-        ? `Módulo ${lesson.module} concluído · ${state.workspace.progress.length}/${total} aulas`
+        ? `Medalha conquistada: ${MEDALS[lesson.module] || `Módulo ${lesson.module}`} · ${state.workspace.progress.length}/${total} aulas`
         : `Aula ${lesson.id} concluída · ${state.workspace.progress.length}/${total} aulas`, 'success');
       if (next) location.hash = `#/aula/${next.id}`;
       else renderLesson(lesson.id);
