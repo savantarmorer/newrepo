@@ -441,3 +441,14 @@ body.ops-paper .ops-search input { background: #fff; color: var(--paper-ink); bo
 .ops-medals li.is-earned { border-color: rgba(255, 184, 0, .45); }
 .ops-medals li.is-earned strong { color: var(--ink); }
 .ops-medals li.is-earned small { color: var(--emerald); }
+
+/* Certificado */
+.ops-cert-card { display: grid; gap: 6px; margin-top: 24px; padding: 22px 24px; border: 1px dashed var(--border-strong); background: var(--surface-1); color: var(--ink); text-decoration: none; }
+.ops-cert-card strong { font-size: 18px; }
+.ops-cert-card small { color: var(--muted); }
+.ops-cert-card .ops-bar { max-width: 360px; margin-top: 6px; }
+.ops-cert-card em { color: var(--blue); font-style: normal; font-weight: 650; }
+.ops-cert-card.is-ready { border: 1px solid var(--amber); border-left-width: 4px; }
+.ops-cert-card:hover { background: var(--surface-2); }
+.ops-cert-form { max-width: 560px; margin-bottom: 28px; }
+#cert-preview { box-shadow: 0 20px 60px rgba(0, 0, 0, .5); }

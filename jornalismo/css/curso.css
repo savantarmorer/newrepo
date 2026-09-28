@@ -353,3 +353,14 @@ a { color: var(--link); text-underline-offset: 3px; }
 .jl-board-fig { margin: 0; padding: clamp(8px, 1.5vw, 16px); background: #fff; border: 1px solid var(--border-ui); }
 .jl-board-fig img { display: block; width: 100%; height: auto; }
 @media (prefers-reduced-motion: reduce) { .jl-video-thumb img { transition: none; } }
+
+/* Certificado */
+.jl-cert { background: radial-gradient(90% 70% at 85% 50%, rgba(255, 184, 0, 0.07), transparent 65%); }
+.jl-cert-grid { display: grid; gap: 40px; align-items: center; }
+@media (min-width: 960px) { .jl-cert-grid { grid-template-columns: 0.85fr 1.15fr; gap: 64px; } }
+.jl-cert .jl-checks strong { color: var(--ink); }
+.jl-cert-fig { margin: 0; }
+.jl-cert-fig img { display: block; width: 100%; height: auto; transform: rotate(-1.2deg); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 14px 14px 0 rgba(255, 184, 0, 0.2); transition: transform 0.3s ease; }
+.jl-cert-fig:hover img { transform: rotate(0deg); }
+.jl-cert-fig figcaption { margin-top: 20px; color: var(--ink-3); font: 500 0.75rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; }
+@media (prefers-reduced-motion: reduce) { .jl-cert-fig img { transition: none; transform: none; } }

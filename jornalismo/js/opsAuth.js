@@ -186,7 +186,7 @@ export async function loadWorkspace(session) {
   const [profile, pauta, progress, exercises, evidence] = await Promise.all([
     sb.from('curso_jip_perfis').select('*').eq('user_id', userId).maybeSingle(),
     sb.from('curso_jip_pautas').select('*').eq('user_id', userId).maybeSingle(),
-    sb.from('curso_jip_progresso').select('aula_id').eq('user_id', userId),
+    sb.from('curso_jip_progresso').select('aula_id,completed_at').eq('user_id', userId),
     sb.from('curso_jip_exercicios').select('aula_id,payload').eq('user_id', userId),
     sb.from('curso_jip_evidencias').select('*').eq('user_id', userId).order('updated_at', { ascending: false })
   ]);
@@ -196,6 +196,7 @@ export async function loadWorkspace(session) {
     profile: profile.data,
     pauta: pauta.data || { titulo: '', dados: {} },
     progress: (progress.data || []).map((row) => row.aula_id),
+    progressDates: Object.fromEntries((progress.data || []).map((row) => [row.aula_id, row.completed_at || null])),
     exercises: Object.fromEntries((exercises.data || []).map((row) => [row.aula_id, row.payload])),
     evidence: evidence.data || []
   };

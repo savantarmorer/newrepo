@@ -86,8 +86,9 @@ async function mockAuthorizedSupabase(page, profile: null | {
   vertente: string;
   opsec_score: number;
   onboarding_completed: boolean;
-}) {
+}, progress: string[] = []) {
   const profileJson = JSON.stringify(profile);
+  const progressJson = JSON.stringify(progress.map((aula_id) => ({ aula_id, completed_at: '2026-09-20T15:00:00Z' })));
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', async (route) => {
     await route.fulfill({
       contentType: 'application/javascript',
@@ -98,6 +99,7 @@ async function mockAuthorizedSupabase(page, profile: null | {
         function resultFor(table) {
           if (table === 'curso_jip_perfis') return profile;
           if (table === 'curso_jip_pautas') return null;
+          if (table === 'curso_jip_progresso') return ${progressJson};
           return [];
         }
         function query(table) {
@@ -229,4 +231,39 @@ test('depoimentos aparecem quando o JSON tem relatos', async ({ page }) => {
   await expect(page.locator('#depoimentos')).toBeVisible();
   await expect(page.locator('.jl-quote-card')).toHaveCount(1);
   await expect(page.locator('.jl-quote-avatar')).toHaveText('MS');
+});
+
+const alunoPerfil = {
+  user_id: '00000000-0000-4000-8000-000000000001',
+  codinome: 'Aluno',
+  vertente: 'financeira',
+  opsec_score: 0,
+  onboarding_completed: true
+};
+
+test('certificado fica bloqueado até concluir todas as aulas', async ({ page }) => {
+  await mockAuthorizedSupabase(page, alunoPerfil);
+  await page.goto('/jornalismo/app.html#/certificado', { waitUntil: 'networkidle' });
+  await expect(page.getByRole('heading', { name: /Quase lá/i })).toBeVisible();
+  await expect(page.locator('.cert')).toHaveCount(0);
+});
+
+test('certificado é emitido pela empresa ao concluir o curso', async ({ page }) => {
+  await mockAuthorizedSupabase(page, alunoPerfil, ['1.1']);
+  await page.goto('/jornalismo/app.html#/inicio', { waitUntil: 'networkidle' });
+  await expect(page.locator('.ops-cert-card.is-ready')).toBeVisible();
+  await page.goto('/jornalismo/app.html#/certificado', { waitUntil: 'networkidle' });
+  await page.locator('#cert-nome').fill('Maria da Silva');
+  const cert = page.locator('.cert');
+  await expect(cert).toContainText('MARIA DA SILVA', { ignoreCase: true });
+  await expect(cert).toContainText('Iuri Piragibe Comunicação e Audiovisual Ltda.');
+  await expect(cert).toContainText('CNPJ 68.595.950/0001-40');
+  await expect(cert).toContainText('20 de setembro de 2026');
+  await expect(cert).toContainText(/JIP-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}/);
+});
+
+test('landing anuncia o certificado', async ({ page }) => {
+  await page.goto('/jornalismo/', { waitUntil: 'networkidle' });
+  await expect(page.locator('#certificado')).toContainText('68.595.950/0001-40');
+  await expect(page.locator('#certificado img')).toHaveAttribute('src', '/jornalismo/img/certificado-exemplo.jpg');
 });

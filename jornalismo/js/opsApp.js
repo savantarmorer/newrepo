@@ -1,5 +1,6 @@
 import * as auth from './opsAuth.js';
 import { MEDALS, medalSvg } from './medals.js';
+import { certificateHtml, certificateCode, formatDate } from './certificate.js';
 
 const OPEN_CATALOG_URL = new URL('../content/aberto.json', import.meta.url).href;
 const root = document.getElementById('jip-root');
@@ -335,6 +336,7 @@ function renderDashboard() {
       </div>
     </section>
     <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Módulos</p><h2>Sua trilha</h2></div><a href="#/sala">Grade completa</a></div><div class="ops-module-grid">${modulesGrid}</div></section>
+    ${certificateCard()}
     <section class="ops-section"><div class="ops-section-head"><div><p class="ops-eyebrow">Conquistas</p><h2>Medalhas · ${earnedCount}/${state.catalog.modules.length}</h2></div></div><ul class="ops-medals">${medals}</ul></section>`;
   const context = `<section><div class="ops-context-head"><h2>Arquivos do curso</h2></div>
     <button class="ops-resource-mini" data-resource="planilha" data-filename="planilha-de-cruzamento.xlsx">Planilha de cruzamento <span>XLSX</span></button>
@@ -344,6 +346,70 @@ function renderDashboard() {
     <section><div class="ops-context-head"><h2>Sua pauta</h2></div><p class="ops-context-text">${state.workspace.pauta?.titulo ? escapeHtml(state.workspace.pauta.titulo) : 'Escolha a investigação que você vai levar até o módulo 8.'}</p><p class="ops-context-more"><a href="#/pauta">${state.workspace.pauta?.titulo ? 'Abrir caderno' : 'Definir minha pauta'} →</a></p></section>`;
   root.innerHTML = shell('inicio', content, context);
   bindResourceDownloads();
+}
+
+function courseComplete() {
+  return state.catalog.aulas.every((lesson) => state.workspace.progress.includes(lesson.id));
+}
+
+function certificateCard() {
+  const done = state.workspace.progress.length;
+  const total = state.catalog.aulas.length;
+  if (courseComplete()) {
+    return `<a class="ops-cert-card is-ready" href="#/certificado"><span class="ops-eyebrow">Certificado</span><strong>Seu certificado está pronto</strong><small>Emitido por Iuri Piragibe Comunicação e Audiovisual Ltda.</small><em>Emitir certificado →</em></a>`;
+  }
+  return `<a class="ops-cert-card" href="#/certificado"><span class="ops-eyebrow">Certificado</span><strong>Conclua as ${total} aulas para emitir</strong><small>${done}/${total} aulas concluídas</small>${progressBar((done / total) * 100, 'Progresso até o certificado')}</a>`;
+}
+
+function certificateName() {
+  let saved = '';
+  try { saved = localStorage.getItem(`jip-cert-nome:${state.session.user.id}`) || ''; } catch { /* sem storage */ }
+  const meta = state.session.user.user_metadata || {};
+  return saved || meta.full_name || meta.name || '';
+}
+
+async function renderCertificate() {
+  const total = state.catalog.aulas.length;
+  if (!courseComplete()) {
+    const done = state.workspace.progress.length;
+    root.innerHTML = shell('conta', `<header class="ops-page-head"><div><p class="ops-eyebrow">Certificado</p><h1>Quase lá</h1><p>O certificado é liberado quando você conclui as ${total} aulas. Faltam ${total - done}.</p>${progressBar((done / total) * 100, 'Progresso até o certificado')}</div></header>
+      <a class="ops-btn ops-btn-primary" href="#/aula/${nextLesson().id}">Continuar aula ${nextLesson().id}</a>`);
+    return;
+  }
+  const dates = Object.values(state.workspace.progressDates || {}).filter(Boolean).map((value) => new Date(value)).filter((date) => !Number.isNaN(date.getTime()));
+  const concluded = dates.length ? new Date(Math.max(...dates)) : new Date();
+  const codigo = await certificateCode(state.session.user.id);
+  const nome = certificateName();
+  const draw = (value) => certificateHtml({
+    nome: value || 'Seu nome completo',
+    concluidoEm: formatDate(concluded),
+    emitidoEm: formatDate(new Date()),
+    codigo,
+    modules: state.catalog.modules,
+    aulas: total
+  });
+  root.innerHTML = shell('conta', `<header class="ops-page-head"><div><p class="ops-eyebrow">Certificado de conclusão</p><h1>Parabéns!</h1><p>Você concluiu as ${total} aulas. Confira o nome e baixe o certificado em PDF.</p></div></header>
+    <form id="cert-form" class="ops-cert-form">
+      <label class="ops-field" for="cert-nome"><span>Nome completo no certificado</span><input id="cert-nome" name="cert-nome" autocomplete="name" maxlength="80" value="${escapeHtml(nome)}" required></label>
+      <div class="ops-practice-actions">${button('Baixar PDF', 'cert-print', 'primary', 'submit')}</div>
+      <small class="ops-fine">Na janela de impressão, escolha “Salvar como PDF”, orientação paisagem e sem margens.</small>
+    </form>
+    <div class="cert-wrap" id="cert-preview">${draw(nome)}</div>`);
+  const input = document.getElementById('cert-nome');
+  const preview = document.getElementById('cert-preview');
+  input.oninput = () => { preview.innerHTML = draw(input.value.trim()); };
+  document.getElementById('cert-form').onsubmit = (event) => {
+    event.preventDefault();
+    const value = input.value.trim();
+    if (value.length < 3) { toast('Digite seu nome completo.', 'error'); input.focus(); return; }
+    try { localStorage.setItem(`jip-cert-nome:${state.session.user.id}`, value); } catch { /* sem storage */ }
+    preview.innerHTML = draw(value);
+    document.body.classList.add('cert-printing');
+    const cleanup = () => { document.body.classList.remove('cert-printing'); window.removeEventListener('afterprint', cleanup); };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+    setTimeout(cleanup, 1000);
+  };
 }
 
 function renderCurriculum(focusId = '') {
@@ -451,7 +517,10 @@ function renderLesson(id) {
       toast(stats.completed === stats.lessons.length
         ? `Medalha conquistada: ${MEDALS[lesson.module] || `Módulo ${lesson.module}`} · ${state.workspace.progress.length}/${total} aulas`
         : `Aula ${lesson.id} concluída · ${state.workspace.progress.length}/${total} aulas`, 'success');
-      if (next) location.hash = `#/aula/${next.id}`;
+      if (courseComplete()) {
+        toast('Curso concluído! Seu certificado está pronto.', 'success');
+        location.hash = '#/certificado';
+      } else if (next) location.hash = `#/aula/${next.id}`;
       else renderLesson(lesson.id);
     } catch {
       toast('Não foi possível salvar o progresso.', 'error');
@@ -610,6 +679,7 @@ function renderAccount() {
     <div class="ops-home-links" style="margin-bottom:20px">
       <a class="ops-btn ops-btn-secondary" href="#/pauta">Minha pauta</a>
       <a class="ops-btn ops-btn-secondary" href="#/evidencias">Registros</a>
+      <a class="ops-btn ops-btn-secondary" href="#/certificado">Certificado</a>
     </div>
     ${button('Sair', 'logout', 'danger')}</section>`);
   document.getElementById('logout').onclick = async () => { await auth.signOut(); location.hash = '#/entrar'; };
@@ -702,6 +772,7 @@ async function boot() {
     else if (current.name === 'evidencias') renderEvidence();
     else if (current.name === 'bonus') renderResources();
     else if (current.name === 'conta') renderAccount();
+    else if (current.name === 'certificado') await renderCertificate();
     else location.hash = state.paid ? '#/inicio' : '#/entrar';
   } catch {
     root.innerHTML = `${publicHeader()}<main class="ops-open"><section class="ops-empty"><h1>Não foi possível carregar o curso</h1><p>Verifique sua conexão e tente novamente.</p><button class="ops-btn ops-btn-primary" onclick="location.reload()">Tentar novamente</button></section></main>`;
