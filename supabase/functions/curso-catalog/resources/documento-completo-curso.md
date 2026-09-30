@@ -488,19 +488,32 @@ O curso pode ser gravado com o esboço aprovado, mas alguns pontos do briefing p
 - [ ] Contato do Programa de Proteção Legal da Abraji à mão
 
 ### c) Planilha de cruzamento
-| Aba | Colunas | Fonte |
-|---|---|---|
-| Pessoas | nome, CPF parcial, cargo, órgão, partido | TSE, diários, Transparência |
-| Empresas | CNPJ, razão social, abertura, capital, endereço, CNAE | Receita, Minha Receita |
-| Sócios | CNPJ, sócio, qualificação, entrada | QSA, juntas |
-| Contratos | órgão, CNPJ, objeto, valor, modalidade, data | PNCP, diários |
-| Pagamentos | CNPJ, valor, data, programa | Portal da Transparência |
-| Sanções | CNPJ, cadastro, período | CEIS, CNEP |
-| Eleitoral | candidato, bens, doadores, fornecedores | TSE |
-| Linha do tempo | data, evento, documento | todas |
-| Log | data da coleta, URL, hash | registro próprio |
+Vinte abas, na ordem do curso. O cabeçalho fica na linha 1 e os dados começam na linha 2, para que as fórmulas das aulas funcionem como aparecem na tela.
 
-Fórmulas: `=PROCX(B2;Sancoes!A:A;Sancoes!B:B;"não consta")`; `=CONT.SE(Socios!B:B;Pessoas!A2)`; `=SE(Empresas!C2>Contratos!F2-180;"ABERTA <6 MESES ANTES";"")`; e uma tabela dinâmica de pagamentos por favorecido e ano.
+| Aba | Colunas, na ordem | Aula |
+|---|---|---|
+| Como usar | cores, lista das abas, regras e fórmulas | — |
+| Bombas | bomba, quem mandou, documento verificável?, interesse público? | 1.1 |
+| Linha do tempo | data, fato, documento, fonte | 1.3, 4.1, 7.2 |
+| Ética da pauta | interesse público, conflito de interesse, quem não será exposto | 1.4 |
+| Fontes | fonte, tipo, acesso, interesse, histórico, corroboração, ordem de abordagem | 2.1 |
+| Log | origem, data e hora, ferramenta, arquivo, código ou protocolo, hash | 2.3 |
+| Risco | risco, probabilidade, impacto, medida | 2.4 |
+| Documentos | documento, quem tem, já está publicado?, onde | 3.1 |
+| Prazos LAI | protocolo, órgão, datas do pedido, da resposta e do recurso | 3.2 a 3.5 |
+| Pagamentos | CNPJ do credor, nome, valor, data, fonte | 4.2, 4.6 |
+| Contratos | CNPJ do fornecedor, órgão, objeto, valor, modalidade, data do contrato, data de abertura (fórmula), vigência | 4.2, 4.6 |
+| Sancoes | CNPJ, tipo de sanção, abrangência, período | 4.2 |
+| Empresas | CNPJ, razão social, data de abertura, CNAE, capital social, endereço, sinal | 4.3 |
+| Socios | CNPJ, nome do sócio, dígitos visíveis do CPF, data de entrada | 4.3 |
+| Pessoas | nome, CPF parcial, cargo, órgão, partido | 4.4, 4.6 |
+| Eleitoral | CNPJ do fornecedor de campanha, candidato e eleição, valor; ao lado, bens por eleição | 4.4 |
+| Processos | número, classe, fase, última decisão | 4.5, 5.2 |
+| Sites | site, empresa responsável, códigos, anúncios | OSINT |
+| Perfis | nome, rede, link, data de criação, cópia arquivada | OSINT |
+| Listas | opções das listas suspensas | — |
+
+CNPJ sempre na coluna A, como texto, com 14 caracteres. Fórmulas: `=PROCX(A2;Sancoes!A:A;Sancoes!B:B;"não consta")`; `=CONT.SE(Socios!B:B;Pessoas!A2)`; `=PROCX(A2;Empresas!A:A;Empresas!C:C)` e `=SE(F2-G2<180;"ABERTA MENOS DE 6 MESES ANTES";"")` em Contratos; e uma tabela dinâmica de pagamentos por favorecido e ano.
 
 ### d) Glossário
 - **Acórdão:** decisão de um colegiado.

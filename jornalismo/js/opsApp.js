@@ -628,7 +628,7 @@ function kindLabel(kind) {
 
 function renderResources() {
   const resources = [
-    ['Planilha de cruzamento', '13 abas, fórmulas e exemplo fictício identificado no próprio arquivo.', 'planilha', 'planilha-de-cruzamento.xlsx', 'XLSX'],
+    ['Planilha de cruzamento', '20 abas na ordem das aulas, fórmulas e exemplo fictício identificado no próprio arquivo.', 'planilha', 'planilha-de-cruzamento.xlsx', 'XLSX'],
     ['Materiais bônus', 'Modelos LAI, checklist pré-publicação, guia da planilha e glossário.', 'bonus', 'materiais-bonus.pdf', 'PDF'],
     ['Documento completo do curso', 'Mapa, roteiros, referências e materiais em texto.', 'documento', 'documento-completo-curso.md', 'MD']
   ];
