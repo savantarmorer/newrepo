@@ -51,3 +51,4 @@ jobs:
             **/newrepo-0.md
             agora-slu/supabase/**
             jornalismo/supabase/**
+            producao/**

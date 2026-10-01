@@ -1,0 +1,1512 @@
+[
+ {
+  "id": "1.1-01",
+  "aula": "1.1",
+  "title": "Toda semana, uma bomba",
+  "cue": "ABERTURA — “Toda semana alguém me manda uma bomba… Nove em cada dez não têm nada dentro.”",
+  "file": "1-1-01_toda-semana-uma-bomba.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-02",
+  "aula": "1.1",
+  "title": "Apurar é tornar puro",
+  "cue": "BLOCO 1 — “Apurar vem de puro. Apurar é, literalmente, tornar puro.”",
+  "file": "1-1-02_apurar-e-tornar-puro.svg",
+  "dur": 9.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-03",
+  "aula": "1.1",
+  "title": "Os três elementos da investigação",
+  "cue": "BLOCO 1 — definição do manual da UNESCO: revelar ao público questões escondidas",
+  "file": "1-1-03_os-tres-elementos-da-investigacao.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-04",
+  "aula": "1.1",
+  "title": "O que não é investigação",
+  "cue": "BLOCO 2 — opinião, react, “exposed” sem documento, vazamento sem verificação",
+  "file": "1-1-04_o-que-nao-e-investigacao.svg",
+  "dur": 7.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-05",
+  "aula": "1.1",
+  "title": "Sem documento, é lenda",
+  "cue": "[LETTERING: Sem documento, é lenda.] — a regra que volta ao longo do curso",
+  "file": "1-1-05_sem-documento-e-lenda.svg",
+  "dur": 5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-06",
+  "aula": "1.1",
+  "title": "O funil da apuração",
+  "cue": "[TELA: funil em cinco camadas — boato, pista, hipótese, prova, publicação]",
+  "file": "1-1-06_o-funil-da-apuracao.svg",
+  "dur": 9.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-07",
+  "aula": "1.1",
+  "title": "Quanto tempo leva",
+  "cue": "BLOCO 4 — orçamento secreto: relatos no fim de 2020, primeira reportagem em maio de 2021",
+  "file": "1-1-07_quanto-tempo-leva.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.1-08",
+  "aula": "1.1",
+  "title": "Três bombas, uma pauta",
+  "cue": "[TELA: tabela modelo — bomba / quem mandou / documento verificável? / interesse público?]",
+  "file": "1-1-08_tres-bombas-uma-pauta.svg",
+  "dur": 7.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-01",
+  "aula": "1.2",
+  "title": "Vazamento é um convite",
+  "cue": "ABERTURA — “Vazamento não é reportagem. É um convite para trabalhar para o interesse de alguém.”",
+  "file": "1-2-01_vazamento-e-um-convite.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-02",
+  "aula": "1.2",
+  "title": "Denúncia é versão",
+  "cue": "BLOCO 1 — denuntiare: anunciar, declarar. Quem denuncia anuncia uma versão.",
+  "file": "1-2-02_denuncia-e-versao.svg",
+  "dur": 8.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-03",
+  "aula": "1.2",
+  "title": "As cinco perguntas",
+  "cue": "[TELA: as cinco perguntas, uma por vez]",
+  "file": "1-2-03_as-cinco-perguntas.svg",
+  "dur": 9.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-04",
+  "aula": "1.2",
+  "title": "O que ficou fora do recorte",
+  "cue": "BLOCO 2, pergunta 4 — o print não mostra a mensagem anterior nem a seguinte",
+  "file": "1-2-04_o-que-ficou-fora-do-recorte.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-05",
+  "aula": "1.2",
+  "title": "Por que agora",
+  "cue": "BLOCO 2 — “Dossiê aparece em setembro por um motivo. O calendário também é uma arma.”",
+  "file": "1-2-05_por-que-agora.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-06",
+  "aula": "1.2",
+  "title": "De denúncia a pauta",
+  "cue": "[TELA: coluna da esquerda com a denúncia; coluna da direita se preenchendo com as perguntas]",
+  "file": "1-2-06_de-denuncia-a-pauta.svg",
+  "dur": 10.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-07",
+  "aula": "1.2",
+  "title": "Licitação, dispensa e inexigibilidade",
+  "cue": "BLOCO 3 — as três formas de contratar, explicadas na pergunta sobre modalidade",
+  "file": "1-2-07_licitacao-dispensa-e-inexigibilidade.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.2-08",
+  "aula": "1.2",
+  "title": "Confirmação independente",
+  "cue": "BLOCO 4 — “Duas pessoas do mesmo grupo de WhatsApp dizendo a mesma coisa não são duas fontes.”",
+  "file": "1-2-08_confirmacao-independente.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-01",
+  "aula": "1.3",
+  "title": "A frase que você tenta destruir",
+  "cue": "ABERTURA e BLOCO 1 — hypo, “embaixo”, e thesis, “o que se coloca”",
+  "file": "1-3-01_a-frase-que-voce-tenta-destruir.svg",
+  "dur": 7.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-02",
+  "aula": "1.3",
+  "title": "Para que serve a hipótese",
+  "cue": "BLOCO 1 — dizer o que procurar, estimar o custo e dizer quando parar",
+  "file": "1-3-02_para-que-serve-a-hipotese.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-03",
+  "aula": "1.3",
+  "title": "O modelo de frase",
+  "cue": "[TELA: “[Agente] fez [ato] com [recurso público], gerando [benefício para alguém], e isso foi ocultado por [meio].”]",
+  "file": "1-3-03_o-modelo-de-frase.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-04",
+  "aula": "1.3",
+  "title": "Hipótese não é comício",
+  "cue": "BLOCO 2 — “Tem corrupção na prefeitura” não é hipótese. Não dá para testar, não dá para derrubar.",
+  "file": "1-3-04_hipotese-nao-e-comicio.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-05",
+  "aula": "1.3",
+  "title": "A árvore de sub-hipóteses",
+  "cue": "[TELA: árvore com a hipótese no topo e cinco galhos, cada um com sua fonte]",
+  "file": "1-3-05_a-arvore-de-sub-hipoteses.svg",
+  "dur": 10.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-06",
+  "aula": "1.3",
+  "title": "O arquivo-mestre",
+  "cue": "[TELA: planilha-base do curso, abas “Linha do tempo” e “Log”]",
+  "file": "1-3-06_o-arquivo-mestre.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.3-07",
+  "aula": "1.3",
+  "title": "Contra a sua própria hipótese",
+  "cue": "BLOCO 5 — viés de confirmação: procure primeiro o documento que derrubaria a frase",
+  "file": "1-3-07_contra-a-sua-propria-hipotese.svg",
+  "dur": 8.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-01",
+  "aula": "1.4",
+  "title": "A ética te defende",
+  "cue": "ABERTURA e BLOCO 1 — êthos: costume, caráter. “A ética é o que te defende quando o processo chega.”",
+  "file": "1-4-01_a-etica-te-defende.svg",
+  "dur": 6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-02",
+  "aula": "1.4",
+  "title": "Os quatro pontos do código",
+  "cue": "BLOCO 2 — arts. 4º, 12 (I e II), 11 (III) e 5º do Código de Ética dos Jornalistas Brasileiros",
+  "file": "1-4-02_os-quatro-pontos-do-codigo.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-03",
+  "aula": "1.4",
+  "title": "A exceção tem duas condições",
+  "cue": "BLOCO 2 — art. 11, III: interesse público incontestável E todas as outras vias esgotadas",
+  "file": "1-4-03_a-excecao-tem-duas-condicoes.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-04",
+  "aula": "1.4",
+  "title": "Interesse público não é interesse do público",
+  "cue": "[TELA: duas colunas — “interesse público” / “curiosidade”]",
+  "file": "1-4-04_interesse-publico-nao-e-interesse-do-publico.svg",
+  "dur": 8.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-05",
+  "aula": "1.4",
+  "title": "Conflito de interesse e publi",
+  "cue": "BLOCO 4 — duas regras práticas para quem é criador de conteúdo",
+  "file": "1-4-05_conflito-de-interesse-e-publi.svg",
+  "dur": 5.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "1.4-06",
+  "aula": "1.4",
+  "title": "Quem não pode ser exposto",
+  "cue": "BLOCO 5 — ECA, art. 143: nem nome, nem foto, nem apelido, nem iniciais",
+  "file": "1-4-06_quem-nao-pode-ser-exposto.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-01",
+  "aula": "2.1",
+  "title": "Fonte queimada não volta",
+  "cue": "ABERTURA — “Off mal combinado é a principal causa de fonte queimada. E fonte queimada não volta.”",
+  "file": "2-1-01_fonte-queimada-nao-volta.svg",
+  "dur": 7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-02",
+  "aula": "2.1",
+  "title": "Os cinco tipos de fonte",
+  "cue": "[TELA: os cinco tipos de fonte]",
+  "file": "2-1-02_os-cinco-tipos-de-fonte.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-03",
+  "aula": "2.1",
+  "title": "On, off e background",
+  "cue": "BLOCO 2 — as três combinações possíveis com a fonte",
+  "file": "2-1-03_on-off-e-background.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-04",
+  "aula": "2.1",
+  "title": "A matriz de credibilidade",
+  "cue": "[TELA: matriz com quatro colunas — acesso, interesse, histórico, corroboração]",
+  "file": "2-1-04_a-matriz-de-credibilidade.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-05",
+  "aula": "2.1",
+  "title": "O off orienta, o documento sustenta",
+  "cue": "BLOCO 4 — a fonte diz “o contrato foi superfaturado”: isso não vai ao ar, vira uma busca",
+  "file": "2-1-05_o-off-orienta-o-documento-sustenta.svg",
+  "dur": 9.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-06",
+  "aula": "2.1",
+  "title": "Da periferia para o centro",
+  "cue": "BLOCO 5 — comece pela periferia, não pelo centro",
+  "file": "2-1-06_da-periferia-para-o-centro.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.1-07",
+  "aula": "2.1",
+  "title": "Prometa só o que depende de você",
+  "cue": "BLOCO 5 — “Ninguém nunca vai saber” × “Eu não vou revelar seu nome, nem em juízo”",
+  "file": "2-1-07_prometa-so-o-que-depende-de-voce.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-01",
+  "aula": "2.2",
+  "title": "O silêncio e o rastro",
+  "cue": "ABERTURA — “A Constituição protege o seu silêncio. Ela não protege o rastro digital da sua fonte.”",
+  "file": "2-2-01_o-silencio-e-o-rastro.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-02",
+  "aula": "2.2",
+  "title": "Sigilo, o selo pequeno",
+  "cue": "BLOCO 1 — “Sigilo vem do latim sigillum: selo pequeno. O selo que fechava a carta.”",
+  "file": "2-2-02_sigilo-o-selo-pequeno.svg",
+  "dur": 4.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-03",
+  "aula": "2.2",
+  "title": "Constituição, art. 5º, XIV",
+  "cue": "[TELA: art. 5º, XIV, destacado]",
+  "file": "2-2-03_constituicao-art-5-xiv.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-04",
+  "aula": "2.2",
+  "title": "A liminar na ADPF 601",
+  "cue": "[TELA: trecho da decisão no portal do STF]",
+  "file": "2-2-04_a-liminar-na-adpf-601.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": "Conferir antes de gravar se o mérito da ADPF 601 já foi julgado. Na última checagem do roteiro, seguia só com a liminar."
+ },
+ {
+  "id": "2.2-05",
+  "aula": "2.2",
+  "title": "O papel e os registros revelaram",
+  "cue": "BLOCO 2 — o caso Reality Winner e o documento da NSA, em 2017",
+  "file": "2-2-05_o-papel-e-os-registros-revelaram.svg",
+  "dur": 9.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-06",
+  "aula": "2.2",
+  "title": "A lei que protege o informante",
+  "cue": "[TELA: arts. 4º-A a 4º-C da Lei 13.608]",
+  "file": "2-2-06_a-lei-que-protege-o-informante.svg",
+  "dur": 5.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-07",
+  "aula": "2.2",
+  "title": "Canal oficial e jornalista",
+  "cue": "BLOCO 3 — a proteção vale quando o relato vai ao órgão oficial, não quando vai ao jornalista",
+  "file": "2-2-07_canal-oficial-e-jornalista.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.2-08",
+  "aula": "2.2",
+  "title": "Protocolo para fonte sensível",
+  "cue": "[TELA: checklist do protocolo]",
+  "file": "2-2-08_protocolo-para-fonte-sensivel.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-01",
+  "aula": "2.3",
+  "title": "Falsificar leva dez minutos",
+  "cue": "ABERTURA — “Falsificar um PDF com cara de oficial leva dez minutos.”",
+  "file": "2-3-01_falsificar-leva-dez-minutos.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-02",
+  "aula": "2.3",
+  "title": "Três testes para todo documento",
+  "cue": "[TELA: três colunas — origem, forma, conteúdo]",
+  "file": "2-3-02_tres-testes-para-todo-documento.svg",
+  "dur": 6.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-03",
+  "aula": "2.3",
+  "title": "Peça o mesmo documento pela LAI",
+  "cue": "BLOCO 2 — “Se o órgão entregar um documento diferente, você tem outra história.”",
+  "file": "2-3-03_peca-o-mesmo-documento-pela-lai.svg",
+  "dur": 6.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-04",
+  "aula": "2.3",
+  "title": "O rodapé do SEI e o validador do ITI",
+  "cue": "BLOCO 3 — código verificador, código CRC e validação de assinatura em validar.iti.gov.br",
+  "file": "2-3-04_o-rodape-do-sei-e-o-validador-do-iti.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-05",
+  "aula": "2.3",
+  "title": "Conteúdo: o que está escrito faz sentido",
+  "cue": "BLOCO 4 — datas, quem assina, valores e timbre",
+  "file": "2-3-05_conteudo-o-que-esta-escrito-faz-sentido.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-06",
+  "aula": "2.3",
+  "title": "Metadados, o dado sobre o dado",
+  "cue": "BLOCO 5 — autor, programa, data de criação; um “documento de 2019” criado em 2026",
+  "file": "2-3-06_metadados-o-dado-sobre-o-dado.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-07",
+  "aula": "2.3",
+  "title": "Hash, o picadinho do arquivo",
+  "cue": "BLOCO 6 — “Se um único caractere do arquivo mudar, o hash muda inteiro.”",
+  "file": "2-3-07_hash-o-picadinho-do-arquivo.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.3-08",
+  "aula": "2.3",
+  "title": "Cadeia de custódia",
+  "cue": "BLOCO 6 — anote quando recebeu, de quem e por qual meio; original intocado; trabalhe numa cópia",
+  "file": "2-3-08_cadeia-de-custodia.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-01",
+  "aula": "2.4",
+  "title": "Ataques a jornalistas no Brasil",
+  "cue": "[TELA: 557 em 2022 · 210 em 2024 · 204 em 2025 — fonte: relatório da Abraji, julho de 2026]",
+  "file": "2-4-01_ataques-a-jornalistas-no-brasil.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-02",
+  "aula": "2.4",
+  "title": "Quem é o alvo dos ataques",
+  "cue": "ABERTURA — 68,6% dos casos tinham uma pessoa como alvo; mais de quatro em cada dez partiram de agentes do Estado",
+  "file": "2-4-02_quem-e-o-alvo-dos-ataques.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-03",
+  "aula": "2.4",
+  "title": "O protocolo acompanha o risco",
+  "cue": "BLOCO 1 — três perguntas: quem pode querer saber, o que pode fazer, qual o estrago",
+  "file": "2-4-03_o-protocolo-acompanha-o-risco.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-04",
+  "aula": "2.4",
+  "title": "A matriz de risco",
+  "cue": "[TELA: matriz de risco — risco / probabilidade / impacto / medida]",
+  "file": "2-4-04_a-matriz-de-risco.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-05",
+  "aula": "2.4",
+  "title": "Segurança digital mínima",
+  "cue": "BLOCO 2 — o básico que todo mundo deveria ter e quase ninguém tem",
+  "file": "2-4-05_seguranca-digital-minima.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-06",
+  "aula": "2.4",
+  "title": "Segurança física",
+  "cue": "BLOCO 3 — a parte que não aparece em tutorial",
+  "file": "2-4-06_seguranca-fisica.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-07",
+  "aula": "2.4",
+  "title": "Assédio on-line e ameaça",
+  "cue": "BLOCO 4 — documente tudo, não alimente, ameaça concreta não é “coisa da internet”",
+  "file": "2-4-07_assedio-on-line-e-ameaca.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "2.4-08",
+  "aula": "2.4",
+  "title": "Ative hoje",
+  "cue": "EXERCÍCIO — “E ative hoje a verificação em duas etapas em tudo que ainda não tem. Hoje. Não amanhã.”",
+  "file": "2-4-08_ative-hoje.svg",
+  "dur": 4.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-01",
+  "aula": "3.1",
+  "title": "Não precisa dizer por quê",
+  "cue": "ABERTURA — “Você não precisa explicar por que quer a informação. Está na lei. Artigo 10, parágrafo 3º.”",
+  "file": "3-1-01_nao-precisa-dizer-por-que.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-02",
+  "aula": "3.1",
+  "title": "A publicidade é a regra",
+  "cue": "BLOCO 1 — art. 3º, I: a publicidade é a regra, o sigilo é a exceção",
+  "file": "3-1-02_a-publicidade-e-a-regra.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-03",
+  "aula": "3.1",
+  "title": "Quem é obrigado a responder",
+  "cue": "[TELA: arts. 1º e 2º da LAI]",
+  "file": "3-1-03_quem-e-obrigado-a-responder.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-04",
+  "aula": "3.1",
+  "title": "O que dá para pedir",
+  "cue": "BLOCO 3 — informação que existe: documento, dado, registro. Opinião, não.",
+  "file": "3-1-04_o-que-da-para-pedir.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-05",
+  "aula": "3.1",
+  "title": "Antes de pedir, procure",
+  "cue": "BLOCO 4 — art. 8º, transparência ativa: pedir o que já está no site é perder 20 dias",
+  "file": "3-1-05_antes-de-pedir-procure.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.1-06",
+  "aula": "3.1",
+  "title": "As regras do jogo",
+  "cue": "[TELA: resumo em quatro linhas]",
+  "file": "3-1-06_as-regras-do-jogo.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-01",
+  "aula": "3.2",
+  "title": "Pedido vago, resposta vaga",
+  "cue": "ABERTURA — “Pedido vago recebe resposta vaga. Pedido cirúrgico recebe planilha.”",
+  "file": "3-2-01_pedido-vago-resposta-vaga.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-02",
+  "aula": "3.2",
+  "title": "A anatomia do pedido",
+  "cue": "[TELA: estrutura do pedido em cinco partes]",
+  "file": "3-2-02_a-anatomia-do-pedido.svg",
+  "dur": 9.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-03",
+  "aula": "3.2",
+  "title": "Pedido ruim e pedido bom",
+  "cue": "[TELA: os dois pedidos lado a lado]",
+  "file": "3-2-03_pedido-ruim-e-pedido-bom.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-04",
+  "aula": "3.2",
+  "title": "As três palavras que matam um pedido",
+  "cue": "BLOCO 3 — Decreto 7.724, art. 13: genérico, desproporcional, trabalho adicional",
+  "file": "3-2-04_as-tres-palavras-que-matam-um-pedido.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-05",
+  "aula": "3.2",
+  "title": "Específico no documento, discreto no alvo",
+  "cue": "BLOCO 5 — “Peça todos os contratos da secretaria no período. O alvo fica no meio dos outros.”",
+  "file": "3-2-05_especifico-no-documento-discreto-no-alvo.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-06",
+  "aula": "3.2",
+  "title": "Quatro cuidados no pedido",
+  "cue": "BLOCO 5 — educado e neutro, sem revelar a hipótese, discreto no alvo, mais de um destino",
+  "file": "3-2-06_quatro-cuidados-no-pedido.svg",
+  "dur": 6.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.2-07",
+  "aula": "3.2",
+  "title": "O relógio começou a correr",
+  "cue": "BLOCO 4 e FECHAMENTO — “Anote o número e a data. A partir de agora, o relógio trabalha para você.”",
+  "file": "3-2-07_o-relogio-comecou-a-correr.svg",
+  "dur": 8.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-01",
+  "aula": "3.3",
+  "title": "A primeira resposta é um teste",
+  "cue": "ABERTURA — “Quem desiste na primeira negativa perde metade do que conseguiria.”",
+  "file": "3-3-01_a-primeira-resposta-e-um-teste.svg",
+  "dur": 4.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-02",
+  "aula": "3.3",
+  "title": "Vinte dias, mais dez",
+  "cue": "[TELA: linha do tempo — dia 0, pedido · dia 20 · dia 30]",
+  "file": "3-3-02_vinte-dias-mais-dez.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-03",
+  "aula": "3.3",
+  "title": "O catálogo da enrolação, parte 1",
+  "cue": "[TELA: cada resposta evasiva aparece como um print, seguida da reação]",
+  "file": "3-3-03_o-catalogo-da-enrolacao-parte-1.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-04",
+  "aula": "3.3",
+  "title": "O catálogo da enrolação, parte 2",
+  "cue": "[TELA: cada resposta evasiva aparece como um print, seguida da reação]",
+  "file": "3-3-04_o-catalogo-da-enrolacao-parte-2.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-05",
+  "aula": "3.3",
+  "title": "A escada de recursos",
+  "cue": "[TELA: escada com quatro degraus e os prazos de cada um]",
+  "file": "3-3-05_a-escada-de-recursos.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-06",
+  "aula": "3.3",
+  "title": "Não com fundamento é recorrível",
+  "cue": "BLOCO 3 — “‘Não’ com fundamento é recorrível. Resposta vaga é areia movediça.”",
+  "file": "3-3-06_nao-com-fundamento-e-recorrivel.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-07",
+  "aula": "3.3",
+  "title": "Quando não respondem nada",
+  "cue": "BLOCO 4 — reclamação à autoridade de monitoramento: começa 30 dias depois do pedido e dura 10 dias",
+  "file": "3-3-07_quando-nao-respondem-nada.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.3-08",
+  "aula": "3.3",
+  "title": "Fora do governo federal",
+  "cue": "BLOCO 5 — mesmos prazos, degraus da norma local e saídas quando o sistema não funciona",
+  "file": "3-3-08_fora-do-governo-federal.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-01",
+  "aula": "3.4",
+  "title": "Cem anos? Quinze",
+  "cue": "ABERTURA — desde 2024, no governo federal, restrição sem prazo justificado é presumida em 15 anos, não em 100",
+  "file": "3-4-01_cem-anos-quinze.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-02",
+  "aula": "3.4",
+  "title": "Dois tipos de segredo",
+  "cue": "BLOCO 1 e 2 — informação classificada (art. 24) e informação pessoal (art. 31)",
+  "file": "3-4-02_dois-tipos-de-segredo.svg",
+  "dur": 6.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-03",
+  "aula": "3.4",
+  "title": "Os graus de classificação",
+  "cue": "[TELA: ultrassecreta, até 25 anos · secreta, até 15 anos · reservada, até 5 anos]",
+  "file": "3-4-03_os-graus-de-classificacao.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-04",
+  "aula": "3.4",
+  "title": "O que a decisão de classificar precisa dizer",
+  "cue": "BLOCO 1 — art. 28: assunto, fundamento, prazo e quem classificou",
+  "file": "3-4-04_o-que-a-decisao-de-classificar-precisa-dizer.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-05",
+  "aula": "3.4",
+  "title": "As duas exceções do art. 31",
+  "cue": "[TELA: art. 31, §3º, V, e §4º, destacados]",
+  "file": "3-4-05_as-duas-excecoes-do-art-31.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-06",
+  "aula": "3.4",
+  "title": "O que a CGU mudou",
+  "cue": "BLOCO 3 — Enunciado 12/2023 e a portaria de setembro de 2024",
+  "file": "3-4-06_o-que-a-cgu-mudou.svg",
+  "dur": 7,
+  "overlay": false,
+  "warn": "Conferir antes de gravar a situação do projeto de lei da CGU sobre o art. 31."
+ },
+ {
+  "id": "3.4-07",
+  "aula": "3.4",
+  "title": "O hábito dos cem anos em números",
+  "cue": "BLOCO 3 — 1.916 negativas com prazo de 100 anos em 2024; para 2025, as fontes divergem entre 77 e 83",
+  "file": "3-4-07_o-habito-dos-cem-anos-em-numeros.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-08",
+  "aula": "3.4",
+  "title": "LGPD não é borracha",
+  "cue": "BLOCO 4 — a LGPD não revogou a LAI; as duas convivem",
+  "file": "3-4-08_lgpd-nao-e-borracha.svg",
+  "dur": 7.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-09",
+  "aula": "3.4",
+  "title": "O que é público e o que é protegido",
+  "cue": "BLOCO 4 — Tema 483 do STF; tarje o que for íntimo e entregue o resto",
+  "file": "3-4-09_o-que-e-publico-e-o-que-e-protegido.svg",
+  "dur": 7.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.4-10",
+  "aula": "3.4",
+  "title": "O recurso contra negativa por dado pessoal",
+  "cue": "[TELA: modelo D dos bônus, com os quatro argumentos destacados]",
+  "file": "3-4-10_o-recurso-contra-negativa-por-dado-pessoal.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.5-01",
+  "aula": "3.5",
+  "title": "Um formulário virou decreto",
+  "cue": "ABERTURA — “Um pedido de LAI sobre voos da FAB virou decreto presidencial.”",
+  "file": "3-5-01_um-formulario-virou-decreto.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.5-02",
+  "aula": "3.5",
+  "title": "Estados e municípios",
+  "cue": "[TELA: dois exemplos — um órgão que usa o Fala.BR e um com sistema próprio]",
+  "file": "3-5-02_estados-e-municipios.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": "O sistema federal de pedidos migrou do Fala.BR para o InformaBR (ver insertos). Conferir o nome e a tela do dia antes de gravar."
+ },
+ {
+  "id": "3.5-03",
+  "aula": "3.5",
+  "title": "Caso 1, os voos da FAB",
+  "cue": "BLOCO 2 — 153 órgãos para transplante deixaram de ser transportados; nos mesmos dias, 716 voos de autoridades",
+  "file": "3-5-03_caso-1-os-voos-da-fab.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.5-04",
+  "aula": "3.5",
+  "title": "Caso 2, o cartão corporativo",
+  "cue": "BLOCO 3 — pedido em 18/12/2022, fim do mandato em 31/12, resposta em 11/01/2023",
+  "file": "3-5-04_caso-2-o-cartao-corporativo.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.5-05",
+  "aula": "3.5",
+  "title": "Caso 3, Lobby sem lei",
+  "cue": "BLOCO 4 — milhares de documentos obtidos via LAI mostraram como o lobby funciona em Brasília",
+  "file": "3-5-05_caso-3-lobby-sem-lei.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "3.5-06",
+  "aula": "3.5",
+  "title": "Pedido bom é reutilizável",
+  "cue": "BLOCO 5 — quando um pedido dá certo, copie a estrutura; antes de pedir, veja se alguém já pediu",
+  "file": "3-5-06_pedido-bom-e-reutilizavel.svg",
+  "dur": 9.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-01",
+  "aula": "4.1",
+  "title": "Sai no Diário Oficial",
+  "cue": "ABERTURA — “A corrupção municipal raramente sai no jornal. Mas quase sempre sai no Diário Oficial.”",
+  "file": "4-1-01_sai-no-diario-oficial.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-02",
+  "aula": "4.1",
+  "title": "O que procurar no diário",
+  "cue": "[TELA: o que procurar — extratos, dispensas e inexigibilidades, aditivos, nomeações e exonerações]",
+  "file": "4-1-02_o-que-procurar-no-diario.svg",
+  "dur": 5.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-03",
+  "aula": "4.1",
+  "title": "O limite dos aditivos",
+  "cue": "BLOCO 1 — Lei 14.133: acréscimos limitados, em regra, a 25% do valor inicial; em reforma, 50%",
+  "file": "4-1-03_o-limite-dos-aditivos.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-04",
+  "aula": "4.1",
+  "title": "As três seções do DOU",
+  "cue": "BLOCO 2 — Seção 1, atos normativos; Seção 2, atos de pessoal; Seção 3, contratos, licitações e extratos",
+  "file": "4-1-04_as-tres-secoes-do-dou.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-05",
+  "aula": "4.1",
+  "title": "Muitos diários, uma busca",
+  "cue": "BLOCO 3 — 5.570 prefeituras, cada uma com seu diário; o Querido Diário junta numa busca só",
+  "file": "4-1-05_muitos-diarios-uma-busca.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": "Conferir antes de gravar o número atual de municípios cobertos pelo Querido Diário."
+ },
+ {
+  "id": "4.1-06",
+  "aula": "4.1",
+  "title": "Três hábitos de busca",
+  "cue": "BLOCO 4 — variações, CNPJ e ler em volta",
+  "file": "4-1-06_tres-habitos-de-busca.svg",
+  "dur": 6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.1-07",
+  "aula": "4.1",
+  "title": "Leia em volta",
+  "cue": "BLOCO 4 — “Às vezes a nomeação do sócio sai uma semana antes do contrato. Coincidências gostam de companhia.”",
+  "file": "4-1-07_leia-em-volta.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-01",
+  "aula": "4.2",
+  "title": "Empresa punida pode continuar contratando",
+  "cue": "ABERTURA — “Às vezes porque a punição não alcança aquele órgão. Às vezes porque ninguém conferiu.”",
+  "file": "4-2-01_empresa-punida-pode-continuar-contratando.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-02",
+  "aula": "4.2",
+  "title": "Empenho, liquidação e pagamento",
+  "cue": "[TELA: empenho → liquidação → pagamento]",
+  "file": "4-2-02_empenho-liquidacao-e-pagamento.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-03",
+  "aula": "4.2",
+  "title": "Os cadastros de punidos",
+  "cue": "BLOCO 3 — CEIS, CNEP e CEPIM, no Portal da Transparência",
+  "file": "4-2-03_os-cadastros-de-punidos.svg",
+  "dur": 5.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-04",
+  "aula": "4.2",
+  "title": "Onde a sanção vale",
+  "cue": "BLOCO 3 — impedimento de licitar vale só no ente que puniu; inidoneidade vale para todos",
+  "file": "4-2-04_onde-a-sancao-vale.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-05",
+  "aula": "4.2",
+  "title": "Estava punida no dia do contrato",
+  "cue": "BLOCO 3 — “Essa empresa estava punida quando foi contratada?”",
+  "file": "4-2-05_estava-punida-no-dia-do-contrato.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-06",
+  "aula": "4.2",
+  "title": "Compare o preço unitário",
+  "cue": "BLOCO 4 — PNCP: comparar o preço unitário de um mesmo item em contratos de órgãos diferentes",
+  "file": "4-2-06_compare-o-preco-unitario.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-07",
+  "aula": "4.2",
+  "title": "Fracionamento",
+  "cue": "BLOCO 5 — dividir uma compra grande em várias pequenas para ficar abaixo do limite da dispensa",
+  "file": "4-2-07_fracionamento.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.2-08",
+  "aula": "4.2",
+  "title": "Sinais de alerta nas contratações",
+  "cue": "[TELA: lista de sinais]",
+  "file": "4-2-08_sinais-de-alerta-nas-contratacoes.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-01",
+  "aula": "4.3",
+  "title": "O assessor aparece no quadro de sócios",
+  "cue": "ABERTURA — “O assessor não aparece no contrato. Aparece no quadro de sócios. E, às vezes, nem lá. Aparece a cunhada.”",
+  "file": "4-3-01_o-assessor-aparece-no-quadro-de-socios.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-02",
+  "aula": "4.3",
+  "title": "A anatomia de uma empresa",
+  "cue": "[TELA: cartão de CNPJ com cada campo destacado]",
+  "file": "4-3-02_a-anatomia-de-uma-empresa.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-03",
+  "aula": "4.3",
+  "title": "Nome e dígitos do CPF",
+  "cue": "BLOCO 2 — o CPF do sócio aparece mascarado; uma pessoa se identifica por nome mais os dígitos visíveis",
+  "file": "4-3-03_nome-e-digitos-do-cpf.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-04",
+  "aula": "4.3",
+  "title": "CNPJ é texto",
+  "cue": "BLOCO 2 — “Na planilha, trate CNPJ sempre como texto. Número come o zero à esquerda. E não aceita letra.”",
+  "file": "4-3-04_cnpj-e-texto.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-05",
+  "aula": "4.3",
+  "title": "A foto e o filme",
+  "cue": "BLOCO 3 — “O cadastro da Receita mostra a foto de hoje. A junta comercial mostra o filme.”",
+  "file": "4-3-05_a-foto-e-o-filme.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-06",
+  "aula": "4.3",
+  "title": "Capital de dez mil, contrato de cinco milhões",
+  "cue": "BLOCO 4 — sinal de alerta: capital social de R$ 10 mil e contrato de R$ 5 milhões",
+  "file": "4-3-06_capital-de-dez-mil-contrato-de-cinco-milhoes.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-07",
+  "aula": "4.3",
+  "title": "Sinais de alerta na empresa",
+  "cue": "[TELA: lista de sinais]",
+  "file": "4-3-07_sinais-de-alerta-na-empresa.svg",
+  "dur": 7.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.3-08",
+  "aula": "4.3",
+  "title": "O laranja também é gente",
+  "cue": "BLOCO 5 — “Normalmente, a história é quem usou o laranja. Não o laranja.”",
+  "file": "4-3-08_o-laranja-tambem-e-gente.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-01",
+  "aula": "4.4",
+  "title": "Patrimônio que cresce dez vezes",
+  "cue": "ABERTURA — “Patrimônio que cresce dez vezes entre duas eleições não prova crime. Mas é uma ótima pergunta.”",
+  "file": "4-4-01_patrimonio-que-cresce-dez-vezes.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-02",
+  "aula": "4.4",
+  "title": "A ficha do candidato",
+  "cue": "BLOCO 1 — DivulgaCandContas: dados, bens, certidões e prestação de contas",
+  "file": "4-4-02_a-ficha-do-candidato.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-03",
+  "aula": "4.4",
+  "title": "Bens declarados, três cuidados",
+  "cue": "BLOCO 2 — valor de aquisição, declarado pelo próprio candidato, sem o que está em nome de terceiros",
+  "file": "4-4-03_bens-declarados-tres-cuidados.svg",
+  "dur": 6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-04",
+  "aula": "4.4",
+  "title": "Os dois cruzamentos da campanha",
+  "cue": "[TELA: esquema dos dois cruzamentos, com setas]",
+  "file": "4-4-04_os-dois-cruzamentos-da-campanha.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-05",
+  "aula": "4.4",
+  "title": "Coincidência documentada",
+  "cue": "BLOCO 3 — “Nenhum desses cruzamentos prova troca de favores. Mostra coincidência documentada.”",
+  "file": "4-4-05_coincidencia-documentada.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-06",
+  "aula": "4.4",
+  "title": "A cota parlamentar",
+  "cue": "BLOCO 4 — nota fiscal do posto, da gráfica, do aluguel de carro, com o CNPJ do fornecedor",
+  "file": "4-4-06_a-cota-parlamentar.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.4-07",
+  "aula": "4.4",
+  "title": "A lista dos tribunais de contas",
+  "cue": "BLOCO 5 — gestores com contas rejeitadas por irregularidade insanável, em decisão irrecorrível",
+  "file": "4-4-07_a-lista-dos-tribunais-de-contas.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": "As regras de inelegibilidade mudaram em 2025. Conferir a redação atual antes de gravar."
+ },
+ {
+  "id": "4.5-01",
+  "aula": "4.5",
+  "title": "O avião do cunhado",
+  "cue": "ABERTURA — “O avião não está no nome do político. Está no nome da empresa do cunhado. E o registro de aeronaves é público.”",
+  "file": "4-5-01_o-aviao-do-cunhado.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.5-02",
+  "aula": "4.5",
+  "title": "Onde procurar processo",
+  "cue": "BLOCO 1 — consulta dos tribunais, DataJud e buscadores privados",
+  "file": "4-5-02_onde-procurar-processo.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.5-03",
+  "aula": "4.5",
+  "title": "Como ler um processo",
+  "cue": "BLOCO 2 — capa, movimentações e decisões; “Decisão proferida” não diz o que foi decidido",
+  "file": "4-5-03_como-ler-um-processo.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.5-04",
+  "aula": "4.5",
+  "title": "Segredo de justiça",
+  "cue": "BLOCO 3 — casos de família, de menores, algumas investigações criminais; não tente contornar",
+  "file": "4-5-04_segredo-de-justica.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.5-05",
+  "aula": "4.5",
+  "title": "A matrícula do imóvel",
+  "cue": "BLOCO 4 — a matrícula é a biografia do imóvel; qualquer pessoa pode pedir certidão sem informar o motivo",
+  "file": "4-5-05_a-matricula-do-imovel.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": "Conferir antes de gravar quais buscas o serviço eletrônico dos registradores permite (por CPF ou CNPJ)."
+ },
+ {
+  "id": "4.5-06",
+  "aula": "4.5",
+  "title": "O que não é público",
+  "cue": "BLOCO 5 — cadastro de veículos, dados bancários, dados fiscais; não compre base vazada",
+  "file": "4-5-06_o-que-nao-e-publico.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-01",
+  "aula": "4.6",
+  "title": "Duas planilhas sem graça",
+  "cue": "ABERTURA — “Duas planilhas sem graça, cruzadas, viram manchete.”",
+  "file": "4-6-01_duas-planilhas-sem-graca.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-02",
+  "aula": "4.6",
+  "title": "A chave do cruzamento",
+  "cue": "[TELA: duas tabelas com a coluna em comum destacada]",
+  "file": "4-6-02_a-chave-do-cruzamento.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-03",
+  "aula": "4.6",
+  "title": "Limpar antes de cruzar",
+  "cue": "BLOCO 2 — tirar pontos, barra e traço do CNPJ; nomes em maiúsculas e sem espaços sobrando",
+  "file": "4-6-03_limpar-antes-de-cruzar.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-04",
+  "aula": "4.6",
+  "title": "PROCX em ação",
+  "cue": "[DEMONSTRAÇÃO: aba “Contratos” cruzada com a aba “Sanções”] — =PROCX(A2;Sancoes!A:A;Sancoes!B:B;\"não consta\")",
+  "file": "4-6-04_procx-em-acao.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-05",
+  "aula": "4.6",
+  "title": "Aberta menos de seis meses antes",
+  "cue": "BLOCO 3 — =SE(F2-G2<180;\"ABERTA MENOS DE 6 MESES ANTES\";\"\")",
+  "file": "4-6-05_aberta-menos-de-seis-meses-antes.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-06",
+  "aula": "4.6",
+  "title": "Tabela dinâmica e a concentração",
+  "cue": "BLOCO 4 — “Um fornecedor que recebia R$ 200 mil por ano e, de repente, passa a receber R$ 8 milhões.”",
+  "file": "4-6-06_tabela-dinamica-e-a-concentracao.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-07",
+  "aula": "4.6",
+  "title": "Cruzamentos que costumam render",
+  "cue": "[TELA: lista]",
+  "file": "4-6-07_cruzamentos-que-costumam-render.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-08",
+  "aula": "4.6",
+  "title": "Vínculo não é culpa",
+  "cue": "BLOCO 7 — “Uma linha num grafo não é crime. É uma pergunta.”",
+  "file": "4-6-08_vinculo-nao-e-culpa.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.6-09",
+  "aula": "4.6",
+  "title": "Reprodutibilidade",
+  "cue": "BLOCO 7 — registre de onde veio cada base e quando você baixou",
+  "file": "4-6-09_reprodutibilidade.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-01",
+  "aula": "4.7",
+  "title": "Acessível não é público",
+  "cue": "ABERTURA — “Nem tudo que está acessível é público. E nem tudo que é público pode ser usado de qualquer jeito.”",
+  "file": "4-7-01_acessivel-nao-e-publico.svg",
+  "dur": 5.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-02",
+  "aula": "4.7",
+  "title": "Voltar no tempo",
+  "cue": "BLOCO 2 — Wayback Machine: o “quem somos” de 2021 pode mostrar o sócio que hoje não aparece",
+  "file": "4-7-02_voltar-no-tempo.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-03",
+  "aula": "4.7",
+  "title": "Busca reversa de imagem",
+  "cue": "BLOCO 3 — foto de obra “recém-inaugurada” pode ser de 2019",
+  "file": "4-7-03_busca-reversa-de-imagem.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-04",
+  "aula": "4.7",
+  "title": "Geolocalizar uma foto",
+  "cue": "BLOCO 3 — placa de rua, fachada, antena, formato do morro",
+  "file": "4-7-04_geolocalizar-uma-foto.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-05",
+  "aula": "4.7",
+  "title": "Operadores de busca",
+  "cue": "[TELA: site:gov.br \"nome da empresa\" — só páginas de governo · filetype:pdf \"CNPJ da empresa\" — só PDFs]",
+  "file": "4-7-05_operadores-de-busca.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-06",
+  "aula": "4.7",
+  "title": "A foto no aniversário",
+  "cue": "BLOCO 4 — a foto do dono da empresa no aniversário do secretário é pública, se o perfil é público",
+  "file": "4-7-06_a-foto-no-aniversario.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-07",
+  "aula": "4.7",
+  "title": "Os limites legais",
+  "cue": "[TELA: cada dispositivo aparece conforme é citado]",
+  "file": "4-7-07_os-limites-legais.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-08",
+  "aula": "4.7",
+  "title": "Senha que não é sua, pare",
+  "cue": "BLOCO 5 — “se, para ver alguma coisa, você precisa passar por uma senha, um login ou um bloqueio que não são seus, pare.”",
+  "file": "4-7-08_senha-que-nao-e-sua-pare.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "4.7-09",
+  "aula": "4.7",
+  "title": "O que este curso não ensina",
+  "cue": "BLOCO 5 — falsa identidade, engenharia social e compra de base vazada",
+  "file": "4-7-09_o-que-este-curso-nao-ensina.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ }
+]

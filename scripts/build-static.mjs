@@ -4,7 +4,7 @@ import { dirname, extname, join, relative, sep } from 'node:path';
 const root = process.cwd();
 const output = join(root, 'dist');
 const blockedTopLevel = new Set([
-  '.git', '.github', '.cursor', '.superdesign', 'node_modules', 'supabase',
+  '.git', '.github', '.cursor', '.superdesign', 'node_modules', 'supabase', 'producao',
   'scripts', 'tests', 'test-results', 'playwright-report', 'dist'
 ]);
 const blockedSegments = new Set(['supabase', 'scripts']);
