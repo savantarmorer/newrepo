@@ -4,22 +4,13 @@ import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { frame, resetClock, clockEnd } from './kit.mjs';
+import { AULAS } from './aulas.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const outDir = join(here, 'svg');
 const filter = process.argv[2];
 
-export const AULAS = {
-  '1.1': 'O que é apuração', '1.2': 'Pauta vs. denúncia', '1.3': 'Hipótese', '1.4': 'Ética aplicada',
-  '2.1': 'Fontes humanas', '2.2': 'Sigilo da fonte', '2.3': 'Documentos', '2.4': 'Segurança',
-  '3.1': 'LAI: quem responde', '3.2': 'O pedido', '3.3': 'Prazos e recursos', '3.4': 'Sigilo e LGPD', '3.5': 'Estados, municípios e casos',
-  '4.1': 'Diários oficiais', '4.2': 'Portal, sanções e PNCP', '4.3': 'Empresas e sócios', '4.4': 'Políticos', '4.5': 'Processos, imóveis e aeronaves',
-  '4.6': 'Cruzamento', '4.7': 'OSINT e limites legais',
-  '5.1': 'Indício, prova e versão', '5.2': 'Fases do processo', '5.3': 'Delação premiada', '5.4': 'Checagem e redação',
-  '6.1': 'Calúnia, difamação e injúria', '6.2': 'Responsabilidade civil', '6.3': 'Assédio judicial e resposta', '6.4': 'Eleições e protocolo',
-  '7.1': 'Estrutura e roteiro', '7.2': 'Documento na tela e outro lado',
-  '8.1': 'Estudo de caso', 'L': 'Letterings'
-};
+export { AULAS };
 
 const modules = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'lettering'];
 const clips = [];

@@ -2148,5 +2148,775 @@
   "dur": 7.7,
   "overlay": false,
   "warn": null
+ },
+ {
+  "id": "7.1-01",
+  "aula": "7.1",
+  "title": "Trinta segundos",
+  "cue": "ABERTURA — “Em 30 segundos, o público decide se entendeu a acusação ou se só ficou com raiva.”",
+  "file": "7-1-01_trinta-segundos.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-02",
+  "aula": "7.1",
+  "title": "Raiva dá clique",
+  "cue": "ABERTURA — “Raiva dá clique. Entendimento dá credibilidade. Só a segunda sobrevive a um processo.”",
+  "file": "7-1-02_raiva-da-clique.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-03",
+  "aula": "7.1",
+  "title": "Investigação é complexa por natureza",
+  "cue": "BLOCO 1 — “Várias empresas, vários anos, várias pessoas, vários documentos.”",
+  "file": "7-1-03_investigacao-e-complexa-por-natureza.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-04",
+  "aula": "7.1",
+  "title": "A ordem da sua semana",
+  "cue": "BLOCO 1 — “É a ordem da sua semana, não a da história.”",
+  "file": "7-1-04_a-ordem-da-sua-semana.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-05",
+  "aula": "7.1",
+  "title": "Três estruturas para texto",
+  "cue": "[TELA: três estruturas lado a lado]",
+  "file": "7-1-05_tres-estruturas-para-texto.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-06",
+  "aula": "7.1",
+  "title": "Lide investigativo",
+  "cue": "BLOCO 2 — “começa pelo fato mais forte que você consegue provar e por que ele importa. Depois vem o detalhe.”",
+  "file": "7-1-06_lide-investigativo.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-07",
+  "aula": "7.1",
+  "title": "Narrativa cronológica",
+  "cue": "BLOCO 2 — “Um contrato que nasce, cresce e explode.”",
+  "file": "7-1-07_narrativa-cronologica.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-08",
+  "aula": "7.1",
+  "title": "Caso, sistema, caso",
+  "cue": "BLOCO 2 — “A merenda da escola X mostra o padrão de dispensas da secretaria, que volta à escola X.”",
+  "file": "7-1-08_caso-sistema-caso.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-09",
+  "aula": "7.1",
+  "title": "O parágrafo-núcleo",
+  "cue": "BLOCO 2 — nut graf: “Se você não consegue escrever esse parágrafo, ainda não sabe qual é a sua matéria.”",
+  "file": "7-1-09_o-paragrafo-nucleo.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-10",
+  "aula": "7.1",
+  "title": "A linha do tempo do vídeo",
+  "cue": "[TELA: linha do tempo do vídeo, com os blocos]",
+  "file": "7-1-10_a-linha-do-tempo-do-video.svg",
+  "dur": 11.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-11",
+  "aula": "7.1",
+  "title": "Gancho, o fato e não a acusação",
+  "cue": "BLOCO 3 — “O fato mais forte que você consegue provar. Não a acusação mais forte que você ouviu.”",
+  "file": "7-1-11_gancho-o-fato-e-nao-a-acusacao.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-12",
+  "aula": "7.1",
+  "title": "A promessa",
+  "cue": "BLOCO 3 — “Ao final deste vídeo, você vai saber quanto a prefeitura pagou, a quem, e o que a empresa respondeu.”",
+  "file": "7-1-12_a-promessa.svg",
+  "dur": 7.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-13",
+  "aula": "7.1",
+  "title": "Um documento, uma ideia",
+  "cue": "BLOCO 3 — “Depois, blocos de 2 a 3 minutos. Cada bloco com um documento. Um documento, uma ideia.”",
+  "file": "7-1-13_um-documento-uma-ideia.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-14",
+  "aula": "7.1",
+  "title": "A virada e o fechamento",
+  "cue": "BLOCO 3 — “a virada: o outro lado… E o fechamento: o que ainda não se sabe, o que acontece a seguir e o que você vai fazer a respeito.”",
+  "file": "7-1-14_a-virada-e-o-fechamento.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-15",
+  "aula": "7.1",
+  "title": "Retenção sem exagero",
+  "cue": "BLOCO 4 — “Uma é prometer mais do que você tem. A outra é revelar algo novo a cada bloco.”",
+  "file": "7-1-15_retencao-sem-exagero.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-16",
+  "aula": "7.1",
+  "title": "Pergunta aberta e honesta",
+  "cue": "BLOCO 4 — “mas o contrato tinha uma cláusula que ninguém explicou. Já chego nela.” E chegue nela.",
+  "file": "7-1-16_pergunta-aberta-e-honesta.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-17",
+  "aula": "7.1",
+  "title": "O título é uma promessa",
+  "cue": "BLOCO 4 — volta à aula 5.4: título e thumbnail são publicação; a promessa do título tem de ser cumprida pelos documentos do vídeo",
+  "file": "7-1-17_o-titulo-e-uma-promessa.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-18",
+  "aula": "7.1",
+  "title": "O template de três colunas",
+  "cue": "[DEMONSTRAÇÃO: template de roteiro com três colunas — fala, tela, fonte]",
+  "file": "7-1-18_o-template-de-tres-colunas.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-19",
+  "aula": "7.1",
+  "title": "Simplificar",
+  "cue": "BLOCO 6 — “Um protagonista. Um caminho do dinheiro. Uma linha do tempo.”",
+  "file": "7-1-19_simplificar.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-20",
+  "aula": "7.1",
+  "title": "Série em vez de 50 minutos",
+  "cue": "BLOCO 6 — “Investigação boa quase sempre rende série. E série prende mais do que um vídeo de 50 minutos.”",
+  "file": "7-1-20_serie-em-vez-de-50-minutos.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.1-21",
+  "aula": "7.1",
+  "title": "Exercício, os primeiros 90 segundos",
+  "cue": "EXERCÍCIO — os primeiros 90 segundos no template de três colunas",
+  "file": "7-1-21_exercicio-os-primeiros-90-segundos.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-01",
+  "aula": "7.2",
+  "title": "Um documento vale por dez adjetivos",
+  "cue": "ABERTURA — “Um documento na tela vale por dez adjetivos.”",
+  "file": "7-2-01_um-documento-vale-por-dez-adjetivos.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-02",
+  "aula": "7.2",
+  "title": "CPF sem tarja vale um processo",
+  "cue": "ABERTURA — “E um CPF sem tarja na tela vale um processo.”",
+  "file": "7-2-02_cpf-sem-tarja-vale-um-processo.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-03",
+  "aula": "7.2",
+  "title": "Zoom na linha que importa",
+  "cue": "[DEMONSTRAÇÃO: um contrato na tela — zoom na linha que importa, marca-texto, legenda de fonte]",
+  "file": "7-2-03_zoom-na-linha-que-importa.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-04",
+  "aula": "7.2",
+  "title": "Legenda de fonte (modelo)",
+  "cue": "BLOCO 1 — legenda de fonte na tela: “Fonte: PNCP, contrato nº tal, acesso em tal data” (sobreposição)",
+  "file": "7-2-04_legenda-de-fonte-modelo.svg",
+  "dur": 5.2,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "7.2-05",
+  "aula": "7.2",
+  "title": "Diga o que está na tela",
+  "cue": "BLOCO 1 — “diga em voz alta o que está sendo mostrado… Acessibilidade não é detalhe.”",
+  "file": "7-2-05_diga-o-que-esta-na-tela.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-06",
+  "aula": "7.2",
+  "title": "O que tarjar, dados pessoais",
+  "cue": "BLOCO 2 — CPF, endereço residencial, telefone, e-mail pessoal, assinatura de quem não é personagem, dados de saúde",
+  "file": "7-2-06_o-que-tarjar-dados-pessoais.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-07",
+  "aula": "7.2",
+  "title": "O que pode identificar a fonte",
+  "cue": "BLOCO 2 — protocolo interno, marca d’água, carimbo de setor, nome de arquivo",
+  "file": "7-2-07_o-que-pode-identificar-a-fonte.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-08",
+  "aula": "7.2",
+  "title": "Tarje antes de exportar",
+  "cue": "BLOCO 2 — “Tarje antes de exportar, não depois. E confira a tarja no arquivo final.”",
+  "file": "7-2-08_tarje-antes-de-exportar.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-09",
+  "aula": "7.2",
+  "title": "Tarja em camada não é tarja",
+  "cue": "BLOCO 2 — tarja feita como camada por cima de um PDF pode ser removida por quem baixar o arquivo",
+  "file": "7-2-09_tarja-em-camada-nao-e-tarja.svg",
+  "dur": 8.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-10",
+  "aula": "7.2",
+  "title": "A linha do tempo da pauta",
+  "cue": "[TELA: linha do tempo — abertura da empresa → nomeação do sócio → dispensa → contrato → aditivo]",
+  "file": "7-2-10_a-linha-do-tempo-da-pauta.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-11",
+  "aula": "7.2",
+  "title": "A sequência diz por você",
+  "cue": "BLOCO 3 — “Você não precisa dizer ‘armação’. A sequência diz por você.”",
+  "file": "7-2-11_a-sequencia-diz-por-voce.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-12",
+  "aula": "7.2",
+  "title": "Cada ponto, data, documento e fonte",
+  "cue": "BLOCO 3 — “Cada ponto da linha tem data, documento e fonte.”",
+  "file": "7-2-12_cada-ponto-data-documento-e-fonte.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-13",
+  "aula": "7.2",
+  "title": "Mapa de vínculos, poderoso e perigoso",
+  "cue": "BLOCO 4 — rotule cada linha com a natureza do vínculo; nada de linha vermelha piscando; vínculo fraco não entra",
+  "file": "7-2-13_mapa-de-vinculos-poderoso-e-perigoso.svg",
+  "dur": 8.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-14",
+  "aula": "7.2",
+  "title": "O outro lado é parte da história",
+  "cue": "BLOCO 5 — “O outro lado não é um parágrafo protocolar no fim. É parte da história.”",
+  "file": "7-2-14_o-outro-lado-e-parte-da-historia.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-15",
+  "aula": "7.2",
+  "title": "A resposta por inteiro",
+  "cue": "[TELA: nota do outro lado exibida por inteiro]",
+  "file": "7-2-15_a-resposta-por-inteiro.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-16",
+  "aula": "7.2",
+  "title": "Quando não há resposta",
+  "cue": "BLOCO 5 — “Procurado por e-mail em 12 de setembro, com prazo de 72 horas, o prefeito não respondeu até a publicação. O espaço segue aberto.”",
+  "file": "7-2-16_quando-nao-ha-resposta.svg",
+  "dur": 7.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-17",
+  "aula": "7.2",
+  "title": "Quando a resposta chega depois",
+  "cue": "BLOCO 5 — “Se a resposta chegar depois: atualize, fixe um comentário e diga que atualizou.”",
+  "file": "7-2-17_quando-a-resposta-chega-depois.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-18",
+  "aula": "7.2",
+  "title": "Dizer o que não se sabe",
+  "cue": "BLOCO 6 — “Não encontramos documento que indique que o prefeito sabia do vínculo.” “A empresa não informou quem são os donos de fato.”",
+  "file": "7-2-18_dizer-o-que-nao-se-sabe.svg",
+  "dur": 6.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-19",
+  "aula": "7.2",
+  "title": "Jornalismo e acusação",
+  "cue": "BLOCO 6 — “Isso não enfraquece a matéria. Fortalece… no tribunal, é a diferença entre jornalismo e acusação.”",
+  "file": "7-2-19_jornalismo-e-acusacao.svg",
+  "dur": 6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-20",
+  "aula": "7.2",
+  "title": "Exercício da aula 7.2",
+  "cue": "EXERCÍCIO — linha do tempo com data, documento e fonte; trecho do outro lado com a data do pedido",
+  "file": "7-2-20_exercicio-da-aula-7-2.svg",
+  "dur": 6.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "7.2-21",
+  "aula": "7.2",
+  "title": "Fecha o módulo 7",
+  "cue": "FECHAMENTO — “Você tem pauta, apuração, proteção e roteiro.”",
+  "file": "7-2-21_fecha-o-modulo-7.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-01",
+  "aula": "8.1",
+  "title": "Agora eu mostro o que eu fiz",
+  "cue": "ABERTURA — “Durante sete módulos, eu te disse o que fazer. Agora eu vou te mostrar o que eu fiz. Incluindo o que eu fiz errado.”",
+  "file": "8-1-01_agora-eu-mostro-o-que-eu-fiz.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-02",
+  "aula": "8.1",
+  "title": "As 12 etapas da investigação",
+  "cue": "ABERTURA — mapa do estudo de caso, etapa por etapa (serve de abertura e de volta ao mapa entre etapas)",
+  "file": "8-1-02_as-12-etapas-da-investigacao.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-03",
+  "aula": "8.1",
+  "title": "Etapa 1, a suspeita",
+  "cue": "ETAPA 1 — A suspeita: “quem ganha com isso?”",
+  "file": "8-1-03_etapa-1-a-suspeita.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-04",
+  "aula": "8.1",
+  "title": "Caso de apoio, a origem do orçamento secreto",
+  "cue": "[CASO DE APOIO: a série do Estadão sobre o orçamento secreto nasceu de relatos de bastidor, no fim de 2020]",
+  "file": "8-1-04_caso-de-apoio-a-origem-do-orcamento-secreto.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-05",
+  "aula": "8.1",
+  "title": "Etapa 2, a hipótese",
+  "cue": "ETAPA 2 — A hipótese: inicial, quando mudou, versão final",
+  "file": "8-1-05_etapa-2-a-hipotese.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-06",
+  "aula": "8.1",
+  "title": "Etapa 3, as fontes",
+  "cue": "ETAPA 3 — As fontes (⚠️ nada que permita identificar fontes, nem indiretamente)",
+  "file": "8-1-06_etapa-3-as-fontes.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-07",
+  "aula": "8.1",
+  "title": "Etapa 4, os pedidos via lai",
+  "cue": "ETAPA 4 — Os pedidos via LAI [TELA: protocolos e respostas, com dados pessoais tarjados]",
+  "file": "8-1-07_etapa-4-os-pedidos-via-lai.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-08",
+  "aula": "8.1",
+  "title": "Caso de apoio, cartão corporativo",
+  "cue": "[CASO DE APOIO: a Fiquem Sabendo pediu os gastos do cartão corporativo em 18/12/2022 e recebeu a resposta em 11/01/2023]",
+  "file": "8-1-08_caso-de-apoio-cartao-corporativo.svg",
+  "dur": 6.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-09",
+  "aula": "8.1",
+  "title": "Etapa 5, os dados",
+  "cue": "ETAPA 5 — Os dados: a base que mais rendeu e a que menos rendeu",
+  "file": "8-1-09_etapa-5-os-dados.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-10",
+  "aula": "8.1",
+  "title": "Caso de apoio, os números do orçamento secreto",
+  "cue": "[CASO DE APOIO: 101 ofícios, R$ 3 bilhões em emendas de relator (RP-9), tratores até 259% acima da referência]",
+  "file": "8-1-10_caso-de-apoio-os-numeros-do-orcamento-secreto.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-11",
+  "aula": "8.1",
+  "title": "Etapa 6, os cruzamentos e o erro",
+  "cue": "ETAPA 6 — Os cruzamentos e o erro",
+  "file": "8-1-11_etapa-6-os-cruzamentos-e-o-erro.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-12",
+  "aula": "8.1",
+  "title": "O erro que quase derrubou",
+  "cue": "ETAPA 6 — “o que quase me derrubou foi [um homônimo, uma data errada, um dado desatualizado]… vínculo não é culpa”",
+  "file": "8-1-12_o-erro-que-quase-derrubou.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": "Modelo: trocar os campos [PREENCHER] pelos dados do caso antes de exportar."
+ },
+ {
+  "id": "8.1-13",
+  "aula": "8.1",
+  "title": "Etapa 7, a checagem",
+  "cue": "ETAPA 7 — A checagem [TELA: trecho do roteiro com a coluna de fontes]",
+  "file": "8-1-13_etapa-7-a-checagem.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-14",
+  "aula": "8.1",
+  "title": "Afirmações que caíram na checagem",
+  "cue": "ETAPA 7 — “O roteiro teve [N] afirmações numeradas. [N] caíram na checagem.”",
+  "file": "8-1-14_afirmacoes-que-cairam-na-checagem.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": "Modelo: trocar os campos [PREENCHER] pelos dados do caso antes de exportar."
+ },
+ {
+  "id": "8.1-15",
+  "aula": "8.1",
+  "title": "Etapa 8, a revisão jurídica",
+  "cue": "ETAPA 8 — A revisão jurídica",
+  "file": "8-1-15_etapa-8-a-revisao-juridica.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-16",
+  "aula": "8.1",
+  "title": "Uma frase antes e depois da revisão",
+  "cue": "[TELA: uma frase antes e depois da revisão]",
+  "file": "8-1-16_uma-frase-antes-e-depois-da-revisao.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": "Modelo: trocar os campos [PREENCHER] pelos dados do caso antes de exportar."
+ },
+ {
+  "id": "8.1-17",
+  "aula": "8.1",
+  "title": "Etapa 9, o pedido de posicionamento",
+  "cue": "ETAPA 9 — O pedido de posicionamento",
+  "file": "8-1-17_etapa-9-o-pedido-de-posicionamento.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-18",
+  "aula": "8.1",
+  "title": "Etapa 10, a publicação",
+  "cue": "ETAPA 10 — A publicação: gancho, título e o que foi descartado",
+  "file": "8-1-18_etapa-10-a-publicacao.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-19",
+  "aula": "8.1",
+  "title": "Etapa 11, a repercussão",
+  "cue": "ETAPA 11 — A repercussão",
+  "file": "8-1-19_etapa-11-a-repercussao.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-20",
+  "aula": "8.1",
+  "title": "Caso de apoio, a repercussão",
+  "cue": "[CASO DE APOIO: TCU e CGU; STF, 19/12/2022, ADPFs 850, 851, 854 e 1014, 6 a 5; Prêmio IREE 2021; Prêmio Cláudio Weber Abramo 2023]",
+  "file": "8-1-20_caso-de-apoio-a-repercussao.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-21",
+  "aula": "8.1",
+  "title": "Etapa 12, erros e aprendizados",
+  "cue": "ETAPA 12 — Erros e aprendizados",
+  "file": "8-1-21_etapa-12-erros-e-aprendizados.svg",
+  "dur": 4.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-22",
+  "aula": "8.1",
+  "title": "Exercício final",
+  "cue": "EXERCÍCIO FINAL — preencha o template etapa por etapa, com o checklist pré-publicação, e poste no Discord do Ágora",
+  "file": "8-1-22_exercicio-final.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-23",
+  "aula": "8.1",
+  "title": "Agora você tem uma pauta",
+  "cue": "ENCERRAMENTO — “Oito módulos atrás, você tinha uma bomba no celular. Agora você tem uma pauta.”",
+  "file": "8-1-23_agora-voce-tem-uma-pauta.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-24",
+  "aula": "8.1",
+  "title": "Matéria ou funil, as duas são jornalismo",
+  "cue": "ENCERRAMENTO — “Pode ser que ela vire matéria. Pode ser que ela morra no funil. As duas coisas são jornalismo.”",
+  "file": "8-1-24_materia-ou-funil-as-duas-sao-jornalismo.svg",
+  "dur": 6.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-25",
+  "aula": "8.1",
+  "title": "Sem documento, é lenda. Com documento, é notícia",
+  "cue": "ENCERRAMENTO — “Sem documento, é lenda. Com documento, é notícia.”",
+  "file": "8-1-25_sem-documento-e-lenda-com-documento-e-noticia.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "8.1-26",
+  "aula": "8.1",
+  "title": "Até a próxima investigação",
+  "cue": "ENCERRAMENTO — “Obrigado. Até a próxima investigação.”",
+  "file": "8-1-26_ate-a-proxima-investigacao.svg",
+  "dur": 4.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "L-01",
+  "aula": "L",
+  "title": "Conteúdo educativo, não substitui advogado",
+  "cue": "Aula 1.1 (apresentação) e lettering fixo do módulo 5",
+  "file": "L-01_conteudo-educativo-nao-substitui-advogado.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-02",
+  "aula": "L",
+  "title": "Conteúdo educativo, regras de setembro de 2026",
+  "cue": "Lettering fixo de todas as aulas do módulo 3",
+  "file": "L-02_conteudo-educativo-regras-de-setembro-de-2026.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-03",
+  "aula": "L",
+  "title": "Lettering fixo do módulo 6",
+  "cue": "Lettering fixo de todas as aulas do módulo 6",
+  "file": "L-03_lettering-fixo-do-modulo-6.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-04",
+  "aula": "L",
+  "title": "Regras do período eleitoral de 2026",
+  "cue": "Aula 6.4, blocos 1 a 3",
+  "file": "L-04_regras-do-periodo-eleitoral-de-2026.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-05",
+  "aula": "L",
+  "title": "Sem documento, é lenda",
+  "cue": "Aula 1.1 — “Tem uma regra que eu uso em todo roteiro meu. Sem documento, é lenda.” (volta ao longo do curso)",
+  "file": "L-05_sem-documento-e-lenda.svg",
+  "dur": 5.2,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-06",
+  "aula": "L",
+  "title": "Nome do apresentador",
+  "cue": "Aula 1.1 [APRESENTAÇÃO] — “Eu sou o Iuri Piragibe.”",
+  "file": "L-06_nome-do-apresentador.svg",
+  "dur": 5.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-07",
+  "aula": "L",
+  "title": "Exemplo fictício",
+  "cue": "Sobre qualquer tela com exemplo inventado (Cidade Exemplo, Alimentos Modelo)",
+  "file": "L-07_exemplo-ficticio.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-08",
+  "aula": "L",
+  "title": "Dados pessoais tarjados",
+  "cue": "Aula 8.1, etapa 4 [TELA: protocolos e respostas, com dados pessoais tarjados] e qualquer documento real na tela",
+  "file": "L-08_dados-pessoais-tarjados.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
+ },
+ {
+  "id": "L-09",
+  "aula": "L",
+  "title": "Caso de apoio (modelo)",
+  "cue": "Aula 8.1 — entrada de cada [CASO DE APOIO]",
+  "file": "L-09_caso-de-apoio-modelo.svg",
+  "dur": 6.3,
+  "overlay": true,
+  "warn": null
  }
 ]
