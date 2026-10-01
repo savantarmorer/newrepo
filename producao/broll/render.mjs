@@ -71,7 +71,8 @@ if (mode === 'poster' && existsSync(join(out))) {
     const layout = Array.from({ length: n }, (_, i) => `${(i % 4) * 480}_${Math.floor(i / 4) * 270}`).join('|');
     const scale = chunk.map((_, i) => `[${i}:v]scale=480:270[v${i}]`).join(';');
     const ins = chunk.map((_, i) => `[v${i}]`).join('');
-    const { done } = ffmpeg([...inputs, '-filter_complex', `${scale};${ins}xstack=inputs=${n}:layout=${layout}:fill=black`, join(here, 'out', `contato-${String(p + 1).padStart(2, '0')}.png`)]);
+    const graph = n === 1 ? '[0:v]scale=480:270' : `${scale};${ins}xstack=inputs=${n}:layout=${layout}:fill=black`;
+    const { done } = ffmpeg([...inputs, '-filter_complex', graph, join(here, 'out', `contato-${String(p + 1).padStart(2, '0')}.png`)]);
     if (n > 1) await done; else await done.catch(() => {});
   }
 }

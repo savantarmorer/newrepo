@@ -1508,5 +1508,645 @@
   "dur": 6.5,
   "overlay": false,
   "warn": null
+ },
+ {
+  "id": "5.1-01",
+  "aula": "5.1",
+  "title": "Indício autoriza a pergunta",
+  "cue": "ABERTURA — “Indício autoriza a pergunta. Não autoriza a afirmação.”",
+  "file": "5-1-01_indicio-autoriza-a-pergunta.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-02",
+  "aula": "5.1",
+  "title": "O dedo que aponta",
+  "cue": "BLOCO 1 — indicium: sinal, indicação; da mesma família de index, o dedo que aponta",
+  "file": "5-1-02_o-dedo-que-aponta.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-03",
+  "aula": "5.1",
+  "title": "Código de Processo Penal, art. 239",
+  "cue": "[TELA: art. 239 do CPP]",
+  "file": "5-1-03_codigo-de-processo-penal-art-239.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-04",
+  "aula": "5.1",
+  "title": "Fato provado e inferência",
+  "cue": "BLOCO 1 — a empresa foi aberta seis meses antes do contrato: fato provado; aberta para ganhar o contrato: inferência",
+  "file": "5-1-04_fato-provado-e-inferencia.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-05",
+  "aula": "5.1",
+  "title": "Fato, indício e versão",
+  "cue": "[TELA: tabela com três colunas — fato, indício, versão]",
+  "file": "5-1-05_fato-indicio-e-versao.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-06",
+  "aula": "5.1",
+  "title": "O que um documento prova",
+  "cue": "BLOCO 3 — pergunte a cada documento: o que ele prova, exatamente?",
+  "file": "5-1-06_o-que-um-documento-prova.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-07",
+  "aula": "5.1",
+  "title": "Código de Processo Penal, art. 155",
+  "cue": "[TELA: art. 155 do CPP] — o inquérito não é a sentença",
+  "file": "5-1-07_codigo-de-processo-penal-art-155.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.1-08",
+  "aula": "5.1",
+  "title": "Presunção de inocência",
+  "cue": "BLOCO 5 — Constituição, art. 5º, LVII; a saída não é o silêncio, é a precisão",
+  "file": "5-1-08_presuncao-de-inocencia.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-01",
+  "aula": "5.2",
+  "title": "Investigado não é réu",
+  "cue": "ABERTURA — “Chamar investigado de réu pode render um processo.”",
+  "file": "5-2-01_investigado-nao-e-reu.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-02",
+  "aula": "5.2",
+  "title": "A linha do tempo do processo penal",
+  "cue": "[TELA: linha do tempo que se monta a cada fase]",
+  "file": "5-2-02_a-linha-do-tempo-do-processo-penal.svg",
+  "dur": 11.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-03",
+  "aula": "5.2",
+  "title": "A frase certa em cada fase",
+  "cue": "[TELA: a frase certa ao lado de cada fase]",
+  "file": "5-2-03_a-frase-certa-em-cada-fase.svg",
+  "dur": 7.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-04",
+  "aula": "5.2",
+  "title": "Uma pessoa, vários processos",
+  "cue": "BLOCO 2 — “A mesma pessoa pode estar em fases diferentes em processos diferentes.”",
+  "file": "5-2-04_uma-pessoa-varios-processos.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-05",
+  "aula": "5.2",
+  "title": "Prisão não é condenação",
+  "cue": "BLOCO 3 — prisão preventiva e temporária são cautelares; pena só depois do trânsito em julgado",
+  "file": "5-2-05_prisao-nao-e-condenacao.svg",
+  "dur": 4.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-06",
+  "aula": "5.2",
+  "title": "Acordo não é condenação",
+  "cue": "BLOCO 4 — acordo de não persecução penal, art. 28-A do CPP",
+  "file": "5-2-06_acordo-nao-e-condenacao.svg",
+  "dur": 5.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.2-07",
+  "aula": "5.2",
+  "title": "Nem todo processo é criminal",
+  "cue": "BLOCO 5 — improbidade é cível; efeitos eleitorais; o foro",
+  "file": "5-2-07_nem-todo-processo-e-criminal.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-01",
+  "aula": "5.3",
+  "title": "A palavra do delator",
+  "cue": "ABERTURA — “A palavra do delator, sozinha, não condena ninguém. Também não deveria virar manchete sozinha.”",
+  "file": "5-3-01_a-palavra-do-delator.svg",
+  "dur": 5.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-02",
+  "aula": "5.3",
+  "title": "Meio de obtenção de prova",
+  "cue": "BLOCO 1 — Lei 12.850, art. 3º-A: o acordo é “meio de obtenção de prova”; não é a prova",
+  "file": "5-3-02_meio-de-obtencao-de-prova.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-03",
+  "aula": "5.3",
+  "title": "Lei 12.850, art. 4º, §16",
+  "cue": "[TELA: art. 4º, §16, da Lei 12.850]",
+  "file": "5-3-03_lei-12-850-art-4-16.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-04",
+  "aula": "5.3",
+  "title": "Por que desconfiar do delator",
+  "cue": "BLOCO 3 — o incentivo embutido; sigilo até o recebimento da denúncia, art. 7º, §3º",
+  "file": "5-3-04_por-que-desconfiar-do-delator.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-05",
+  "aula": "5.3",
+  "title": "Onde estava o acusado em 12 de março",
+  "cue": "BLOCO 4 — “A agenda pública dele pode desmentir o delator. Ou confirmar.”",
+  "file": "5-3-05_onde-estava-o-acusado-em-12-de-marco.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.3-06",
+  "aula": "5.3",
+  "title": "Como escrever a delação",
+  "cue": "BLOCO 4 — “Segundo o delator, cuja colaboração ainda não foi confirmada por outras provas…”",
+  "file": "5-3-06_como-escrever-a-delacao.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-01",
+  "aula": "5.4",
+  "title": "Cada verbo precisa de um documento",
+  "cue": "ABERTURA — “‘Recebeu’ precisa de extrato. ‘Assinou’ precisa de assinatura. ‘Desviou’ precisa de sentença.”",
+  "file": "5-4-01_cada-verbo-precisa-de-um-documento.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-02",
+  "aula": "5.4",
+  "title": "Checagem linha a linha",
+  "cue": "[DEMONSTRAÇÃO: roteiro de exemplo com cada afirmação numerada e uma coluna de fontes na margem]",
+  "file": "5-4-02_checagem-linha-a-linha.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-03",
+  "aula": "5.4",
+  "title": "O método de quem checa",
+  "cue": "BLOCO 2 — Verification Handbook, Lupa, Aos Fatos, Projeto Comprova",
+  "file": "5-4-03_o-metodo-de-quem-checa.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-04",
+  "aula": "5.4",
+  "title": "Armadilhas com números, parte 1",
+  "cue": "[TELA: cada armadilha com um exemplo] — unidade e período; empenhado não é pago",
+  "file": "5-4-04_armadilhas-com-numeros-parte-1.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-05",
+  "aula": "5.4",
+  "title": "Armadilhas com números, parte 2",
+  "cue": "[TELA: cada armadilha com um exemplo] — valor corrigido, por habitante, porcentagem e ponto percentual",
+  "file": "5-4-05_armadilhas-com-numeros-parte-2.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-06",
+  "aula": "5.4",
+  "title": "A escala de verbos",
+  "cue": "[TELA: escala do mais forte ao mais fraco]",
+  "file": "5-4-06_a-escala-de-verbos.svg",
+  "dur": 8.2,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-07",
+  "aula": "5.4",
+  "title": "Corte os adjetivos",
+  "cue": "BLOCO 4 — “Adjetivo não acrescenta prova. Só acrescenta risco.”",
+  "file": "5-4-07_corte-os-adjetivos.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-08",
+  "aula": "5.4",
+  "title": "Título e thumbnail também são publicação",
+  "cue": "BLOCO 5 — “PREFEITO LADRÃO” com sirene × “O contrato de R$ 4 milhões que ninguém explicou”",
+  "file": "5-4-08_titulo-e-thumbnail-tambem-sao-publicacao.svg",
+  "dur": 6.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "5.4-09",
+  "aula": "5.4",
+  "title": "Quando errar",
+  "cue": "BLOCO 6 — corrija rápido e à vista: comentário fixado, descrição, card",
+  "file": "5-4-09_quando-errar.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-01",
+  "aula": "6.1",
+  "title": "Pena em triplo nas redes",
+  "cue": "ABERTURA — “Nas redes sociais, a pena de crime contra a honra é aplicada em triplo.”",
+  "file": "6-1-01_pena-em-triplo-nas-redes.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-02",
+  "aula": "6.1",
+  "title": "Calúnia, difamação e injúria",
+  "cue": "[TELA: quadro comparativo — crime / o que é / exemplo / admite prova da verdade?]",
+  "file": "6-1-02_calunia-difamacao-e-injuria.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-03",
+  "aula": "6.1",
+  "title": "Calúnia, os três elementos",
+  "cue": "BLOCO 1 — um fato determinado, que é crime, e que é falso; repostar também conta",
+  "file": "6-1-03_calunia-os-tres-elementos.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-04",
+  "aula": "6.1",
+  "title": "A exceção da verdade",
+  "cue": "BLOCO 2 — “o que eu falei é verdade, e eu provo”",
+  "file": "6-1-04_a-excecao-da-verdade.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-05",
+  "aula": "6.1",
+  "title": "Os aumentos de pena",
+  "cue": "[TELA: art. 141 do Código Penal]",
+  "file": "6-1-05_os-aumentos-de-pena.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-06",
+  "aula": "6.1",
+  "title": "O que não é crime contra a honra",
+  "cue": "BLOCO 4 — art. 142 e a intenção de ofender; conte com os documentos",
+  "file": "6-1-06_o-que-nao-e-crime-contra-a-honra.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-07",
+  "aula": "6.1",
+  "title": "Retratação, prazo e quem processa",
+  "cue": "BLOCO 5 — arts. 143, 145 e 103; Súmula 714 do STF",
+  "file": "6-1-07_retratacao-prazo-e-quem-processa.svg",
+  "dur": 5.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.1-08",
+  "aula": "6.1",
+  "title": "As quatro perguntas para cada frase",
+  "cue": "[TELA: as quatro perguntas]",
+  "file": "6-1-08_as-quatro-perguntas-para-cada-frase.svg",
+  "dur": 8.6,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-01",
+  "aula": "6.2",
+  "title": "Só com dolo ou culpa grave",
+  "cue": "ABERTURA — “Pelo Supremo, jornalista só paga indenização por reportagem se agiu com dolo ou culpa grave.”",
+  "file": "6-2-01_so-com-dolo-ou-culpa-grave.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-02",
+  "aula": "6.2",
+  "title": "Súmula 221 do STJ",
+  "cue": "[TELA: Súmula 221 do STJ] — autor e veículo respondem",
+  "file": "6-2-02_sumula-221-do-stj.svg",
+  "dur": 7.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-03",
+  "aula": "6.2",
+  "title": "Não existe mais Lei de Imprensa",
+  "cue": "BLOCO 1 — ADPF 130, de 2009: a Lei de Imprensa de 1967 não foi recepcionada",
+  "file": "6-2-03_nao-existe-mais-lei-de-imprensa.svg",
+  "dur": 6.8,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-04",
+  "aula": "6.2",
+  "title": "As três teses contra o assédio judicial",
+  "cue": "[TELA: as três teses] — ADIs 6792 e 7055, julgadas em maio de 2024, acórdão em abril de 2025",
+  "file": "6-2-04_as-tres-teses-contra-o-assedio-judicial.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-05",
+  "aula": "6.2",
+  "title": "Reunir as ações no domicílio",
+  "cue": "BLOCO 2 — segunda tese: o jornalista pode pedir que todas as ações sejam reunidas no foro do seu domicílio",
+  "file": "6-2-05_reunir-as-acoes-no-domicilio.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-06",
+  "aula": "6.2",
+  "title": "A terceira tese é um manual",
+  "cue": "BLOCO 2 — “Ela diz o que você precisa mostrar a um juiz: que apurou.”",
+  "file": "6-2-06_a-terceira-tese-e-um-manual.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-07",
+  "aula": "6.2",
+  "title": "Tema 995 e a entrevista",
+  "cue": "[TELA: resumo da tese revisada] — o veículo só responde se houver má-fé",
+  "file": "6-2-07_tema-995-e-a-entrevista.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-08",
+  "aula": "6.2",
+  "title": "Sem direito ao esquecimento",
+  "cue": "BLOCO 4 — Tema 786, 2021: o direito ao esquecimento é incompatível com a Constituição",
+  "file": "6-2-08_sem-direito-ao-esquecimento.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.2-09",
+  "aula": "6.2",
+  "title": "O que condena e o que protege",
+  "cue": "[TELA: duas colunas — o que costuma condenar / o que costuma proteger]",
+  "file": "6-2-09_o-que-condena-e-o-que-protege.svg",
+  "dur": 8.1,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-01",
+  "aula": "6.3",
+  "title": "Querem cansar",
+  "cue": "ABERTURA — “Muitos não querem ganhar. Querem cansar. O processo, às vezes, é a própria punição.”",
+  "file": "6-3-01_querem-cansar.svg",
+  "dur": 5.9,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-02",
+  "aula": "6.3",
+  "title": "O Monitor de Assédio Judicial",
+  "cue": "[TELA: dados da segunda edição do Monitor de Assédio Judicial contra Jornalistas]",
+  "file": "6-3-02_o-monitor-de-assedio-judicial.svg",
+  "dur": 7.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-03",
+  "aula": "6.3",
+  "title": "Programa de Proteção Legal",
+  "cue": "[TELA: página do programa] — Abraji, Media Defence e Tornavoz",
+  "file": "6-3-03_programa-de-protecao-legal.svg",
+  "dur": 6.1,
+  "overlay": false,
+  "warn": "Conferir antes de gravar o número atualizado de atendidos e o canal de pedido."
+ },
+ {
+  "id": "6.3-04",
+  "aula": "6.3",
+  "title": "Recebi. E agora?",
+  "cue": "[TELA: fluxograma — recebi o quê? → prazo → provas → quem me ajuda → decisão]",
+  "file": "6-3-04_recebi-e-agora.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-05",
+  "aula": "6.3",
+  "title": "Notificação não é processo",
+  "cue": "BLOCO 3 — não entre em pânico, não ignore e não apague tudo na hora",
+  "file": "6-3-05_notificacao-nao-e-processo.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-06",
+  "aula": "6.3",
+  "title": "O direito de resposta",
+  "cue": "[TELA: arts. 2º a 5º da Lei 13.188]",
+  "file": "6-3-06_o-direito-de-resposta.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-07",
+  "aula": "6.3",
+  "title": "Publicar a resposta costuma ser a melhor defesa",
+  "cue": "BLOCO 4 — “quando o pedido é razoável, publicar a resposta costuma ser a melhor defesa”",
+  "file": "6-3-07_publicar-a-resposta-costuma-ser-a-melhor-defesa.svg",
+  "dur": 5.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.3-08",
+  "aula": "6.3",
+  "title": "Marco Civil, o regime atual",
+  "cue": "[TELA: resumo do regime atual] — art. 19 parcialmente inconstitucional",
+  "file": "6-3-08_marco-civil-o-regime-atual.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": "Conferir antes de gravar o texto final da tese dos Temas 987 e 533 depois dos embargos e se canais independentes contam como provedor jornalístico."
+ },
+ {
+  "id": "6.3-09",
+  "aula": "6.3",
+  "title": "Não dependa de uma plataforma",
+  "cue": "BLOCO 6 — “Canal que só existe num lugar pode deixar de existir numa tarde.”",
+  "file": "6-3-09_nao-dependa-de-uma-plataforma.svg",
+  "dur": 6.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-01",
+  "aula": "6.4",
+  "title": "Horas, não semanas",
+  "cue": "ABERTURA — “No período eleitoral, o pedido de resposta a uma matéria sobre candidato corre em horas.”",
+  "file": "6-4-01_horas-nao-semanas.svg",
+  "dur": 6.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-02",
+  "aula": "6.4",
+  "title": "O calendário eleitoral de 2026",
+  "cue": "[TELA: calendário com as três datas]",
+  "file": "6-4-02_o-calendario-eleitoral-de-2026.svg",
+  "dur": 6.5,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-03",
+  "aula": "6.4",
+  "title": "Os prazos do direito de resposta eleitoral",
+  "cue": "[TELA: art. 58, §1º, da Lei 9.504]",
+  "file": "6-4-03_os-prazos-do-direito-de-resposta-eleitoral.svg",
+  "dur": 5.7,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-04",
+  "aula": "6.4",
+  "title": "Sabidamente inverídica, a qualquer tempo",
+  "cue": "BLOCO 2 — “o seu vídeo de agosto pode gerar pedido de resposta em outubro”",
+  "file": "6-4-04_sabidamente-inveridica-a-qualquer-tempo.svg",
+  "dur": 7.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-05",
+  "aula": "6.4",
+  "title": "Inteligência artificial na eleição",
+  "cue": "[TELA: resumo das regras] — Resolução TSE 23.610, alterada em março de 2026",
+  "file": "6-4-05_inteligencia-artificial-na-eleicao.svg",
+  "dur": 8.3,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-06",
+  "aula": "6.4",
+  "title": "O protocolo pré-publicação",
+  "cue": "[TELA: os cinco passos, um por vez]",
+  "file": "6-4-06_o-protocolo-pre-publicacao.svg",
+  "dur": 8.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-07",
+  "aula": "6.4",
+  "title": "O pedido de posicionamento",
+  "cue": "[TELA: modelo de e-mail, com os campos destacados]",
+  "file": "6-4-07_o-pedido-de-posicionamento.svg",
+  "dur": 7.4,
+  "overlay": false,
+  "warn": null
+ },
+ {
+  "id": "6.4-08",
+  "aula": "6.4",
+  "title": "Prazo de fachada",
+  "cue": "BLOCO 5 — “não mande às 23h de sexta pedindo resposta até segunda às 8h”",
+  "file": "6-4-08_prazo-de-fachada.svg",
+  "dur": 7.7,
+  "overlay": false,
+  "warn": null
  }
 ]
