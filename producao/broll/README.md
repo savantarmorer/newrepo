@@ -6,7 +6,7 @@ Esta pasta é material de produção: fica fora do site (`scripts/build-static.m
 
 ## Ver
 
-Abra `index.html` no navegador. A galeria mostra os clipes por módulo e aula, com a deixa, a duração e o arquivo; clique numa imagem para tocar de novo. As fontes vêm do Google Fonts: sem internet, o navegador usa fontes substitutas.
+Abra `index.html` no navegador. A galeria mostra os clipes por módulo e aula, com a deixa, a duração, o arquivo e o botão **↓ MP4**; clique numa imagem para tocar de novo. Os botões de download apontam para `out/mp4/` e `out/webm/`: rode o `render.mjs` antes (veja abaixo) e gere a galeria de novo para ela mostrar o tamanho de cada vídeo. As fontes vêm do Google Fonts: sem internet, o navegador usa fontes substitutas.
 
 Cada arquivo de `svg/` também abre sozinho no navegador e toca a animação.
 
@@ -22,7 +22,7 @@ Cada arquivo de `svg/` também abre sozinho no navegador e toca a animação.
 | `svg/` | Os clipes gerados. **Não edite à mão**: rode o `build.mjs`. |
 | `manifest.json` | Lista dos clipes: código, aula, título, deixa do roteiro, arquivo, duração e aviso. |
 | `index.html` | Galeria de revisão. |
-| `out/` | Saída do `render.mjs` (PNG, MP4, MOV). Não vai para o git. |
+| `out/` | Saída do `render.mjs` (PNG, MP4, WebM, MOV). Não vai para o git. |
 
 ## Gerar de novo
 
@@ -43,11 +43,16 @@ Requer `ffmpeg` e o Chromium do Playwright (`npx playwright install chromium`, o
 ```bash
 node producao/broll/render.mjs mp4            # todos → out/mp4/
 node producao/broll/render.mjs mp4 7.2        # só a aula 7.2
+node producao/broll/render.mjs webm           # letterings com transparência → out/webm/
+node producao/broll/render.mjs mov            # letterings com transparência em ProRes 4444 → out/mov/
 node producao/broll/render.mjs poster 5.      # PNG do quadro final + folhas de contato out/contato-NN.png
+node producao/broll/galeria.mjs               # atualiza os botões de download com o tamanho dos vídeos
 ```
 
-- Clipes comuns saem em MP4 H.264, 1080p, 30 quadros por segundo (`FPS=60` muda).
-- Letterings saem em MOV ProRes 4444 **com transparência**, para pôr em cima da câmera.
+- Todos os clipes saem em MP4 H.264, 1080p, 30 quadros por segundo (`FPS=60` muda).
+- MP4 não tem transparência: os letterings saem em MP4 sobre verde de recorte (`#00B140`). Para pôr em cima da câmera sem recorte, use o WebM (VP9 com canal alfa, leve) ou o MOV ProRes 4444 (pesado, aceito por todo editor).
+- Para os 292 clipes, rode em paralelo: `SHARD=1/4 node producao/broll/render.mjs mp4 &` e o mesmo com `2/4`, `3/4` e `4/4`. Leva cerca de 50 minutos numa máquina de 4 núcleos.
+- Vídeos que já existem e estão mais novos que o SVG são pulados. `REFAZER=1` refaz tudo.
 - `FONTES_LOCAIS=1` usa as fontes instaladas na máquina (Archivo Black, Space Grotesk, JetBrains Mono) em vez de baixá-las.
 - A duração de cada clipe é o fim da última animação mais uma pausa de 2,4 s. Para segurar mais, congele o último quadro na edição.
 

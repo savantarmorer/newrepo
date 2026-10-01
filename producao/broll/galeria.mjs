@@ -2,7 +2,7 @@
 // Uso:
 //   node producao/broll/galeria.mjs                 → producao/broll/index.html (carrega os arquivos de svg/)
 //   node producao/broll/galeria.mjs --inline <saida> → página única com todos os SVGs embutidos
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CSS } from './kit.mjs';
@@ -16,6 +16,11 @@ if (!target) throw new Error('informe o arquivo de saída depois de --inline');
 const manifest = JSON.parse(readFileSync(join(here, 'manifest.json'), 'utf8'));
 const data = manifest.map((c) => {
   const d = { id: c.id, aula: c.aula, title: c.title, cue: c.cue, dur: c.dur, overlay: c.overlay, warn: c.warn, file: c.file };
+  // vídeos já renderizados (out/mp4, out/webm): tamanho em bytes, para o botão de download
+  for (const ext of ['mp4', 'webm']) {
+    const f = join(here, 'out', ext, c.file.replace('.svg', '.' + ext));
+    if (existsSync(f)) d[ext] = statSync(f).size;
+  }
   if (inline) {
     // o estilo das animações é o mesmo em todos os clipes: vai uma vez só no <head>
     d.svg = readFileSync(join(here, 'svg', c.file), 'utf8').replace(/<style>[\s\S]*?<\/style>/, '');
@@ -78,6 +83,14 @@ h1 { font: 400 clamp(34px, 6vw, 64px)/1.02 var(--display); margin: 16px 0 14px; 
 .g-stage:hover .g-play, .g-stage:focus-visible .g-play { opacity: 1; }
 .g-meta { display: flex; justify-content: space-between; gap: 10px; font: 12px var(--mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .g-meta b { color: var(--amber); font-weight: 700; }
+.g-meta > span { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.g-dl { font: 700 11px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; color: var(--bg); background: var(--amber); border: 1px solid var(--amber); padding: 6px 9px; cursor: pointer; white-space: nowrap; }
+.g-dl:hover { background: var(--ink); border-color: var(--ink); }
+.g-dl.is-alt { color: var(--amber); background: transparent; }
+.g-dl.is-alt:hover { color: var(--bg); background: var(--amber); }
+.g-dl[aria-busy="true"] { opacity: .6; cursor: progress; }
+.g-dl:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.g-dlmsg { font: 12px var(--mono); color: var(--red); margin: -4px 0 0; }
 .g-title { font: 700 17px/1.25 var(--body); margin: 0; }
 .g-cue { font-size: 14px; color: var(--ink-2); margin: 0; }
 .g-warn { font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--red) 14%, transparent); border-left: 3px solid var(--red); padding: 8px 10px; margin: 0; }
@@ -90,7 +103,7 @@ ${inline ? CSS : ''}
 <div class="g-wrap">
   <p class="g-eyebrow">Jornalismo Investigativo na Prática · material de edição</p>
   <h1>B-rolls e animações das aulas</h1>
-  <p class="g-lede"><b>${total} clipes</b> em SVG animado, 1920 × 1080, para as ${nAulas} aulas e os letterings. Cada cartão traz a deixa do roteiro em que o clipe entra. Clique na imagem para tocar de novo. <b>${nWarn}</b> pedem conferência antes da gravação.</p>
+  <p class="g-lede"><b>${total} clipes</b> em SVG animado, 1920 × 1080, para as ${nAulas} aulas e os letterings. Cada cartão traz a deixa do roteiro em que o clipe entra e o botão para baixar o vídeo em MP4. Clique na imagem para tocar de novo. <b>${nWarn}</b> pedem conferência antes da gravação.</p>
   <div class="g-bar" role="search">
     <div class="g-mods" id="mods"></div>
     <input class="g-search" id="busca" type="search" placeholder="Buscar por título, deixa ou código (ex.: 4.6, PNCP, prazo)" aria-label="Buscar clipes">
@@ -110,6 +123,26 @@ const modOf = (c) => (c.aula === 'L' ? 'L' : c.aula.split('.')[0]);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 const fmt = (n) => n.toFixed(1).replace('.', ',') + ' s';
 
+const mb = (n) => (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
+const base = (c) => c.file.replace(/\\.svg$/, '');
+// botões de download: no modo embutido usam a capacidade de downloads do visualizador;
+// no modo local são links para out/mp4 e out/webm (gerados pelo render.mjs)
+function dlButtons(c) {
+  let h = '';
+  const kinds = [['mp4', c.overlay ? 'MP4 verde' : 'MP4', ''], ['webm', 'WebM transparente', ' is-alt']];
+  for (const [ext, label, cls] of kinds) {
+    if (ext === 'webm' && !c.overlay) continue;
+    if (INLINE && !c[ext]) continue;
+    const name = base(c) + '.' + ext;
+    const title = ext === 'webm' ? 'Vídeo com fundo transparente, para pôr sobre a câmera' : c.overlay ? 'MP4 sobre verde de recorte (#00B140)' : 'Vídeo MP4 1080p';
+    const size = c[ext] ? ' · ' + mb(c[ext]) : '';
+    h += INLINE
+      ? '<button class="g-dl' + cls + '" type="button" data-ext="' + ext + '" title="' + title + '" hidden>↓ ' + label + size + '</button>'
+      : '<a class="g-dl' + cls + '" href="out/' + ext + '/' + esc(name) + '" download title="' + title + '">↓ ' + label + size + '</a>';
+  }
+  return h;
+}
+
 // monta módulos → aulas → cartões
 const lista = document.getElementById('lista');
 const mods = [...new Set(CLIPS.map(modOf))];
@@ -124,7 +157,8 @@ for (const m of mods) {
       const i = CLIPS.indexOf(c);
       htmlOut += '<article class="g-card" data-i="' + i + '">'
         + '<button class="g-stage' + (c.overlay ? ' is-overlay' : '') + '" type="button" aria-label="Tocar ' + esc(c.title) + '"><span class="g-play">▶ Tocar</span></button>'
-        + '<div class="g-meta"><b>' + esc(c.id) + '</b><span>' + fmt(c.dur) + '</span></div>'
+        + '<div class="g-meta"><b>' + esc(c.id) + '</b><span>' + fmt(c.dur) + dlButtons(c) + '</span></div>'
+        + '<p class="g-dlmsg" hidden></p>'
         + '<h4 class="g-title">' + esc(c.title) + '</h4>'
         + '<p class="g-cue">' + esc(c.cue) + '</p>'
         + (c.warn ? '<p class="g-warn"><b>Conferir</b>' + esc(c.warn) + '</p>' : '')
@@ -165,7 +199,40 @@ const io = new IntersectionObserver((entries) => {
   for (const e of entries) if (e.isIntersecting) { mount(e.target); io.unobserve(e.target); }
 }, { rootMargin: '600px 0px' });
 document.querySelectorAll('.g-card').forEach((card) => io.observe(card));
+let downloads = null;
+if (INLINE && window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('downloads').then((d) => {
+    downloads = d;
+    if (d) document.querySelectorAll('button.g-dl').forEach((b) => { b.hidden = false; });
+  }).catch(() => {});
+}
+const avisos = { rate_limited: 'Já há uma janela de download aberta. Feche-a e tente de novo.', too_large: 'Arquivo grande demais para esta visualização.', fetch: 'Não consegui carregar o vídeo. Recarregue a página e tente de novo.' };
+async function baixar(btn) {
+  const card = btn.closest('.g-card');
+  const c = CLIPS[card.dataset.i];
+  const ext = btn.dataset.ext;
+  const msg = card.querySelector('.g-dlmsg');
+  msg.hidden = true;
+  if (!downloads || btn.getAttribute('aria-busy') === 'true') return;
+  btn.setAttribute('aria-busy', 'true');
+  try {
+    const r = await fetch(ext + '/' + base(c) + '.' + ext);
+    if (!r.ok) throw { code: 'fetch' };
+    const blob = await r.blob();
+    await downloads.save({ filename: base(c) + '.' + ext, data: blob });
+  } catch (e) {
+    const code = (e && e.code) || 'fetch';
+    if (code !== 'declined') {
+      msg.textContent = avisos[code] || 'Download indisponível nesta visualização.';
+      msg.hidden = false;
+    }
+  } finally {
+    btn.removeAttribute('aria-busy');
+  }
+}
 lista.addEventListener('click', (ev) => {
+  const dl = ev.target.closest('button.g-dl');
+  if (dl) { baixar(dl); return; }
   const stage = ev.target.closest('.g-stage');
   if (!stage) return;
   const card = stage.closest('.g-card');
