@@ -40,6 +40,8 @@ Coloque o MP4 numa faixa **acima** do talking head e remova o verde:
 - **DaVinci Resolve:** *Effects* → *3D Keyer* (ou a aba *Qualifier* no Color) → selecione o verde.
 - **Final Cut Pro:** efeito *Keyer* (detecta o verde sozinho).
 
+![O 41° depois do chroma key, sobre um fundo claro de teste](preview/exemplo-chroma-key.jpg)
+
 Dica: as cores do design evitam verde de propósito (inclusive a faixa "verde" do arco-íris do 41° e o Leão Verde
 do 46°, que usam um verde-azulado/verdigris), para nada sumir junto com o fundo.
 
