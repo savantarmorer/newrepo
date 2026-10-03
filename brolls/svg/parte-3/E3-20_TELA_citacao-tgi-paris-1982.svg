@@ -1216,6 +1216,7 @@ TEMPLATES.escolha = (root, p, D, clip) => {
       op(o.dot, P(t, o.t0 - 0.2, o.t0));
       const pe = Ez.out(P(t, o.t0 + 0.1, o.t0 + 0.6));
       o.ex.setAttribute('y2', y + 18 + 160 * pe);
+      op(o.ex, pe > 0 ? 1 : 0);
       op(o.sair, P(t, o.t0 + 0.4, o.t0 + 0.7));
       o.custo.forEach((e, k) => op(e, P(t, o.t0 + 0.5 + k * 0.1, o.t0 + 0.8 + k * 0.1)));
     });
