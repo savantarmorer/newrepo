@@ -2,10 +2,11 @@
 // download do MP4. Funciona aberta localmente (links diretos) e publicada como
 // Artifact no claude.ai (download pela capability `downloads`).
 //
-// Uso: node galeria.mjs                                  → ../index.html
-//      node galeria.mjs --artifact saida.html --zips dir → versão para publicar
-//                                                          (sem esqueleto HTML, com ZIPs por seção)
-import { existsSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+// Uso: node galeria.mjs                        → ../index.html
+//      node galeria.mjs --artifact saida.html  → versão para publicar (sem esqueleto HTML)
+//
+// No claude.ai a página também monta ZIPs (por seção ou tudo) no navegador.
+import { existsSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GRAUS, duracao, slug } from './graus.mjs';
@@ -22,7 +23,6 @@ export const SECTIONS = [
 const args = process.argv.slice(2);
 const opt = (k) => (args.includes(k) ? args[args.indexOf(k) + 1] : null);
 const artifactOut = opt('--artifact');
-const zipDir = opt('--zips');
 
 const mb = (bytes) => (bytes / 1048576).toLocaleString('pt-BR', { maximumFractionDigits: 1, minimumFractionDigits: 1 });
 const size = (rel) => (existsSync(join(ROOT, rel)) ? statSync(join(ROOT, rel)).size : 0);
@@ -31,15 +31,6 @@ const data = SECTIONS.map((s) => ({
   id: s.id,
   title: s.title,
   range: s.range,
-  zips: zipDir
-    ? readdirSync(zipDir)
-        .filter((f) => f.startsWith(s.id + '-') && f.endsWith('.zip'))
-        .sort((a, b) => Number(a.split('-')[1]) - Number(b.split('-')[1]))
-        .map((f) => {
-          const [, a, b] = f.replace('.zip', '').split('-');
-          return { path: `zip/${f}`, mb: mb(statSync(join(zipDir, f)).size), label: `${a}°–${b}°` };
-        })
-    : [],
   items: GRAUS.filter((d) => s.test(d.n)).map((d) => ({
     n: d.n,
     name: d.name,
@@ -51,6 +42,9 @@ const data = SECTIONS.map((s) => ({
   })),
 }));
 
+for (const sec of data) sec.mb = mb(sec.items.reduce((a, it) => a + size(`mp4/${it.slug}.mp4`), 0));
+const allMb = mb(GRAUS.reduce((a, d) => a + size(`mp4/${slug(d)}.mp4`), 0));
+
 const mock = `data:image/svg+xml;base64,${Buffer.from(mockBackground('escuro')).toString('base64')}`;
 const total = GRAUS.length;
 const minutes = Math.round(GRAUS.reduce((a, d) => a + duracao(d), 0) / 60);
@@ -59,6 +53,7 @@ const html = `<title>Overlays da Maçonaria Egípcia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 /* Layout: cabeçalho de arquivo + barra fixa de filtros + seções com grade de cartões (prévia 16:9 em cima, ficha embaixo). Tema único escuro: as prévias são douradas sobre fundo escuro. */
 :root {
@@ -109,6 +104,7 @@ section.sec { padding-top: 34px; scroll-margin-top: 72px; }
 h2 { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.6vw, 26px); margin: 0; letter-spacing: .02em; }
 h2 small { font-family: var(--body); font-size: 13px; color: var(--muted); letter-spacing: .04em; margin-left: .6em; font-weight: 400; }
 .zips { display: flex; flex-wrap: wrap; gap: 8px; }
+.row-all { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 18px; }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
@@ -155,6 +151,7 @@ footer code { font-size: 12.5px; color: var(--ink); }
       <div><strong>CapCut:</strong> Chroma key (em Remover fundo/Recortar). <strong>Premiere:</strong> Ultra Key. <strong>DaVinci:</strong> 3D Keyer. <strong>Final Cut:</strong> Keyer.</div>
       <div><strong>Duração:</strong> calculada pelo texto do roteiro. Entrada de ~2,5 s e depois um ciclo de 8 s que emenda — corte onde quiser.</div>
     </div>
+    <div class="row-all"><button type="button" class="btn zip-all needs-dl" hidden>Baixar todos os ${total} (ZIP · ${allMb} MB)</button></div>
   </header>
 
   <div class="bar" role="toolbar" aria-label="Opções da galeria">
@@ -235,34 +232,64 @@ for (const sec of DATA) {
   const head = el('div', { class: 'sec-head' });
   const h2 = el('h2', {}, sec.title, el('small', { text: sec.range + ' · ' + sec.items.length + ' graus' }));
   head.append(h2);
-  if (sec.zips.length) {
-    const zips = el('div', { class: 'zips' });
-    sec.zips.forEach((z) => zips.append(fileButton('Baixar ' + z.label + ' (ZIP · ' + z.mb + ' MB)', z.path, 'overlays-' + z.path.split('/').pop(), 'btn ghost')));
-    head.append(zips);
+  if (inViewer) {
+    const zb = el('button', { class: 'btn ghost zip-sec needs-dl', type: 'button', 'data-sec': sec.id }, 'Baixar seção (ZIP · ' + sec.mb + ' MB)');
+    zb.hidden = true;
+    head.append(el('div', { class: 'zips' }, zb));
   }
   const grid = el('div', { class: 'grid' });
   sec.items.forEach((it) => grid.append(card(it)));
   main.append(el('section', { class: 'sec', id: sec.id }, head, grid));
 }
 
-main.addEventListener('click', async (ev) => {
+function failMessage(err) {
+  const code = err && err.code;
+  if (code === 'declined') return 'Download cancelado.';
+  if (code === 'rate_limited') return 'Já há um download aguardando confirmação.';
+  if (code === 'missing') return 'Arquivo não encontrado nesta página.';
+  return 'Não foi possível baixar aqui. Tente pelo app do Claude ou pelo repositório.';
+}
+
+async function saveFile(b) {
+  const res = await fetch(b.dataset.path);
+  if (!res.ok) throw { code: 'missing' };
+  await downloads.save({ filename: b.dataset.file, data: await res.blob() });
+  toast('Download de ' + b.dataset.file + ' iniciado.');
+}
+
+async function saveZip(b, items, filename) {
+  if (!window.JSZip) throw { code: 'unavailable' };
+  const zip = new JSZip();
+  let k = 0;
+  for (const it of items) {
+    b.textContent = 'Preparando ' + (++k) + '/' + items.length + '…';
+    const res = await fetch('mp4/' + it.slug + '.mp4');
+    if (!res.ok) throw { code: 'missing' };
+    zip.file(it.slug + '.mp4', await res.arrayBuffer(), { binary: true });
+  }
+  b.textContent = 'Compactando…';
+  const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+  await downloads.save({ filename, data: blob });
+  toast('Download de ' + filename + ' iniciado.');
+}
+
+document.addEventListener('click', async (ev) => {
   const b = ev.target.closest('button.needs-dl');
-  if (!b || !downloads) return;
+  if (!b || !downloads || b.disabled) return;
   const old = b.textContent;
   b.disabled = true;
   b.textContent = 'Preparando…';
   try {
-    const res = await fetch(b.dataset.path);
-    if (!res.ok) throw { code: 'missing' };
-    const blob = await res.blob();
-    await downloads.save({ filename: b.dataset.file, data: blob });
-    toast('Download de ' + b.dataset.file + ' iniciado.');
+    if (b.classList.contains('zip-all')) {
+      await saveZip(b, DATA.flatMap((s) => s.items), 'overlays-maconaria-egipcia-34-a-100.zip');
+    } else if (b.classList.contains('zip-sec')) {
+      const sec = DATA.find((s) => s.id === b.dataset.sec);
+      await saveZip(b, sec.items, 'overlays-' + sec.id + '-' + sec.items[0].n + '-' + sec.items.at(-1).n + '.zip');
+    } else {
+      await saveFile(b);
+    }
   } catch (err) {
-    const code = err && err.code;
-    if (code === 'declined') toast('Download cancelado.');
-    else if (code === 'rate_limited') toast('Já há um download aguardando confirmação.');
-    else if (code === 'missing') toast('Arquivo não encontrado nesta página.');
-    else toast('Não foi possível baixar aqui. Tente pelo app do Claude ou pelo repositório.');
+    toast(failMessage(err));
   } finally {
     b.disabled = false;
     b.textContent = old;
