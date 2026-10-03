@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Overlays da Maçonaria Egípcia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+</head>
+<body>
+<style>
+/* Layout: cabeçalho de arquivo + barra fixa de filtros + seções com grade de cartões (prévia 16:9 em cima, ficha embaixo). Tema único escuro: as prévias são douradas sobre fundo escuro. */
+:root {
+  --bg: #0F0C0A;
+  --panel: #18130F;
+  --panel-2: #211A13;
+  --ink: #F1E7D0;
+  --muted: #A99A7E;
+  --gold: #E2BE68;
+  --gold-deep: #9C7434;
+  --line: #34291D;
+  --chroma: #00FF00;
+  --danger: #E58A7A;
+  --display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: max(16px, 3vw); padding-block: 0 64px; }
+header.mast { padding-block: 40px 22px; display: grid; gap: 14px; border-bottom: 1px solid var(--line); }
+.eyebrow { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); }
+h1 { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 5vw, 52px); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: .01em; }
+h1 em { font-family: var(--serif); font-style: italic; font-weight: 500; color: var(--gold); letter-spacing: 0; }
+.lede { max-width: 66ch; color: var(--ink); margin: 0; }
+.facts { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 13px; margin: 0; padding: 0; list-style: none; }
+.facts b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.howto { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px 22px; margin-top: 4px; font-size: 13.5px; color: var(--muted); }
+.howto strong { color: var(--ink); font-weight: 600; }
+.chip { display: inline-block; width: .9em; height: .9em; border-radius: 2px; background: var(--chroma); vertical-align: -.1em; margin-right: .3em; }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); padding-block: 12px; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--panel); }
+.seg button { font: 500 13px/1 var(--body); color: var(--muted); background: transparent; border: 0; border-radius: 999px; padding: 8px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--ink); box-shadow: inset 0 0 0 1px var(--gold-deep); }
+.search { flex: 1 1 220px; min-width: 0; }
+.search input { width: 100%; font: 400 14px/1.2 var(--body); color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; }
+.search input::placeholder { color: var(--muted); }
+.jump { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; }
+.jump a { color: var(--muted); text-decoration: none; }
+.jump a:hover { color: var(--gold); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+section.sec { padding-top: 34px; scroll-margin-top: 72px; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; margin-bottom: 16px; }
+h2 { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.6vw, 26px); margin: 0; letter-spacing: .02em; }
+h2 small { font-family: var(--body); font-size: 13px; color: var(--muted); letter-spacing: .04em; margin-left: .6em; font-weight: 400; }
+.zips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 18px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+.stage { position: relative; aspect-ratio: 16 / 9; max-width: 100%; background-size: cover; background-position: center; cursor: pointer; border: 0; padding: 0; display: block; width: 100%; }
+body[data-bg="video"] .stage { background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIwIiBoZWlnaHQ9IjEwODAiIHZpZXdCb3g9IjAgMCAxOTIwIDEwODAiPgo8ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9InciIGN4PSI1MCUiIGN5PSI0MCUiIHI9Ijc1JSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjM2IzMDI5Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMTAwYzBhIi8+PC9yYWRpYWxHcmFkaWVudD4KPHJhZGlhbEdyYWRpZW50IGlkPSJmIiBjeD0iNDUlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2I1ODQ2NiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzZlNGEzNyIvPjwvcmFkaWFsR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iMTkyMCIgaGVpZ2h0PSIxMDgwIiBmaWxsPSJ1cmwoI3cpIi8+PHJlY3QgeD0iOTAiIHk9IjMxMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjEwMCIgeT0iMjAwIiB3aWR0aD0iMTgiIGhlaWdodD0iMTEwIiBmaWxsPSIjNWEyYTIyIi8+PHJlY3QgeD0iMTIxIiB5PSIxNDciIHdpZHRoPSIzMyIgaGVpZ2h0PSIxNjMiIGZpbGw9IiMyYzNlNTciLz48cmVjdCB4PSIxNTciIHk9IjE0OSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjE2MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE4NiIgeT0iMTUxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTU5IiBmaWxsPSIjM2QyYTQ1Ii8+PHJlY3QgeD0iMjA4IiB5PSIxNTMiIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNTciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSIyNDUiIHk9IjE1NSIgd2lkdGg9IjI3IiBoZWlnaHQ9IjE1NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjI3NSIgeT0iMTU3IiB3aWR0aD0iMjAiIGhlaWdodD0iMTUzIiBmaWxsPSIjMmMzZTU3Ii8+PHJlY3QgeD0iMjk4IiB5PSIxNTkiIHdpZHRoPSIzNSIgaGVpZ2h0PSIxNTEiIGZpbGw9IiM2YjVhMmUiLz48cmVjdCB4PSIzMzYiIHk9IjE2MSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjM2NyIgeT0iMTYzIiB3aWR0aD0iMjEiIGhlaWdodD0iMTQ3IiBmaWxsPSIjN2E0YjI3Ii8+PHJlY3QgeD0iMzkxIiB5PSIxNjUiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNDUiIGZpbGw9IiM1YTJhMjIiLz48cmVjdCB4PSI0MzAiIHk9IjE2NyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjQ2MiIgeT0iMTY5IiB3aWR0aD0iMjIiIGhlaWdodD0iMTQxIiBmaWxsPSIjNmI1YTJlIi8+PHJlY3QgeD0iOTAiIHk9IjU0MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjEwMCIgeT0iMzgxIiB3aWR0aD0iMTkiIGhlaWdodD0iMTU5IiBmaWxsPSIjM2QyYTQ1Ii8+PHJlY3QgeD0iMTIyIiB5PSIzODMiIHdpZHRoPSIzNCIgaGVpZ2h0PSIxNTciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSIxNTkiIHk9IjM4NSIgd2lkdGg9IjI3IiBoZWlnaHQ9IjE1NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE4OSIgeT0iMzg3IiB3aWR0aD0iMjAiIGhlaWdodD0iMTUzIiBmaWxsPSIjMmMzZTU3Ii8+PHJlY3QgeD0iMjEyIiB5PSIzODkiIHdpZHRoPSIzNSIgaGVpZ2h0PSIxNTEiIGZpbGw9IiM2YjVhMmUiLz48cmVjdCB4PSIyNTAiIHk9IjM5MSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjI4MSIgeT0iMzkzIiB3aWR0aD0iMjEiIGhlaWdodD0iMTQ3IiBmaWxsPSIjN2E0YjI3Ii8+PHJlY3QgeD0iMzA1IiB5PSIzOTUiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNDUiIGZpbGw9IiM1YTJhMjIiLz48cmVjdCB4PSIzNDQiIHk9IjM5NyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjM3NiIgeT0iMzk5IiB3aWR0aD0iMjIiIGhlaWdodD0iMTQxIiBmaWxsPSIjNmI1YTJlIi8+PHJlY3QgeD0iNDAxIiB5PSI0MDEiIHdpZHRoPSIzNyIgaGVpZ2h0PSIxMzkiIGZpbGw9IiMzZDJhNDUiLz48cmVjdCB4PSI0NDEiIHk9IjQwMyIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEzNyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjkwIiB5PSI3NzAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMTYiIGZpbGw9IiMyMTE4MGYiLz48cmVjdCB4PSIxMDAiIHk9IjYxNyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE1MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjEyMyIgeT0iNjE5IiB3aWR0aD0iMzUiIGhlaWdodD0iMTUxIiBmaWxsPSIjNmI1YTJlIi8+PHJlY3QgeD0iMTYxIiB5PSI2MjEiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxNDkiIGZpbGw9IiMzZDJhNDUiLz48cmVjdCB4PSIxOTIiIHk9IjYyMyIgd2lkdGg9IjIxIiBoZWlnaHQ9IjE0NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjIxNiIgeT0iNjI1IiB3aWR0aD0iMzYiIGhlaWdodD0iMTQ1IiBmaWxsPSIjNWEyYTIyIi8+PHJlY3QgeD0iMjU1IiB5PSI2MjciIHdpZHRoPSIyOSIgaGVpZ2h0PSIxNDMiIGZpbGw9IiMyYzNlNTciLz48cmVjdCB4PSIyODciIHk9IjYyOSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE0MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjMxMiIgeT0iNjMxIiB3aWR0aD0iMzciIGhlaWdodD0iMTM5IiBmaWxsPSIjM2QyYTQ1Ii8+PHJlY3QgeD0iMzUyIiB5PSI2MzMiIHdpZHRoPSIzMCIgaGVpZ2h0PSIxMzciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSIzODUiIHk9IjYzNSIgd2lkdGg9IjIzIiBoZWlnaHQ9IjEzNSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjQxMSIgeT0iNjM3IiB3aWR0aD0iMzgiIGhlaWdodD0iMTMzIiBmaWxsPSIjMmMzZTU3Ii8+PHJlY3QgeD0iNDUyIiB5PSI2MzkiIHdpZHRoPSIzMSIgaGVpZ2h0PSIxMzEiIGZpbGw9IiM2YjVhMmUiLz48cmVjdCB4PSI5MCIgeT0iMTAwMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjEwMCIgeT0iODUzIiB3aWR0aD0iMjEiIGhlaWdodD0iMTQ3IiBmaWxsPSIjN2E0YjI3Ii8+PHJlY3QgeD0iMTI0IiB5PSI4NTUiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNDUiIGZpbGw9IiM1YTJhMjIiLz48cmVjdCB4PSIxNjMiIHk9Ijg1NyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE5NSIgeT0iODU5IiB3aWR0aD0iMjIiIGhlaWdodD0iMTQxIiBmaWxsPSIjNmI1YTJlIi8+PHJlY3QgeD0iMjIwIiB5PSI4NjEiIHdpZHRoPSIzNyIgaGVpZ2h0PSIxMzkiIGZpbGw9IiMzZDJhNDUiLz48cmVjdCB4PSIyNjAiIHk9Ijg2MyIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEzNyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjI5MyIgeT0iODY1IiB3aWR0aD0iMjMiIGhlaWdodD0iMTM1IiBmaWxsPSIjNWEyYTIyIi8+PHJlY3QgeD0iMzE5IiB5PSI4NjciIHdpZHRoPSIzOCIgaGVpZ2h0PSIxMzMiIGZpbGw9IiMyYzNlNTciLz48cmVjdCB4PSIzNjAiIHk9Ijg2OSIgd2lkdGg9IjMxIiBoZWlnaHQ9IjEzMSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjM5NCIgeT0iODcxIiB3aWR0aD0iMjQiIGhlaWdodD0iMTI5IiBmaWxsPSIjM2QyYTQ1Ii8+PHJlY3QgeD0iNDIxIiB5PSI4NzMiIHdpZHRoPSIzOSIgaGVpZ2h0PSIxMjciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSI0NjMiIHk9Ijg3NSIgd2lkdGg9IjMyIiBoZWlnaHQ9IjEyNSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE0MzAiIHk9IjMxMCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjE0NDAiIHk9IjE0NyIgd2lkdGg9IjMzIiBoZWlnaHQ9IjE2MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE0NzYiIHk9IjE0OSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjE2MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE1MDUiIHk9IjE1MSIgd2lkdGg9IjE5IiBoZWlnaHQ9IjE1OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE1MjciIHk9IjE1MyIgd2lkdGg9IjM0IiBoZWlnaHQ9IjE1NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE1NjQiIHk9IjE1NSIgd2lkdGg9IjI3IiBoZWlnaHQ9IjE1NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE1OTQiIHk9IjE1NyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE1MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE2MTciIHk9IjE1OSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjE1MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE2NTUiIHk9IjE2MSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE2ODYiIHk9IjE2MyIgd2lkdGg9IjIxIiBoZWlnaHQ9IjE0NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE3MTAiIHk9IjE2NSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjE0NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE3NDkiIHk9IjE2NyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE3ODEiIHk9IjE2OSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE0MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE4MDYiIHk9IjE3MSIgd2lkdGg9IjM3IiBoZWlnaHQ9IjEzOSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE0MzAiIHk9IjU0MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjE0NDAiIHk9IjM4MyIgd2lkdGg9IjM0IiBoZWlnaHQ9IjE1NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE0NzciIHk9IjM4NSIgd2lkdGg9IjI3IiBoZWlnaHQ9IjE1NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE1MDciIHk9IjM4NyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE1MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE1MzAiIHk9IjM4OSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjE1MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE1NjgiIHk9IjM5MSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE1OTkiIHk9IjM5MyIgd2lkdGg9IjIxIiBoZWlnaHQ9IjE0NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE2MjMiIHk9IjM5NSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjE0NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE2NjIiIHk9IjM5NyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE2OTQiIHk9IjM5OSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE0MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE3MTkiIHk9IjQwMSIgd2lkdGg9IjM3IiBoZWlnaHQ9IjEzOSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE3NTkiIHk9IjQwMyIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEzNyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE3OTIiIHk9IjQwNSIgd2lkdGg9IjIzIiBoZWlnaHQ9IjEzNSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE0MzAiIHk9Ijc3MCIgd2lkdGg9IjQwMCIgaGVpZ2h0PSIxNiIgZmlsbD0iIzIxMTgwZiIvPjxyZWN0IHg9IjE0NDAiIHk9IjYxOSIgd2lkdGg9IjM1IiBoZWlnaHQ9IjE1MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE0NzgiIHk9IjYyMSIgd2lkdGg9IjI4IiBoZWlnaHQ9IjE0OSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE1MDkiIHk9IjYyMyIgd2lkdGg9IjIxIiBoZWlnaHQ9IjE0NyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE1MzMiIHk9IjYyNSIgd2lkdGg9IjM2IiBoZWlnaHQ9IjE0NSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE1NzIiIHk9IjYyNyIgd2lkdGg9IjI5IiBoZWlnaHQ9IjE0MyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE2MDQiIHk9IjYyOSIgd2lkdGg9IjIyIiBoZWlnaHQ9IjE0MSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE2MjkiIHk9IjYzMSIgd2lkdGg9IjM3IiBoZWlnaHQ9IjEzOSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE2NjkiIHk9IjYzMyIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEzNyIgZmlsbD0iIzdhNGIyNyIvPjxyZWN0IHg9IjE3MDIiIHk9IjYzNSIgd2lkdGg9IjIzIiBoZWlnaHQ9IjEzNSIgZmlsbD0iIzVhMmEyMiIvPjxyZWN0IHg9IjE3MjgiIHk9IjYzNyIgd2lkdGg9IjM4IiBoZWlnaHQ9IjEzMyIgZmlsbD0iIzJjM2U1NyIvPjxyZWN0IHg9IjE3NjkiIHk9IjYzOSIgd2lkdGg9IjMxIiBoZWlnaHQ9IjEzMSIgZmlsbD0iIzZiNWEyZSIvPjxyZWN0IHg9IjE4MDMiIHk9IjY0MSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjEyOSIgZmlsbD0iIzNkMmE0NSIvPjxyZWN0IHg9IjE0MzAiIHk9IjEwMDAiIHdpZHRoPSI0MDAiIGhlaWdodD0iMTYiIGZpbGw9IiMyMTE4MGYiLz48cmVjdCB4PSIxNDQwIiB5PSI4NTUiIHdpZHRoPSIzNiIgaGVpZ2h0PSIxNDUiIGZpbGw9IiM1YTJhMjIiLz48cmVjdCB4PSIxNDc5IiB5PSI4NTciIHdpZHRoPSIyOSIgaGVpZ2h0PSIxNDMiIGZpbGw9IiMyYzNlNTciLz48cmVjdCB4PSIxNTExIiB5PSI4NTkiIHdpZHRoPSIyMiIgaGVpZ2h0PSIxNDEiIGZpbGw9IiM2YjVhMmUiLz48cmVjdCB4PSIxNTM2IiB5PSI4NjEiIHdpZHRoPSIzNyIgaGVpZ2h0PSIxMzkiIGZpbGw9IiMzZDJhNDUiLz48cmVjdCB4PSIxNTc2IiB5PSI4NjMiIHdpZHRoPSIzMCIgaGVpZ2h0PSIxMzciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSIxNjA5IiB5PSI4NjUiIHdpZHRoPSIyMyIgaGVpZ2h0PSIxMzUiIGZpbGw9IiM1YTJhMjIiLz48cmVjdCB4PSIxNjM1IiB5PSI4NjciIHdpZHRoPSIzOCIgaGVpZ2h0PSIxMzMiIGZpbGw9IiMyYzNlNTciLz48cmVjdCB4PSIxNjc2IiB5PSI4NjkiIHdpZHRoPSIzMSIgaGVpZ2h0PSIxMzEiIGZpbGw9IiM2YjVhMmUiLz48cmVjdCB4PSIxNzEwIiB5PSI4NzEiIHdpZHRoPSIyNCIgaGVpZ2h0PSIxMjkiIGZpbGw9IiMzZDJhNDUiLz48cmVjdCB4PSIxNzM3IiB5PSI4NzMiIHdpZHRoPSIzOSIgaGVpZ2h0PSIxMjciIGZpbGw9IiM3YTRiMjciLz48cmVjdCB4PSIxNzc5IiB5PSI4NzUiIHdpZHRoPSIzMiIgaGVpZ2h0PSIxMjUiIGZpbGw9IiM1YTJhMjIiLz4KPHBhdGggZD0iTTUyMCAxMDgwQzU0MCA5MDAgNjQwIDgwMCA4MDAgNzcwTDg2MCA3MzBIMTA2MEwxMTIwIDc3MEMxMjgwIDgwMCAxMzgwIDkwMCAxNDAwIDEwODBaIiBmaWxsPSIjMWQyNDMwIi8+CjxyZWN0IHg9Ijg5MCIgeT0iNjAwIiB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE3MCIgcng9IjQwIiBmaWxsPSJ1cmwoI2YpIi8+CjxlbGxpcHNlIGN4PSI5NjAiIGN5PSI0NDAiIHJ4PSIxNjUiIHJ5PSIyMDUiIGZpbGw9InVybCgjZikiLz4KPHBhdGggZD0iTTc5NSA0MTBDNzkwIDI2MCA4ODAgMjEwIDk2MCAyMTBDMTA1MCAyMTAgMTEzNSAyNjAgMTEyNSA0MTBDMTExMCAzMzAgMTA2MCAzMDAgOTYwIDMwMEM4NzAgMzAwIDgxNSAzMzAgNzk1IDQxMFoiIGZpbGw9IiMyYTFkMTYiLz4KPC9zdmc+"); }
+body[data-bg="verde"] .stage { background: var(--chroma); }
+body[data-bg="escuro"] .stage { background: #0A0806; }
+.stage img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.stage .again { position: absolute; right: 8px; top: 8px; font: 500 11px/1 var(--body); color: var(--ink); background: rgba(10, 8, 6, .72); border-radius: 999px; padding: 6px 9px; opacity: 0; transition: opacity .2s; }
+.stage:hover .again, .stage:focus-visible .again { opacity: 1; }
+.info { padding: 12px 14px 14px; display: grid; gap: 6px; min-width: 0; }
+.title { display: flex; gap: 10px; align-items: baseline; min-width: 0; }
+.num { font-family: var(--display); font-weight: 700; font-size: 24px; color: var(--gold); font-variant-numeric: tabular-nums; flex: none; }
+.name { font-family: var(--display); font-weight: 600; font-size: 15.5px; line-height: 1.25; text-wrap: balance; min-width: 0; }
+.alt { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--muted); line-height: 1.2; }
+.kicker { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 4px; }
+.meta { font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; margin-right: auto; }
+.btn { font: 600 13px/1 var(--body); color: #1A1208; background: var(--gold); border: 1px solid var(--gold); border-radius: 7px; padding: 9px 12px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+.btn:hover { filter: brightness(1.07); }
+.btn[disabled] { opacity: .6; cursor: progress; }
+.note { font-size: 13px; color: var(--muted); }
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--panel-2); color: var(--ink); border: 1px solid var(--gold-deep); border-radius: 8px; padding: 10px 14px; font-size: 13.5px; max-width: calc(100% - 32px); z-index: 10; }
+.empty { color: var(--muted); padding: 20px 0; }
+footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; display: grid; gap: 6px; }
+footer code { font-size: 12.5px; color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .stage .again { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="eyebrow">Rito de Memphis-Misraïm · graus 34° a 99°</div>
+    <h1>Overlays da Maçonaria <em>Egípcia</em></h1>
+    <p class="lede">Um overlay animado por grau para o talking head: número e nome do grau numa placa e uma moldura com o simbolismo de cada um — runas, colunas do Templo, labirinto, ovos alados, a corrente da Cadeia Líbia, as quatro fases da Grande Obra.</p>
+    <ul class="facts">
+      <li><b>67</b> overlays (34°–99°, + 89° e 100°)</li>
+      <li>MP4 <b>1920×1080</b>, <b>30 fps</b>, H.264</li>
+      <li>Fundo <span class="chip" aria-hidden="true"></span><b>verde #00FF00</b></li>
+      <li><b>17 min</b> de overlay no total</li>
+    </ul>
+    <div class="howto">
+      <div><strong>Como usar:</strong> coloque o MP4 numa faixa acima do talking head e aplique <em>chroma key</em> no verde.</div>
+      <div><strong>CapCut:</strong> Chroma key (em Remover fundo/Recortar). <strong>Premiere:</strong> Ultra Key. <strong>DaVinci:</strong> 3D Keyer. <strong>Final Cut:</strong> Keyer.</div>
+      <div><strong>Duração:</strong> calculada pelo texto do roteiro. Entrada de ~2,5 s e depois um ciclo de 8 s que emenda — corte onde quiser.</div>
+    </div>
+  </header>
+
+  <div class="bar" role="toolbar" aria-label="Opções da galeria">
+    <div class="seg" role="group" aria-label="Fundo da prévia">
+      <button type="button" data-bg="video" aria-pressed="true">Sobre o vídeo</button>
+      <button type="button" data-bg="verde" aria-pressed="false">Verde (MP4)</button>
+      <button type="button" data-bg="escuro" aria-pressed="false">Escuro</button>
+    </div>
+    <label class="search"><span hidden>Buscar</span><input id="q" type="search" placeholder="Buscar por número ou nome (ex.: 88, fênix, Ísis)" autocomplete="off"></label>
+    <nav class="jump" aria-label="Seções"><a href="#consistorio">Grande Consistório</a><a href="#conselho">Sublime Conselho</a><a href="#arcana">Arcana Arcanorum</a><a href="#admin">Graus administrativos</a></nav>
+  </div>
+
+  <main id="main"></main>
+  <p class="empty" id="empty" hidden>Nenhum grau encontrado.</p>
+
+  <footer>
+    <div>Clique numa prévia para rever a animação de entrada. As prévias são os SVG animados; os MP4 são o mesmo desenho, renderizado sobre verde.</div>
+    <div id="dlnote" hidden>Para baixar, abra esta página pelo claude.ai ou pelo app do Claude. Os arquivos também estão na pasta <code>overlays/maconaria-egipcia</code> do repositório.</div>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+const DATA = [{"id":"consistorio","title":"Grande Consistório","range":"34°–67°","zips":[],"items":[{"n":34,"name":"Cavaleiro da Escandinávia","alt":"","kicker":"Mitologia nórdica · Odin · Runas","dur":19,"slug":"34-cavaleiro-da-escandinavia","mb":"0,6"},{"n":35,"name":"Sublime Comandante do Templo","alt":"","kicker":"O Templo como imagem do Universo","dur":10,"slug":"35-sublime-comandante-do-templo","mb":"0,5"},{"n":36,"name":"Sublime Negociante","alt":"","kicker":"Geometria · Astronomia caldaica","dur":15,"slug":"36-sublime-negociante","mb":"1,0"},{"n":37,"name":"Cavaleiro de Shota","alt":"Sábio da Verdade","kicker":"Tradições iniciáticas antigas","dur":16,"slug":"37-cavaleiro-de-shota","mb":"0,4"},{"n":38,"name":"Sublime Eleito da Verdade","alt":"A Águia Vermelha","kicker":"Luz × Trevas · Dualismo cósmico","dur":12,"slug":"38-sublime-eleito-da-verdade","mb":"0,4"},{"n":39,"name":"Grande Eleito dos Eões","alt":"","kicker":"Gnosticismo valentiniano · Éons","dur":11,"slug":"39-grande-eleito-dos-eoes","mb":"0,4"},{"n":40,"name":"Sábio Savaísta","alt":"Sábio Perfeito","kicker":"Leis da natureza · Alfa e Ômega","dur":10,"slug":"40-sabio-savaista","mb":"0,4"},{"n":41,"name":"Cavaleiro do Arco de Sete Cores","alt":"","kicker":"Simbolismo solar · Ursa Maior","dur":25,"slug":"41-cavaleiro-do-arco-de-sete-cores","mb":"1,1"},{"n":42,"name":"Príncipe da Luz","alt":"","kicker":"Pureza · Desinteresse · Justiça","dur":10,"slug":"42-principe-da-luz","mb":"0,4"},{"n":43,"name":"Sublime Sábio Hermético","alt":"Filósofo Hermético","kicker":"Hermetismo · As 12 casas do Sol","dur":16,"slug":"43-sublime-sabio-hermetico","mb":"0,4"},{"n":44,"name":"Príncipe do Zodíaco","alt":"","kicker":"Zodíaco · Os 12 trabalhos de Hércules","dur":15,"slug":"44-principe-do-zodiaco","mb":"0,8"},{"n":45,"name":"Sublime Sábio dos Mistérios","alt":"","kicker":"Da escuridão à luz · O número três","dur":10,"slug":"45-sublime-sabio-dos-misterios","mb":"0,3"},{"n":46,"name":"Sublime Pastor das Cabanas","alt":"","kicker":"Alquimia · O Leão Verde","dur":23,"slug":"46-sublime-pastor-das-cabanas","mb":"0,6"},{"n":47,"name":"Cavaleiro das Sete Estrelas","alt":"","kicker":"Ursa Maior · Saptarshi · Plêiades","dur":11,"slug":"47-cavaleiro-das-sete-estrelas","mb":"0,8"},{"n":48,"name":"Sublime Guardião do Monte Sagrado","alt":"","kicker":"Mistérios supremos · O altar","dur":10,"slug":"48-sublime-guardiao-do-monte-sagrado","mb":"0,5"},{"n":49,"name":"Sublime Sábio das Pirâmides","alt":"","kicker":"Egito · 21 degraus vermelhos","dur":15,"slug":"49-sublime-sabio-das-piramides","mb":"0,5"},{"n":50,"name":"Sublime Filósofo de Samotrácia","alt":"","kicker":"Mistérios de Samotrácia · Cabiros","dur":19,"slug":"50-sublime-filosofo-de-samotracia","mb":"0,6"},{"n":51,"name":"Sublime Titã do Cáucaso","alt":"","kicker":"Prometeu · O dom do fogo","dur":10,"slug":"51-sublime-tita-do-caucaso","mb":"0,5"},{"n":52,"name":"Sábio do Labirinto","alt":"","kicker":"Hermetismo · Hermes Trismegisto","dur":12,"slug":"52-sabio-do-labirinto","mb":"0,5"},{"n":53,"name":"Cavaleiro / Sábio da Fênix","alt":"","kicker":"Rosacruz · Morte e ressurreição","dur":12,"slug":"53-cavaleiro-sabio-da-fenix","mb":"0,6"},{"n":54,"name":"Sublime Escaldo","alt":"","kicker":"Poesia escandinava · Os escaldos","dur":13,"slug":"54-sublime-escaldo","mb":"0,4"},{"n":55,"name":"Sublime Doutor Órfico","alt":"","kicker":"Mistérios órficos · Dioniso Zagreu","dur":14,"slug":"55-sublime-doutor-orfico","mb":"0,5"},{"n":56,"name":"Pontífice / Sábio de Cádmia","alt":"","kicker":"Alquimia · 7 tons, 7 cores, 7 vogais","dur":24,"slug":"56-pontifice-sabio-de-cadmia","mb":"0,5"},{"n":57,"name":"Sublime Mago","alt":"","kicker":"Um único Espírito · Espírito e matéria","dur":11,"slug":"57-sublime-mago","mb":"0,3"},{"n":58,"name":"Sábio / Príncipe Brâmane","alt":"","kicker":"Tradição oriental · Trimúrti","dur":15,"slug":"58-sabio-principe-bramane","mb":"0,4"},{"n":59,"name":"Sublime Sábio de Ogígia","alt":"","kicker":"Mitologia homérica · Odisseu","dur":20,"slug":"59-sublime-sabio-de-ogigia","mb":"2,1"},{"n":60,"name":"Sublime Guardião dos Três Fogos","alt":"","kicker":"Corpo · Alma · Espírito","dur":11,"slug":"60-sublime-guardiao-dos-tres-fogos","mb":"0,5"},{"n":61,"name":"Sublime Filósofo Desconhecido","alt":"","kicker":"Alquimia · Medicina oculta","dur":12,"slug":"61-sublime-filosofo-desconhecido","mb":"0,3"},{"n":62,"name":"Sublime Sábio de Elêusis","alt":"","kicker":"Mistérios eleusinos · Deméter e Perséfone","dur":12,"slug":"62-sublime-sabio-de-eleusis","mb":"0,4"},{"n":63,"name":"Sublime Kawi","alt":"","kicker":"Amor · União · Trabalho","dur":15,"slug":"63-sublime-kawi","mb":"0,4"},{"n":64,"name":"Sábio de Mitra","alt":"","kicker":"Mistérios mitraicos · A chama sagrada","dur":12,"slug":"64-sabio-de-mitra","mb":"0,6"},{"n":65,"name":"Guardião do Santuário","alt":"Grande Instalador","kicker":"Fé · Esperança · Caridade","dur":10,"slug":"65-guardiao-do-santuario","mb":"0,4"},{"n":66,"name":"Grande Arquiteto da Cidade Misteriosa","alt":"Grande Consagrador","kicker":"Grau hierático · Pneuma","dur":28,"slug":"66-grande-arquiteto-da-cidade-misteriosa","mb":"0,9"},{"n":67,"name":"Guardião do Nome Incomunicável","alt":"Grande Eulogista","kicker":"Cabala · O Tetragrama","dur":18,"slug":"67-guardiao-do-nome-incomunicavel","mb":"0,7"}]},{"id":"conselho","title":"Sublime Conselho","range":"68°–86°","zips":[],"items":[{"n":68,"name":"Patriarca da Verdade","alt":"","kicker":"Tradições de Heliópolis","dur":22,"slug":"68-patriarca-da-verdade","mb":"0,7"},{"n":69,"name":"Cavaleiro do Ramo de Ouro de Elêusis","alt":"","kicker":"O Ramo de Ouro · O Y pitagórico","dur":18,"slug":"69-cavaleiro-do-ramo-de-ouro-de-eleusis","mb":"0,6"},{"n":70,"name":"Príncipe da Luz","alt":"Patriarca dos Planisferos","kicker":"Contemplação do Oriente divino","dur":10,"slug":"70-principe-da-luz","mb":"0,8"},{"n":71,"name":"Patriarca dos Vedas Sagrados","alt":"","kicker":"Bhagavad Gita · Arjuna e Krishna","dur":12,"slug":"71-patriarca-dos-vedas-sagrados","mb":"0,5"},{"n":72,"name":"Sublime Mestre da Sabedoria","alt":"","kicker":"As instituições de mistérios","dur":10,"slug":"72-sublime-mestre-da-sabedoria","mb":"0,3"},{"n":73,"name":"Patriarca / Doutor do Fogo Sagrado","alt":"","kicker":"O fogo eterno de Heliópolis","dur":22,"slug":"73-patriarca-doutor-do-fogo-sagrado","mb":"0,6"},{"n":74,"name":"Sublime Mestre do Stoka","alt":"","kicker":"Ritmo · Número · 2 × 16 sílabas","dur":14,"slug":"74-sublime-mestre-do-stoka","mb":"0,4"},{"n":75,"name":"Cavaleiro Comandante da Cadeia Líbia","alt":"","kicker":"Grau supremo do Consistório","dur":14,"slug":"75-cavaleiro-comandante-da-cadeia-libia","mb":"0,5"},{"n":76,"name":"Intérprete dos Hieróglifos","alt":"Patriarca de Ísis","kicker":"Egito · Hieróglifos · Ísis","dur":14,"slug":"76-interprete-dos-hieroglifos","mb":"0,4"},{"n":77,"name":"Sublime Cavaleiro / Sábio Teósofo","alt":"","kicker":"Cabala · A Árvore da Vida","dur":14,"slug":"77-sublime-cavaleiro-sabio-teosofo","mb":"0,4"},{"n":78,"name":"Grande Pontífice da Tebaida","alt":"","kicker":"Tebas · Osíris · Ciência astral","dur":12,"slug":"78-grande-pontifice-da-tebaida","mb":"0,4"},{"n":79,"name":"Cavaleiro do Formidável Sada","alt":"","kicker":"Sada = sempre · Constância","dur":10,"slug":"79-cavaleiro-do-formidavel-sada","mb":"0,4"},{"n":80,"name":"Sublime Eleito do Santuário de Heliópolis/Mazias","alt":"","kicker":"Rá · O lótus primordial","dur":22,"slug":"80-sublime-eleito-do-santuario-de-heliopolis-mazias","mb":"0,7"},{"n":81,"name":"Intendente Regulador","alt":"Patriarca de Mênfis","kicker":"Teologia menfita · Ptah e a Palavra","dur":16,"slug":"81-intendente-regulador","mb":"0,4"},{"n":82,"name":"Grande Eleito do Templo de Midgard","alt":"","kicker":"Cosmologia nórdica · Yggdrasil","dur":15,"slug":"82-grande-eleito-do-templo-de-midgard","mb":"0,5"},{"n":83,"name":"Sublime Eleito do Vale de Oddy","alt":"","kicker":"Enéada · Coração e língua de Ptah","dur":18,"slug":"83-sublime-eleito-do-vale-de-oddy","mb":"0,6"},{"n":84,"name":"Patriarca dos Izeds","alt":"","kicker":"Zoroastrismo · Os 28 Izeds","dur":13,"slug":"84-patriarca-dos-izeds","mb":"0,5"},{"n":85,"name":"Sublime Sábio / Cavaleiro de Kneph","alt":"","kicker":"Kneph · O espírito sobre a matéria","dur":19,"slug":"85-sublime-sabio-cavaleiro-de-kneph","mb":"0,7"},{"n":86,"name":"Sublime Filósofo do Vale de Kab","alt":"","kicker":"A Rosa de Kab · Ísis, Rainha das Rosas","dur":17,"slug":"86-sublime-filosofo-do-vale-de-kab","mb":"0,5"}]},{"id":"arcana","title":"Arcana Arcanorum","range":"87°–90°","zips":[],"items":[{"n":87,"name":"Sublime Príncipe da Maçonaria","alt":"Grande Regulador Geral","kicker":"Arcana Arcanorum · Nigredo","dur":10,"slug":"87-sublime-principe-da-maconaria","mb":"0,4"},{"n":88,"name":"Sublime Pontífice da Maçonaria","alt":"Soberano Grande Patriarca","kicker":"Arcana Arcanorum · Albedo · O Microcosmo","dur":75,"slug":"88-sublime-pontifice-da-maconaria","mb":"1,9"},{"n":89,"name":"Patriarca da Cidade Mística","alt":"","kicker":"Arcana Arcanorum · Rubedo","dur":10,"slug":"89-patriarca-da-cidade-mistica","mb":"0,4"},{"n":90,"name":"Soberano Grande Mestre Absoluto","alt":"Sublime Mestre da Grande Obra","kicker":"Arcana Arcanorum · Auredo","dur":34,"slug":"90-soberano-grande-mestre-absoluto","mb":"1,2"}]},{"id":"admin","title":"Graus administrativos","range":"91°–100°","zips":[],"items":[{"n":91,"name":"Grande Defensor","alt":"","kicker":"Grande Tribunal de Defensores · 9 membros","dur":10,"slug":"91-grande-defensor","mb":"0,6"},{"n":92,"name":"Grande Catequista","alt":"","kicker":"Grande Colégio Litúrgico · 7 oficiais","dur":10,"slug":"92-grande-catequista","mb":"0,6"},{"n":93,"name":"Regulador Geral","alt":"","kicker":"Consistório de Inspetores Reguladores · 9 membros","dur":10,"slug":"93-regulador-geral","mb":"0,6"},{"n":94,"name":"Príncipe de Mênfis","alt":"Grande Administrador","kicker":"Conselho Geral · 7 oficiais","dur":10,"slug":"94-principe-de-menfis","mb":"0,6"},{"n":95,"name":"Patriarca Grande Conservador","alt":"","kicker":"Soberano Santuário · Transmite a filiação do Rito","dur":22,"slug":"95-patriarca-grande-conservador","mb":"0,8"},{"n":96,"name":"Grande e Poderoso Soberano da Ordem","alt":"","kicker":"Liderança nacional","dur":10,"slug":"96-grande-e-poderoso-soberano-da-ordem","mb":"0,6"},{"n":97,"name":"Vice-Grão-Mestre Internacional","alt":"","kicker":"Governança internacional adjunta","dur":10,"slug":"97-vice-grao-mestre-internacional","mb":"0,6"},{"n":98,"name":"Grão-Mestre Internacional","alt":"","kicker":"Autoridade suprema internacional","dur":10,"slug":"98-grao-mestre-internacional","mb":"0,6"},{"n":99,"name":"Grande Hierofante","alt":"","kicker":"Autoridade espiritual suprema do Rito","dur":18,"slug":"99-grande-hierofante","mb":"1,1"},{"n":100,"name":"Imperador Soberano Grande Hierofante Geral","alt":"","kicker":"Bônus · Sede de Palermo · Igreja Gnóstica","dur":16,"slug":"100-imperador-soberano-grande-hierofante-geral","mb":"0,8"}]}];
+const main = document.getElementById('main');
+const toastEl = document.getElementById('toast');
+let toastTimer = 0;
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { toastEl.hidden = true; }, 3600);
+}
+
+// Dentro do claude.ai o download passa pela capability "downloads"; aberto
+// localmente (sem window.claude) usamos links diretos para os arquivos.
+const inViewer = typeof window.claude !== 'undefined';
+let downloads = null;
+document.body.dataset.dl = inViewer ? 'pending' : 'local';
+
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (k === 'class') e.className = v; else if (k === 'text') e.textContent = v; else e.setAttribute(k, v);
+  }
+  for (const k of kids) if (k) e.append(k);
+  return e;
+}
+
+function fileButton(label, path, filename, cls) {
+  if (!inViewer) {
+    const a = el('a', { class: cls, href: path, download: filename }, label);
+    return a;
+  }
+  const b = el('button', { class: cls + ' needs-dl', type: 'button', 'data-path': path, 'data-file': filename }, label);
+  b.hidden = !downloads;
+  return b;
+}
+
+function card(item) {
+  const label = item.n + '° ' + item.name;
+  const img = el('img', { src: 'svg/' + item.slug + '.svg', alt: 'Prévia do overlay do ' + label, loading: 'lazy', decoding: 'async' });
+  const stage = el('button', { class: 'stage', type: 'button', 'aria-label': 'Rever a animação do ' + label }, img, el('span', { class: 'again', text: 'Rever animação' }));
+  stage.addEventListener('click', () => { img.src = 'svg/' + item.slug + '.svg?r=' + Date.now(); });
+  const title = el('div', { class: 'title' }, el('span', { class: 'num', text: item.n + '°' }), el('span', { class: 'name', text: item.name }));
+  const info = el('div', { class: 'info' }, title);
+  if (item.alt) info.append(el('div', { class: 'alt', text: item.alt }));
+  info.append(el('div', { class: 'kicker', text: item.kicker }));
+  const row = el('div', { class: 'row' }, el('span', { class: 'meta', text: item.dur + ' s · ' + item.mb + ' MB' }));
+  row.append(fileButton('Baixar MP4', 'mp4/' + item.slug + '.mp4', item.slug + '.mp4', 'btn'));
+  row.append(fileButton('SVG', 'svg/' + item.slug + '.svg', item.slug + '.svg', 'btn ghost'));
+  info.append(row);
+  const c = el('article', { class: 'card', 'data-q': (item.n + ' ' + item.name + ' ' + item.alt + ' ' + item.kicker).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') }, stage, info);
+  return c;
+}
+
+for (const sec of DATA) {
+  const head = el('div', { class: 'sec-head' });
+  const h2 = el('h2', {}, sec.title, el('small', { text: sec.range + ' · ' + sec.items.length + ' graus' }));
+  head.append(h2);
+  if (sec.zips.length) {
+    const zips = el('div', { class: 'zips' });
+    sec.zips.forEach((z) => zips.append(fileButton('Baixar ' + z.label + ' (ZIP · ' + z.mb + ' MB)', z.path, 'overlays-' + z.path.split('/').pop(), 'btn ghost')));
+    head.append(zips);
+  }
+  const grid = el('div', { class: 'grid' });
+  sec.items.forEach((it) => grid.append(card(it)));
+  main.append(el('section', { class: 'sec', id: sec.id }, head, grid));
+}
+
+main.addEventListener('click', async (ev) => {
+  const b = ev.target.closest('button.needs-dl');
+  if (!b || !downloads) return;
+  const old = b.textContent;
+  b.disabled = true;
+  b.textContent = 'Preparando…';
+  try {
+    const res = await fetch(b.dataset.path);
+    if (!res.ok) throw { code: 'missing' };
+    const blob = await res.blob();
+    await downloads.save({ filename: b.dataset.file, data: blob });
+    toast('Download de ' + b.dataset.file + ' iniciado.');
+  } catch (err) {
+    const code = err && err.code;
+    if (code === 'declined') toast('Download cancelado.');
+    else if (code === 'rate_limited') toast('Já há um download aguardando confirmação.');
+    else if (code === 'missing') toast('Arquivo não encontrado nesta página.');
+    else toast('Não foi possível baixar aqui. Tente pelo app do Claude ou pelo repositório.');
+  } finally {
+    b.disabled = false;
+    b.textContent = old;
+  }
+});
+
+if (inViewer && window.claude.use) {
+  window.claude.use('downloads').then((ns) => {
+    downloads = ns;
+    document.querySelectorAll('.needs-dl').forEach((b) => { b.hidden = !ns; });
+    document.getElementById('dlnote').hidden = !!ns;
+  });
+}
+
+// fundo da prévia (lembrado só neste navegador)
+const segButtons = document.querySelectorAll('.seg button');
+function setBg(v) {
+  document.body.dataset.bg = v;
+  segButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.bg === v)));
+  try { localStorage.setItem('overlay-bg', v); } catch (e) {}
+}
+segButtons.forEach((b) => b.addEventListener('click', () => setBg(b.dataset.bg)));
+let saved = 'video';
+try { saved = localStorage.getItem('overlay-bg') || 'video'; } catch (e) {}
+setBg(saved);
+
+// busca
+const q = document.getElementById('q');
+q.addEventListener('input', () => {
+  const term = q.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace('°', '');
+  let shown = 0;
+  document.querySelectorAll('section.sec').forEach((s) => {
+    let n = 0;
+    s.querySelectorAll('.card').forEach((c) => {
+      const ok = !term || c.dataset.q.includes(term);
+      c.hidden = !ok;
+      if (ok) n++;
+    });
+    s.hidden = n === 0;
+    shown += n;
+  });
+  document.getElementById('empty').hidden = shown > 0;
+});
+</script>
+
+</body>
+</html>
