@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>B-rolls João de Deus</title>
+<!--
+  Overlays animados (1080x1920, fundo transparente) para o vídeo
+  "Quantos João de Deus temos no Brasil?". Cada <section class="clip">
+  vira um arquivo. Abra com ?clip=b01 para ver um deles; o render.mjs
+  captura quadro a quadro chamando window.renderAt(ms).
+-->
+<style>
+@font-face{font-family:'Archivo Black';font-weight:400;src:url('fonts/ArchivoBlack.woff2') format('woff2')}
+@font-face{font-family:'Space Grotesk';font-weight:300 700;src:url('fonts/SpaceGrotesk.woff2') format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-weight:100 800;src:url('fonts/JetBrainsMono.woff2') format('woff2')}
+
+:root{
+  --ink:#0C0C0D; --paper:#F4F1EA; --acc:#FFB800; --red:#FF6B5E; --muted:#A9A59C;
+  --ease:cubic-bezier(.2,.9,.25,1); --back:cubic-bezier(.34,1.56,.64,1); --in:cubic-bezier(.55,0,.75,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:transparent}
+body{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--paper);-webkit-font-smoothing:antialiased}
+svg{display:block}
+
+.clip{position:absolute;inset:0;display:none}
+.clip.on{display:block}
+.exit{position:absolute;inset:0;animation:out 300ms var(--in) forwards}
+.stage{position:absolute;left:72px;right:72px}
+.top{top:290px}
+.low{top:1160px}
+.center{text-align:center}
+
+.disp{font-family:'Archivo Black',sans-serif;font-weight:400;text-transform:uppercase;line-height:1;letter-spacing:-.01em}
+.mono{font-family:'JetBrains Mono',monospace;font-weight:800;text-transform:uppercase;letter-spacing:.03em;line-height:1.15}
+.box{display:inline-block;background:var(--ink);color:var(--paper);padding:.16em .32em .12em}
+.box.y{background:var(--acc);color:var(--ink)}
+.box.p{background:var(--paper);color:var(--ink)}
+.box.r{background:var(--red);color:var(--ink)}
+.card{background:var(--ink);padding:40px 44px;position:relative}
+.card.bar{border-top:14px solid var(--acc)}
+.t-acc{color:var(--acc)} .t-red{color:var(--red)} .t-dim{color:var(--muted)}
+.ghost{visibility:hidden}
+.cur{display:inline-block;height:.9em;border-left:.1em solid currentColor;margin-right:-.1em;vertical-align:-.1em}
+
+/* utilitários de animação: atraso via style="animation-delay:…" */
+.a-wipe{animation:wipe 420ms var(--ease) both}
+.a-rise{animation:rise 480ms var(--ease) both}
+.a-pop{animation:pop 420ms var(--back) both}
+.a-slam{animation:slam 340ms var(--ease) both}
+.a-fade{animation:fade 600ms ease both}
+.a-shake{animation:shake 340ms linear both}
+.a-strike{animation:strike 300ms var(--ease) both;transform-origin:left center}
+.draw path{stroke-dasharray:160;stroke-dashoffset:160;animation:draw 320ms var(--ease) both;animation-delay:inherit}
+
+@keyframes out{to{opacity:0;transform:translateY(-28px)}}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes rise{from{opacity:0;transform:translateY(56px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}60%{opacity:1;transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
+@keyframes slam{0%{opacity:0;transform:scale(2.3) rotate(var(--rot,0deg))}65%{opacity:1;transform:scale(.95) rotate(var(--rot,0deg))}100%{opacity:1;transform:scale(1) rotate(var(--rot,0deg))}}
+@keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-16px,7px)}40%{transform:translate(13px,-9px)}60%{transform:translate(-8px,5px)}80%{transform:translate(5px,-2px)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes strike{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes dim{to{opacity:.38}}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(16deg)}75%{transform:rotate(-12deg)}}
+@keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
+@keyframes fillY{to{background:var(--acc);border-color:var(--acc)}}
+@keyframes growY{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes growBig{0%{transform:scaleY(0)}70%{transform:scaleY(1.07)}85%{transform:scaleY(.98)}100%{transform:scaleY(1)}}
+@keyframes print{0%{transform:translateY(-100%)}100%{transform:translateY(0)}}
+@keyframes drop{from{transform:translateY(-760px)}to{transform:none}}
+@keyframes swing{0%{transform:rotate(20deg)}18%{transform:rotate(-13deg)}36%{transform:rotate(8deg)}54%{transform:rotate(-4.5deg)}72%{transform:rotate(2deg)}88%{transform:rotate(-.8deg)}100%{transform:rotate(0)}}
+
+/* 01 pergunta */
+#b01 .tag{font-size:40px;margin-bottom:18px}
+#b01 .l{font-size:104px;margin-top:10px}
+#b01 .l.sm{font-size:70px}
+#b01 .q{display:inline-block;color:var(--acc);animation:wobble 700ms ease-in-out 900ms 2 both}
+
+/* 02 checklist cirurgia */
+#b02 .hdr{font-size:34px;color:var(--acc);margin-bottom:16px}
+#b02 .row{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0;border-top:3px dashed rgba(244,241,234,.22)}
+#b02 .lbl{font-size:60px}
+#b02 .mk{width:96px;height:96px;flex:none;color:var(--ink)}
+#b02 .mk.no{background:var(--red)}
+#b02 .mk.yes{background:var(--acc);width:112px;height:112px}
+#b02 .mk svg{width:100%;height:100%}
+
+/* 03 senha */
+#b03 .slot{height:30px;background:var(--ink);width:780px;margin:0 auto;position:relative;z-index:2;border-bottom:6px solid #2A2A2F}
+#b03 .feed{width:700px;margin:0 auto;overflow:hidden;padding-bottom:26px}
+#b03 .ticket{background:var(--paper);color:var(--ink);padding:40px 36px 30px;position:relative;text-align:center;animation:print 900ms steps(9,end) 150ms both}
+#b03 .ticket::after{content:'';position:absolute;left:0;right:0;bottom:-24px;height:24px;
+  background:linear-gradient(-45deg,transparent 17px,var(--paper) 0),linear-gradient(45deg,transparent 17px,var(--paper) 0);
+  background-size:34px 34px;background-position:left bottom;background-repeat:repeat-x}
+#b03 .t1{font-size:30px}
+#b03 .t2{font-size:30px;margin-top:22px;color:#5b5953}
+#b03 .t3{font-size:190px;letter-spacing:-.03em;margin:4px 0 10px}
+#b03 .t4{font-size:30px;border-top:4px dashed var(--ink);padding-top:18px}
+#b03 .t5{font-size:26px;margin-top:10px;color:#5b5953}
+
+/* 04 data */
+#b04 .dbox{display:inline-flex;align-items:center;gap:26px;background:var(--ink);padding:28px 38px;position:relative}
+#b04 .rec{width:30px;height:30px;border-radius:50%;background:var(--red)}
+#b04 .dt{font-size:68px}
+#b04 .ul{position:absolute;left:0;right:0;bottom:-12px;height:12px;background:var(--acc)}
+
+/* 05 denúncias */
+#b05 .stack{position:relative;height:520px}
+#b05 .dc{position:absolute;width:780px;height:112px;background:var(--ink);border-left:16px solid var(--red);display:flex;align-items:flex-start;justify-content:space-between;padding:9px 34px 0;font-size:36px}
+#b05 .dot{width:22px;height:22px;border-radius:50%;background:var(--red);margin-top:10px}
+#b05 .cent{position:absolute;left:0;right:0;top:190px;text-align:center}
+#b05 .cent .box{font-size:150px}
+
+/* 06 condenado */
+#b06 .stamp{display:inline-block;font-size:116px;color:var(--red);border:12px solid var(--red);padding:18px 34px 12px;background:rgba(12,12,13,.9);outline:4px solid var(--red);outline-offset:-30px}
+#b06 .vol{margin-top:56px;text-align:center}
+#b06 .vt{font-size:34px}
+#b06 .vnum{font-size:220px;margin:14px 0 6px}
+#b06 .vf{font-size:30px}
+
+/* 07 milagre / método */
+#b07 .sm{font-size:46px;margin:14px 0}
+#b07 .big{font-size:146px;position:relative}
+#b07 .strike{position:absolute;left:.15em;right:.15em;top:44%;height:22px;background:var(--red)}
+
+/* passos */
+.passo .head{display:flex;align-items:stretch;gap:22px}
+.passo .num{width:210px;height:210px;flex:none;background:var(--acc);color:var(--ink);font-size:124px;display:flex;align-items:center;justify-content:center}
+.passo .txt{display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.passo .lab{font-size:36px;color:var(--acc);background:var(--ink);align-self:flex-start;padding:10px 16px}
+.passo .ttl{font-size:80px}
+.passo .prog{display:flex;gap:12px;margin-top:22px}
+.passo .prog i{flex:1;height:18px;background:rgba(12,12,13,.72);position:relative;overflow:hidden}
+.passo .prog i.done{background:var(--acc)}
+.passo .prog i b{position:absolute;inset:0;background:var(--acc);transform-origin:left center}
+.passo .sub{font-size:40px;margin-top:22px}
+.passo.mute .num{background:var(--ink);color:var(--muted);border:6px solid var(--muted)}
+.passo.mute .lab{color:var(--muted)}
+.passo.mute .prog i.done,.passo.mute .prog i b{background:var(--muted)}
+
+/* 10 lojinha */
+#b10 .hang{position:absolute;left:400px;top:150px;width:520px}
+#b10 .drop{animation:drop 560ms var(--back) both}
+#b10 .swing{transform-origin:50% 0;animation:swing 2300ms ease-in-out 420ms both}
+#b10 .nail{width:26px;height:26px;border-radius:50%;background:var(--ink);border:5px solid var(--paper);margin:0 auto;position:relative;z-index:3}
+#b10 .string{width:6px;height:186px;background:var(--ink);margin:-13px auto 0;position:relative;z-index:3}
+#b10 .tag{margin-top:-58px;background:var(--acc);color:var(--ink);padding:110px 40px 40px;text-align:center;
+  clip-path:polygon(50% 0,100% 15%,100% 100%,0 100%,0 15%);
+  -webkit-mask:radial-gradient(circle at 50% 58px,transparent 19px,#000 20px)}
+#b10 .g1{font-size:84px}
+#b10 .g2{font-size:60px;display:flex;align-items:center;justify-content:center;gap:16px;margin-top:6px}
+#b10 .g2 svg{width:74px;height:46px}
+#b10 .gl{border-top:5px dashed var(--ink);margin:26px 0 20px}
+#b10 .g3{font-size:30px}
+
+/* 12 culpa */
+#b12 .qh{font-size:50px;line-height:1.08;margin-bottom:22px}
+#b12 .opt{display:flex;align-items:center;gap:26px;font-size:48px;padding:16px 0}
+#b12 .cb{width:76px;height:76px;flex:none;border:7px solid var(--paper);color:var(--ink);padding:4px}
+#b12 .cb svg{width:100%;height:100%}
+#b12 .na{font-size:30px;margin:2px 0 4px 102px}
+
+/* 14 PIB */
+#b14 .chart{height:620px}
+#b14 .ch{font-size:34px}
+#b14 .plot{position:absolute;left:44px;right:44px;bottom:118px;height:360px;border-bottom:6px solid var(--paper)}
+#b14 .bar{position:absolute;bottom:0;width:26%;background:var(--paper);transform-origin:bottom center;animation:growY 500ms var(--ease) both}
+#b14 .bar.fe{background:var(--acc);animation:growBig 800ms var(--ease) both}
+#b14 .labs{position:absolute;left:44px;right:44px;bottom:56px;height:44px;font-size:32px}
+#b14 .labs span{position:absolute;width:26%;text-align:center}
+#b14 .src{position:absolute;right:44px;bottom:18px;font-size:22px}
+
+/* 16 terapeuta */
+#b16 .tera{font-size:106px}
+#b16 .ast{display:inline-block;font-size:.9em;vertical-align:.18em;margin-left:.04em}
+#b16 .ft{font-size:40px;margin-top:16px}
+
+/* 17 sem evidência */
+#b17 .qc{background:var(--paper);color:var(--ink);padding:44px 48px 64px;border-left:16px solid var(--ink)}
+#b17 .ql{font-size:30px;color:#5b5953;margin-bottom:18px}
+#b17 .qt{font-size:70px;line-height:1.06;letter-spacing:-.015em}
+#b17 .st{position:absolute;right:-10px;top:270px;background:var(--paper);color:var(--red);border:10px solid var(--red);padding:16px 30px 14px;text-align:center}
+#b17 .st .disp{font-size:72px}
+#b17 .st .mono{font-size:38px;letter-spacing:.3em;margin-top:4px}
+
+/* 18 aviso */
+#b18 .l3{background:var(--ink);border-left:18px solid var(--acc);padding:32px 40px 36px}
+#b18 .l3h{display:flex;align-items:center;gap:16px;font-size:34px;color:var(--acc);margin-bottom:14px}
+#b18 .l3h svg{width:46px;height:42px;color:var(--acc)}
+#b18 .l3t{font-size:50px;line-height:1.12}
+
+/* 19 sertralina */
+#b19 .sbar{display:flex;align-items:center;gap:24px;background:var(--paper);color:var(--ink);padding:26px 34px;border:6px solid var(--ink)}
+#b19 .sbar svg{width:64px;height:64px;flex:none}
+#b19 .stxt{font-size:62px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+#b19 .load{height:12px;background:var(--acc)}
+#b19 .res{background:var(--ink);padding:36px 40px 40px;margin-top:0}
+#b19 .rn{font-size:86px}
+#b19 .rs{font-size:34px;margin-top:16px}
+
+/* 20 CTA */
+#b20 .row{display:flex;align-items:center;gap:18px}
+#b20 .tg{font-size:38px}
+#b20 .arr{width:84px;height:52px;color:var(--acc);animation:fade 300ms ease 300ms both,nudge 700ms ease-in-out 700ms infinite}
+#b20 .hdl{font-size:96px;text-transform:none;letter-spacing:-.02em;margin-top:16px}
+#b20 .te{font-size:38px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<!-- 01 · "Quantos João de Deus temos no Brasil?" -->
+<section class="clip" id="b01" data-name="01_pergunta" data-dur="3600">
+  <div class="exit" style="animation-delay:3250ms">
+    <div class="stage top center">
+      <div class="mono tag"><span class="box y a-wipe">PERGUNTA SÉRIA:</span></div>
+      <div class="disp l"><span class="box a-wipe" style="animation-delay:180ms">QUANTOS</span></div>
+      <div class="disp l"><span class="box y a-wipe" style="animation-delay:380ms">JOÃO DE DEUS</span></div>
+      <div class="disp l sm"><span class="box a-wipe" style="animation-delay:580ms">TEMOS NO BRASIL<span class="q">?</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · "cortava gente sem anestesia, porque no plano espiritual o CRM não fiscaliza" -->
+<section class="clip" id="b02" data-name="02_checklist_cirurgia" data-dur="4200">
+  <div class="exit" style="animation-delay:3850ms">
+    <div class="stage low">
+      <div class="card bar a-rise">
+        <div class="mono hdr">CIRURGIA ESPIRITUAL // CHECKLIST</div>
+        <div class="row a-rise" style="animation-delay:300ms">
+          <span class="disp lbl">ANESTESIA</span>
+          <span class="mk no a-pop" style="animation-delay:650ms"><svg class="draw" viewBox="0 0 100 100" style="animation-delay:700ms"><path d="M26 26L74 74M74 26L26 74" stroke="currentColor" stroke-width="15" stroke-linecap="square" fill="none"/></svg></span>
+        </div>
+        <div class="row a-rise" style="animation-delay:950ms">
+          <span class="disp lbl">REGISTRO NO CRM</span>
+          <span class="mk no a-pop" style="animation-delay:1300ms"><svg class="draw" viewBox="0 0 100 100" style="animation-delay:1350ms"><path d="M26 26L74 74M74 26L26 74" stroke="currentColor" stroke-width="15" stroke-linecap="square" fill="none"/></svg></span>
+        </div>
+        <div class="row a-rise" style="animation-delay:1650ms">
+          <span class="disp lbl">FACA</span>
+          <span class="mk yes a-pop" style="animation-delay:2050ms"><svg class="draw" viewBox="0 0 100 100" style="animation-delay:2100ms"><path d="M20 52L42 74L82 28" stroke="currentColor" stroke-width="15" stroke-linecap="square" fill="none"/></svg></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 · "Um milagre vivo, com fila e estacionamento." -->
+<section class="clip" id="b03" data-name="03_senha_milagre" data-dur="3800">
+  <div class="exit" style="animation-delay:3450ms">
+    <div class="stage low" style="top:1080px">
+      <div class="slot a-fade" style="animation-duration:200ms"></div>
+      <div class="feed">
+        <div class="ticket">
+          <div class="mono t1">ATENDIMENTO ESPIRITUAL</div>
+          <div class="mono t2">SUA SENHA</div>
+          <div class="disp t3" data-seq="0425|0426|0427" data-start="1150" data-step="260">0425</div>
+          <div class="mono t4">MILAGRE · AGUARDE SER CHAMADO</div>
+          <div class="mono t5">ESTACIONAMENTO NO LOCAL</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · "Isso durou até dezembro de 2018" (tom sério) -->
+<section class="clip" id="b04" data-name="04_dezembro_2018" data-dur="3000">
+  <div class="exit" style="animation-delay:2650ms">
+    <div class="stage top">
+      <div class="dbox a-wipe">
+        <span class="rec" data-blink="450" data-start="300"></span>
+        <span class="mono dt" data-type data-start="250" data-cps="20">DEZEMBRO · 2018</span>
+        <span class="ul a-strike" style="animation-delay:1100ms"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · "Em poucos dias vieram centenas de denúncias" (tom sério) -->
+<section class="clip" id="b05" data-name="05_denuncias" data-dur="3800">
+  <div class="exit" style="animation-delay:3450ms">
+    <div class="stage low">
+      <div class="stack a-shake" style="animation-delay:1720ms">
+        <div class="dc a-pop" style="top:0;left:0;animation-delay:0ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:56px;left:20px;animation-delay:340ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:112px;left:40px;animation-delay:600ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:168px;left:60px;animation-delay:810ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:224px;left:80px;animation-delay:970ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:280px;left:100px;animation-delay:1090ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:336px;left:120px;animation-delay:1180ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+        <div class="dc a-pop" style="top:392px;left:140px;animation-delay:1250ms"><span class="mono">DENÚNCIA RECEBIDA</span><i class="dot"></i></div>
+      </div>
+      <div class="cent"><span class="box y disp a-slam" style="--rot:-4deg;animation-delay:1500ms">CENTENAS</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · "condenado... As entidades não se ofereceram para cumprir pena junto." -->
+<section class="clip" id="b06" data-name="06_condenado" data-dur="4600">
+  <div class="exit" style="animation-delay:4250ms">
+    <div class="stage top center">
+      <div class="a-shake" style="animation-delay:280ms;display:inline-block">
+        <div class="stamp disp a-slam" style="--rot:-5deg">CONDENADO</div>
+      </div>
+      <div class="card vol a-rise" style="animation-delay:1200ms">
+        <div class="mono vt">VOLUNTÁRIOS DO PLANO ESPIRITUAL<br>PARA DIVIDIR A PENA:</div>
+        <div class="disp vnum t-acc" data-seq="7|2|9|4|8|1|6|3|0" data-start="1300" data-step="90">7</div>
+        <div class="mono vf t-dim" data-type data-start="2600" data-cps="26">AGUARDANDO MANIFESTAÇÃO...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · "seita não precisa de milagre, precisa de método" -->
+<section class="clip" id="b07" data-name="07_milagre_metodo" data-dur="3800">
+  <div class="exit" style="animation-delay:3450ms">
+    <div class="stage top center">
+      <div class="mono sm"><span class="box a-wipe">SEITA NÃO PRECISA DE</span></div>
+      <div><span class="disp box big" style="animation:wipe 420ms var(--ease) 200ms both,dim 300ms ease 1150ms forwards">MILAGRE<i class="strike a-strike" style="animation-delay:850ms"></i></span></div>
+      <div class="mono sm"><span class="box a-wipe" style="animation-delay:1300ms">PRECISA DE</span></div>
+      <div class="a-shake" style="animation-delay:1780ms"><span class="disp box y big a-slam" style="animation-delay:1500ms">MÉTODO</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08, 09, 11, 13, 15 · passos (gerados pelo script abaixo) -->
+
+<!-- 10 · "Com lojinha na saída." -->
+<section class="clip" id="b10" data-name="10_lojinha_na_saida" data-dur="3600">
+  <div class="exit" style="animation-delay:3250ms">
+    <div class="hang">
+      <div class="drop">
+        <div class="swing">
+          <div class="nail"></div>
+          <div class="string"></div>
+          <div class="tag">
+            <div class="disp g1">LOJINHA</div>
+            <div class="disp g2">NA SAÍDA <svg viewBox="0 0 100 60"><path d="M4 30H86M62 8L88 30L62 52" stroke="currentColor" stroke-width="12" stroke-linecap="square" fill="none"/></svg></div>
+            <div class="gl"></div>
+            <div class="mono g3">CURA NÃO INCLUSA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 · "Se algo parecer errado, o problema é você... Nunca é o cara com a faca." -->
+<section class="clip" id="b12" data-name="12_culpa_checklist" data-dur="4600">
+  <div class="exit" style="animation-delay:4250ms">
+    <div class="stage low" style="top:1120px">
+      <div class="card bar a-rise">
+        <div class="qh">Se algo parecer errado,<br>a culpa é:</div>
+        <div class="opt a-rise" style="animation-delay:250ms">
+          <span class="cb" style="animation:fillY 120ms linear 900ms forwards"><svg class="draw" viewBox="0 0 100 100" style="animation-delay:920ms"><path d="M18 52L42 74L84 26" stroke="currentColor" stroke-width="16" stroke-linecap="square" fill="none"/></svg></span>
+          <span>da sua falta de fé</span>
+        </div>
+        <div class="opt a-rise" style="animation-delay:400ms">
+          <span class="cb" style="animation:fillY 120ms linear 1450ms forwards"><svg class="draw" viewBox="0 0 100 100" style="animation-delay:1470ms"><path d="M18 52L42 74L84 26" stroke="currentColor" stroke-width="16" stroke-linecap="square" fill="none"/></svg></span>
+          <span>da sua energia ruim</span>
+        </div>
+        <div class="opt" style="animation:rise 480ms var(--ease) 550ms both,dim 300ms ease 2150ms forwards">
+          <span class="cb"></span>
+          <span>do cara com a faca</span>
+        </div>
+        <div class="na"><span class="mono box r a-slam" style="--rot:-4deg;animation-delay:2350ms">OPÇÃO INDISPONÍVEL</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 · "Denunciar o líder vira atentado contra o PIB local." -->
+<section class="clip" id="b14" data-name="14_pib_da_fe" data-dur="4200">
+  <div class="exit" style="animation-delay:3850ms">
+    <div class="stage low" style="top:1160px">
+      <div class="a-shake" style="animation-delay:1750ms">
+        <div class="card chart a-rise">
+          <div class="mono ch">PIB LOCAL <span class="t-dim">// POR SETOR</span></div>
+          <div class="plot">
+            <div class="bar" style="left:3%;height:110px;animation-delay:420ms"></div>
+            <div class="bar" style="left:37%;height:150px;animation-delay:600ms"></div>
+            <div class="bar fe" style="left:71%;height:660px;animation-delay:1050ms"></div>
+          </div>
+          <div class="mono labs"><span style="left:3%">POUSADA</span><span style="left:37%">LOJINHA</span><span class="t-acc" style="left:71%">FÉ</span></div>
+          <div class="mono src t-dim a-fade" style="animation-delay:2100ms">FONTE: CONFIA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 · "uma autointitulada terapeuta, sem formação nenhuma" -->
+<section class="clip" id="b16" data-name="16_terapeuta_asterisco" data-dur="3900">
+  <div class="exit" style="animation-delay:3550ms">
+    <div class="stage top">
+      <div class="disp tera"><span class="box a-wipe">TERAPEUTA<span class="ast t-acc a-pop" style="animation-delay:520ms">*</span></span></div>
+      <div class="mono ft"><span class="box t-acc a-wipe" style="animation-delay:900ms"><span data-type data-start="1000" data-cps="24">*AUTOINTITULADA.</span></span></div>
+      <div class="mono ft"><span class="box a-wipe" style="animation-delay:1650ms"><span data-type data-start="1750" data-cps="24">FORMAÇÃO: NÃO CONSTA.</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 · "dizendo que câncer é causado por depressão" -->
+<section class="clip" id="b17" data-name="17_sem_evidencia" data-dur="4200">
+  <div class="exit" style="animation-delay:3850ms">
+    <div class="stage low" style="top:1080px">
+      <div class="a-shake" style="animation-delay:1380ms">
+        <div class="qc a-rise">
+          <div class="mono ql">AFIRMAÇÃO DO VÍDEO:</div>
+          <div class="qt">“Câncer é causado por depressão.”</div>
+        </div>
+      </div>
+      <div class="st a-slam" style="--rot:-7deg;animation-delay:1100ms">
+        <div class="disp">SEM EVIDÊNCIA</div>
+        <div class="mono">CIENTÍFICA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 · aviso de saúde para a parte dos remédios psiquiátricos (tom sério) -->
+<section class="clip" id="b18" data-name="18_aviso_remedio" data-dur="5200">
+  <div class="exit" style="animation-delay:4850ms">
+    <div class="stage low" style="top:1300px">
+      <div class="l3 a-wipe" style="animation-duration:520ms">
+        <div class="mono l3h"><svg viewBox="0 0 100 90"><path d="M50 4L96 86H4Z" fill="currentColor"/><rect x="45" y="32" width="10" height="28" fill="#0C0C0D"/><rect x="45" y="66" width="10" height="10" fill="#0C0C0D"/></svg>AVISO</div>
+        <div class="l3t a-fade" style="animation-delay:280ms">Não interrompa remédio psiquiátrico sem orientação médica.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 · "Jesus, que até onde eu sei, nunca se pronunciou sobre sertralina." -->
+<section class="clip" id="b19" data-name="19_sertralina" data-dur="4400">
+  <div class="exit" style="animation-delay:4050ms">
+    <div class="stage top" style="top:320px">
+      <div class="sbar a-wipe">
+        <svg viewBox="0 0 100 100"><circle cx="42" cy="42" r="26" stroke="currentColor" stroke-width="12" fill="none"/><path d="M62 62L86 86" stroke="currentColor" stroke-width="14" stroke-linecap="square"/></svg>
+        <span class="stxt" data-type data-start="350" data-cps="13" data-cursor>jesus sertralina</span>
+      </div>
+      <div class="load a-strike" style="animation-duration:500ms;animation-delay:1650ms"></div>
+      <div class="res a-rise" style="animation-delay:2050ms">
+        <div class="disp t-acc rn">0 RESULTADOS</div>
+        <div class="mono rs" data-type data-start="2400" data-cps="30">NENHUMA DECLARAÇÃO ENCONTRADA.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 · "Te espero lá: @iuripiragibe" -->
+<section class="clip" id="b20" data-name="20_cta_iuripiragibe" data-dur="5000">
+  <div class="exit" style="animation-delay:4650ms">
+    <div class="stage low" style="top:1180px">
+      <div class="row">
+        <span class="mono box tg a-wipe">VÍDEOS LONGOS NA REDE VIZINHA</span>
+        <svg class="arr" viewBox="0 0 100 60"><path d="M4 30H86M62 8L88 30L62 52" stroke="currentColor" stroke-width="12" stroke-linecap="square" fill="none"/></svg>
+      </div>
+      <div><span class="box y disp hdl a-wipe" style="animation-delay:250ms"><span data-type data-start="450" data-cps="16" data-cursor>@iuripiragibe</span></span></div>
+      <div class="mono te"><span class="box a-rise" style="animation-delay:1800ms">TE ESPERO LÁ.</span></div>
+    </div>
+  </div>
+</section>
+
+<script>
+// Passos da seita: mesmo layout, um arquivo por passo.
+const PASSOS = [
+  ['b08', '08_passo1_escolhido', 'O ESCOLHIDO', 'DUVIDAR DELE = DUVIDAR DE DEUS'],
+  ['b09', '09_passo2_promessa', 'A PROMESSA', 'QUANDO A MEDICINA DIZ NÃO'],
+  ['b11', '11_passo3_regras', 'AS REGRAS', 'OLHO FECHADO. BOCA FECHADA.'],
+  ['b13', '13_passo4_economia', 'A ECONOMIA', 'PIB LOCAL MOVIDO A FÉ'],
+  ['b15', '15_passo5_silencio', 'O SILÊNCIO', null], // sem piada, de propósito
+];
+PASSOS.forEach(([id, name, title, sub], i) => {
+  const n = i + 1;
+  const mute = !sub;
+  const a = mute ? 'a-fade' : 'a-wipe';
+  const segs = [1, 2, 3, 4, 5].map((k) =>
+    k < n ? '<i class="done"></i>'
+    : k === n ? `<i><b class="a-strike" style="animation-duration:500ms;animation-delay:${mute ? 700 : 500}ms"></b></i>`
+    : '<i></i>').join('');
+  const s = document.createElement('section');
+  s.className = 'clip';
+  s.id = id;
+  s.dataset.name = name;
+  s.dataset.dur = mute ? 3600 : 3200;
+  s.innerHTML = `
+    <div class="exit" style="animation-delay:${mute ? 3150 : 2870}ms;${mute ? 'animation-duration:450ms' : ''}">
+      <div class="stage top passo${mute ? ' mute' : ''}">
+        <div class="head">
+          <div class="num disp ${mute ? 'a-fade' : 'a-pop'}">0${n}</div>
+          <div class="txt">
+            <div class="mono lab ${a}" style="animation-delay:${mute ? 250 : 150}ms">PASSO ${n} DE 5</div>
+            <div class="disp ttl"><span class="box ${a}" style="animation-delay:${mute ? 400 : 280}ms">${title}</span></div>
+          </div>
+        </div>
+        <div class="prog ${mute ? 'a-fade' : 'a-rise'}" style="animation-delay:${mute ? 500 : 380}ms">${segs}</div>
+        ${sub ? `<div class="mono sub"><span class="box y a-wipe" style="animation-delay:850ms">${sub}</span></div>` : ''}
+      </div>
+    </div>`;
+  document.body.insertBefore(s, document.querySelector('script'));
+});
+
+const id = new URLSearchParams(location.search).get('clip') || 'b01';
+const clip = document.getElementById(id);
+clip.classList.add('on');
+
+const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const typers = [...clip.querySelectorAll('[data-type]')].map((el) => ({
+  el, full: el.textContent, start: +el.dataset.start || 0, cps: +el.dataset.cps || 20, cursor: 'cursor' in el.dataset,
+}));
+const seqs = [...clip.querySelectorAll('[data-seq]')].map((el) => ({
+  el, seq: el.dataset.seq.split('|'), start: +el.dataset.start, step: +el.dataset.step,
+}));
+const blinks = [...clip.querySelectorAll('[data-blink]')].map((el) => ({
+  el, period: +el.dataset.blink, start: +el.dataset.start || 0,
+}));
+
+// Desenha o clipe exatamente no instante t (ms). Determinístico: o render
+// não depende do relógio real.
+window.renderAt = (t) => {
+  document.getAnimations().forEach((an) => { an.pause(); an.currentTime = t; });
+  for (const o of typers) {
+    const n = Math.max(0, Math.min(o.full.length, Math.floor(((t - o.start) / 1000) * o.cps)));
+    const typing = t >= o.start - 300 && n < o.full.length;
+    const showCur = o.cursor && (typing || Math.floor(t / 420) % 2 === 0);
+    o.el.innerHTML = esc(o.full.slice(0, n)) + (showCur ? '<span class="cur"></span>' : '')
+      + `<span class="ghost">${esc(o.full.slice(n))}</span>`;
+  }
+  for (const o of seqs) {
+    const i = Math.max(0, Math.min(o.seq.length - 1, Math.floor((t - o.start) / o.step)));
+    o.el.textContent = o.seq[i];
+  }
+  for (const o of blinks) {
+    o.el.style.opacity = t < o.start || Math.floor((t - o.start) / o.period) % 2 === 0 ? 1 : 0.15;
+  }
+};
+window.clipInfo = { id, name: clip.dataset.name, dur: +clip.dataset.dur };
+window.clipIds = [...document.querySelectorAll('.clip')].map((c) => c.id).sort();
+window.renderAt(0);
+</script>
+</body>
+</html>
