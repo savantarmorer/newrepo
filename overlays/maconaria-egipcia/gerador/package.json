@@ -1,0 +1,27 @@
+{
+  "name": "overlays-maconaria-egipcia",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Gera os overlays SVG animados dos graus 34°–99° e renderiza os MP4 (fundo verde para chroma key).",
+  "scripts": {
+    "svg": "node gerar-svg.mjs",
+    "mp4": "node renderizar-mp4.mjs",
+    "preview": "node preview.mjs",
+    "tudo": "node gerar-svg.mjs && node renderizar-mp4.mjs && node preview.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "5.3.0",
+    "@fontsource/cinzel-decorative": "5.3.0",
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/noto-sans-devanagari": "5.3.0",
+    "@fontsource/noto-sans-egyptian-hieroglyphs": "5.3.0",
+    "@fontsource/noto-sans-runic": "5.3.0",
+    "@fontsource/noto-sans-symbols": "5.3.0",
+    "@fontsource/noto-sans-symbols-2": "5.3.0",
+    "@fontsource/noto-serif-display": "5.3.0",
+    "@fontsource/noto-serif-hebrew": "5.3.0",
+    "opentype.js": "1.3.4",
+    "playwright": "1.56.1"
+  }
+}

@@ -49,5 +49,6 @@ jobs:
             **/DEPLOY.md
             **/README*
             **/newrepo-0.md
+            overlays/**
             agora-slu/supabase/**
             jornalismo/supabase/**

@@ -5,7 +5,9 @@ const root = process.cwd();
 const output = join(root, 'dist');
 const blockedTopLevel = new Set([
   '.git', '.github', '.cursor', '.superdesign', 'node_modules', 'supabase',
-  'scripts', 'tests', 'test-results', 'playwright-report', 'dist'
+  'scripts', 'tests', 'test-results', 'playwright-report', 'dist',
+  // material de produção de vídeo (overlays em SVG/MP4), não faz parte do site
+  'overlays'
 ]);
 const blockedSegments = new Set(['supabase', 'scripts']);
 const blockedFiles = new Set([
