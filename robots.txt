@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /jornalismo/app.html
+Disallow: /anarquia/
 
 Sitemap: https://iuripiragibe.net/sitemap.xml
