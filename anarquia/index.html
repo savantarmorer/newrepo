@@ -6,214 +6,301 @@
 <title>Arquivo Anarquista — Iuri Piragibe</title>
 <meta name="description" content="Arquivo histórico e documental de zines anarquistas em inglês, espelhado de acervo público, para fins de pesquisa, estudo e jornalismo.">
 <meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#000000">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#000;--fg:#fff;--fg2:#9ca3af;--fg3:#6b7280;--b:#1a1a1a;--gold:#FFB800}
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);line-height:1.6}
-main{max-width:900px;margin:0 auto;padding:40px 16px 80px}
-a{color:var(--gold)}
-.back{color:var(--fg2);text-decoration:none;font-size:13px}
-h1{font-family:'Archivo Black',Impact,sans-serif;text-transform:uppercase;font-size:clamp(28px,6vw,48px);margin:16px 0 8px;letter-spacing:-.02em}
-h2{font-family:'Archivo Black',Impact,sans-serif;text-transform:uppercase;font-size:16px;margin:28px 0 10px;color:var(--gold)}
-p,li{color:var(--fg2);font-size:15px}
-.legal{border:1px solid var(--gold);padding:20px;margin:24px 0;background:#0a0a0a}
-.legal ol{padding-left:20px} .legal li{margin:8px 0}
-.gate{display:flex;gap:10px;align-items:flex-start;margin-top:16px;color:var(--fg)}
-.gate input{margin-top:6px;accent-color:var(--gold)}
-#acervo[hidden]{display:none}
-#busca{width:100%;padding:10px 14px;background:#0a0a0a;border:1px solid var(--b);color:var(--fg);font:inherit;margin:8px 0 16px}
-#busca:focus{outline:none;border-color:var(--gold)}
-ul.z{list-style:none}
-ul.z li{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--b)}
-ul.z a{text-decoration:none;color:var(--fg)} ul.z a:hover{color:var(--gold)}
-ul.z span{color:var(--fg3);font-size:13px;white-space:nowrap}
-small{color:var(--fg3)}
+:root{
+  --bg:#000;--bg1:#0a0a0a;--bg2:#111;--fg:#fff;--fg2:#a1a1aa;--fg3:#71717a;--b:#1f1f1f;
+  --gold:#FFB800;--red:#ff3b30;
+  --intro:#FFB800;--seg:#4ade80;--acao:#ff3b30;--org:#60a5fa;--saude:#f472b6;--prisao:#c084fc;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{overflow-x:clip;font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--fg);line-height:1.6;overflow-x:hidden}
+a{color:inherit}
+::selection{background:var(--gold);color:#000}
+.mono{font-family:'Space Mono',monospace}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+
+/* noise overlay */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:200;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+nav a{text-decoration:none;font-size:13px;color:var(--fg2);transition:color .2s}
+nav a:hover{color:var(--gold)}
+.logo{font-family:'Archivo Black',sans-serif;color:var(--fg)!important;letter-spacing:-.02em;display:flex;gap:8px;align-items:center}
+.logo b{display:inline-grid;place-items:center;width:28px;height:28px;border:2px solid var(--gold);border-radius:50%;color:var(--gold);font-size:15px;line-height:1}
+
+/* hero */
+.hero{position:relative;padding:72px 0 40px;overflow:hidden}
+.hero .glow{position:absolute;width:720px;height:720px;right:-200px;top:-260px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,184,0,.22),transparent 60%);filter:blur(20px);animation:float 12s ease-in-out infinite;pointer-events:none}
+.hero .glow.r{left:-260px;right:auto;top:120px;background:radial-gradient(circle,rgba(255,59,48,.16),transparent 60%);animation-delay:-6s}
+@keyframes float{50%{transform:translate(40px,30px) scale(1.08)}}
+.kicker{display:inline-flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(255,184,0,.35);padding:6px 12px;border-radius:99px}
+.kicker i{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+h1{font-family:'Archivo Black',Impact,sans-serif;text-transform:uppercase;line-height:.88;letter-spacing:-.04em;font-size:clamp(52px,12vw,168px);margin:24px 0 20px}
+h1 .l2{display:block;-webkit-text-stroke:2px var(--fg);color:transparent}
+h1 .a{color:var(--gold);display:inline-block;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.lead{max-width:640px;color:var(--fg2);font-size:clamp(16px,2vw,19px)}
+.lead a{color:var(--gold)}
+.stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:36px}
+.stat strong{font-family:'Archivo Black',sans-serif;font-size:40px;display:block;line-height:1}
+.stat span{font-size:12px;color:var(--fg3);text-transform:uppercase;letter-spacing:.15em}
+
+/* marquee */
+.marquee{border-block:1px solid var(--b);background:var(--gold);color:#000;overflow:hidden;white-space:nowrap;padding:10px 0;transform:rotate(-1.2deg);margin:24px -20px}
+.marquee div{display:inline-block;animation:mq 40s linear infinite;font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:18px}
+.marquee span{margin:0 18px}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* legal gate */
+.gate{margin:48px auto;max-width:880px;border:1px solid var(--b);background:linear-gradient(180deg,var(--bg1),#050505);position:relative}
+.gate::before{content:"";position:absolute;inset:-1px;border:1px solid transparent;background:linear-gradient(135deg,var(--gold),transparent 40%,transparent 60%,var(--red)) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.gate header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--b);gap:12px}
+.gate h2{font-family:'Archivo Black',sans-serif;text-transform:uppercase;font-size:18px;letter-spacing:-.01em}
+.gate h2 em{font-style:normal;color:var(--gold)}
+.toggle{background:none;border:1px solid var(--b);color:var(--fg2);font:inherit;font-size:12px;padding:6px 12px;cursor:pointer}
+.toggle:hover{border-color:var(--gold);color:var(--gold)}
+.gate .body{padding:8px 24px 0;max-height:2000px;overflow:hidden;transition:max-height .5s var(--ease)}
+.gate.min .body{max-height:0}
+.gate ol{list-style:none;counter-reset:n;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:0 28px}
+.gate li{counter-increment:n;padding:14px 0 14px 40px;position:relative;color:var(--fg2);font-size:14px;border-bottom:1px dashed var(--b)}
+.gate li::before{content:counter(n,decimal-leading-zero);position:absolute;left:0;top:14px;font-family:'Space Mono',monospace;color:var(--gold);font-size:12px}
+.gate li strong{color:var(--fg);display:block;margin-bottom:2px}
+.gate li a{color:var(--gold)}
+.accept{display:flex;gap:14px;align-items:center;padding:20px 24px;cursor:pointer;user-select:none}
+.accept input{position:absolute;opacity:0}
+.box{flex-shrink:0;width:26px;height:26px;border:2px solid var(--fg3);display:grid;place-items:center;transition:.2s}
+.box svg{opacity:0;transform:scale(.4);transition:.25s var(--ease)}
+.accept input:checked+.box{background:var(--gold);border-color:var(--gold)}
+.accept input:checked+.box svg{opacity:1;transform:none}
+.accept input:focus-visible+.box{outline:2px solid var(--gold);outline-offset:3px}
+.accept span{font-size:14px}
+
+/* library */
+#acervo{transition:opacity .6s var(--ease),filter .6s var(--ease)}
+#acervo.locked{opacity:.12;filter:blur(6px);pointer-events:none;user-select:none;max-height:900px;overflow:hidden}
+.toolbar{position:sticky;top:56px;z-index:40;background:rgba(0,0,0,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--b);padding:14px 0}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{flex:1;min-width:220px;display:flex;align-items:center;gap:10px;border:1px solid var(--b);background:var(--bg1);padding:0 14px;transition:.2s}
+.search:focus-within{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,184,0,.12)}
+.search input{flex:1;background:none;border:0;outline:0;color:var(--fg);font:inherit;padding:11px 0}
+.search kbd{font-family:'Space Mono',monospace;font-size:11px;color:var(--fg3);border:1px solid var(--b);padding:1px 6px}
+.btn{background:var(--bg1);border:1px solid var(--b);color:var(--fg);font:inherit;font-size:13px;padding:10px 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;transition:.2s}
+.btn:hover{border-color:var(--gold);color:var(--gold)}
+.btn.primary{background:var(--gold);color:#000;border-color:var(--gold);font-weight:700}
+.btn.primary:hover{background:#fff;border-color:#fff;color:#000}
+select.btn{appearance:none;padding-right:30px;background-image:linear-gradient(45deg,transparent 50%,var(--fg2) 50%),linear-gradient(135deg,var(--fg2) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-top:12px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;border:1px solid var(--b);background:none;color:var(--fg2);font:inherit;font-size:13px;padding:7px 14px;border-radius:99px;cursor:pointer;transition:.2s;display:flex;gap:8px;align-items:center}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--c,var(--fg))}
+.chip small{font-family:'Space Mono',monospace;font-size:11px;color:var(--fg3)}
+.chip:hover{color:var(--fg);border-color:var(--fg3)}
+.chip[aria-pressed=true]{background:var(--fg);color:#000;border-color:var(--fg)}
+.chip[aria-pressed=true] small{color:#444}
+
+.meta{display:flex;justify-content:space-between;align-items:center;margin:28px 0 18px;color:var(--fg3);font-size:13px}
+.meta b{color:var(--fg)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;padding-bottom:40px}
+.card{position:relative;text-decoration:none;display:flex;flex-direction:column;perspective:900px;opacity:0;transform:translateY(24px);animation:in .6s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes in{to{opacity:1;transform:none}}
+.cover{position:relative;aspect-ratio:3/4;background:var(--bg1);border:1px solid var(--b);overflow:hidden;padding:18px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .45s var(--ease),border-color .3s,box-shadow .45s var(--ease);transform-style:preserve-3d}
+.cover::before{content:"";position:absolute;inset:0;opacity:.9;background:
+  radial-gradient(120% 80% at var(--gx,80%) var(--gy,0%),color-mix(in srgb,var(--c) 38%,transparent),transparent 60%),
+  repeating-linear-gradient(var(--ang,135deg),transparent 0 14px,color-mix(in srgb,var(--c) 7%,transparent) 14px 15px)}
+.cover::after{content:"";position:absolute;right:0;top:0;width:34px;height:34px;background:linear-gradient(225deg,var(--bg) 50%,color-mix(in srgb,var(--c) 60%,#000) 50%);transition:.3s}
+.card:hover .cover,.card:focus-visible .cover{border-color:var(--c);box-shadow:0 24px 60px -20px color-mix(in srgb,var(--c) 55%,transparent);transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-6px)}
+.card:hover .cover::after{width:46px;height:46px}
+.card:focus-visible{outline:none}
+.tag{position:relative;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--c);display:flex;gap:6px;align-items:center}
+.tag i{width:6px;height:6px;background:var(--c);border-radius:50%}
+.num{position:absolute;right:14px;bottom:-14px;font-family:'Archivo Black',sans-serif;font-size:96px;line-height:1;color:color-mix(in srgb,var(--c) 14%,transparent);pointer-events:none}
+.title{position:relative;font-family:'Archivo Black',sans-serif;text-transform:uppercase;line-height:1.02;letter-spacing:-.02em;font-size:clamp(17px,1.6vw,21px);word-break:break-word;hyphens:auto}
+.author{position:relative;font-size:12px;color:var(--fg2);margin-top:8px}
+.foot{display:flex;justify-content:space-between;align-items:center;padding:10px 2px 0;font-size:12px;color:var(--fg3)}
+.dl{display:inline-flex;gap:6px;align-items:center;color:var(--fg2);transition:.2s}
+.card:hover .dl{color:var(--c)}
+.seen .tag::after{content:"✓ lido";margin-left:auto;color:var(--fg3)}
+
+.empty{text-align:center;padding:80px 0;color:var(--fg3)}
+.empty strong{display:block;font-family:'Archivo Black',sans-serif;font-size:28px;color:var(--fg);margin-bottom:6px}
+
+footer{border-top:1px solid var(--b);padding:32px 0 60px;color:var(--fg3);font-size:13px}
+footer a{color:var(--fg2)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--fg);color:#000;padding:12px 18px;font-weight:700;font-size:14px;z-index:300;transition:transform .4s var(--ease);max-width:calc(100% - 32px)}
+.toast.on{transform:translate(-50%,0)}
+.top{position:fixed;right:16px;bottom:16px;z-index:60;width:46px;height:46px;border-radius:50%;background:var(--gold);color:#000;border:0;cursor:pointer;font-size:20px;opacity:0;transform:scale(.6);transition:.3s var(--ease);pointer-events:none}
+.top.on{opacity:1;transform:none;pointer-events:auto}
+
+@media (max-width:640px){
+  .hero{padding-top:48px}
+  .stats{gap:24px}.stat strong{font-size:30px}
+  .grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .cover{padding:12px}.num{font-size:64px}
+  .gate header,.gate .body,.accept{padding-left:16px;padding-right:16px}
+  .toolbar{top:56px}
+  .hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.card{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<main>
-<a class="back" href="/">← Início</a>
-<h1>Arquivo Anarquista</h1>
-<p>Espelho documental de 146 zines e guias em inglês ("Guides") do acervo público <a href="https://github.com/rechelon/zine_library/tree/master/Guides" rel="nofollow noopener" target="_blank">rechelon/zine_library</a>, preservados como registro histórico, político e cultural de movimentos sociais.</p>
+<nav><div class="wrap">
+  <a class="logo" href="/"><b>Ⓐ</b> ARQUIVO</a>
+  <div class="row" style="gap:20px"><a href="#aviso">Aviso legal</a><a href="#acervo" class="hide-sm">Acervo</a><a href="/">← Início</a></div>
+</div></nav>
 
-<section class="legal" aria-labelledby="aviso">
-<h2 id="aviso">Aviso legal — leia antes de acessar</h2>
-<ol>
-<li><strong>Finalidade exclusivamente documental.</strong> Este acervo é disponibilizado para fins de pesquisa acadêmica, jornalismo, crítica, estudo histórico e debate de ideias, no exercício da liberdade de expressão, de informação e de imprensa (CF/88, art. 5º, IV, IX e XIV, e art. 220).</li>
-<li><strong>Não é apologia nem incitação.</strong> A publicação não constitui endosso, recomendação, incentivo ou instrução para a prática de qualquer conduta. O responsável pelo site repudia expressamente qualquer ato ilícito, violência ou dano a pessoas e patrimônio, e não pratica incitação ao crime nem apologia de crime ou criminoso (Código Penal, arts. 286 e 287).</li>
-<li><strong>Autoria de terceiros.</strong> Os textos são de autoria de terceiros, majoritariamente anônimos, e não refletem as opiniões do responsável por este site. Os documentos são reproduzidos sem alteração, na forma em que circulam publicamente.</li>
-<li><strong>Responsabilidade do usuário.</strong> Quem acessa e usa este material o faz por sua conta e risco e é o único responsável por cumprir as leis aplicáveis no seu país. Parte do conteúdo descreve condutas que podem ser ilegais no Brasil ou em outros países; conhecê-lo não autoriza praticá-las.</li>
-<li><strong>Informação de saúde e segurança.</strong> Guias sobre primeiros socorros, saúde ou segurança não substituem orientação de profissionais habilitados (médicos, advogados etc.).</li>
-<li><strong>Maioridade.</strong> O acesso é destinado a maiores de 18 anos.</li>
-<li><strong>Direitos autorais e remoção.</strong> O material é reproduzido de repositório público, com finalidade não comercial e citação da fonte. Titulares de direitos ou qualquer pessoa que considere um conteúdo ilícito podem solicitar a remoção pelos canais de <a href="/sobre.html">contato</a>; o pedido será analisado e, se procedente, o arquivo será retirado prontamente (Lei 9.610/98; Marco Civil da Internet, Lei 12.965/14).</li>
-<li><strong>Sem garantias.</strong> O conteúdo é fornecido "no estado em que se encontra", podendo conter informações desatualizadas ou incorretas. Ver também os <a href="/termos.html">Termos de Uso</a> e a <a href="/privacidade.html">Política de Privacidade</a>.</li>
-</ol>
-<label class="gate"><input type="checkbox" id="aceite"> <span>Tenho 18 anos ou mais, li e concordo com o aviso acima, e acesso este acervo apenas para fins de estudo, pesquisa ou informação.</span></label>
+<header class="hero">
+  <div class="glow"></div><div class="glow r"></div>
+  <div class="wrap" style="position:relative">
+    <span class="kicker"><i></i> Acervo documental · 184 zines</span>
+    <h1>Arquivo <span class="a">Ⓐ</span><span class="l2">Anarquista</span></h1>
+    <p class="lead">Uma biblioteca de zines e panfletos em inglês: dos clássicos de Malatesta, Goldman e Graeber a guias práticos de organização comunitária. Espelhado do acervo público <a href="https://github.com/rechelon/zine_library" target="_blank" rel="nofollow noopener">rechelon/zine_library</a> para pesquisa, estudo e jornalismo.</p>
+    <div class="stats">
+      <div class="stat"><strong data-count="184">0</strong><span>documentos</span></div>
+      <div class="stat"><strong data-count="38">0</strong><span>introduções</span></div>
+      <div class="stat"><strong data-count="146">0</strong><span>guias</span></div>
+      <div class="stat"><strong>PDF</strong><span>pronto p/ imprimir</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true"><div>
+  <span>Faça você mesmo</span>✺<span>Apoio mútuo</span>✺<span>Ajuda mútua</span>✺<span>Autonomia</span>✺<span>Leia · Imprima · Debata</span>✺<span>Memória dos movimentos</span>✺
+  <span>Faça você mesmo</span>✺<span>Apoio mútuo</span>✺<span>Ajuda mútua</span>✺<span>Autonomia</span>✺<span>Leia · Imprima · Debata</span>✺<span>Memória dos movimentos</span>✺
+</div></div>
+
+<div class="wrap">
+<section class="gate" id="aviso" aria-labelledby="aviso-t">
+  <header>
+    <h2 id="aviso-t"><em>⚠</em> Aviso legal: leia antes de acessar</h2>
+    <button class="toggle" id="toggleAviso" type="button" aria-expanded="true">Recolher</button>
+  </header>
+  <div class="body">
+  <ol>
+    <li><strong>Finalidade exclusivamente documental</strong>Este acervo é disponibilizado para fins de pesquisa acadêmica, jornalismo, crítica, estudo histórico e debate de ideias, no exercício da liberdade de expressão, de informação e de imprensa (CF/88, art. 5º, IV, IX e XIV, e art. 220).</li>
+    <li><strong>Não é apologia nem incitação</strong>A publicação não constitui endosso, recomendação, incentivo ou instrução para a prática de qualquer conduta. O responsável pelo site repudia expressamente qualquer ato ilícito, violência ou dano a pessoas e patrimônio, e não pratica incitação ao crime nem apologia de crime ou criminoso (Código Penal, arts. 286 e 287).</li>
+    <li><strong>Autoria de terceiros</strong>Os textos são de autoria de terceiros, majoritariamente anônimos, e não refletem as opiniões do responsável por este site. Os documentos são reproduzidos sem alteração, na forma em que circulam publicamente.</li>
+    <li><strong>Responsabilidade do usuário</strong>Quem acessa e usa este material o faz por sua conta e risco e é o único responsável por cumprir as leis aplicáveis no seu país. Parte do conteúdo descreve condutas que podem ser ilegais no Brasil ou em outros países; conhecê-lo não autoriza praticá-las.</li>
+    <li><strong>Saúde e segurança</strong>Guias sobre primeiros socorros, saúde ou segurança não substituem orientação de profissionais habilitados (médicos, advogados etc.).</li>
+    <li><strong>Maioridade</strong>O acesso é destinado a maiores de 18 anos.</li>
+    <li><strong>Direitos autorais e remoção</strong>O material é reproduzido de repositório público, com finalidade não comercial e citação da fonte. Titulares de direitos ou qualquer pessoa que considere um conteúdo ilícito podem solicitar a remoção pelos canais de <a href="/sobre.html">contato</a>; o pedido será analisado e, se procedente, o arquivo será retirado prontamente (Lei 9.610/98; Marco Civil da Internet, Lei 12.965/14).</li>
+    <li><strong>Sem garantias</strong>O conteúdo é fornecido "no estado em que se encontra", podendo conter informações desatualizadas ou incorretas. Ver também os <a href="/termos.html">Termos de Uso</a> e a <a href="/privacidade.html">Política de Privacidade</a>.</li>
+  </ol>
+  </div>
+  <label class="accept">
+    <input type="checkbox" id="aceite">
+    <span class="box"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="4"><path d="M4 12l5 5L20 6"/></svg></span>
+    <span>Tenho 18 anos ou mais, li e concordo com o aviso acima, e acesso este acervo apenas para fins de estudo, pesquisa ou informação.</span>
+  </label>
+</section>
+</div>
+
+<section id="acervo" class="locked" aria-label="Acervo">
+  <div class="toolbar"><div class="wrap">
+    <div class="row">
+      <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="busca" type="search" placeholder="Buscar título ou autor…" aria-label="Buscar" autocomplete="off"><kbd class="hide-sm">/</kbd></label>
+      <select id="ordem" class="btn" aria-label="Ordenar">
+        <option value="az">A → Z</option><option value="za">Z → A</option><option value="sm">Menores primeiro</option><option value="lg">Maiores primeiro</option>
+      </select>
+      <button class="btn primary" id="sorte" type="button">✺ Me surpreenda</button>
+    </div>
+    <div class="chips" id="chips" role="toolbar" aria-label="Categorias"></div>
+  </div></div>
+  <div class="wrap">
+    <div class="meta"><span id="contagem"></span><span class="mono hide-sm">Clique para abrir · PDF em inglês</span></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="vazio" hidden><strong>Nada por aqui.</strong>Tente outro termo ou categoria.</div>
+  </div>
 </section>
 
-<section id="acervo" hidden>
-<h2>Acervo (146 documentos, PDF, em inglês)</h2>
-<input id="busca" type="search" placeholder="Buscar por título…" aria-label="Buscar">
-<ul class="z" id="lista">
-<li><a href="/anarquia/zines/10%20Steps%20For%20Setting%20Up%20A%20Blockade.pdf" rel="nofollow noopener" download>10 Steps For Setting Up A Blockade</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/40%20Ways%20To%20Fight%20Fascism.pdf" rel="nofollow noopener" download>40 Ways To Fight Fascism</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/A%20Field%20Guide%20To%20Wheatpasting.pdf" rel="nofollow noopener" download>A Field Guide To Wheatpasting</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/A%20Friend%20Of%20Mine%20Or%20A%20Friend%20Of%20Ours.pdf" rel="nofollow noopener" download>A Friend Of Mine Or A Friend Of Ours</a><span>0.1 MB</span></li>
-<li><a href="/anarquia/zines/A%20Rebel%20Worker%27s%20Organizing%20Handbook.pdf" rel="nofollow noopener" download>A Rebel Worker&#x27;s Organizing Handbook</a><span>0.8 MB</span></li>
-<li><a href="/anarquia/zines/A%20Recipe%20For%20Nocturnal%20Direct%20Actions.pdf" rel="nofollow noopener" download>A Recipe For Nocturnal Direct Actions</a><span>2.0 MB</span></li>
-<li><a href="/anarquia/zines/A%20Scam%20App%20Primer.pdf" rel="nofollow noopener" download>A Scam App Primer</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Affinity%20Groups.pdf" rel="nofollow noopener" download>Affinity Groups</a><span>2.4 MB</span></li>
-<li><a href="/anarquia/zines/ALF%20Prisoner%20Support%20-%20Bite%20Back.pdf" rel="nofollow noopener" download>ALF Prisoner Support - Bite Back</a><span>0.0 MB</span></li>
-<li><a href="/anarquia/zines/An%20Activist%27s%20Guide%20to%20First%20Aid.pdf" rel="nofollow noopener" download>An Activist&#x27;s Guide to First Aid</a><span>1.0 MB</span></li>
-<li><a href="/anarquia/zines/Aorta%20-%20Facilitating%20Meetings.pdf" rel="nofollow noopener" download>Aorta - Facilitating Meetings</a><span>4.6 MB</span></li>
-<li><a href="/anarquia/zines/Autonomous%20Trans%20Healthcare.pdf" rel="nofollow noopener" download>Autonomous Trans Healthcare</a><span>12.9 MB</span></li>
-<li><a href="/anarquia/zines/Autonomous%20Winter%20Support.pdf" rel="nofollow noopener" download>Autonomous Winter Support</a><span>11.5 MB</span></li>
-<li><a href="/anarquia/zines/Banner%20Drops%20Stencils%20Wheatpaste.pdf" rel="nofollow noopener" download>Banner Drops Stencils Wheatpaste</a><span>1.3 MB</span></li>
-<li><a href="/anarquia/zines/Basic%20Blockading.pdf" rel="nofollow noopener" download>Basic Blockading</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Be%20Your%20Own%20Repression%20Committee.pdf" rel="nofollow noopener" download>Be Your Own Repression Committee</a><span>4.0 MB</span></li>
-<li><a href="/anarquia/zines/Best%20Practices%20For%20Tips%20and%20Info%20Sharing.pdf" rel="nofollow noopener" download>Best Practices For Tips and Info Sharing</a><span>1.3 MB</span></li>
-<li><a href="/anarquia/zines/Billboard%20Improvement.pdf" rel="nofollow noopener" download>Billboard Improvement</a><span>1.2 MB</span></li>
-<li><a href="/anarquia/zines/Blinding%20the%20Cyclops%20Wrecking%20the%20Panopticon.pdf" rel="nofollow noopener" download>Blinding the Cyclops Wrecking the Panopticon</a><span>1.7 MB</span></li>
-<li><a href="/anarquia/zines/Blocing%20Up.pdf" rel="nofollow noopener" download>Blocing Up</a><span>4.7 MB</span></li>
-<li><a href="/anarquia/zines/Blockade%20Occupy%20Strike%20Back.pdf" rel="nofollow noopener" download>Blockade Occupy Strike Back</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/Blocks%20Black%20and%20Otherwise.pdf" rel="nofollow noopener" download>Blocks Black and Otherwise</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Bodyhammer.pdf" rel="nofollow noopener" download>Bodyhammer</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/Bounty%20Hunters%2C%20Inside%20FBI%20Entrapment.pdf" rel="nofollow noopener" download>Bounty Hunters, Inside FBI Entrapment</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/Build%20Your%20Own%20Solidarity%20Network.pdf" rel="nofollow noopener" download>Build Your Own Solidarity Network</a><span>1.9 MB</span></li>
-<li><a href="/anarquia/zines/Building%20Spaces.pdf" rel="nofollow noopener" download>Building Spaces</a><span>4.5 MB</span></li>
-<li><a href="/anarquia/zines/Burner%20Phone%20Best%20Practices.pdf" rel="nofollow noopener" download>Burner Phone Best Practices</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Cars%20as%20Cameras.pdf" rel="nofollow noopener" download>Cars as Cameras</a><span>0.9 MB</span></li>
-<li><a href="/anarquia/zines/Cloak%20Dagger%2C%20Lockpicking.pdf" rel="nofollow noopener" download>Cloak Dagger, Lockpicking</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/Cloak%20Dagger%2C%20Theft.pdf" rel="nofollow noopener" download>Cloak Dagger, Theft</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Confidence%20Courage%20Connection%20Trust%2C%20Security%20Culture.pdf" rel="nofollow noopener" download>Confidence Courage Connection Trust, Security Culture</a><span>1.6 MB</span></li>
-<li><a href="/anarquia/zines/Consensus%20Introduction.pdf" rel="nofollow noopener" download>Consensus Introduction</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Constructing%20a%20Revolution.pdf" rel="nofollow noopener" download>Constructing a Revolution</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Counterinfo%20A%20How%20To%20Guide.pdf" rel="nofollow noopener" download>Counterinfo A How To Guide</a><span>1.6 MB</span></li>
-<li><a href="/anarquia/zines/Cover%20Your%20Forehead.pdf" rel="nofollow noopener" download>Cover Your Forehead</a><span>0.0 MB</span></li>
-<li><a href="/anarquia/zines/Creating%20a%20Clean%20Room.pdf" rel="nofollow noopener" download>Creating a Clean Room</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Crossing%20the%20US%20Canada%20Border.pdf" rel="nofollow noopener" download>Crossing the US Canada Border</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Dealing%20with%20DNA%20in%20Practice.pdf" rel="nofollow noopener" download>Dealing with DNA in Practice</a><span>10.9 MB</span></li>
-<li><a href="/anarquia/zines/Dearrest%20Primer.pdf" rel="nofollow noopener" download>Dearrest Primer</a><span>2.8 MB</span></li>
-<li><a href="/anarquia/zines/Debt%20Resistors%20Operations%20Manual.pdf" rel="nofollow noopener" download>Debt Resistors Operations Manual</a><span>17.7 MB</span></li>
-<li><a href="/anarquia/zines/Demonstrator%27s%20Guide%20To%20Gunshot%20Wounds.pdf" rel="nofollow noopener" download>Demonstrator&#x27;s Guide To Gunshot Wounds</a><span>2.5 MB</span></li>
-<li><a href="/anarquia/zines/Digital%20Security%20For%20Activists.pdf" rel="nofollow noopener" download>Digital Security For Activists</a><span>3.9 MB</span></li>
-<li><a href="/anarquia/zines/Digital%20Security.pdf" rel="nofollow noopener" download>Digital Security</a><span>4.6 MB</span></li>
-<li><a href="/anarquia/zines/DigitalPiracy.pdf" rel="nofollow noopener" download>DigitalPiracy</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/DIY%20Emergency%20Handwashing%20Station.pdf" rel="nofollow noopener" download>DIY Emergency Handwashing Station</a><span>1.1 MB</span></li>
-<li><a href="/anarquia/zines/DIY%20Occupation%20Guide.pdf" rel="nofollow noopener" download>DIY Occupation Guide</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/DIY%20Trans%20Healthcare.pdf" rel="nofollow noopener" download>DIY Trans Healthcare</a><span>5.8 MB</span></li>
-<li><a href="/anarquia/zines/DNA%20You%20Say.pdf" rel="nofollow noopener" download>DNA You Say</a><span>3.8 MB</span></li>
-<li><a href="/anarquia/zines/Doxcare.pdf" rel="nofollow noopener" download>Doxcare</a><span>7.2 MB</span></li>
-<li><a href="/anarquia/zines/Dropping%20Out.pdf" rel="nofollow noopener" download>Dropping Out</a><span>1.4 MB</span></li>
-<li><a href="/anarquia/zines/Edible%20Medicinal%20Plants.pdf" rel="nofollow noopener" download>Edible Medicinal Plants</a><span>3.3 MB</span></li>
-<li><a href="/anarquia/zines/Encrypted%20Messaging%20for%20Anarchists.pdf" rel="nofollow noopener" download>Encrypted Messaging for Anarchists</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Excited%20Delirium%2C%20Police%20Weapons.pdf" rel="nofollow noopener" download>Excited Delirium, Police Weapons</a><span>9.3 MB</span></li>
-<li><a href="/anarquia/zines/Fedizine%20An%20Anarchist%20Introduction%20to%20Federated%20Social%20Media.pdf" rel="nofollow noopener" download>Fedizine An Anarchist Introduction to Federated Social Media</a><span>2.7 MB</span></li>
-<li><a href="/anarquia/zines/For%20an%20Anarchist%20Radio%20Relay%20League.pdf" rel="nofollow noopener" download>For an Anarchist Radio Relay League</a><span>39.1 MB</span></li>
-<li><a href="/anarquia/zines/Forming%20an%20Affinity%20Group.pdf" rel="nofollow noopener" download>Forming an Affinity Group</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Forming%20an%20Antifa%20Group.pdf" rel="nofollow noopener" download>Forming an Antifa Group</a><span>3.4 MB</span></li>
-<li><a href="/anarquia/zines/Go%20Kits%20for%20AntiFascist%20Community%20Defense.pdf" rel="nofollow noopener" download>Go Kits for AntiFascist Community Defense</a><span>4.3 MB</span></li>
-<li><a href="/anarquia/zines/Grand%20Juries%20Tools%20of%20Repression.pdf" rel="nofollow noopener" download>Grand Juries Tools of Repression</a><span>0.1 MB</span></li>
-<li><a href="/anarquia/zines/Graphene%20OS.pdf" rel="nofollow noopener" download>Graphene OS</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Guide%20to%20Closed%20Circuit%20Television.pdf" rel="nofollow noopener" download>Guide to Closed Circuit Television</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Guide%20to%20Peer-to-Peer%20Encryption%20and%20Tor.pdf" rel="nofollow noopener" download>Guide to Peer-to-Peer Encryption and Tor</a><span>7.9 MB</span></li>
-<li><a href="/anarquia/zines/Hack%20Back%20a%20DIY%20Guide.pdf" rel="nofollow noopener" download>Hack Back a DIY Guide</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/How%20It%20Is%20To%20Be%20Fun.pdf" rel="nofollow noopener" download>How It Is To Be Fun</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Give%20Yourself%20An%20Abortion.pdf" rel="nofollow noopener" download>How To Give Yourself An Abortion</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Have%20A%20Fun%20Night%20To%20Forget.pdf" rel="nofollow noopener" download>How To Have A Fun Night To Forget</a><span>1.4 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Organize%20a%20Neighborhood%20Assembly.pdf" rel="nofollow noopener" download>How To Organize a Neighborhood Assembly</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Organize%20a%20Protest%20March.pdf" rel="nofollow noopener" download>How to Organize a Protest March</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Organize%20a%20Squatted%20Dance%20Party.pdf" rel="nofollow noopener" download>How to Organize a Squatted Dance Party</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Organize%20an%20Assembly.pdf" rel="nofollow noopener" download>How to Organize an Assembly</a><span>1.0 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Organize%20Your%20Building.pdf" rel="nofollow noopener" download>How To Organize Your Building</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Put%20Together%20a%20Consent%20Workshop.pdf" rel="nofollow noopener" download>How to Put Together a Consent Workshop</a><span>4.7 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Set%20Up%20a%20Burner%20Phone.pdf" rel="nofollow noopener" download>How to Set Up a Burner Phone</a><span>2.5 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Start%20a%20Prison%20Books%20Collective.pdf" rel="nofollow noopener" download>How to Start a Prison Books Collective</a><span>2.0 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Start%20A%20Successful%20Group.pdf" rel="nofollow noopener" download>How To Start A Successful Group</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Start%20Your%20Own%20Study%20Group%20In%20Prison.pdf" rel="nofollow noopener" download>How to Start Your Own Study Group In Prison</a><span>22.1 MB</span></li>
-<li><a href="/anarquia/zines/How%20To%20Survive%20A%20Felony%20Trial.pdf" rel="nofollow noopener" download>How To Survive A Felony Trial</a><span>2.5 MB</span></li>
-<li><a href="/anarquia/zines/How%20to%20Zap%20a%20Camera.pdf" rel="nofollow noopener" download>How to Zap a Camera</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Intelligence%20%26%20Tech%20Security.pdf" rel="nofollow noopener" download>Intelligence &amp; Tech Security</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Investigators%20Dirty%20Tricks.pdf" rel="nofollow noopener" download>Investigators Dirty Tricks</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/It%27s%20Vacant%20Take%20It.pdf" rel="nofollow noopener" download>It&#x27;s Vacant Take It</a><span>3.1 MB</span></li>
-<li><a href="/anarquia/zines/Jury%20Nullification.pdf" rel="nofollow noopener" download>Jury Nullification</a><span>0.9 MB</span></li>
-<li><a href="/anarquia/zines/Kill%20The%20Cop%20in%20Your%20Pocket.pdf" rel="nofollow noopener" download>Kill The Cop in Your Pocket</a><span>0.8 MB</span></li>
-<li><a href="/anarquia/zines/Lafarge%20Case%20Investigation%20Methods%20Used%20and%20Lessons.pdf" rel="nofollow noopener" download>Lafarge Case Investigation Methods Used and Lessons</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/Learning%20Good%20Consent.pdf" rel="nofollow noopener" download>Learning Good Consent</a><span>6.6 MB</span></li>
-<li><a href="/anarquia/zines/Linux%20101.pdf" rel="nofollow noopener" download>Linux 101</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/London%20Calling%20A%20Cellphone%20and%20Internet%20Security%20Primer.pdf" rel="nofollow noopener" download>London Calling A Cellphone and Internet Security Primer</a><span>2.2 MB</span></li>
-<li><a href="/anarquia/zines/Make%20Your%20Electronics%20Tamper%20Evident.pdf" rel="nofollow noopener" download>Make Your Electronics Tamper Evident</a><span>1.8 MB</span></li>
-<li><a href="/anarquia/zines/Measures%20Against%20Surveillance%20Part%202.pdf" rel="nofollow noopener" download>Measures Against Surveillance Part 2</a><span>5.8 MB</span></li>
-<li><a href="/anarquia/zines/Measures%20Against%20Surveillance.pdf" rel="nofollow noopener" download>Measures Against Surveillance</a><span>3.8 MB</span></li>
-<li><a href="/anarquia/zines/Media%20A%20How%20To%20Guide.pdf" rel="nofollow noopener" download>Media A How To Guide</a><span>0.4 MB</span></li>
-<li><a href="/anarquia/zines/Methods%20of%20Struggle%2C%20Ansyn%20Tactics.pdf" rel="nofollow noopener" download>Methods of Struggle, Ansyn Tactics</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/Minimizing%20DNA%20Traces.pdf" rel="nofollow noopener" download>Minimizing DNA Traces</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Mobile%20Phone%20Security.pdf" rel="nofollow noopener" download>Mobile Phone Security</a><span>3.1 MB</span></li>
-<li><a href="/anarquia/zines/On%20Badjacketing.pdf" rel="nofollow noopener" download>On Badjacketing</a><span>9.5 MB</span></li>
-<li><a href="/anarquia/zines/Opening%20Doors%2C%20Squating.pdf" rel="nofollow noopener" download>Opening Doors, Squating</a><span>5.4 MB</span></li>
-<li><a href="/anarquia/zines/Organizing%20the%20Unhoused.pdf" rel="nofollow noopener" download>Organizing the Unhoused</a><span>19.1 MB</span></li>
-<li><a href="/anarquia/zines/Ours%20Occupation%20Guide.pdf" rel="nofollow noopener" download>Ours Occupation Guide</a><span>4.5 MB</span></li>
-<li><a href="/anarquia/zines/Outrun%20the%20Bear%20Protonmail%20is%20not%20for%20Activists.pdf" rel="nofollow noopener" download>Outrun the Bear Protonmail is not for Activists</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Overview%20Of%20Police%20Investigations%20Tied%20To%20A%20Demo.pdf" rel="nofollow noopener" download>Overview Of Police Investigations Tied To A Demo</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Piece%20Now.pdf" rel="nofollow noopener" download>Piece Now</a><span>0.8 MB</span></li>
-<li><a href="/anarquia/zines/Prisoner%20Letter%20Writing.pdf" rel="nofollow noopener" download>Prisoner Letter Writing</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/Qubes%20OS%20For%20Anarchists.pdf" rel="nofollow noopener" download>Qubes OS For Anarchists</a><span>1.2 MB</span></li>
-<li><a href="/anarquia/zines/Queensland%20Squatters%20Handbook.pdf" rel="nofollow noopener" download>Queensland Squatters Handbook</a><span>0.9 MB</span></li>
-<li><a href="/anarquia/zines/Removing%20Metadata.pdf" rel="nofollow noopener" download>Removing Metadata</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Resisting%20Arrest%2C%20Specific%20to%20Canada.pdf" rel="nofollow noopener" download>Resisting Arrest, Specific to Canada</a><span>1.2 MB</span></li>
-<li><a href="/anarquia/zines/Rusty%27s%20Rules.pdf" rel="nofollow noopener" download>Rusty&#x27;s Rules</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Safety%20Practices%20for%20Food%20Distribution.pdf" rel="nofollow noopener" download>Safety Practices for Food Distribution</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Secrets%20and%20Lies%2C%20Security%20Culture.pdf" rel="nofollow noopener" download>Secrets and Lies, Security Culture</a><span>0.8 MB</span></li>
-<li><a href="/anarquia/zines/Security%20Culture%20Building%20Relationships%20of%20Trust%20and%20Care.pdf" rel="nofollow noopener" download>Security Culture Building Relationships of Trust and Care</a><span>17.2 MB</span></li>
-<li><a href="/anarquia/zines/Security%20Culture.pdf" rel="nofollow noopener" download>Security Culture</a><span>0.9 MB</span></li>
-<li><a href="/anarquia/zines/Security%20Without%20Hierarchy.pdf" rel="nofollow noopener" download>Security Without Hierarchy</a><span>7.8 MB</span></li>
-<li><a href="/anarquia/zines/Shoplifting.pdf" rel="nofollow noopener" download>Shoplifting</a><span>0.1 MB</span></li>
-<li><a href="/anarquia/zines/Signal%20for%20Punks.pdf" rel="nofollow noopener" download>Signal for Punks</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/Soaring%20Beyond%20The%20Walls.pdf" rel="nofollow noopener" download>Soaring Beyond The Walls</a><span>2.5 MB</span></li>
-<li><a href="/anarquia/zines/Spread%20Information%20Not%20Panic.pdf" rel="nofollow noopener" download>Spread Information Not Panic</a><span>0.7 MB</span></li>
-<li><a href="/anarquia/zines/Starting%20an%20ABC%20Group.pdf" rel="nofollow noopener" download>Starting an ABC Group</a><span>28.9 MB</span></li>
-<li><a href="/anarquia/zines/Stay%20Calm.pdf" rel="nofollow noopener" download>Stay Calm</a><span>0.1 MB</span></li>
-<li><a href="/anarquia/zines/Sticking%20to%20It%2C%20Removing%20Fascist%20Stickers%20and%20Posters.pdf" rel="nofollow noopener" download>Sticking to It, Removing Fascist Stickers and Posters</a><span>10.8 MB</span></li>
-<li><a href="/anarquia/zines/Stop%20Hunting%20Sheep%2C%20Security%20Culture%2C%20Informants.pdf" rel="nofollow noopener" download>Stop Hunting Sheep, Security Culture, Informants</a><span>6.0 MB</span></li>
-<li><a href="/anarquia/zines/Strike%2C%20A%20Guide%20To%20Walking%20Out.pdf" rel="nofollow noopener" download>Strike, A Guide To Walking Out</a><span>1.3 MB</span></li>
-<li><a href="/anarquia/zines/Sunbird%20Signal%20Dispatch%20Thread.pdf" rel="nofollow noopener" download>Sunbird Signal Dispatch Thread</a><span>6.0 MB</span></li>
-<li><a href="/anarquia/zines/Survival%20In%20Solitary.pdf" rel="nofollow noopener" download>Survival In Solitary</a><span>0.6 MB</span></li>
-<li><a href="/anarquia/zines/Surviving%20a%20Grand%20Jury.pdf" rel="nofollow noopener" download>Surviving a Grand Jury</a><span>2.1 MB</span></li>
-<li><a href="/anarquia/zines/Tails%20for%20Anarchists.pdf" rel="nofollow noopener" download>Tails for Anarchists</a><span>1.9 MB</span></li>
-<li><a href="/anarquia/zines/Talking%20To%20The%20Media.pdf" rel="nofollow noopener" download>Talking To The Media</a><span>0.3 MB</span></li>
-<li><a href="/anarquia/zines/Tear%20Gas.pdf" rel="nofollow noopener" download>Tear Gas</a><span>4.5 MB</span></li>
-<li><a href="/anarquia/zines/The%20Complete%20Manual%20of%20Pirate%20Radio.pdf" rel="nofollow noopener" download>The Complete Manual of Pirate Radio</a><span>11.4 MB</span></li>
-<li><a href="/anarquia/zines/The%20Counterforce%20Guide%20to%20Mastodon%20and%20the%20Fediverse.pdf" rel="nofollow noopener" download>The Counterforce Guide to Mastodon and the Fediverse</a><span>4.3 MB</span></li>
-<li><a href="/anarquia/zines/The%20Criminal%20Legal%20System.pdf" rel="nofollow noopener" download>The Criminal Legal System</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Threat%20Modeling%20Fundamentals.pdf" rel="nofollow noopener" download>Threat Modeling Fundamentals</a><span>7.2 MB</span></li>
-<li><a href="/anarquia/zines/Tips%20on%20Staying%20Calm%20While%20Sitting%20In%20Jail.pdf" rel="nofollow noopener" download>Tips on Staying Calm While Sitting In Jail</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Training%20Martial%20Arts%20for%20Anti-Fascism.pdf" rel="nofollow noopener" download>Training Martial Arts for Anti-Fascism</a><span>3.6 MB</span></li>
-<li><a href="/anarquia/zines/Transfem%20DIY%20HRT.pdf" rel="nofollow noopener" download>Transfem DIY HRT</a><span>2.2 MB</span></li>
-<li><a href="/anarquia/zines/Transmasc%20DIY%20HRT.pdf" rel="nofollow noopener" download>Transmasc DIY HRT</a><span>1.9 MB</span></li>
-<li><a href="/anarquia/zines/Troublemakers%20Guide.pdf" rel="nofollow noopener" download>Troublemakers Guide</a><span>1.0 MB</span></li>
-<li><a href="/anarquia/zines/Turn%20Off%20Your%20Phone.pdf" rel="nofollow noopener" download>Turn Off Your Phone</a><span>3.1 MB</span></li>
-<li><a href="/anarquia/zines/We%20Are%20Being%20Doxxed.pdf" rel="nofollow noopener" download>We Are Being Doxxed</a><span>1.1 MB</span></li>
-<li><a href="/anarquia/zines/Weathering%20Jail%20and%20Prison.pdf" rel="nofollow noopener" download>Weathering Jail and Prison</a><span>1.0 MB</span></li>
-<li><a href="/anarquia/zines/What%20Is%20Prisoner%20Support.pdf" rel="nofollow noopener" download>What Is Prisoner Support</a><span>0.5 MB</span></li>
-<li><a href="/anarquia/zines/What%20Is%20Security%20Culture.pdf" rel="nofollow noopener" download>What Is Security Culture</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/What%20Should%20We%20Do%20When%20Signal%20Gets%20Blocked.pdf" rel="nofollow noopener" download>What Should We Do When Signal Gets Blocked</a><span>16.0 MB</span></li>
-<li><a href="/anarquia/zines/What%20To%20Do%20About%20Your%20Slumlord%20Scum.pdf" rel="nofollow noopener" download>What To Do About Your Slumlord Scum</a><span>2.3 MB</span></li>
-<li><a href="/anarquia/zines/Who%20Wrote%20That%2C%20Forensic%20Linguistics.pdf" rel="nofollow noopener" download>Who Wrote That, Forensic Linguistics</a><span>0.2 MB</span></li>
-<li><a href="/anarquia/zines/Winter%20Support%20For%20Unsheltered.pdf" rel="nofollow noopener" download>Winter Support For Unsheltered</a><span>11.5 MB</span></li>
-<li><a href="/anarquia/zines/Writing%20to%20Prisoners%20FAQ.pdf" rel="nofollow noopener" download>Writing to Prisoners FAQ</a><span>0.1 MB</span></li>
-</ul>
-<p><small>Fonte: github.com/rechelon/zine_library (pasta Guides, commit 47beb5b). Espelhado em 05/10/2026.</small></p>
-</section>
-</main>
+<footer><div class="wrap">
+  Fonte: <a href="https://github.com/rechelon/zine_library" target="_blank" rel="nofollow noopener">github.com/rechelon/zine_library</a> (pastas "Basic Intros" e "Guides", commit 47beb5b), espelhado em 05/10/2026 sem alterações. Pedidos de remoção: <a href="/sobre.html">contato</a>.
+</div></footer>
+
+<button class="top" id="top" type="button" aria-label="Voltar ao topo">↑</button>
+<div class="toast" id="toast" role="status"></div>
+
 <script>
-const c=document.getElementById('aceite'),a=document.getElementById('acervo');
-function show(){a.hidden=!c.checked}
-try{if(sessionStorage.getItem('anarquia-aceite')==='1'){c.checked=true}}catch(e){}
-show();
-c.addEventListener('change',()=>{show();try{sessionStorage.setItem('anarquia-aceite',c.checked?'1':'0')}catch(e){}});
-document.getElementById('busca').addEventListener('input',e=>{const q=e.target.value.toLowerCase();for(const li of document.querySelectorAll('#lista li'))li.hidden=!li.textContent.toLowerCase().includes(q)});
+const DATA=[{"t": "10 Points on the Black Bloc", "a": "Walia", "c": "intro", "s": 1.3, "u": "/anarquia/zines/intros/10 Points on the Black Bloc - Walia.pdf", "k": "intro"}, {"t": "7 Reasons to Hate The Season of Electoralism", "a": "", "c": "intro", "s": 0.7, "u": "/anarquia/zines/intros/7 Reasons to Hate The Season of Electoralism.pdf", "k": "intro"}, {"t": "A Brief History of Capitalism", "a": "", "c": "intro", "s": 4.9, "u": "/anarquia/zines/intros/A Brief History of Capitalism.pdf", "k": "intro"}, {"t": "ABCs of Anarchy", "a": "", "c": "intro", "s": 1.2, "u": "/anarquia/zines/intros/ABCs of Anarchy.pdf", "k": "intro"}, {"t": "Against The Logic Of The Guillotine", "a": "", "c": "intro", "s": 1.5, "u": "/anarquia/zines/intros/Against The Logic Of The Guillotine.pdf", "k": "intro"}, {"t": "Alternatives to the Police", "a": "", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Alternatives to the Police.pdf", "k": "intro"}, {"t": "Anarchism", "a": "Labadie", "c": "intro", "s": 0.7, "u": "/anarquia/zines/intros/Anarchism - Labadie.pdf", "k": "intro"}, {"t": "Anarchism Articulated", "a": "", "c": "intro", "s": 0.9, "u": "/anarquia/zines/intros/Anarchism Articulated.pdf", "k": "intro"}, {"t": "Anarchism What it is, and What it Ain't...", "a": "", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Anarchism What it is, and What it Ain't....pdf", "k": "intro"}, {"t": "Anarchism What It Really Stands For", "a": "Goldman", "c": "intro", "s": 0.1, "u": "/anarquia/zines/intros/Anarchism What It Really Stands For - Goldman.pdf", "k": "intro"}, {"t": "Anarchy", "a": "Malatesta", "c": "intro", "s": 0.3, "u": "/anarquia/zines/intros/Anarchy - Malatesta.pdf", "k": "intro"}, {"t": "Anarchy Works - Crime", "a": "Gelderloos", "c": "intro", "s": 1.2, "u": "/anarquia/zines/intros/Anarchy Works - Crime - Gelderloos.pdf", "k": "intro"}, {"t": "Anarchy Works - Revolution", "a": "Gelderloos", "c": "intro", "s": 2.2, "u": "/anarquia/zines/intros/Anarchy Works - Revolution - Gelderloos.pdf", "k": "intro"}, {"t": "Are You An Anarchist", "a": "Graeber", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Are You An Anarchist - Graeber.pdf", "k": "intro"}, {"t": "Basic Principles of Anarchism", "a": "", "c": "intro", "s": 4.1, "u": "/anarquia/zines/intros/Basic Principles of Anarchism.pdf", "k": "intro"}, {"t": "Consent or Coercion", "a": "", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Consent or Coercion.pdf", "k": "intro"}, {"t": "Don't Just Do Nothing To Counter Fascism", "a": "", "c": "intro", "s": 0.3, "u": "/anarquia/zines/intros/Don't Just Do Nothing To Counter Fascism.pdf", "k": "intro"}, {"t": "Enemies We Know", "a": "", "c": "intro", "s": 1.5, "u": "/anarquia/zines/intros/Enemies We Know.pdf", "k": "intro"}, {"t": "Exist Anarchism in a Nutshell", "a": "", "c": "intro", "s": 1.9, "u": "/anarquia/zines/intros/Exist Anarchism in a Nutshell.pdf", "k": "intro"}, {"t": "Fighting For Our Lives", "a": "", "c": "intro", "s": 9.7, "u": "/anarquia/zines/intros/Fighting For Our Lives.pdf", "k": "intro"}, {"t": "From Democracy To Freedom", "a": "", "c": "intro", "s": 6.1, "u": "/anarquia/zines/intros/From Democracy To Freedom.pdf", "k": "intro"}, {"t": "In Defense Of Smashing Cameras", "a": "", "c": "intro", "s": 0.8, "u": "/anarquia/zines/intros/In Defense Of Smashing Cameras.pdf", "k": "intro"}, {"t": "Join The Resistance Fall In Love", "a": "", "c": "intro", "s": 0.8, "u": "/anarquia/zines/intros/Join The Resistance Fall In Love.pdf", "k": "intro"}, {"t": "Lexicon Pamphlets", "a": "", "c": "intro", "s": 5.9, "u": "/anarquia/zines/intros/Lexicon Pamphlets.pdf", "k": "intro"}, {"t": "Life Without Law", "a": "", "c": "intro", "s": 2.3, "u": "/anarquia/zines/intros/Life Without Law.pdf", "k": "intro"}, {"t": "Mythology Of Work", "a": "Crimethinc", "c": "intro", "s": 4.4, "u": "/anarquia/zines/intros/Mythology Of Work - Crimethinc.pdf", "k": "intro"}, {"t": "Seven Myths About The Police", "a": "", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Seven Myths About The Police.pdf", "k": "intro"}, {"t": "The Party's Over, Beyond Democracy", "a": "", "c": "intro", "s": 1.8, "u": "/anarquia/zines/intros/The Party's Over, Beyond Democracy.pdf", "k": "intro"}, {"t": "There's No Such Thing As A Revolutionary Government", "a": "", "c": "intro", "s": 4.0, "u": "/anarquia/zines/intros/There's No Such Thing As A Revolutionary Government.pdf", "k": "intro"}, {"t": "Towards Anarchy", "a": "Malatesta", "c": "intro", "s": 0.6, "u": "/anarquia/zines/intros/Towards Anarchy - Malatesta.pdf", "k": "intro"}, {"t": "Voting vs Direct Action", "a": "", "c": "intro", "s": 0.2, "u": "/anarquia/zines/intros/Voting vs Direct Action.pdf", "k": "intro"}, {"t": "What Anarchists Have Been Saying and What Liberals Need to Hear", "a": "", "c": "intro", "s": 0.5, "u": "/anarquia/zines/intros/What Anarchists Have Been Saying and What Liberals Need to Hear.pdf", "k": "intro"}, {"t": "What Will It Take To Stop The Police From Killing", "a": "", "c": "intro", "s": 0.9, "u": "/anarquia/zines/intros/What Will It Take To Stop The Police From Killing.pdf", "k": "intro"}, {"t": "Who Are You Streaming For", "a": "", "c": "intro", "s": 1.0, "u": "/anarquia/zines/intros/Who Are You Streaming For.pdf", "k": "intro"}, {"t": "Who's Left Prison Abolition", "a": "", "c": "intro", "s": 7.3, "u": "/anarquia/zines/intros/Who's Left Prison Abolition.pdf", "k": "intro"}, {"t": "Without Police, Examples", "a": "", "c": "intro", "s": 0.3, "u": "/anarquia/zines/intros/Without Police, Examples.pdf", "k": "intro"}, {"t": "Work, Community, Politics, War", "a": "", "c": "intro", "s": 11.4, "u": "/anarquia/zines/intros/Work, Community, Politics, War.pdf", "k": "intro"}, {"t": "Your Freedom Is My Freedom", "a": "", "c": "intro", "s": 0.5, "u": "/anarquia/zines/intros/Your Freedom Is My Freedom.pdf", "k": "intro"}, {"t": "10 Steps For Setting Up A Blockade", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/10 Steps For Setting Up A Blockade.pdf", "k": "acao"}, {"t": "40 Ways To Fight Fascism", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/40 Ways To Fight Fascism.pdf", "k": "acao"}, {"t": "A Field Guide To Wheatpasting", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/A Field Guide To Wheatpasting.pdf", "k": "acao"}, {"t": "A Friend Of Mine Or A Friend Of Ours", "a": "", "c": "guia", "s": 0.1, "u": "/anarquia/zines/A Friend Of Mine Or A Friend Of Ours.pdf", "k": "org"}, {"t": "A Rebel Worker's Organizing Handbook", "a": "", "c": "guia", "s": 0.8, "u": "/anarquia/zines/A Rebel Worker's Organizing Handbook.pdf", "k": "org"}, {"t": "A Recipe For Nocturnal Direct Actions", "a": "", "c": "guia", "s": 2.0, "u": "/anarquia/zines/A Recipe For Nocturnal Direct Actions.pdf", "k": "acao"}, {"t": "A Scam App Primer", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/A Scam App Primer.pdf", "k": "seg"}, {"t": "Affinity Groups", "a": "", "c": "guia", "s": 2.4, "u": "/anarquia/zines/Affinity Groups.pdf", "k": "org"}, {"t": "ALF Prisoner Support - Bite Back", "a": "", "c": "guia", "s": 0.0, "u": "/anarquia/zines/ALF Prisoner Support - Bite Back.pdf", "k": "prisao"}, {"t": "An Activist's Guide to First Aid", "a": "", "c": "guia", "s": 1.0, "u": "/anarquia/zines/An Activist's Guide to First Aid.pdf", "k": "saude"}, {"t": "Aorta - Facilitating Meetings", "a": "", "c": "guia", "s": 4.6, "u": "/anarquia/zines/Aorta - Facilitating Meetings.pdf", "k": "org"}, {"t": "Autonomous Trans Healthcare", "a": "", "c": "guia", "s": 12.9, "u": "/anarquia/zines/Autonomous Trans Healthcare.pdf", "k": "saude"}, {"t": "Autonomous Winter Support", "a": "", "c": "guia", "s": 11.5, "u": "/anarquia/zines/Autonomous Winter Support.pdf", "k": "saude"}, {"t": "Banner Drops Stencils Wheatpaste", "a": "", "c": "guia", "s": 1.3, "u": "/anarquia/zines/Banner Drops Stencils Wheatpaste.pdf", "k": "acao"}, {"t": "Basic Blockading", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Basic Blockading.pdf", "k": "acao"}, {"t": "Be Your Own Repression Committee", "a": "", "c": "guia", "s": 4.0, "u": "/anarquia/zines/Be Your Own Repression Committee.pdf", "k": "seg"}, {"t": "Best Practices For Tips and Info Sharing", "a": "", "c": "guia", "s": 1.3, "u": "/anarquia/zines/Best Practices For Tips and Info Sharing.pdf", "k": "org"}, {"t": "Billboard Improvement", "a": "", "c": "guia", "s": 1.2, "u": "/anarquia/zines/Billboard Improvement.pdf", "k": "acao"}, {"t": "Blinding the Cyclops Wrecking the Panopticon", "a": "", "c": "guia", "s": 1.7, "u": "/anarquia/zines/Blinding the Cyclops Wrecking the Panopticon.pdf", "k": "seg"}, {"t": "Blocing Up", "a": "", "c": "guia", "s": 4.7, "u": "/anarquia/zines/Blocing Up.pdf", "k": "acao"}, {"t": "Blockade Occupy Strike Back", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/Blockade Occupy Strike Back.pdf", "k": "acao"}, {"t": "Blocks Black and Otherwise", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Blocks Black and Otherwise.pdf", "k": "acao"}, {"t": "Bodyhammer", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/Bodyhammer.pdf", "k": "org"}, {"t": "Bounty Hunters, Inside FBI Entrapment", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/Bounty Hunters, Inside FBI Entrapment.pdf", "k": "seg"}, {"t": "Build Your Own Solidarity Network", "a": "", "c": "guia", "s": 1.9, "u": "/anarquia/zines/Build Your Own Solidarity Network.pdf", "k": "org"}, {"t": "Building Spaces", "a": "", "c": "guia", "s": 4.5, "u": "/anarquia/zines/Building Spaces.pdf", "k": "org"}, {"t": "Burner Phone Best Practices", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Burner Phone Best Practices.pdf", "k": "seg"}, {"t": "Cars as Cameras", "a": "", "c": "guia", "s": 0.9, "u": "/anarquia/zines/Cars as Cameras.pdf", "k": "seg"}, {"t": "Cloak Dagger, Lockpicking", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/Cloak Dagger, Lockpicking.pdf", "k": "acao"}, {"t": "Cloak Dagger, Theft", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Cloak Dagger, Theft.pdf", "k": "acao"}, {"t": "Confidence Courage Connection Trust, Security Culture", "a": "", "c": "guia", "s": 1.6, "u": "/anarquia/zines/Confidence Courage Connection Trust, Security Culture.pdf", "k": "seg"}, {"t": "Consensus Introduction", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Consensus Introduction.pdf", "k": "org"}, {"t": "Constructing a Revolution", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Constructing a Revolution.pdf", "k": "org"}, {"t": "Counterinfo A How To Guide", "a": "", "c": "guia", "s": 1.6, "u": "/anarquia/zines/Counterinfo A How To Guide.pdf", "k": "seg"}, {"t": "Cover Your Forehead", "a": "", "c": "guia", "s": 0.0, "u": "/anarquia/zines/Cover Your Forehead.pdf", "k": "seg"}, {"t": "Creating a Clean Room", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Creating a Clean Room.pdf", "k": "seg"}, {"t": "Crossing the US Canada Border", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Crossing the US Canada Border.pdf", "k": "org"}, {"t": "Dealing with DNA in Practice", "a": "", "c": "guia", "s": 10.9, "u": "/anarquia/zines/Dealing with DNA in Practice.pdf", "k": "seg"}, {"t": "Dearrest Primer", "a": "", "c": "guia", "s": 2.8, "u": "/anarquia/zines/Dearrest Primer.pdf", "k": "prisao"}, {"t": "Debt Resistors Operations Manual", "a": "", "c": "guia", "s": 17.7, "u": "/anarquia/zines/Debt Resistors Operations Manual.pdf", "k": "seg"}, {"t": "Demonstrator's Guide To Gunshot Wounds", "a": "", "c": "guia", "s": 2.5, "u": "/anarquia/zines/Demonstrator's Guide To Gunshot Wounds.pdf", "k": "seg"}, {"t": "Digital Security For Activists", "a": "", "c": "guia", "s": 3.9, "u": "/anarquia/zines/Digital Security For Activists.pdf", "k": "seg"}, {"t": "Digital Security", "a": "", "c": "guia", "s": 4.6, "u": "/anarquia/zines/Digital Security.pdf", "k": "seg"}, {"t": "DigitalPiracy", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/DigitalPiracy.pdf", "k": "seg"}, {"t": "DIY Emergency Handwashing Station", "a": "", "c": "guia", "s": 1.1, "u": "/anarquia/zines/DIY Emergency Handwashing Station.pdf", "k": "saude"}, {"t": "DIY Occupation Guide", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/DIY Occupation Guide.pdf", "k": "acao"}, {"t": "DIY Trans Healthcare", "a": "", "c": "guia", "s": 5.8, "u": "/anarquia/zines/DIY Trans Healthcare.pdf", "k": "saude"}, {"t": "DNA You Say", "a": "", "c": "guia", "s": 3.8, "u": "/anarquia/zines/DNA You Say.pdf", "k": "seg"}, {"t": "Doxcare", "a": "", "c": "guia", "s": 7.2, "u": "/anarquia/zines/Doxcare.pdf", "k": "seg"}, {"t": "Dropping Out", "a": "", "c": "guia", "s": 1.4, "u": "/anarquia/zines/Dropping Out.pdf", "k": "org"}, {"t": "Edible Medicinal Plants", "a": "", "c": "guia", "s": 3.3, "u": "/anarquia/zines/Edible Medicinal Plants.pdf", "k": "saude"}, {"t": "Encrypted Messaging for Anarchists", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Encrypted Messaging for Anarchists.pdf", "k": "seg"}, {"t": "Excited Delirium, Police Weapons", "a": "", "c": "guia", "s": 9.3, "u": "/anarquia/zines/Excited Delirium, Police Weapons.pdf", "k": "org"}, {"t": "Fedizine An Anarchist Introduction to Federated Social Media", "a": "", "c": "guia", "s": 2.7, "u": "/anarquia/zines/Fedizine An Anarchist Introduction to Federated Social Media.pdf", "k": "org"}, {"t": "For an Anarchist Radio Relay League", "a": "", "c": "guia", "s": 39.1, "u": "/anarquia/zines/For an Anarchist Radio Relay League.pdf", "k": "acao"}, {"t": "Forming an Affinity Group", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Forming an Affinity Group.pdf", "k": "org"}, {"t": "Forming an Antifa Group", "a": "", "c": "guia", "s": 3.4, "u": "/anarquia/zines/Forming an Antifa Group.pdf", "k": "org"}, {"t": "Go Kits for AntiFascist Community Defense", "a": "", "c": "guia", "s": 4.3, "u": "/anarquia/zines/Go Kits for AntiFascist Community Defense.pdf", "k": "org"}, {"t": "Grand Juries Tools of Repression", "a": "", "c": "guia", "s": 0.1, "u": "/anarquia/zines/Grand Juries Tools of Repression.pdf", "k": "seg"}, {"t": "Graphene OS", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Graphene OS.pdf", "k": "org"}, {"t": "Guide to Closed Circuit Television", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Guide to Closed Circuit Television.pdf", "k": "org"}, {"t": "Guide to Peer-to-Peer Encryption and Tor", "a": "", "c": "guia", "s": 7.9, "u": "/anarquia/zines/Guide to Peer-to-Peer Encryption and Tor.pdf", "k": "seg"}, {"t": "Hack Back a DIY Guide", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Hack Back a DIY Guide.pdf", "k": "org"}, {"t": "How It Is To Be Fun", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/How It Is To Be Fun.pdf", "k": "org"}, {"t": "How To Give Yourself An Abortion", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/How To Give Yourself An Abortion.pdf", "k": "saude"}, {"t": "How To Have A Fun Night To Forget", "a": "", "c": "guia", "s": 1.4, "u": "/anarquia/zines/How To Have A Fun Night To Forget.pdf", "k": "org"}, {"t": "How To Organize a Neighborhood Assembly", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/How To Organize a Neighborhood Assembly.pdf", "k": "org"}, {"t": "How to Organize a Protest March", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/How to Organize a Protest March.pdf", "k": "org"}, {"t": "How to Organize a Squatted Dance Party", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/How to Organize a Squatted Dance Party.pdf", "k": "acao"}, {"t": "How to Organize an Assembly", "a": "", "c": "guia", "s": 1.0, "u": "/anarquia/zines/How to Organize an Assembly.pdf", "k": "org"}, {"t": "How To Organize Your Building", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/How To Organize Your Building.pdf", "k": "org"}, {"t": "How to Put Together a Consent Workshop", "a": "", "c": "guia", "s": 4.7, "u": "/anarquia/zines/How to Put Together a Consent Workshop.pdf", "k": "org"}, {"t": "How to Set Up a Burner Phone", "a": "", "c": "guia", "s": 2.5, "u": "/anarquia/zines/How to Set Up a Burner Phone.pdf", "k": "seg"}, {"t": "How to Start a Prison Books Collective", "a": "", "c": "guia", "s": 2.0, "u": "/anarquia/zines/How to Start a Prison Books Collective.pdf", "k": "prisao"}, {"t": "How To Start A Successful Group", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/How To Start A Successful Group.pdf", "k": "org"}, {"t": "How to Start Your Own Study Group In Prison", "a": "", "c": "guia", "s": 22.1, "u": "/anarquia/zines/How to Start Your Own Study Group In Prison.pdf", "k": "prisao"}, {"t": "How To Survive A Felony Trial", "a": "", "c": "guia", "s": 2.5, "u": "/anarquia/zines/How To Survive A Felony Trial.pdf", "k": "org"}, {"t": "How to Zap a Camera", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/How to Zap a Camera.pdf", "k": "org"}, {"t": "Intelligence & Tech Security", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Intelligence & Tech Security.pdf", "k": "seg"}, {"t": "Investigators Dirty Tricks", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Investigators Dirty Tricks.pdf", "k": "seg"}, {"t": "It's Vacant Take It", "a": "", "c": "guia", "s": 3.1, "u": "/anarquia/zines/It's Vacant Take It.pdf", "k": "org"}, {"t": "Jury Nullification", "a": "", "c": "guia", "s": 0.9, "u": "/anarquia/zines/Jury Nullification.pdf", "k": "org"}, {"t": "Kill The Cop in Your Pocket", "a": "", "c": "guia", "s": 0.8, "u": "/anarquia/zines/Kill The Cop in Your Pocket.pdf", "k": "org"}, {"t": "Lafarge Case Investigation Methods Used and Lessons", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/Lafarge Case Investigation Methods Used and Lessons.pdf", "k": "org"}, {"t": "Learning Good Consent", "a": "", "c": "guia", "s": 6.6, "u": "/anarquia/zines/Learning Good Consent.pdf", "k": "org"}, {"t": "Linux 101", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Linux 101.pdf", "k": "org"}, {"t": "London Calling A Cellphone and Internet Security Primer", "a": "", "c": "guia", "s": 2.2, "u": "/anarquia/zines/London Calling A Cellphone and Internet Security Primer.pdf", "k": "seg"}, {"t": "Make Your Electronics Tamper Evident", "a": "", "c": "guia", "s": 1.8, "u": "/anarquia/zines/Make Your Electronics Tamper Evident.pdf", "k": "org"}, {"t": "Measures Against Surveillance Part 2", "a": "", "c": "guia", "s": 5.8, "u": "/anarquia/zines/Measures Against Surveillance Part 2.pdf", "k": "seg"}, {"t": "Measures Against Surveillance", "a": "", "c": "guia", "s": 3.8, "u": "/anarquia/zines/Measures Against Surveillance.pdf", "k": "seg"}, {"t": "Media A How To Guide", "a": "", "c": "guia", "s": 0.4, "u": "/anarquia/zines/Media A How To Guide.pdf", "k": "org"}, {"t": "Methods of Struggle, Ansyn Tactics", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/Methods of Struggle, Ansyn Tactics.pdf", "k": "org"}, {"t": "Minimizing DNA Traces", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Minimizing DNA Traces.pdf", "k": "seg"}, {"t": "Mobile Phone Security", "a": "", "c": "guia", "s": 3.1, "u": "/anarquia/zines/Mobile Phone Security.pdf", "k": "seg"}, {"t": "On Badjacketing", "a": "", "c": "guia", "s": 9.5, "u": "/anarquia/zines/On Badjacketing.pdf", "k": "org"}, {"t": "Opening Doors, Squating", "a": "", "c": "guia", "s": 5.4, "u": "/anarquia/zines/Opening Doors, Squating.pdf", "k": "acao"}, {"t": "Organizing the Unhoused", "a": "", "c": "guia", "s": 19.1, "u": "/anarquia/zines/Organizing the Unhoused.pdf", "k": "saude"}, {"t": "Ours Occupation Guide", "a": "", "c": "guia", "s": 4.5, "u": "/anarquia/zines/Ours Occupation Guide.pdf", "k": "acao"}, {"t": "Outrun the Bear Protonmail is not for Activists", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Outrun the Bear Protonmail is not for Activists.pdf", "k": "org"}, {"t": "Overview Of Police Investigations Tied To A Demo", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Overview Of Police Investigations Tied To A Demo.pdf", "k": "acao"}, {"t": "Piece Now", "a": "", "c": "guia", "s": 0.8, "u": "/anarquia/zines/Piece Now.pdf", "k": "org"}, {"t": "Prisoner Letter Writing", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/Prisoner Letter Writing.pdf", "k": "prisao"}, {"t": "Qubes OS For Anarchists", "a": "", "c": "guia", "s": 1.2, "u": "/anarquia/zines/Qubes OS For Anarchists.pdf", "k": "org"}, {"t": "Queensland Squatters Handbook", "a": "", "c": "guia", "s": 0.9, "u": "/anarquia/zines/Queensland Squatters Handbook.pdf", "k": "acao"}, {"t": "Removing Metadata", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Removing Metadata.pdf", "k": "org"}, {"t": "Resisting Arrest, Specific to Canada", "a": "", "c": "guia", "s": 1.2, "u": "/anarquia/zines/Resisting Arrest, Specific to Canada.pdf", "k": "prisao"}, {"t": "Rusty's Rules", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Rusty's Rules.pdf", "k": "org"}, {"t": "Safety Practices for Food Distribution", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Safety Practices for Food Distribution.pdf", "k": "saude"}, {"t": "Secrets and Lies, Security Culture", "a": "", "c": "guia", "s": 0.8, "u": "/anarquia/zines/Secrets and Lies, Security Culture.pdf", "k": "seg"}, {"t": "Security Culture Building Relationships of Trust and Care", "a": "", "c": "guia", "s": 17.2, "u": "/anarquia/zines/Security Culture Building Relationships of Trust and Care.pdf", "k": "seg"}, {"t": "Security Culture", "a": "", "c": "guia", "s": 0.9, "u": "/anarquia/zines/Security Culture.pdf", "k": "seg"}, {"t": "Security Without Hierarchy", "a": "", "c": "guia", "s": 7.8, "u": "/anarquia/zines/Security Without Hierarchy.pdf", "k": "seg"}, {"t": "Shoplifting", "a": "", "c": "guia", "s": 0.1, "u": "/anarquia/zines/Shoplifting.pdf", "k": "org"}, {"t": "Signal for Punks", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/Signal for Punks.pdf", "k": "org"}, {"t": "Soaring Beyond The Walls", "a": "", "c": "guia", "s": 2.5, "u": "/anarquia/zines/Soaring Beyond The Walls.pdf", "k": "org"}, {"t": "Spread Information Not Panic", "a": "", "c": "guia", "s": 0.7, "u": "/anarquia/zines/Spread Information Not Panic.pdf", "k": "org"}, {"t": "Starting an ABC Group", "a": "", "c": "guia", "s": 28.9, "u": "/anarquia/zines/Starting an ABC Group.pdf", "k": "prisao"}, {"t": "Stay Calm", "a": "", "c": "guia", "s": 0.1, "u": "/anarquia/zines/Stay Calm.pdf", "k": "org"}, {"t": "Sticking to It, Removing Fascist Stickers and Posters", "a": "", "c": "guia", "s": 10.8, "u": "/anarquia/zines/Sticking to It, Removing Fascist Stickers and Posters.pdf", "k": "org"}, {"t": "Stop Hunting Sheep, Security Culture, Informants", "a": "", "c": "guia", "s": 6.0, "u": "/anarquia/zines/Stop Hunting Sheep, Security Culture, Informants.pdf", "k": "seg"}, {"t": "Strike, A Guide To Walking Out", "a": "", "c": "guia", "s": 1.3, "u": "/anarquia/zines/Strike, A Guide To Walking Out.pdf", "k": "org"}, {"t": "Sunbird Signal Dispatch Thread", "a": "", "c": "guia", "s": 6.0, "u": "/anarquia/zines/Sunbird Signal Dispatch Thread.pdf", "k": "org"}, {"t": "Survival In Solitary", "a": "", "c": "guia", "s": 0.6, "u": "/anarquia/zines/Survival In Solitary.pdf", "k": "org"}, {"t": "Surviving a Grand Jury", "a": "", "c": "guia", "s": 2.1, "u": "/anarquia/zines/Surviving a Grand Jury.pdf", "k": "seg"}, {"t": "Tails for Anarchists", "a": "", "c": "guia", "s": 1.9, "u": "/anarquia/zines/Tails for Anarchists.pdf", "k": "org"}, {"t": "Talking To The Media", "a": "", "c": "guia", "s": 0.3, "u": "/anarquia/zines/Talking To The Media.pdf", "k": "org"}, {"t": "Tear Gas", "a": "", "c": "guia", "s": 4.5, "u": "/anarquia/zines/Tear Gas.pdf", "k": "org"}, {"t": "The Complete Manual of Pirate Radio", "a": "", "c": "guia", "s": 11.4, "u": "/anarquia/zines/The Complete Manual of Pirate Radio.pdf", "k": "acao"}, {"t": "The Counterforce Guide to Mastodon and the Fediverse", "a": "", "c": "guia", "s": 4.3, "u": "/anarquia/zines/The Counterforce Guide to Mastodon and the Fediverse.pdf", "k": "org"}, {"t": "The Criminal Legal System", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/The Criminal Legal System.pdf", "k": "prisao"}, {"t": "Threat Modeling Fundamentals", "a": "", "c": "guia", "s": 7.2, "u": "/anarquia/zines/Threat Modeling Fundamentals.pdf", "k": "saude"}, {"t": "Tips on Staying Calm While Sitting In Jail", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Tips on Staying Calm While Sitting In Jail.pdf", "k": "prisao"}, {"t": "Training Martial Arts for Anti-Fascism", "a": "", "c": "guia", "s": 3.6, "u": "/anarquia/zines/Training Martial Arts for Anti-Fascism.pdf", "k": "org"}, {"t": "Transfem DIY HRT", "a": "", "c": "guia", "s": 2.2, "u": "/anarquia/zines/Transfem DIY HRT.pdf", "k": "saude"}, {"t": "Transmasc DIY HRT", "a": "", "c": "guia", "s": 1.9, "u": "/anarquia/zines/Transmasc DIY HRT.pdf", "k": "saude"}, {"t": "Troublemakers Guide", "a": "", "c": "guia", "s": 1.0, "u": "/anarquia/zines/Troublemakers Guide.pdf", "k": "org"}, {"t": "Turn Off Your Phone", "a": "", "c": "guia", "s": 3.1, "u": "/anarquia/zines/Turn Off Your Phone.pdf", "k": "seg"}, {"t": "We Are Being Doxxed", "a": "", "c": "guia", "s": 1.1, "u": "/anarquia/zines/We Are Being Doxxed.pdf", "k": "org"}, {"t": "Weathering Jail and Prison", "a": "", "c": "guia", "s": 1.0, "u": "/anarquia/zines/Weathering Jail and Prison.pdf", "k": "prisao"}, {"t": "What Is Prisoner Support", "a": "", "c": "guia", "s": 0.5, "u": "/anarquia/zines/What Is Prisoner Support.pdf", "k": "prisao"}, {"t": "What Is Security Culture", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/What Is Security Culture.pdf", "k": "seg"}, {"t": "What Should We Do When Signal Gets Blocked", "a": "", "c": "guia", "s": 16.0, "u": "/anarquia/zines/What Should We Do When Signal Gets Blocked.pdf", "k": "acao"}, {"t": "What To Do About Your Slumlord Scum", "a": "", "c": "guia", "s": 2.3, "u": "/anarquia/zines/What To Do About Your Slumlord Scum.pdf", "k": "org"}, {"t": "Who Wrote That, Forensic Linguistics", "a": "", "c": "guia", "s": 0.2, "u": "/anarquia/zines/Who Wrote That, Forensic Linguistics.pdf", "k": "org"}, {"t": "Winter Support For Unsheltered", "a": "", "c": "guia", "s": 11.5, "u": "/anarquia/zines/Winter Support For Unsheltered.pdf", "k": "saude"}, {"t": "Writing to Prisoners FAQ", "a": "", "c": "guia", "s": 0.1, "u": "/anarquia/zines/Writing to Prisoners FAQ.pdf", "k": "prisao"}];
+const CATS={todos:['Todos','#fff'],intro:['Introduções','var(--intro)'],org:['Organização','var(--org)'],acao:['Ação & protesto','var(--acao)'],seg:['Segurança & privacidade','var(--seg)'],saude:['Saúde & cuidado','var(--saude)'],prisao:['Prisão & justiça','var(--prisao)']};
+const $=s=>document.querySelector(s);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let seen=new Set();try{seen=new Set(JSON.parse(store.get('anarq-seen')||'[]'))}catch(e){}
+const state={cat:'todos',q:'',sort:'az'};
+
+// gate
+const aceite=$('#aceite'),acervo=$('#acervo'),gate=$('#aviso'),tog=$('#toggleAviso');
+function setGate(on,scroll){aceite.checked=on;acervo.classList.toggle('locked',!on);acervo.toggleAttribute('inert',!on);
+  gate.classList.toggle('min',on);tog.textContent=on?'Ler aviso':'Recolher';tog.setAttribute('aria-expanded',String(!on));
+  if(on&&scroll)setTimeout(()=>acervo.scrollIntoView({behavior:'smooth'}),350)}
+try{setGate(sessionStorage.getItem('anarquia-aceite')==='1',false)}catch(e){setGate(false,false)}
+aceite.addEventListener('change',()=>{setGate(aceite.checked,true);try{sessionStorage.setItem('anarquia-aceite',aceite.checked?'1':'0')}catch(e){}});
+tog.addEventListener('click',()=>{const min=gate.classList.toggle('min');tog.textContent=min?'Ler aviso':'Recolher';tog.setAttribute('aria-expanded',String(!min))});
+
+// chips
+const counts=DATA.reduce((m,x)=>(m[x.k]=(m[x.k]||0)+1,m),{todos:DATA.length});
+$('#chips').innerHTML=Object.entries(CATS).map(([k,[n,c]])=>`<button class="chip" style="--c:${c}" data-k="${k}" aria-pressed="${k==='todos'}"><i></i>${n} <small>${counts[k]||0}</small></button>`).join('');
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;state.cat=b.dataset.k;
+  document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',c===b));render()});
+
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function hash(s){let h=0;for(const ch of s)h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)}
+
+function render(){
+  const q=norm(state.q);
+  let list=DATA.filter(x=>(state.cat==='todos'||x.k===state.cat)&&(!q||norm(x.t+' '+x.a).includes(q)));
+  const cmp={az:(a,b)=>a.t.localeCompare(b.t),za:(a,b)=>b.t.localeCompare(a.t),sm:(a,b)=>a.s-b.s,lg:(a,b)=>b.s-a.s}[state.sort];
+  list.sort(cmp);
+  $('#contagem').innerHTML=`<b>${list.length}</b> de ${DATA.length} documentos`;
+  $('#vazio').hidden=list.length>0;
+  $('#grid').innerHTML=list.map((x,i)=>{const h=hash(x.t),[cn,cc]=CATS[x.k];
+    return `<a class="card${seen.has(x.u)?' seen':''}" href="${encodeURI(x.u)}" target="_blank" rel="nofollow noopener" data-u="${esc(x.u)}"
+      style="--c:${cc};--d:${Math.min(i,24)*0.03}s;--gx:${h%100}%;--gy:${(h>>3)%100}%;--ang:${(h%4)*45+22}deg">
+      <div class="cover"><div class="tag"><i></i>${cn}</div>
+        <div><div class="title">${esc(x.t)}</div>${x.a?`<div class="author">por ${esc(x.a)}</div>`:''}</div>
+        <div class="num">${String(i+1).padStart(2,'0')}</div></div>
+      <div class="foot"><span class="mono">${x.s.toFixed(1)} MB</span><span class="dl">Abrir PDF <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M7 17L17 7M8 7h9v9"/></svg></span></div></a>`}).join('');
+}
+render();
+
+// interactions
+let t;$('#busca').addEventListener('input',e=>{clearTimeout(t);t=setTimeout(()=>{state.q=e.target.value;render()},120)});
+$('#ordem').addEventListener('change',e=>{state.sort=e.target.value;render()});
+document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&aceite.checked){e.preventDefault();$('#busca').focus()}});
+$('#grid').addEventListener('click',e=>{const c=e.target.closest('.card');if(!c)return;seen.add(c.dataset.u);c.classList.add('seen');store.set('anarq-seen',JSON.stringify([...seen]))});
+$('#grid').addEventListener('pointermove',e=>{const c=e.target.closest('.cover');if(!c)return;const r=c.getBoundingClientRect();
+  c.style.setProperty('--ry',((e.clientX-r.left)/r.width-.5)*14+'deg');c.style.setProperty('--rx',-((e.clientY-r.top)/r.height-.5)*14+'deg')});
+$('#grid').addEventListener('pointerout',e=>{const c=e.target.closest('.cover');if(c){c.style.removeProperty('--rx');c.style.removeProperty('--ry')}});
+function toast(m){const el=$('#toast');el.textContent=m;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2600)}
+$('#sorte').addEventListener('click',()=>{const cards=[...document.querySelectorAll('.card')];if(!cards.length)return;
+  const c=cards[Math.floor(Math.random()*cards.length)];c.scrollIntoView({behavior:'smooth',block:'center'});c.focus({preventScroll:true});
+  c.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:700,easing:'ease-out'});
+  toast('Que tal ler: '+c.querySelector('.title').textContent+'?')});
+
+// counters
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(!en.isIntersecting)return;const el=en.target,n=+el.dataset.count,t0=performance.now();
+  (function step(now){const p=Math.min((now-t0)/1200,1);el.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(step)})(t0);io.unobserve(el)}));
+document.querySelectorAll('[data-count]').forEach(el=>io.observe(el));
+const topBtn=$('#top');addEventListener('scroll',()=>topBtn.classList.toggle('on',scrollY>900),{passive:true});
+topBtn.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
 </script>
 </body>
 </html>
