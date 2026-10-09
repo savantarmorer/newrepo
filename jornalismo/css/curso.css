@@ -364,3 +364,19 @@ a { color: var(--link); text-underline-offset: 3px; }
 .jl-cert-fig:hover img { transform: rotate(0deg); }
 .jl-cert-fig figcaption { margin-top: 20px; color: var(--ink-3); font: 500 0.75rem/1.4 var(--mono); text-transform: uppercase; letter-spacing: 0.08em; }
 @media (prefers-reduced-motion: reduce) { .jl-cert-fig img { transition: none; transform: none; } }
+
+/* Formulário de pré-venda (modal) */
+.jl-lead-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,.72); }
+.jl-lead-modal[hidden] { display: none; }
+.jl-lead-box { position: relative; width: min(100%, 480px); max-height: calc(100vh - 32px); overflow-y: auto; background: var(--surface-1); border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--action); padding: 28px 24px 20px; }
+.jl-lead-box h2 { font-family: var(--display); font-size: clamp(1.4rem, 4vw, 1.8rem); line-height: 1.1; margin: 10px 0 8px; }
+.jl-lead-fechar { position: absolute; top: 8px; right: 12px; font-size: 1.8rem; line-height: 1; color: var(--ink-2); background: none; border: 0; cursor: pointer; min-width: 40px; min-height: 40px; }
+.jl-lead-fechar:hover { color: var(--action); }
+#jl-lead-form { display: grid; gap: 14px; margin-top: 16px; }
+.jl-lead-campo { display: grid; gap: 6px; font-size: .85rem; color: var(--ink-2); }
+.jl-lead-campo input { min-height: var(--tap); padding: 0 12px; background: var(--bg); color: var(--ink); border: 1px solid var(--border-ui); font: inherit; font-size: 1rem; }
+.jl-lead-campo input:focus { outline: 2px solid var(--action); outline-offset: 1px; border-color: var(--action); }
+.jl-lead-aceite { display: flex; gap: 10px; align-items: flex-start; font-size: .85rem; color: var(--ink-2); line-height: 1.4; }
+.jl-lead-aceite input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--action); flex: none; }
+.jl-lead-aceite a { color: var(--link); }
+.jl-lead-status { min-height: 1.2em; font-size: .9rem; color: var(--action); margin: 0; }

@@ -61,7 +61,8 @@
     "inLanguage": "pt-BR",
     "instructor": {
       "@id": "https://iuripiragibe.net/#iuri"
-    }
+    },
+    "startDate": "2026-12"
   },
   "image": "https://iuripiragibe.net/og-image.jpg",
   "offers": {
@@ -69,7 +70,7 @@
     "category": "Paid",
     "price": "197.00",
     "priceCurrency": "BRL",
-    "availability": "https://schema.org/InStock",
+    "availability": "https://schema.org/PreOrder",
     "url": "https://iuripiragibe.net/jornalismo/"
   },
   "teaches": [
@@ -153,7 +154,7 @@
     <section class="jl-hero">
       <div class="jl-wrap jl-hero-grid">
         <div class="jl-hero-copy">
-          <p class="jl-eyebrow"><span class="jl-pill">Pré-venda</span> 31 aulas · 8 módulos · ~6 h · certificado</p>
+          <p class="jl-eyebrow"><span class="jl-pill">Pré-venda</span> Lançamento previsto: dezembro de 2026 · 31 aulas · 8 módulos · ~6 h · certificado</p>
           <h1>Jornalismo Investigativo na Prática</h1>
           <blockquote class="jl-quote">Sem documento, é lenda.</blockquote>
           <p class="jl-lead">Transforme suspeita em pauta documentada: da hipótese ao pedido de LAI, dos dados públicos à publicação com risco jurídico sob controle.</p>
@@ -161,7 +162,7 @@
             <a class="jip-btn jip-btn-primary jl-cta-lg" href="/jornalismo/app.html#/comprar" data-checkout>Garantir vaga · R$ 197</a>
             <a class="jl-textlink" href="/jornalismo/app.html?v=aberto#/aberto">Ver a aula aberta grátis <span aria-hidden="true">→</span></a>
           </div>
-          <p class="jl-fine">R$ 297 depois da pré-venda · 7 dias para desistir (CDC, art. 49) · Já comprou? <a href="/jornalismo/app.html#/entrar">Entre com o e-mail da compra</a></p>
+          <p class="jl-fine">Acesso completo a partir do lançamento, previsto para dezembro · R$ 297 depois da pré-venda · 7 dias para desistir (CDC, art. 49) · Já comprou? <a href="/jornalismo/app.html#/entrar">Entre com o e-mail da compra</a></p>
         </div>
         <figure class="jl-mock">
           <div class="jl-mock-frame">
@@ -497,6 +498,7 @@
           </div>
           <div class="jl-offer-price">
             <p class="jl-price"><s>R$ 297</s><strong>R$ 197</strong></p>
+            <p class="jl-fine"><b>Pré-venda.</b> Lançamento previsto para dezembro de 2026; quem garante a vaga agora recebe o acesso no lançamento, pelo preço de pré-venda.</p>
             <a class="jip-btn jip-btn-primary jl-cta-lg jl-block" href="/jornalismo/app.html#/comprar" data-checkout>Garantir vaga</a>
             <p class="jl-fine">7 dias para desistir (CDC, art. 49). Conteúdo educativo — não substitui advogado.</p>
           </div>
@@ -508,6 +510,10 @@
       <div class="jl-wrap jl-narrow">
         <p class="jl-eyebrow">Perguntas</p>
         <h2 id="jip-faq-title">Antes de comprar</h2>
+        <details>
+          <summary>Quando o curso começa?</summary>
+          <p class="jip-muted">O lançamento está previsto para dezembro de 2026. Na pré-venda você garante a vaga pelo preço de R$ 197 e recebe o acesso por e-mail assim que o curso abrir. A aula aberta já pode ser lida agora.</p>
+        </details>
         <details>
           <summary>Preciso trabalhar em redação para fazer o curso?</summary>
           <p class="jip-muted">Não. Você escolhe uma pauta na aula 1.1 e leva a mesma investigação até o módulo 8.</p>
@@ -557,6 +563,25 @@
       </div>
     </section>
   </main>
+  <div class="jl-lead-modal" id="jl-lead" role="dialog" aria-modal="true" aria-labelledby="jl-lead-titulo" hidden>
+    <div class="jl-lead-box">
+      <button type="button" class="jl-lead-fechar" data-lead-fechar aria-label="Fechar">×</button>
+      <p class="jl-eyebrow"><span class="jl-pill">Pré-venda</span> Lançamento previsto: dezembro</p>
+      <h2 id="jl-lead-titulo">Garanta sua vaga por R$ 197</h2>
+      <p class="jip-muted">Informe seu contato para receber o acesso no lançamento. Em seguida você vai para o pagamento seguro no Mercado Pago.</p>
+      <form name="curso-pre-venda" method="POST" data-netlify="true" netlify-honeypot="empresa" id="jl-lead-form" novalidate>
+        <input type="hidden" name="form-name" value="curso-pre-venda">
+        <p hidden><label>Não preencha: <input name="empresa" tabindex="-1" autocomplete="off"></label></p>
+        <label class="jl-lead-campo"><span>E-mail</span><input type="email" name="email" required autocomplete="email" inputmode="email" placeholder="voce@exemplo.com"></label>
+        <label class="jl-lead-campo"><span>Telefone / WhatsApp (com DDD)</span><input type="tel" name="telefone" required autocomplete="tel" inputmode="tel" placeholder="(31) 99999-9999"></label>
+        <label class="jl-lead-aceite"><input type="checkbox" name="aceite" value="sim" required> <span>Concordo em receber comunicações sobre o curso e li a <a href="/privacidade.html" target="_blank">política de privacidade</a>.</span></label>
+        <button type="submit" class="jip-btn jip-btn-primary jl-cta-lg jl-block">Continuar para o pagamento →</button>
+        <p class="jl-lead-status" role="status" aria-live="polite"></p>
+        <p class="jl-fine">Use o mesmo e-mail no pagamento: é por ele que você entra na área do aluno.</p>
+      </form>
+    </div>
+  </div>
+
 
   <footer class="jl-footer">
     <div class="jl-wrap">
