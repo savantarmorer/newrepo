@@ -1,6 +1,9 @@
 // Pré-venda: os botões de compra abrem um formulário (e-mail + telefone),
 // salvam o contato no Netlify Forms e levam ao link de pagamento do Mercado Pago.
 window.JIP_CHECKOUT_URL = 'https://mpago.la/15kWm4V';
+// Supabase do curso (valores públicos; a tabela só aceita inserção — ver supabase/curso_leads.sql)
+var SUPABASE_URL = 'https://fveslvzjjixzpwiqcydz.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_tUHMDyn291B9RBJ10tlXJQ_aPJkHKxX';
 
 (function () {
   var url = window.JIP_CHECKOUT_URL;
@@ -48,13 +51,18 @@ window.JIP_CHECKOUT_URL = 'https://mpago.la/15kWm4V';
       var botao = form.querySelector('button[type=submit]');
       botao.disabled = true; status.textContent = 'Salvando seus dados…';
       try { localStorage.setItem('jip_lead_email', email); } catch (_) {}
-      var dados = new URLSearchParams(new FormData(form)).toString();
-      var seguir = function () { status.textContent = 'Abrindo o pagamento…'; location.href = url; };
-      // Salva o contato; se demorar ou falhar, segue mesmo assim para não perder a compra.
+      var seguiu = false;
+      var seguir = function () { if (seguiu) return; seguiu = true; status.textContent = 'Abrindo o pagamento…'; location.href = url; };
+      // Salva o contato na tabela curso_leads do Supabase (e uma cópia no Netlify Forms).
+      // Se demorar ou falhar, segue mesmo assim para não perder a compra.
       var tempo = setTimeout(seguir, 4000);
-      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: dados })
-        .catch(function () {})
-        .then(function () { clearTimeout(tempo); seguir(); });
+      var supa = fetch(SUPABASE_URL + '/rest/v1/curso_leads', {
+        method: 'POST',
+        headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+        body: JSON.stringify({ email: email.toLowerCase(), telefone: tel, aceite: true, origem: (location.pathname + location.search).slice(0, 300) }),
+      }).then(function (r) { if (!r.ok) console.warn('curso_leads:', r.status); }).catch(function () {});
+      var netlify = fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() }).catch(function () {});
+      Promise.all([supa, netlify]).then(function () { clearTimeout(tempo); seguir(); });
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', iniciar);
