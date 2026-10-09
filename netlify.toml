@@ -3,6 +3,91 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# ── URLs curtas (equivalente ao .htaccess/vercel.json, que o Netlify ignora) ──
+# Sem estas regras, /master e /ponte serviam páginas "Carregando…" com noindex,
+# e /participacao (endereço canônico da página) dava 404.
+[[redirects]]
+  from = "/master"
+  to = "/teia-compliance-zero.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/master/"
+  to = "/teia-compliance-zero.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/ponte"
+  to = "/teia-ponte.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/ponte/"
+  to = "/teia-ponte.html"
+  status = 200
+  force = true
+[[redirects]]
+  from = "/participacao"
+  to = "/participacao-civica.html"
+  status = 200
+[[redirects]]
+  from = "/participacao/"
+  to = "/participacao-civica.html"
+  status = 200
+[[redirects]]
+  from = "/biblioteca"
+  to = "/biblioteca.html"
+  status = 200
+[[redirects]]
+  from = "/sobre"
+  to = "/sobre.html"
+  status = 200
+[[redirects]]
+  from = "/blog"
+  to = "/blog.html"
+  status = 200
+[[redirects]]
+  from = "/login"
+  to = "/login.html"
+  status = 200
+[[redirects]]
+  from = "/jarro"
+  to = "/jarro.html"
+  status = 200
+[[redirects]]
+  from = "/mapa-dinastias"
+  to = "/mapa-dinastias.html"
+  status = 200
+[[redirects]]
+  from = "/mapa-magico"
+  to = "/mapa-magico.html"
+  status = 200
+[[redirects]]
+  from = "/investigacao-hub"
+  to = "/investigacao-hub.html"
+  status = 200
+
+# www → domínio principal (evita conteúdo duplicado)
+[[redirects]]
+  from = "https://www.iuripiragibe.net/*"
+  to = "https://iuripiragibe.net/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+[[headers]]
+  for = "/jornalismo/app.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, follow"
+[[headers]]
+  for = "/agora-slu/admin.html"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 [[redirects]]
   from = "/jornalismo"
   to = "/jornalismo/index.html"
