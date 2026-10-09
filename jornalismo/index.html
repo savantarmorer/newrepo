@@ -26,6 +26,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/jornalismo/css/curso.css">
   <script src="/jornalismo/js/checkout.js" defer></script>
+  <script>
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest('.jl-video-play'); if (!b) return;
+      var box = b.parentNode, id = box.getAttribute('data-yt');
+      box.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0" title="Teaser do curso Jornalismo Investigativo na Prática" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+    });
+  </script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -78,7 +85,17 @@
     "Apuração com dados públicos",
     "Checagem de informações",
     "Risco jurídico no jornalismo"
-  ]
+  ],
+  "video": {
+    "@type": "VideoObject",
+    "name": "Teaser — Jornalismo Investigativo na Prática",
+    "description": "Teaser do curso Jornalismo Investigativo na Prática, de Iuri Piragibe.",
+    "thumbnailUrl": "https://i.ytimg.com/vi/ho1kjtEcS34/hqdefault.jpg",
+    "embedUrl": "https://www.youtube-nocookie.com/embed/ho1kjtEcS34",
+    "contentUrl": "https://www.youtube.com/watch?v=ho1kjtEcS34",
+    "uploadDate": "2026-10-09",
+    "inLanguage": "pt-BR"
+  }
 }
 </script>
   <script type="application/ld+json">
@@ -172,6 +189,20 @@
           <img class="jl-mock-phone" src="/jornalismo/img/plataforma-mobile.jpg" width="390" height="780" alt="" loading="lazy">
           <figcaption>Prévia real da área do aluno</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section class="jl-section jl-teaser" id="teaser" aria-labelledby="jl-teaser-titulo">
+      <div class="jl-wrap jl-narrow">
+        <p class="jl-eyebrow">Teaser</p>
+        <h2 id="jl-teaser-titulo">Veja como é o curso</h2>
+        <div class="jl-video" data-yt="ho1kjtEcS34">
+          <button type="button" class="jl-video-play" aria-label="Assistir ao teaser do curso Jornalismo Investigativo na Prática">
+            <img src="https://i.ytimg.com/vi/ho1kjtEcS34/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+            <span class="jl-video-icone" aria-hidden="true">▶</span>
+          </button>
+        </div>
+        <p class="jl-fine">Prefere ver no YouTube? <a href="https://www.youtube.com/watch?v=ho1kjtEcS34" target="_blank" rel="noopener">Abrir o teaser</a></p>
       </div>
     </section>
 

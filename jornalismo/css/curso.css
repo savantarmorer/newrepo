@@ -380,3 +380,14 @@ a { color: var(--link); text-underline-offset: 3px; }
 .jl-lead-aceite input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--action); flex: none; }
 .jl-lead-aceite a { color: var(--link); }
 .jl-lead-status { min-height: 1.2em; font-size: .9rem; color: var(--action); margin: 0; }
+
+/* Teaser em vídeo */
+.jl-video { position: relative; aspect-ratio: 16 / 9; margin-top: 20px; background: #000; border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--action); overflow: hidden; }
+.jl-video iframe, .jl-video-play, .jl-video-play img { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.jl-video-play { padding: 0; cursor: pointer; background: #000; }
+.jl-video-play img { object-fit: cover; opacity: .85; transition: opacity .2s; }
+.jl-video-play:hover img { opacity: 1; }
+.jl-video-icone { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 76px; height: 76px; display: flex; align-items: center; justify-content: center; background: var(--action); color: var(--action-ink); font-size: 1.8rem; border: 2px solid var(--ink); }
+.jl-video-play:hover .jl-video-icone { transform: translate(-50%, -50%) scale(1.06); }
+.jl-video-play:focus-visible { outline: 3px solid var(--action); outline-offset: 3px; }
+.jl-teaser .jl-fine { margin-top: 18px; }
