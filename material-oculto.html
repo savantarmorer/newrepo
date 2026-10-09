@@ -32,30 +32,66 @@
     
     <!-- Schema.org JSON-LD (Book & Product) -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Book",
-        "name": "O Livro dos Iniciados: Seitas, Ordens Secretas e os Ritos que Ninguém Deveria Ver",
-        "alternateName": ["Livro dos Iniciados", "Material Oculto - Iuri Piragibe"],
-        "author": {
-            "@type": "Person",
-            "name": "Iuri Piragibe",
-            "jobTitle": "Jornalista Investigativo, Advogado e Autor",
-            "url": "https://iuripiragibe.net"
-        },
-        "url": "https://iuripiragibe.net/material-oculto.html",
-        "genre": ["Jornalismo Investigativo", "História do Esoterismo", "Sociedades Secretas"],
-        "inLanguage": "pt-BR",
-        "description": "Livro investigativo escrito por Iuri Piragibe sobre 18 organizações secretas, seitas e fraternidades no Brasil e no mundo. Análise fundamentada em documentos primários, manuais rituais internos e processos judiciais.",
-        "offers": {
-            "@type": "Offer",
-            "price": "99.90",
-            "priceCurrency": "BRL",
-            "availability": "https://schema.org/InStock",
-            "url": "https://iuripiragibe.net/material-oculto.html"
-        }
+{
+  "@context": "https://schema.org",
+  "@type": [
+    "Book",
+    "Product"
+  ],
+  "name": "O Livro dos Iniciados: Seitas, Ordens Secretas e os Ritos que Ninguém Deveria Ver",
+  "alternateName": [
+    "Livro dos Iniciados",
+    "Material Oculto - Iuri Piragibe"
+  ],
+  "author": {
+    "@type": "Person",
+    "@id": "https://iuripiragibe.net/#iuri",
+    "name": "Iuri Piragibe",
+    "url": "https://iuripiragibe.net/"
+  },
+  "url": "https://iuripiragibe.net/material-oculto.html",
+  "genre": [
+    "Jornalismo Investigativo",
+    "História do Esoterismo",
+    "Sociedades Secretas"
+  ],
+  "inLanguage": "pt-BR",
+  "description": "Livro investigativo escrito por Iuri Piragibe sobre 18 organizações secretas, seitas e fraternidades no Brasil e no mundo. Análise fundamentada em documentos primários, manuais rituais internos e processos judiciais.",
+  "offers": {
+    "@type": "Offer",
+    "price": "99.90",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "url": "https://iuripiragibe.net/material-oculto.html",
+    "priceValidUntil": "2026-12-31",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@id": "https://iuripiragibe.net/#empresa"
+    },
+    "hasMerchantReturnPolicy": {
+      "@type": "MerchantReturnPolicy",
+      "applicableCountry": "BR",
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": 7,
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "returnFees": "https://schema.org/FreeReturn"
     }
-    </script>
+  },
+  "@id": "https://iuripiragibe.net/material-oculto.html#livro",
+  "publisher": {
+    "@id": "https://iuripiragibe.net/#empresa"
+  },
+  "brand": {
+    "@type": "Brand",
+    "name": "Iuri Piragibe"
+  },
+  "image": [
+    "https://iuripiragibe.net/og-image.jpg"
+  ],
+  "bookFormat": "https://schema.org/EBook",
+  "sku": "livro-dos-iniciados-ebook"
+}
+</script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

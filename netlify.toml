@@ -189,3 +189,9 @@
 
 
 
+
+# PDFs pagos: impede indexação pelo Google (não substitui a proteção de acesso)
+[[headers]]
+  for = "/downloads/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
