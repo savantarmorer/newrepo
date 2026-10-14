@@ -1,0 +1,87 @@
+# Teste de ponta a ponta no Android (Maestro): instala o APK num emulador, conecta ao
+# Supabase local do CI por link de convite, entra com a conta de teste e percorre as 4 abas.
+# Uso: maestro test -e CHAVE=<anon key> -e URL_SERVIDOR=http%3A%2F%2F10.0.2.2%3A54321 e2e/fluxo-principal.yaml
+appId: br.comunidade.agora
+name: Ágora — fluxo principal
+---
+- launchApp:
+    clearState: true
+- waitForAnimationToEnd:
+    timeout: 15000
+- takeScreenshot: 01-abertura
+
+# Conexão ao servidor pelo link de convite (mesmo formato do QR Code do painel admin)
+- openLink: "agora://servidor?url=${URL_SERVIDOR}&chave=${CHAVE}"
+- extendedWaitUntil:
+    visible: "Testar e conectar"
+    timeout: 30000
+- takeScreenshot: 02-convite-servidor
+- tapOn: "Testar e conectar"
+- extendedWaitUntil:
+    visible: "Uma praça para pensar junto"
+    timeout: 60000
+- takeScreenshot: 03-boas-vindas
+
+# Login com a conta de teste do seed
+- tapOn: "Continuar"
+- tapOn: "Continuar"
+- tapOn: "Entrar na Ágora"
+- tapOn: "Entrar com senha \\(contas de teste\\)"
+- tapOn:
+    id: "campo-email"
+- inputText: "membro@agora.test"
+- tapOn:
+    id: "campo-senha"
+- inputText: "agora-membro-123"
+- hideKeyboard
+- takeScreenshot: 04-entrar
+- tapOn: "Entrar"
+- extendedWaitUntil:
+    visible: "Trilhas em destaque"
+    timeout: 60000
+- takeScreenshot: 05-biblioteca
+
+# Biblioteca → artigo publicado
+- scrollUntilVisible:
+    element: ".*Ragnar.*"
+    direction: DOWN
+    timeout: 30000
+- tapOn: ".*Ragnar.*"
+- extendedWaitUntil:
+    visible: ".*min de leitura.*"
+    timeout: 30000
+- takeScreenshot: 06-artigo
+- back
+
+# Mutirão → projeto
+- tapOn: "Mutirão"
+- extendedWaitUntil:
+    visible: ".*Campanha de agasalhos.*"
+    timeout: 30000
+- takeScreenshot: 07-mutirao
+- tapOn: ".*Campanha de agasalhos.*"
+- extendedWaitUntil:
+    visible: ".*Caixa.*"
+    timeout: 30000
+- takeScreenshot: 08-projeto
+- back
+
+# Assembleia → proposta em votação
+- tapOn: "Assembleia"
+- extendedWaitUntil:
+    visible: ".*Calendário fixo de mutirões.*"
+    timeout: 30000
+- takeScreenshot: 09-assembleia
+- tapOn: ".*Calendário fixo de mutirões.*"
+- extendedWaitUntil:
+    visible: ".*Proposta.*"
+    timeout: 30000
+- takeScreenshot: 10-proposta
+- back
+
+# Perfil
+- tapOn: "Perfil"
+- extendedWaitUntil:
+    visible: ".*[Rr]eputação.*"
+    timeout: 30000
+- takeScreenshot: 11-perfil

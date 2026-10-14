@@ -15,12 +15,14 @@ import { textoDoErro } from '@/lib/erros';
 import { limparOffline } from '@/lib/offline';
 import { removerPushDoAparelho } from '@/lib/push';
 import { usePreferencias, type PreferenciaTema } from '@/stores/preferencias';
+import { useServidor } from '@/stores/servidor';
 import { toast } from '@/stores/toast';
 
 export default function Configuracoes() {
   const tema = usePreferencias((s) => s.tema);
   const definirTema = usePreferencias((s) => s.definirTema);
   const [exportando, setExportando] = useState(false);
+  const servidor = useServidor((s) => s.servidor);
 
   async function exportar() {
     setExportando(true);
@@ -77,6 +79,8 @@ export default function Configuracoes() {
         <ItemLista icone="bell" titulo="Notificações" subtitulo="Escolha o que quer receber" onPress={() => router.push('/perfil/notificacoes-config')} />
         <Divisor />
         <ItemLista icone="book" titulo="Código de Conduta" onPress={() => router.push('/perfil/conduta')} />
+        <Divisor />
+        <ItemLista icone="server" titulo="Servidor da comunidade" subtitulo={servidor?.url.replace(/^https?:\/\//, '')} onPress={() => router.push('/servidor')} />
       </Card>
       <Secao titulo="Seus dados (LGPD)">
         <Card plano style={{ paddingVertical: 4 }}>

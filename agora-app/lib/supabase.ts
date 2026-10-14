@@ -1,24 +1,49 @@
 import 'react-native-url-polyfill/auto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createClient, type PostgrestError } from '@supabase/supabase-js';
+import { createClient, type PostgrestError, type SupabaseClient } from '@supabase/supabase-js';
 import { AppState, Platform } from 'react-native';
-import { env } from './env';
 import { mensagemDeErro } from './erros';
+import type { Servidor } from './servidor';
 
-export const supabase = createClient(env.supabaseUrl, env.supabaseAnonKey || 'chave-ausente', {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: Platform.OS === 'web',
-    flowType: 'pkce',
+let clienteAtual: SupabaseClient | null = null;
+
+/** Cria o cliente para o servidor escolhido. Cada servidor guarda a própria sessão. */
+export function conectarSupabase(servidor: Servidor): SupabaseClient {
+  clienteAtual?.auth.stopAutoRefresh();
+  clienteAtual?.removeAllChannels();
+  const prefixo = servidor.url.replace(/^https?:\/\//, '').replace(/[^a-z0-9]+/gi, '-');
+  clienteAtual = createClient(servidor.url, servidor.chave, {
+    auth: {
+      storage: AsyncStorage,
+      storageKey: `sb-${prefixo}-auth`,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: Platform.OS === 'web',
+      flowType: 'pkce',
+    },
+  });
+  return clienteAtual;
+}
+
+export const supabaseConectado = () => clienteAtual !== null;
+
+/**
+ * Ponto único de acesso ao Supabase. Encaminha para o cliente do servidor atual, então
+ * trocar de servidor (tela "Servidor") não exige reiniciar o app.
+ */
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_alvo, prop) {
+    if (!clienteAtual) throw new Error('Servidor da Ágora ainda não configurado.');
+    const valor = Reflect.get(clienteAtual, prop, clienteAtual) as unknown;
+    return typeof valor === 'function' ? (valor as (...a: unknown[]) => unknown).bind(clienteAtual) : valor;
   },
 });
 
 if (Platform.OS !== 'web') {
   AppState.addEventListener('change', (estado) => {
-    if (estado === 'active') supabase.auth.startAutoRefresh();
-    else supabase.auth.stopAutoRefresh();
+    if (!clienteAtual) return;
+    if (estado === 'active') clienteAtual.auth.startAutoRefresh();
+    else clienteAtual.auth.stopAutoRefresh();
   });
 }
 

@@ -1,0 +1,180 @@
+# Ágora — gera o APK Android instalável, testa no emulador contra um Supabase real e publica para download.
+#
+# Variáveis opcionais do repositório (Settings › Secrets and variables › Actions › Variables) — todas públicas:
+#   AGORA_SUPABASE_URL, AGORA_SUPABASE_ANON_KEY  → servidor embutido no APK (sem elas o app pede o servidor na 1ª abertura)
+#   AGORA_THIRDWEB_CLIENT_ID                     → carteira embutida
+#   EAS_PROJECT_ID                               → notificações push (Expo)
+name: Ágora — app Android
+
+on:
+  push:
+    paths:
+      - 'agora-app/**'
+      - '!agora-app/contracts/**'
+      - '!agora-app/**/*.md'
+      - '.github/workflows/agora-android.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: agora-android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: agora-app
+
+jobs:
+  apk:
+    name: Gerar APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.AGORA_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.AGORA_SUPABASE_ANON_KEY }}
+      EXPO_PUBLIC_THIRDWEB_CLIENT_ID: ${{ vars.AGORA_THIRDWEB_CLIENT_ID }}
+      EXPO_PUBLIC_REDE: base-sepolia
+      EXPO_PUBLIC_LOGIN_SENHA: 'true'
+      EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
+      # APK de teste: aceita http:// para falar com Supabase local na rede/emulador
+      AGORA_PERMITIR_HTTP: '1'
+      NODE_OPTIONS: --max-old-space-size=6144
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: agora-app/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Verificar tipos
+        run: npx tsc --noEmit
+
+      - name: Gerar projeto nativo (expo prebuild)
+        run: npx expo prebuild --platform android --no-install --clean
+
+      - name: Compilar APK (release, assinado com chave de teste)
+        working-directory: agora-app/android
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a,x86_64 -Dorg.gradle.jvmargs="-Xmx6g -XX:MaxMetaspaceSize=1g"
+
+      - name: Renomear APK
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/release/app-release.apk "dist/agora-${GITHUB_SHA::7}.apk"
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agora-apk
+          path: agora-app/dist/*.apk
+          retention-days: 30
+
+  e2e:
+    name: Testar no emulador (Supabase local + Maestro)
+    needs: apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: agora-apk
+          path: agora-app/dist
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Subir Supabase local (migrações + seed)
+        env:
+          SUPABASE_AUTH_GOOGLE_CLIENT_ID: nao-usado-no-ci
+          SUPABASE_AUTH_GOOGLE_SECRET: nao-usado-no-ci
+        run: |
+          supabase start -x studio,imgproxy,logflare,vector,supavisor,edge-runtime
+          supabase status -o env > ../supabase.env
+          grep -E '^(API_URL|ANON_KEY)=' ../supabase.env | sed 's/ANON_KEY=.*/ANON_KEY=<omitida>/'
+          echo "SUPABASE_ANON_KEY=$(grep '^ANON_KEY=' ../supabase.env | cut -d= -f2- | tr -d '\"')" >> "$GITHUB_ENV"
+
+      - name: Conferir backend (função pública e login da conta de teste)
+        run: |
+          curl -fsS -X POST http://127.0.0.1:54321/rest/v1/rpc/estatisticas_publicas \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Content-Type: application/json" -d '{}'
+          echo
+          curl -fsS -X POST "http://127.0.0.1:54321/auth/v1/token?grant_type=password" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Content-Type: application/json" \
+            -d '{"email":"membro@agora.test","password":"agora-membro-123"}' | head -c 120
+          echo
+
+      - name: Instalar Maestro
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Habilitar KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Emulador Android + fluxo Maestro
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          working-directory: agora-app
+          script: ./e2e/rodar-android.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agora-e2e-capturas
+          path: agora-app/e2e/saida
+          retention-days: 30
+
+  publicar:
+    name: Publicar APK para download
+    needs: [apk, e2e]
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: agora-apk
+          path: dist
+
+      - name: Atualizar release "agora-android"
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete agora-android --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true
+          gh release create agora-android dist/*.apk \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Ágora — APK Android (teste)" \
+            --notes "APK gerado do commit ${GITHUB_SHA::7} (branch ${GITHUB_REF_NAME}) e aprovado no teste de ponta a ponta no emulador.
+
+          **Instalar:** abra este link no celular Android, baixe o .apk e permita instalar de fontes desconhecidas.
+          Na primeira abertura o app pede o servidor da comunidade (QR Code de convite ou endereço + chave pública do Supabase), a menos que o build tenha um servidor embutido.
+
+          Contas de teste (seed): membro@agora.test / agora-membro-123 · admin@agora.test / agora-admin-123."

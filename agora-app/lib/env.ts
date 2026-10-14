@@ -10,8 +10,9 @@ function ler(nome: string, valor: string | undefined, padrao?: string): string {
 }
 
 export const env = {
-  supabaseUrl: ler('EXPO_PUBLIC_SUPABASE_URL', process.env.EXPO_PUBLIC_SUPABASE_URL, 'http://127.0.0.1:54321'),
-  supabaseAnonKey: ler('EXPO_PUBLIC_SUPABASE_ANON_KEY', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY),
+  /** Servidor embutido no build. Vazio = o app pede o endereço na primeira abertura (ver lib/servidor.ts). */
+  supabaseUrl: ler('EXPO_PUBLIC_SUPABASE_URL', process.env.EXPO_PUBLIC_SUPABASE_URL, ''),
+  supabaseAnonKey: ler('EXPO_PUBLIC_SUPABASE_ANON_KEY', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY, ''),
   /** Client ID público da thirdweb (carteira embutida + paymaster) */
   thirdwebClientId: ler('EXPO_PUBLIC_THIRDWEB_CLIENT_ID', process.env.EXPO_PUBLIC_THIRDWEB_CLIENT_ID, ''),
   /** base-sepolia | base | polygon-amoy | polygon */

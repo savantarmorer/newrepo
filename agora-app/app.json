@@ -29,8 +29,16 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": ["CAMERA", "READ_CALENDAR", "WRITE_CALENDAR", "POST_NOTIFICATIONS"],
-      "blockedPermissions": ["android.permission.RECORD_AUDIO", "com.google.android.gms.permission.AD_ID"],
+      "permissions": [
+        "CAMERA",
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "POST_NOTIFICATIONS"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID"
+      ],
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -47,7 +55,10 @@
           "imageWidth": 160,
           "resizeMode": "contain",
           "backgroundColor": "#F5EFE3",
-          "dark": { "image": "./assets/icon.png", "backgroundColor": "#1C1A18" }
+          "dark": {
+            "image": "./assets/icon.png",
+            "backgroundColor": "#1C1A18"
+          }
         }
       ],
       "expo-secure-store",
@@ -56,27 +67,35 @@
       "expo-sharing",
       [
         "expo-notifications",
-        { "color": "#A9452B", "defaultChannel": "padrao" }
+        {
+          "color": "#A9452B",
+          "defaultChannel": "padrao"
+        }
       ],
       [
         "expo-camera",
-        { "cameraPermission": "A câmera é usada para ler o QR Code de check-in em eventos e fotografar comprovantes do caixa.", "recordAudioAndroid": false }
+        {
+          "cameraPermission": "A câmera é usada para ler o QR Code de check-in em eventos e fotografar comprovantes do caixa.",
+          "recordAudioAndroid": false
+        }
       ],
       [
         "expo-image-picker",
-        { "photosPermission": "Usamos suas fotos para avatar, capas e comprovantes que você escolher.", "cameraPermission": "Para fotografar comprovantes do caixa." }
+        {
+          "photosPermission": "Usamos suas fotos para avatar, capas e comprovantes que você escolher.",
+          "cameraPermission": "Para fotografar comprovantes do caixa."
+        }
       ],
       [
         "expo-calendar",
-        { "calendarPermission": "Para adicionar eventos da Ágora ao seu calendário." }
+        {
+          "calendarPermission": "Para adicionar eventos da Ágora ao seu calendário."
+        }
       ]
     ],
     "experiments": {
       "typedRoutes": false,
       "tsconfigPaths": true
-    },
-    "extra": {
-      "eas": { "projectId": "00000000-0000-0000-0000-000000000000" }
     }
   }
 }

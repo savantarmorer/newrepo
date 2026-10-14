@@ -23,6 +23,7 @@ export default function PerfilLayout() {
         { nome: 'admin/configuracoes', titulo: 'Configurações globais' },
         { nome: 'admin/denuncias', titulo: 'Moderação' },
         { nome: 'admin/metricas', titulo: 'Métricas' },
+        { nome: 'admin/convite', titulo: 'Convidar' },
       ]}
     />
   );

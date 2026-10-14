@@ -18,10 +18,11 @@ interface Props {
   largura?: 'auto' | 'total';
   dica?: string;
   style?: ViewStyle;
+  testID?: string;
 }
 
 export function Botao({
-  titulo, onPress, variante = 'primario', icone, carregando, desabilitado, compacto, largura = 'auto', dica, style,
+  titulo, onPress, variante = 'primario', icone, carregando, desabilitado, compacto, largura = 'auto', dica, style, testID,
 }: Props) {
   const { c, raio, espaco } = useTema();
   const inativo = desabilitado || carregando;
@@ -34,6 +35,7 @@ export function Botao({
 
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={titulo}
       accessibilityHint={dica}

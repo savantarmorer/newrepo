@@ -45,3 +45,6 @@ yarn-error.*
 supabase/functions/.env
 supabase/.branches
 supabase/.temp
+
+# testes no celular (CI)
+e2e/saida/

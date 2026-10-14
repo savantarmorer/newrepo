@@ -1,20 +1,22 @@
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useFonts } from 'expo-font';
 import * as Linking from 'expo-linking';
-import { router, Stack } from 'expo-router';
+import { router, Stack, useSegments } from 'expo-router';
 import * as Notifications from 'expo-notifications';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ToastHost } from '@/components/ToastHost';
 import { useNotificacoesTempoReal } from '@/features/notificacoes/hooks';
+import { iniciarServidor } from '@/features/servidor/ativar';
 import { concluirLoginPorUrl } from '@/lib/auth';
 import { registrarPush } from '@/lib/push';
 import { persistidor, queryClient } from '@/lib/queryClient';
 import { supabase } from '@/lib/supabase';
+import { useServidor } from '@/stores/servidor';
 import { useSessao } from '@/stores/sessao';
 import { toast } from '@/stores/toast';
 import { fontesDoApp } from '@/theme/fontes';
@@ -26,30 +28,46 @@ export default function RaizLayout() {
   const [fontesOk, erroFontes] = useFonts(fontesDoApp);
   const definirSessao = useSessao((s) => s.definir);
   const carregandoSessao = useSessao((s) => s.carregando);
+  const servidor = useServidor((s) => s.servidor);
+  const servidorCarregado = useServidor((s) => s.carregado);
+  const versaoServidor = useServidor((s) => s.versao);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => definirSessao(data.session));
+    iniciarServidor().catch(() => useServidor.getState().definir(null));
+  }, []);
+
+  // Escuta a sessão do servidor atual (reinicia quando o servidor muda)
+  useEffect(() => {
+    if (!servidor) return;
+    let ativo = true;
+    supabase.auth.getSession().then(({ data }) => { if (ativo) definirSessao(data.session); }).catch(() => definirSessao(null));
     const { data } = supabase.auth.onAuthStateChange((evento, sessao) => {
       definirSessao(sessao);
       if (evento === 'SIGNED_OUT') queryClient.clear();
     });
-    return () => data.subscription.unsubscribe();
-  }, [definirSessao]);
+    return () => {
+      ativo = false;
+      data.subscription.unsubscribe();
+    };
+  }, [servidor, versaoServidor, definirSessao]);
 
   // Retorno do link mágico / Google por deep link
   const url = Linking.useLinkingURL();
   useEffect(() => {
-    if (url && /[?#&](code|access_token|error_description)=/.test(url)) {
+    if (servidor && url && /[?#&](code|access_token|error_description)=/.test(url)) {
       concluirLoginPorUrl(url).catch((e: Error) => toast.erro(e.message));
     }
-  }, [url]);
+  }, [url, servidor]);
 
-  const pronto = (fontesOk || !!erroFontes) && !carregandoSessao;
+  // Só a primeira abertura espera a sessão; numa troca de servidor a navegação continua montada
+  const jaAbriu = useRef(false);
+  const pronto = jaAbriu.current || ((fontesOk || !!erroFontes) && servidorCarregado && (!servidor || !carregandoSessao));
+  if (pronto) jaAbriu.current = true;
   useEffect(() => {
     if (pronto) SplashScreen.hideAsync().catch(() => undefined);
   }, [pronto]);
 
-  // Splash até fontes e sessão estarem prontas: as telas já montam com a sessão certa
+  // Splash até fontes, servidor e sessão estarem prontos: as telas já montam com a sessão certa
   if (!pronto) return null;
 
   return (
@@ -57,7 +75,7 @@ export default function RaizLayout() {
       <SafeAreaProvider>
         <PersistQueryClientProvider
           client={queryClient}
-          persistOptions={{ persister: persistidor, maxAge: 1000 * 60 * 60 * 24 * 7, buster: 'v1' }}
+          persistOptions={{ persister: persistidor, maxAge: 1000 * 60 * 60 * 24 * 7, buster: `v2:${servidor?.url ?? ''}` }}
         >
           <ThemeProvider>
             <Navegacao />
@@ -71,7 +89,15 @@ export default function RaizLayout() {
 function Navegacao() {
   const { c, esquema, familias } = useTema();
   const sessao = useSessao((s) => s.sessao);
+  const servidor = useServidor((s) => s.servidor);
+  const segmentos = useSegments();
   useNotificacoesTempoReal();
+
+  // Sem servidor configurado, qualquer rota leva à tela de conexão
+  const naTelaServidor = segmentos[0] === 'servidor';
+  useEffect(() => {
+    if (!servidor && !naTelaServidor) router.replace('/servidor');
+  }, [servidor, naTelaServidor]);
 
   useEffect(() => {
     if (sessao?.user.id) registrarPush(sessao.user.id).catch(() => undefined);
@@ -109,6 +135,7 @@ function Navegacao() {
         <Stack.Screen name="busca" options={{ title: 'Buscar', presentation: 'modal' }} />
         <Stack.Screen name="notificacoes" options={{ title: 'Notificações', presentation: 'modal' }} />
         <Stack.Screen name="denunciar" options={{ title: 'Denunciar conteúdo', presentation: 'modal' }} />
+        <Stack.Screen name="servidor" options={{ title: 'Servidor', presentation: servidor ? 'modal' : 'card', headerShown: !!servidor }} />
       </Stack>
       <ToastHost />
     </>

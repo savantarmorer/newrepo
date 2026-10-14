@@ -22,11 +22,13 @@ create function pg_temp.tema(p_slug text) returns uuid language sql stable as
   $$ select id from public.temas where slug = p_slug $$;
 
 -- ---------------------------------------------------------------- usuários (auth)
-insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_user_meta_data, raw_app_meta_data, created_at, updated_at)
+-- Os campos de token vazios ('' e não NULL) são exigidos pelo GoTrue para o login por senha funcionar.
+insert into auth.users (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, raw_user_meta_data, raw_app_meta_data,
+                        confirmation_token, recovery_token, email_change_token_new, email_change, created_at, updated_at)
 select '00000000-0000-0000-0000-000000000000', pg_temp.u(n), 'authenticated', 'authenticated', email,
        extensions.crypt(senha, extensions.gen_salt('bf')), now() - interval '200 days',
        jsonb_build_object('full_name', nome), '{"provider":"email","providers":["email"]}'::jsonb,
-       now() - make_interval(days => 200 - n * 3), now()
+       '', '', '', '', now() - make_interval(days => 200 - n * 3), now()
 from (values
   (1,  'admin@agora.test',            'agora-admin-123',  'Administração Ágora'),
   (2,  'membro@agora.test',           'agora-membro-123', 'Membro de Teste'),

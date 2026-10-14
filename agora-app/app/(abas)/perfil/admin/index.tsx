@@ -21,6 +21,8 @@ export default function AdminInicio() {
         <ItemLista icone="flag" titulo="Moderação" subtitulo="Fila de denúncias" onPress={() => router.push('/perfil/admin/denuncias')} />
         <Divisor />
         <ItemLista icone="bar-chart-2" titulo="Métricas" onPress={() => router.push('/perfil/admin/metricas')} />
+        <Divisor />
+        <ItemLista icone="user-plus" titulo="Convidar para este servidor" subtitulo="QR Code que configura o app de novos membros" onPress={() => router.push('/perfil/admin/convite')} />
       </Card>
     </Tela>
   );

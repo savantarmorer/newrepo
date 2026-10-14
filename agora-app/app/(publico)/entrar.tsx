@@ -62,8 +62,8 @@ export default function Entrar() {
         <Texto variante="titulo">Bem-vinda, bem-vindo</Texto>
         <Texto cor="secundario">Entre com seu e-mail — sem senha para decorar — ou com sua conta Google.</Texto>
       </View>
-      <CampoForm control={control} nome="email" rotulo="E-mail" placeholder="voce@exemplo.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="emailAddress" />
-      {usarSenha ? <CampoForm control={control} nome="senha" rotulo="Senha" secureTextEntry autoComplete="password" /> : null}
+      <CampoForm control={control} nome="email" rotulo="E-mail" placeholder="voce@exemplo.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="emailAddress" testID="campo-email" />
+      {usarSenha ? <CampoForm control={control} nome="senha" rotulo="Senha" secureTextEntry autoComplete="password" testID="campo-senha" /> : null}
       <Botao titulo={usarSenha ? 'Entrar' : 'Receber link de acesso'} icone={usarSenha ? 'log-in' : 'mail'} largura="total" carregando={carregando === 'link' || carregando === 'senha'} onPress={enviar} />
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <View style={{ flex: 1, height: 1, backgroundColor: '#0002' }} />

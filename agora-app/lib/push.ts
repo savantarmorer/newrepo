@@ -15,7 +15,9 @@ Notifications.setNotificationHandler({
 
 /** Pede permissão e registra o token Expo Push do aparelho no Supabase. */
 export async function registrarPush(profileId: string): Promise<string | null> {
-  if (Platform.OS === 'web' || !Device.isDevice) return null;
+  // Sem projeto EAS (ex.: APK de teste do CI) não há token Expo Push: nem pede a permissão.
+  const projectId = idProjetoExpo();
+  if (Platform.OS === 'web' || !Device.isDevice || !projectId) return null;
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('padrao', {
       name: 'Ágora',
@@ -26,11 +28,8 @@ export async function registrarPush(profileId: string): Promise<string | null> {
   let status = atual.status;
   if (status !== 'granted') status = (await Notifications.requestPermissionsAsync()).status;
   if (status !== 'granted') return null;
-  const projectId =
-    (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId ??
-    Constants.easConfig?.projectId;
   try {
-    const token = (await Notifications.getExpoPushTokenAsync(projectId ? { projectId } : undefined)).data;
+    const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
     await supabase.from('dispositivos_push').upsert({ token, profile_id: profileId, plataforma: Platform.OS });
     return token;
   } catch (e) {
@@ -39,10 +38,18 @@ export async function registrarPush(profileId: string): Promise<string | null> {
   }
 }
 
+function idProjetoExpo(): string | null {
+  const id =
+    (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)?.eas?.projectId ??
+    Constants.easConfig?.projectId;
+  return id && !/^0{8}-/.test(id) ? id : null;
+}
+
 export async function removerPushDoAparelho() {
-  if (Platform.OS === 'web' || !Device.isDevice) return;
+  const projectId = idProjetoExpo();
+  if (Platform.OS === 'web' || !Device.isDevice || !projectId) return;
   try {
-    const token = (await Notifications.getExpoPushTokenAsync()).data;
+    const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
     await supabase.from('dispositivos_push').delete().eq('token', token);
   } catch {
     /* sem token */

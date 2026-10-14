@@ -105,6 +105,7 @@ export default function BoasVindas() {
           }}
         />
         <Botao titulo="Conhecer a comunidade" variante="fantasma" largura="total" onPress={() => router.push('/sobre')} />
+        <Botao titulo="Trocar servidor da comunidade" icone="server" variante="fantasma" compacto largura="total" onPress={() => router.push('/servidor')} />
       </View>
     </SafeAreaView>
   );
