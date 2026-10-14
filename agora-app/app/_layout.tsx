@@ -25,6 +25,7 @@ SplashScreen.preventAutoHideAsync().catch(() => undefined);
 export default function RaizLayout() {
   const [fontesOk, erroFontes] = useFonts(fontesDoApp);
   const definirSessao = useSessao((s) => s.definir);
+  const carregandoSessao = useSessao((s) => s.carregando);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => definirSessao(data.session));
@@ -43,11 +44,13 @@ export default function RaizLayout() {
     }
   }, [url]);
 
+  const pronto = (fontesOk || !!erroFontes) && !carregandoSessao;
   useEffect(() => {
-    if (fontesOk || erroFontes) SplashScreen.hideAsync().catch(() => undefined);
-  }, [fontesOk, erroFontes]);
+    if (pronto) SplashScreen.hideAsync().catch(() => undefined);
+  }, [pronto]);
 
-  if (!fontesOk && !erroFontes) return null;
+  // Splash até fontes e sessão estarem prontas: as telas já montam com a sessão certa
+  if (!pronto) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

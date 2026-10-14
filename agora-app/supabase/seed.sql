@@ -178,6 +178,10 @@ insert into public.respostas (id, topico_id, autor_id, corpo_md, created_at, res
   (pg_temp.id('5', 17), pg_temp.id('c', 13), pg_temp.u(4), E'Planilha não basta: falta trilha de auditoria. Lançamento imutável + comprovante é o mínimo.', now() - interval '1 day', null),
   (pg_temp.id('5', 18), pg_temp.id('c', 4), pg_temp.u(2), E'Acompanhando! Tema importante.', now() - interval '3 days', null);
 
+-- o trigger de respostas marca "agora" como última atividade; restaura a data histórica
+update public.topicos t set ultima_atividade_em = coalesce(
+  (select max(r.created_at) from public.respostas r where r.topico_id = t.id), t.created_at);
+
 -- respostas úteis (geram pontos via trigger)
 update public.respostas set marcada_como_util = true where id in (pg_temp.id('5', 4), pg_temp.id('5', 6), pg_temp.id('5', 1), pg_temp.id('5', 10), pg_temp.id('5', 13));
 
@@ -525,8 +529,8 @@ insert into public.propostas_onchain (proposal_id, proposta_id_app, proponente, 
 insert into public.notificacoes (profile_id, tipo, titulo, corpo, link, created_at) values
   (pg_temp.u(2), 'boas_vindas', 'Bem-vinda(o) à Ágora', 'Comece pela trilha "Primeiros passos" ou apresente-se no tópico do seu núcleo.', '/biblioteca', now() - interval '150 days');
 
--- limpa marcações de push para as notificações geradas pelo seed
-update public.notificacoes set push_enviado_em = now();
+-- notificações geradas pelos triggers do seed: marcadas como enviadas e lidas (histórico)
+update public.notificacoes set push_enviado_em = now(), lida = true, created_at = now() - interval '3 days' where tipo <> 'boas_vindas';
 select pg_temp.como(null);
 
 commit;

@@ -39,11 +39,14 @@ create table if not exists auth.identities (
   identity_data jsonb, last_sign_in_at timestamptz, created_at timestamptz, updated_at timestamptz
 );
 
+-- mesmas definições do Supabase (aceitam o GUC legado e o JSON do PostgREST v10+)
 create or replace function auth.uid() returns uuid language sql stable as $$
-  select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid
+  select coalesce(nullif(current_setting('request.jwt.claim.sub', true), ''),
+                  (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'))::uuid
 $$;
 create or replace function auth.role() returns text language sql stable as $$
-  select nullif(current_setting('request.jwt.claim.role', true), '')::text
+  select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''),
+                  (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role'))::text
 $$;
 
 create table if not exists storage.buckets (
