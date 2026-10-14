@@ -20,7 +20,8 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       [
         'expo-build-properties',
         {
-          android: { usesCleartextTraffic: permitirHttp },
+          // minSdk 26 (Android 8.0): exigido pela criptografia da carteira embutida (react-native-aes-gcm-crypto)
+          android: { usesCleartextTraffic: permitirHttp, minSdkVersion: 26 },
           ios: {},
         },
       ],
