@@ -504,12 +504,14 @@ insert into public.delegacoes (delegante, delegado, bloco, tx_hash) values
   ('0x90f79bf6eb2c4f870365e785982e1f101e93b906', '0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc', 18200500, '0x4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b');
 
 -- ---------------------------------------------------------------- 2 propostas on-chain (Base Sepolia)
+-- Espelhos provisórios: ao rodar contracts/script/SeedTestnet.s.sol, o indexador cria as
+-- propostas reais (descrição com [agora:<uuid>]) e remove estes registros sem tx_criacao.
 insert into public.propostas (id, autor_id, titulo, contexto_md, proposta_md, tipo, natureza, status, debate_iniciado_em, debate_ate, votacao_ate, created_at) values
   (pg_temp.id('2', 7), pg_temp.u(4), 'Liberar 5.000 DRC do Fundo do Mutirão para a Biblioteca do Bixiga',
    E'A biblioteca comunitária precisa de reconhecimento para as voluntárias que catalogam o acervo raro.',
    E'Executar `FundoMutirao.liberar(0x90F7…b906, 5000 DRC, "projeto:biblioteca-bixiga")` após aprovação e 48h de timelock.',
    'financeira', 'onchain', 'votacao', now() - interval '2 days', now() - interval '2 days', now() + interval '5 days', now() - interval '2 days'),
-  (pg_temp.id('2', 8), pg_temp.u(3), 'Excluir a tesouraria e os cofres de vesting do cálculo de quórum',
+  (pg_temp.id('2', 8), pg_temp.u(7), 'Excluir a tesouraria e os cofres de vesting do cálculo de quórum',
    E'Tokens travados na tesouraria e nos contratos de vesting não votam e inflam o quórum.',
    E'Chamar `AgoraGovernor.definirExcluidosDoQuorum([timelock, fundoMutirao, vesting…])`.',
    'regimento', 'onchain', 'aprovada', now() - interval '12 days', now() - interval '12 days', now() - interval '3 days', now() - interval '12 days');
@@ -518,12 +520,12 @@ insert into public.propostas_onchain (proposal_id, proposta_id_app, proponente, 
    'Liberar 5.000 DRC do Fundo do Mutirão para a Biblioteca do Bixiga', null,
    '[{"alvo":"fundo_mutirao","funcao":"liberar","args":["0x90f79bf6eb2c4f870365e785982e1f101e93b906","5000000000000000000000","projeto:biblioteca-bixiga"]}]',
    'ativa', 'hibrido', 23400000000000000000, 9200000000000000000, 1000000000000000000, 15000000000000000000, 18210000, 18512400, null,
-   '0x5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c'),
-  ('91827364550192837465019283746501928374650192837465019283746501928', pg_temp.id('2', 8), '0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc',
+   null),
+  ('91827364550192837465019283746501928374650192837465019283746501928', pg_temp.id('2', 8), '0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc',
    'Excluir a tesouraria e os cofres de vesting do cálculo de quórum', null,
    '[{"alvo":"governor","funcao":"definirExcluidosDoQuorum","args":[["timelock","fundo_mutirao"]]}]',
    'na_fila', 'hibrido', 31800000000000000000, 2100000000000000000, 0, 15000000000000000000, 18150000, 18452400, now() + interval '30 hours',
-   '0x6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d');
+   null);
 
 -- ---------------------------------------------------------------- notificações de boas-vindas
 insert into public.notificacoes (profile_id, tipo, titulo, corpo, link, created_at) values
