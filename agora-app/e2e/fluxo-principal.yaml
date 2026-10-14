@@ -79,7 +79,8 @@ name: Ágora — fluxo principal
     visible: ".*Campanha de agasalhos.*"
     timeout: 30000
 - takeScreenshot: 07-mutirao
-- tapOn: ".*Campanha de agasalhos.*"
+# Nome exato: cartões de tarefa também citam o projeto ("Campanha… ›")
+- tapOn: "Campanha de agasalhos de inverno"
 - extendedWaitUntil:
     visible: ".*Caixa.*"
     timeout: 30000

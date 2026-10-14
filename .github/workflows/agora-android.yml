@@ -167,29 +167,47 @@ jobs:
 
   publicar:
     name: Publicar APK para download
-    # Publica assim que o APK compila; o resultado do teste no emulador aparece no próprio workflow
+    # Publica assim que o APK compila (ou, no modo só-teste, o APK da execução informada)
     needs: apk
+    if: ${{ !cancelled() && (needs.apk.result == 'success' || inputs.apk_run_id) }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: agora-apk
           path: dist
+          run-id: ${{ inputs.apk_run_id || github.run_id }}
+          github-token: ${{ github.token }}
 
-      - name: Atualizar release "agora-android"
+      # Cria a release nova ANTES de apagar as antigas: se algo falhar, o download anterior continua no ar.
+      # O arquivo agora.apk tem nome fixo, então este link sempre baixa a versão mais recente:
+      #   https://github.com/<repo>/releases/latest/download/agora.apk
+      - name: Publicar release
         working-directory: .
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete agora-android --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true
-          gh release create agora-android dist/*.apk \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
-            --prerelease \
-            --title "Ágora — APK Android (teste)" \
-            --notes "APK gerado do commit ${GITHUB_SHA::7} (branch ${GITHUB_REF_NAME}). Resultado do teste no emulador: veja o job \"Testar no emulador\" do workflow.
+          set -euo pipefail
+          VERSAO=$(ls dist/agora-*.apk | head -1 | sed -E 's#.*/agora-([0-9a-f]+)\.apk#\1#')
+          TAG="agora-android-${VERSAO}"
+          cp dist/agora-*.apk dist/agora.apk
+          NOTAS="APK do commit ${VERSAO} (branch ${GITHUB_REF_NAME}).
 
-          **Instalar:** abra este link no celular Android, baixe o .apk e permita instalar de fontes desconhecidas.
+          **Instalar:** abra este link no celular Android (8.0+), baixe agora.apk e permita instalar de fontes desconhecidas.
+          Link fixo para a versão mais recente: https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/agora.apk
+
           Na primeira abertura o app pede o servidor da comunidade (QR Code de convite ou endereço + chave pública do Supabase), a menos que o build tenha um servidor embutido.
-
           Contas de teste (seed): membro@agora.test / agora-membro-123 · admin@agora.test / agora-admin-123."
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/agora.apk dist/agora-*.apk --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" dist/agora.apk dist/agora-*.apk \
+              --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --latest \
+              --title "Ágora — APK Android (${VERSAO})" --notes "$NOTAS"
+          fi
+          # Só agora remove as versões anteriores (inclusive a antiga tag fixa agora-android)
+          gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName -q '.[].tagName' \
+            | grep -E '^agora-android(-[0-9a-f]+)?$' | grep -vx "$TAG" \
+            | while read -r antiga; do gh release delete "$antiga" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true; done
+          echo "### APK publicado" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/agora.apk" >> "$GITHUB_STEP_SUMMARY"
