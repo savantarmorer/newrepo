@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { supabase } from './supabase';
+import { chamarFuncao, supabase } from './supabase';
 import { mensagemDeErro } from './erros';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -50,6 +50,16 @@ export async function concluirLoginPorUrl(url: string) {
     const { error } = await supabase.auth.setSession({ access_token: access, refresh_token: refresh });
     if (error) throw new Error(mensagemDeErro(error));
   }
+}
+
+/**
+ * Entra com o código gerado pelo bot do Discord (/agora app ou /menu › Entrar no app).
+ * A Edge Function consome o código e devolve um token de uso único da mesma conta.
+ */
+export async function entrarComCodigoDiscord(codigo: string) {
+  const { token_hash } = await chamarFuncao<{ token_hash: string }>('entrar-com-codigo', { codigo: codigo.trim() });
+  const { error } = await supabase.auth.verifyOtp({ token_hash, type: 'magiclink' });
+  if (error) throw new Error(mensagemDeErro(error));
 }
 
 export async function sair() {

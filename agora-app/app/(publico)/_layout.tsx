@@ -18,6 +18,7 @@ export default function PublicoLayout() {
     >
       <Stack.Screen name="boas-vindas" options={{ headerShown: false }} />
       <Stack.Screen name="entrar" options={{ title: 'Entrar' }} />
+      <Stack.Screen name="entrar-discord" options={{ title: 'Entrar com o Discord' }} />
       <Stack.Screen name="sobre" options={{ title: 'A Ágora' }} />
     </Stack>
   );

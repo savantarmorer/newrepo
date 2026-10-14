@@ -101,7 +101,10 @@ Antes do lançamento, a comunidade usa a Ágora pelo bot do Discord (repositóri
 `/menu` — painel com botões e tutorial —, `/agora`, `/dracmas`, `/biblioteca`, `/mutirao`, `/assembleia`). O bot age como cada membro **neste mesmo banco**
 — mesmas regras de nível e RLS —, então reputação, artigos, votos, horas e créditos de Dracma da prévia já estão
 aqui no lançamento. A migração `20261014001200_discord.sql` cria a tabela `discord_vinculos` (só o bot a acessa).
-Para usar a mesma conta no app, o membro cadastra o e-mail com `/agora email`.
+Para usar a mesma conta no app, o membro pede um código no Discord (`/agora app`, 8 caracteres, 15 min, uso único) e
+digita em **Entrar › Já usa a Ágora pelo Discord?**; a Edge Function `entrar-com-codigo` (tabela `codigos_login`, só o
+hash) troca o código por uma sessão da mesma conta. Não depende de e-mail. Opcionalmente, `/agora email` põe o e-mail
+pessoal na conta para entrar também por link mágico (exige SMTP próprio no Supabase).
 Eventos do Mutirão e votações da Assembleia viram eventos agendados do servidor do Discord (tabela `discord_eventos`,
 também só do bot).
 

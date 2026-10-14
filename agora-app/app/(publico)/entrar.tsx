@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { View } from 'react-native';
@@ -62,6 +63,10 @@ export default function Entrar() {
         <Texto variante="titulo">Bem-vinda, bem-vindo</Texto>
         <Texto cor="secundario">Entre com seu e-mail — sem senha para decorar — ou com sua conta Google.</Texto>
       </View>
+      <Card destaque="primaria" onPress={() => router.push('/entrar-discord')} rotulo="Já uso a Ágora pelo Discord: entrar com código">
+        <Texto variante="corpoForte">Já usa a Ágora pelo Discord?</Texto>
+        <Texto variante="legenda" cor="secundario">Entre com a mesma conta usando um código do bot (/agora app). Não precisa de e-mail.</Texto>
+      </Card>
       <CampoForm control={control} nome="email" rotulo="E-mail" placeholder="voce@exemplo.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" textContentType="emailAddress" testID="campo-email" />
       {usarSenha ? <CampoForm control={control} nome="senha" rotulo="Senha" secureTextEntry autoComplete="password" testID="campo-senha" /> : null}
       <Botao titulo={usarSenha ? 'Entrar' : 'Receber link de acesso'} icone={usarSenha ? 'log-in' : 'mail'} largura="total" carregando={carregando === 'link' || carregando === 'senha'} onPress={enviar} />

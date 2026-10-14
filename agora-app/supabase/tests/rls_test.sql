@@ -365,5 +365,19 @@ insert into public.rsvps (evento_id, profile_id, status, presente, checkin_em) v
 select pg_temp.verifica(not exists (select 1 from public.reputacao_eventos where referencia_id = 'e1000000-0000-4000-8000-000000000003'),
   'presença em sessão da Assembleia não vale pontos');
 
+-- ---------------------------------------------------------------- 17. login no app com código do Discord
+insert into public.codigos_login (codigo_hash, profile_id, expira_em) values
+  ('hash-valido', pg_temp.u(10), now() + interval '15 minutes'), ('hash-vencido', pg_temp.u(10), now() - interval '1 minute');
+select pg_temp.como(pg_temp.u(10));
+select pg_temp.deve_falhar($$select * from public.codigos_login$$, 'códigos de login são só do servidor');
+select pg_temp.deve_falhar($$select public.usar_codigo_login('hash-valido')$$, 'membro não consome códigos pela API');
+reset role;
+select pg_temp.como(null);
+select pg_temp.deve_falhar($$select public.usar_codigo_login('hash-valido')$$, 'anônimo não consome códigos pela API');
+reset role;
+select pg_temp.verifica(public.usar_codigo_login('hash-valido') = pg_temp.u(10), 'código válido leva à conta');
+select pg_temp.verifica(public.usar_codigo_login('hash-valido') is null, 'código só vale uma vez');
+select pg_temp.verifica(public.usar_codigo_login('hash-vencido') is null, 'código vencido não vale');
+
 do $$ begin raise notice '✔ Todos os testes de RLS e regras passaram'; end $$;
 rollback;

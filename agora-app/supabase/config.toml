@@ -53,3 +53,7 @@ policy = "per_worker"
 # Webhook do gateway de pagamento é chamado sem JWT do Supabase (autenticado pelo provedor)
 [functions.webhook-pagamento]
 verify_jwt = false
+
+# Login com código do Discord: chamado antes de a pessoa ter sessão
+[functions.entrar-com-codigo]
+verify_jwt = false
