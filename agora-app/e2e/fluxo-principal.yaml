@@ -51,7 +51,11 @@ name: Ágora — fluxo principal
 - inputText: "agora-membro-123"
 - hideKeyboard
 - takeScreenshot: 04-entrar
-- tapOn: "Entrar"
+# "Entrar" também é o título do cabeçalho: toca o botão, que fica abaixo do campo de senha
+- tapOn:
+    text: "Entrar"
+    below:
+      id: "campo-senha"
 - extendedWaitUntil:
     visible: "Trilhas em destaque"
     timeout: 60000
