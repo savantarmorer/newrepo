@@ -271,5 +271,26 @@ select pg_temp.verifica((select status from public.propostas where id = pg_temp.
 select pg_temp.verifica(exists (select 1 from public.decisoes where proposta_id = pg_temp.id('2', 4)), 'decisão registrada');
 select pg_temp.verifica((select status from public.propostas where id = pg_temp.id('2', 7)) = 'votacao', 'propostas on-chain não são apuradas off-chain');
 
+-- ---------------------------------------------------------------- 15. acervo (índice do Drive) e tabelas do bot
+insert into public.acervo_documentos (id, nome, titulo, tipo, mime, categoria, colecao, caminho, assunto, tamanho)
+values ('teste-rls-1', 'Tarô de Marselha.pdf', 'Tarô de Marselha', 'pdf', 'application/pdf', 'Tradições Místicas', 'Tarô', '{Tarô}', 'Artes Divinatórias', 1000),
+       ('teste-rls-2', 'Liber_AL.pdf', 'Liber AL', 'pdf', 'application/pdf', 'Tradições Místicas', 'Thelema', '{Thelema}', 'Thelema e Crowley', 2000);
+select pg_temp.como(pg_temp.u(2));
+select pg_temp.verifica(pg_temp.conta($$select * from public.buscar_acervo('taro')$$) = 1, 'acervo: busca sem acento acha "Tarô"');
+select pg_temp.verifica(pg_temp.conta($$select * from public.buscar_acervo('liber a')$$) = 1, 'acervo: busca por trecho do título');
+select pg_temp.verifica(pg_temp.conta($$select * from public.buscar_acervo(null, 'Tradições Místicas', 'Thelema')$$) = 1, 'acervo: filtro por categoria e coleção');
+select pg_temp.verifica(pg_temp.conta($$select * from public.acervo_resumo() where nome = 'Tarô'$$) = 1, 'acervo: resumo por coleção');
+select pg_temp.deve_falhar($$insert into public.acervo_documentos (id, nome, titulo, tipo, mime, categoria) values ('x', 'x', 'x', 'pdf', 'x', 'x')$$,
+  'acervo: membro não escreve no índice');
+select pg_temp.deve_falhar($$select * from public.discord_vinculos$$, 'vínculos do Discord são só do bot');
+select pg_temp.deve_falhar($$select * from public.discord_eventos$$, 'eventos do Discord são só do bot');
+reset role;
+select pg_temp.como(pg_temp.u(19));
+select pg_temp.verifica(pg_temp.conta($$select * from public.buscar_acervo('taro')$$) = 0, 'acervo: inativos não leem');
+reset role;
+select pg_temp.como(null);
+select pg_temp.deve_falhar($$select * from public.buscar_acervo('taro')$$, 'acervo: anônimo não busca');
+reset role;
+
 do $$ begin raise notice '✔ Todos os testes de RLS e regras passaram'; end $$;
 rollback;

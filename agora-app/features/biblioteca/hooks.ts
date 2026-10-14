@@ -19,6 +19,8 @@ export const chavesBiblioteca = {
   curadas: ['biblioteca', 'trilhas-curadas'] as const,
   salvos: ['biblioteca', 'salvos'] as const,
   salvo: (tipo: string, id: string) => ['biblioteca', 'salvo', tipo, id] as const,
+  acervo: (filtro: object) => ['biblioteca', 'acervo', filtro] as const,
+  acervoResumo: ['biblioteca', 'acervo-resumo'] as const,
 };
 
 export const useTemas = () => useQuery({ queryKey: chavesBiblioteca.temas, queryFn: s.listarTemas, staleTime: 10 * 60_000 });
@@ -88,3 +90,14 @@ export function useInvalidarBiblioteca() {
   const qc = useQueryClient();
   return () => qc.invalidateQueries({ queryKey: ['biblioteca'] });
 }
+
+export function useAcervo(filtro: s.FiltroAcervo) {
+  return useInfiniteQuery({
+    queryKey: chavesBiblioteca.acervo(filtro),
+    queryFn: ({ pageParam }) => s.buscarAcervo(filtro, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (ultima, todas) => (ultima.length < s.TAMANHO_PAGINA_ACERVO ? undefined : todas.length),
+  });
+}
+
+export const useResumoAcervo = () => useQuery({ queryKey: chavesBiblioteca.acervoResumo, queryFn: s.resumoAcervo, staleTime: 60 * 60_000 });

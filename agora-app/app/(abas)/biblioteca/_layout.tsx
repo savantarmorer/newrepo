@@ -6,6 +6,7 @@ export default function BibliotecaLayout() {
       tituloInicial="Biblioteca"
       telas={[
         { nome: 'temas', titulo: 'Temas' },
+        { nome: 'acervo', titulo: 'Acervo' },
         { nome: 'tema/[slug]', titulo: 'Tema' },
         { nome: 'topico/[id]', titulo: 'Tópico' },
         { nome: 'topico/novo', titulo: 'Novo tópico', modal: true },

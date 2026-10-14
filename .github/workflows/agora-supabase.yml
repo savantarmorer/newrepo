@@ -18,6 +18,10 @@ on:
         description: 'Publicar também as Edge Functions'
         type: boolean
         default: true
+      acervo:
+        description: 'Carregar o acervo da biblioteca do site (índice dos documentos do Drive)'
+        type: boolean
+        default: true
 
 concurrency:
   group: agora-supabase
@@ -71,6 +75,15 @@ jobs:
       - name: Publicar Edge Functions
         if: inputs.funcoes
         run: supabase functions deploy --project-ref "$PROJECT_REF"
+
+      - name: Carregar o acervo da biblioteca
+        if: inputs.acervo
+        env:
+          GOOGLE_DRIVE_API_KEY: ${{ secrets.GOOGLE_DRIVE_API_KEY }}
+        run: |
+          CHAVE="$(supabase projects api-keys --project-ref "$PROJECT_REF" -o json | jq -r '.[] | select(.name == "service_role") | .api_key' | head -n1)"
+          echo "::add-mask::$CHAVE"
+          AGORA_SUPABASE_URL="https://$PROJECT_REF.supabase.co" AGORA_SUPABASE_SERVICE_KEY="$CHAVE" node scripts/sincronizar-acervo.mjs
 
       - name: Próximos passos
         run: |

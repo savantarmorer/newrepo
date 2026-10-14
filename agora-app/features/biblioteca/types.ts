@@ -109,3 +109,33 @@ export const ROTULO_STATUS_ARTIGO: Record<StatusArtigo, string> = {
 };
 
 export const ROTULO_DIFICULDADE: Record<number, string> = { 1: 'Introdutória', 2: 'Intermediária', 3: 'Avançada' };
+
+// ------------------------------------------------------------------ acervo (documentos do Drive)
+export type TipoDocumento = 'pdf' | 'documento' | 'apresentacao' | 'planilha' | 'livro' | 'imagem' | 'audio' | 'video' | 'outro';
+
+export interface DocumentoAcervo {
+  id: string;
+  titulo: string;
+  tipo: TipoDocumento;
+  categoria: string;
+  colecao: string | null;
+  assunto: string | null;
+  caminho: string[];
+  tamanho: number | null;
+  modificado_em: string | null;
+}
+
+export interface ResumoAcervo {
+  grupo: 'colecao' | 'assunto';
+  categoria: string | null;
+  nome: string;
+  total: number;
+}
+
+export const ROTULO_TIPO_DOCUMENTO: Record<TipoDocumento, string> = {
+  pdf: 'PDF', documento: 'Documento', apresentacao: 'Apresentação', planilha: 'Planilha', livro: 'Livro digital',
+  imagem: 'Imagem', audio: 'Áudio', video: 'Vídeo', outro: 'Arquivo',
+};
+
+/** Abre o arquivo no visualizador do Google Drive */
+export const linkDocumento = (id: string) => `https://drive.google.com/file/d/${id}/view`;

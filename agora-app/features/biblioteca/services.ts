@@ -1,6 +1,6 @@
 import { dados, dadosOuNulo, meuId, rpc, supabase } from '@/lib/supabase';
 import { anexarPerfis, paginar, perfisPorIds, TAMANHO_PAGINA, type Pagina } from '../comum';
-import type { Artigo, Autoria, ItemTrilha, Resposta, Revisao, Tema, Topico, Trilha } from './types';
+import type { Artigo, Autoria, DocumentoAcervo, ItemTrilha, Resposta, ResumoAcervo, Revisao, Tema, Topico, Trilha } from './types';
 
 // ------------------------------------------------------------------ temas
 export async function listarTemas(): Promise<Tema[]> {
@@ -258,4 +258,29 @@ export async function alternarSalvo(tipo: TipoSalvo, itemId: string, salvar: boo
   const eu = await meuId();
   if (salvar) await dados(supabase.from('salvos').upsert({ profile_id: eu, tipo, item_id: itemId }));
   else await dados(supabase.from('salvos').delete().eq('profile_id', eu).eq('tipo', tipo).eq('item_id', itemId));
+}
+
+// ------------------------------------------------------------------ acervo
+export const TAMANHO_PAGINA_ACERVO = 30;
+
+export interface FiltroAcervo {
+  termo?: string;
+  categoria?: string | null;
+  colecao?: string | null;
+  assunto?: string | null;
+}
+
+export async function buscarAcervo(f: FiltroAcervo, pagina: number): Promise<DocumentoAcervo[]> {
+  return rpc<DocumentoAcervo[]>('buscar_acervo', {
+    p_termo: f.termo?.trim() || null,
+    p_categoria: f.categoria ?? null,
+    p_colecao: f.colecao ?? null,
+    p_assunto: f.assunto ?? null,
+    p_limite: TAMANHO_PAGINA_ACERVO,
+    p_deslocamento: pagina * TAMANHO_PAGINA_ACERVO,
+  });
+}
+
+export async function resumoAcervo(): Promise<ResumoAcervo[]> {
+  return rpc<ResumoAcervo[]>('acervo_resumo');
 }

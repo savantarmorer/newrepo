@@ -33,6 +33,7 @@ export default function BibliotecaInicio() {
     <Tela aoAtualizar={atualizar} atualizando={atualizando}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: espaco.sm }}>
         <Botao titulo="Temas" icone="grid" variante="secundario" compacto onPress={() => router.push('/biblioteca/temas')} />
+        <Botao titulo="Acervo" icone="archive" variante="secundario" compacto onPress={() => router.push('/biblioteca/acervo')} />
         {podeNivel(perfil, 2) ? <Botao titulo="Novo tópico" icone="edit-3" variante="secundario" compacto onPress={() => router.push('/biblioteca/topico/novo')} /> : null}
         {podeNivel(perfil, 2) ? <Botao titulo="Meus artigos" icone="file-text" variante="secundario" compacto onPress={() => router.push('/biblioteca/meus-artigos')} /> : null}
         {podeNivel(perfil, 3) ? <Botao titulo="Fila de revisão" icone="check-square" variante="secundario" compacto onPress={() => router.push('/biblioteca/revisao')} /> : null}

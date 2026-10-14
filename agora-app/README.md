@@ -17,6 +17,7 @@ de contribuição verificável), **transparência total do dinheiro** e **privac
 ## Sumário
 
 1. [**Usar no celular (APK pronto, servidor, iPhone)**](#usar-no-celular)
+   · [Prévia pelo Discord](#prévia-pelo-discord) · [Acervo da biblioteca do site](#acervo-da-biblioteca-do-site)
 2. [Stack e estrutura](#stack-e-estrutura)
 3. [Requisitos](#requisitos)
 4. [Rodar localmente](#rodar-localmente)
@@ -97,10 +98,31 @@ gera um build de distribuição interna (instalação por link nos aparelhos reg
 ## Prévia pelo Discord
 
 Antes do lançamento, a comunidade usa a Ágora pelo bot do Discord (repositório `savantarmorer/discord`, comandos
-`/agora`, `/dracmas`, `/biblioteca`, `/mutirao`, `/assembleia`). O bot age como cada membro **neste mesmo banco**
+`/menu` — painel com botões e tutorial —, `/agora`, `/dracmas`, `/biblioteca`, `/mutirao`, `/assembleia`). O bot age como cada membro **neste mesmo banco**
 — mesmas regras de nível e RLS —, então reputação, artigos, votos, horas e créditos de Dracma da prévia já estão
 aqui no lançamento. A migração `20261014001200_discord.sql` cria a tabela `discord_vinculos` (só o bot a acessa).
 Para usar a mesma conta no app, o membro cadastra o e-mail com `/agora email`.
+Eventos do Mutirão e votações da Assembleia viram eventos agendados do servidor do Discord (tabela `discord_eventos`,
+também só do bot).
+
+## Acervo da biblioteca do site
+
+A página [iuripiragibe.net/biblioteca](https://iuripiragibe.net/biblioteca) lista os documentos de três pastas públicas
+do Google Drive (Tradições Místicas, Biblioteca Esotérica e Sociedades Secretas). A Ágora guarda o **índice** desses
+arquivos na tabela `acervo_documentos` — título limpo, tipo, categoria, coleção (subpasta), assunto detectado por
+palavras-chave, tamanho — e os arquivos continuam no Drive. Aparece em **Biblioteca › Acervo** no app e em
+`/biblioteca acervo` (ou `/menu › Acervo`) no bot, com busca pelo título e filtros por categoria, coleção e assunto.
+
+- **Carregar/atualizar**: GitHub Actions › **Ágora — acervo** › *Run workflow* (roda sozinho todo domingo e também ao
+  publicar o backend). Usa os secrets `SUPABASE_ACCESS_TOKEN` e `SUPABASE_PROJECT_REF`; a chave de serviço é obtida
+  na hora pela CLI. A chave da API do Google é a mesma, pública, da página do site (ou o secret `GOOGLE_DRIVE_API_KEY`).
+- **Localmente**: `ACERVO_SAIDA=acervo.json node scripts/sincronizar-acervo.mjs` só gera o índice num arquivo, para
+  conferir; com `AGORA_SUPABASE_URL` e `AGORA_SUPABASE_SERVICE_KEY` grava no banco.
+- **O que fica de fora**: cópias repetidas (mesmo nome e tamanho), programas, código, atalhos, fotos sem nome
+  (`IMG_1234`), a pasta `[backups]` e as cópias de computadores pessoais (`COMPUTADOR_*`). Ajuste com
+  `ACERVO_IGNORAR_PASTAS` (nomes separados por `|`, `*` como curinga).
+- Quem lê: membros ativos (mesma regra do resto da Biblioteca). Arquivos que saem do Drive saem do índice na
+  sincronização seguinte.
 
 ## Stack e estrutura
 

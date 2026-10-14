@@ -1,0 +1,91 @@
+# Ágora — sincroniza o acervo da biblioteca do site (pastas do Google Drive) com o banco.
+# Os arquivos continuam no Drive; o banco guarda só o índice para o app e o bot buscarem.
+#
+# Roda sozinho todo domingo e também manualmente em Actions › "Ágora — acervo" › Run workflow.
+# Usa os mesmos secrets do workflow "Ágora — backend Supabase":
+#   SUPABASE_ACCESS_TOKEN  (sbp_…) e SUPABASE_PROJECT_REF
+# A chave service_role é obtida na hora pela CLI do Supabase (não precisa cadastrar).
+# Opcional: GOOGLE_DRIVE_API_KEY (sem ele, usa a mesma chave pública da página /biblioteca).
+name: Ágora — acervo
+
+on:
+  workflow_dispatch:
+    inputs:
+      ignorar_pastas:
+        description: 'Pastas a pular, separadas por | ("*" é curinga). Vazio = padrão: [backups]|COMPUTADOR_*'
+        type: string
+        default: ''
+  schedule:
+    - cron: '17 6 * * 0'
+
+concurrency:
+  group: agora-acervo
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      GOOGLE_DRIVE_API_KEY: ${{ secrets.GOOGLE_DRIVE_API_KEY }}
+      ACERVO_IGNORAR_PASTAS: ${{ inputs.ignorar_pastas }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            agora-app/scripts
+            biblioteca.html
+          sparse-checkout-cone-mode: false
+
+      - name: Conferir secrets
+        id: secrets
+        run: |
+          TOKEN="$(printf '%s' "$SUPABASE_ACCESS_TOKEN" | tr -d '[:space:]')"
+          REF="$(printf '%s' "$PROJECT_REF" | tr -d '[:space:]')"
+          if [ -z "$TOKEN" ] || [ -z "$REF" ]; then
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              echo "::notice::Backend da Ágora ainda não configurado (SUPABASE_ACCESS_TOKEN / SUPABASE_PROJECT_REF); nada a fazer."
+              echo "pular=1" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+            echo "::error::Defina os secrets SUPABASE_ACCESS_TOKEN e SUPABASE_PROJECT_REF (os mesmos do workflow do backend)."; exit 1
+          fi
+          case "$TOKEN" in sbp_*) ;; *) echo "::error::SUPABASE_ACCESS_TOKEN precisa ser um token pessoal sbp_…"; exit 1 ;; esac
+          echo "::add-mask::$TOKEN"
+          echo "SUPABASE_ACCESS_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "PROJECT_REF=$REF" >> "$GITHUB_ENV"
+
+      - uses: supabase/setup-cli@v1
+        if: steps.secrets.outputs.pular != '1'
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        if: steps.secrets.outputs.pular != '1'
+        with:
+          node-version: 22
+
+      - name: Obter chave de serviço
+        if: steps.secrets.outputs.pular != '1'
+        run: |
+          CHAVE="$(supabase projects api-keys --project-ref "$PROJECT_REF" -o json | jq -r '.[] | select(.name == "service_role") | .api_key' | head -n1)"
+          if [ -z "$CHAVE" ] || [ "$CHAVE" = "null" ]; then
+            echo "::error::Não consegui obter a chave service_role do projeto $PROJECT_REF."; exit 1
+          fi
+          echo "::add-mask::$CHAVE"
+          echo "AGORA_SUPABASE_SERVICE_KEY=$CHAVE" >> "$GITHUB_ENV"
+          echo "AGORA_SUPABASE_URL=https://$PROJECT_REF.supabase.co" >> "$GITHUB_ENV"
+
+      - name: Sincronizar
+        if: steps.secrets.outputs.pular != '1'
+        run: node agora-app/scripts/sincronizar-acervo.mjs | tee resultado.txt
+
+      - name: Resumo
+        if: steps.secrets.outputs.pular != '1'
+        run: |
+          echo "### Acervo sincronizado" >> "$GITHUB_STEP_SUMMARY"
+          sed 's/\r/\n/g' resultado.txt | grep -v "enviados" >> "$GITHUB_STEP_SUMMARY"
