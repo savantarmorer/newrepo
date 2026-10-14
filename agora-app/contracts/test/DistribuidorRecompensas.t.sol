@@ -71,7 +71,9 @@ contract DistribuidorRecompensasTest is BaseTest {
     function test_tetoPorCarteira() public {
         uint256[4] memory v = [uint256(2_001e18), 1e18, 1e18, 1e18];
         bytes32[][] memory provas = _publicar(1, contas, v);
-        vm.expectRevert(abi.encodeWithSelector(DistribuidorRecompensas.AcimaDoTetoPorCarteira.selector, 2_001e18, 2_000e18));
+        vm.expectRevert(
+            abi.encodeWithSelector(DistribuidorRecompensas.AcimaDoTetoPorCarteira.selector, 2_001e18, 2_000e18)
+        );
         d.distribuidor.resgatar(1, alice, v[0], provas[0]);
     }
 
@@ -200,7 +202,12 @@ contract DistribuidorRecompensasTest is BaseTest {
     }
 
     function testFuzz_resgateRespeitaFolha(uint96 v0, uint96 v1, uint96 v2, uint96 v3, uint256 tentativa) public {
-        uint256[4] memory v = [uint256(v0) % 2_000e18 + 1, uint256(v1) % 2_000e18 + 1, uint256(v2) % 2_000e18 + 1, uint256(v3) % 2_000e18 + 1];
+        uint256[4] memory v = [
+            uint256(v0) % 2_000e18 + 1,
+            uint256(v1) % 2_000e18 + 1,
+            uint256(v2) % 2_000e18 + 1,
+            uint256(v3) % 2_000e18 + 1
+        ];
         bytes32[][] memory provas = _publicar(1, contas, v);
         uint256 i = tentativa % 4;
         uint256 errado = v[i] + 1 + (tentativa % 1e18);

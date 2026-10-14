@@ -27,7 +27,9 @@ contract DeployMainnet is Script, Implantacao {
             revert ConfirmacaoAusente();
         }
         if (bytes(vm.envOr("AUDITORIA_URL", string(""))).length == 0) revert ChecklistIncompleto("auditoria externa");
-        if (bytes(vm.envOr("PARECER_JURIDICO_URL", string(""))).length == 0) revert ChecklistIncompleto("revisao juridica");
+        if (bytes(vm.envOr("PARECER_JURIDICO_URL", string(""))).length == 0) {
+            revert ChecklistIncompleto("revisao juridica");
+        }
         if (vm.envOr("TESTNET_SEMANAS", uint256(0)) < 4) revert ChecklistIncompleto("4 semanas de testnet");
 
         uint256 chave = vm.envUint("PRIVATE_KEY");

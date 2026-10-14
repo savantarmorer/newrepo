@@ -77,22 +77,29 @@ contract SeedTestnet is Script {
 
         // proposta 1: liberar 5.000 DRC do Fundo do Mutirão (proponente: conta 3, 210 DRC)
         alvos[0] = e.fundo;
-        dados[0] = abi.encodeCall(FundoMutirao.liberar, (IERC20(e.token), contas[2], 5_000e18, "projeto:biblioteca-bixiga"));
+        dados[0] =
+            abi.encodeCall(FundoMutirao.liberar, (IERC20(e.token), contas[2], 5_000e18, "projeto:biblioteca-bixiga"));
         vm.startBroadcast(vm.deriveKey(MNEMONICO, 3));
-        uint256 id1 = e.gov.propose(
-            alvos, valores, dados,
-            unicode"[agora:20000000-0000-4000-8000-000000000007] Liberar 5.000 DRC do Fundo do Mutirão para a Biblioteca do Bixiga"
-        );
+        uint256 id1 = e.gov
+            .propose(
+                alvos,
+                valores,
+                dados,
+                unicode"[agora:20000000-0000-4000-8000-000000000007] Liberar 5.000 DRC do Fundo do Mutirão para a Biblioteca do Bixiga"
+            );
         vm.stopBroadcast();
 
         // proposta 2: reafirmar as contas excluídas do quórum (proponente: conta 5, 150 DRC)
         alvos[0] = address(e.gov);
         dados[0] = abi.encodeCall(AgoraGovernor.definirExcluidosDoQuorum, (e.gov.excluidosDoQuorum()));
         vm.startBroadcast(vm.deriveKey(MNEMONICO, 5));
-        uint256 id2 = e.gov.propose(
-            alvos, valores, dados,
-            unicode"[agora:20000000-0000-4000-8000-000000000008] Excluir a tesouraria e os cofres de vesting do cálculo de quórum"
-        );
+        uint256 id2 = e.gov
+            .propose(
+                alvos,
+                valores,
+                dados,
+                unicode"[agora:20000000-0000-4000-8000-000000000008] Excluir a tesouraria e os cofres de vesting do cálculo de quórum"
+            );
         vm.stopBroadcast();
 
         console2.log("Proposta 1:", id1);

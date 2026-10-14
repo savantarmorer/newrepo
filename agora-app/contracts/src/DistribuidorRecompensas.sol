@@ -152,7 +152,9 @@ contract DistribuidorRecompensas is AccessControl, Pausable {
         uint256[] calldata valores,
         bytes32[][] calldata provas
     ) external {
-        if (epocas_.length != valores.length || epocas_.length != provas.length) revert ParametrosInconsistentes();
+        if (epocas_.length != valores.length || epocas_.length != provas.length) {
+            revert ParametrosInconsistentes();
+        }
         for (uint256 i = 0; i < epocas_.length; i++) {
             resgatar(epocas_[i], conta, valores[i], provas[i]);
         }

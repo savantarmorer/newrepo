@@ -35,7 +35,8 @@ contract AgoraGovernorTest is BaseTest {
         alvos[0] = address(d.fundo);
         valores = new uint256[](1);
         dados = new bytes[](1);
-        dados[0] = abi.encodeCall(FundoMutirao.liberar, (IERC20(address(d.token)), destino, valor, "projeto:biblioteca"));
+        dados[0] =
+            abi.encodeCall(FundoMutirao.liberar, (IERC20(address(d.token)), destino, valor, "projeto:biblioteca"));
         descricao = "[agora:20000000-0000-4000-8000-000000000007] Liberar DRC do Fundo do Mutirao";
     }
 

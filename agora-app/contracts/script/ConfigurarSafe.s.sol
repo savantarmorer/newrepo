@@ -47,7 +47,8 @@ contract ConfigurarSafe is Script {
             ISafe.setup, (donos, limiar, address(0), "", FALLBACK_HANDLER, address(0), 0, payable(address(0)))
         );
         vm.startBroadcast(vm.envUint("PRIVATE_KEY"));
-        safe = ISafeProxyFactory(FACTORY).createProxyWithNonce(SAFE_L2_SINGLETON, init, vm.envOr("SAFE_SALT", uint256(0)));
+        safe =
+            ISafeProxyFactory(FACTORY).createProxyWithNonce(SAFE_L2_SINGLETON, init, vm.envOr("SAFE_SALT", uint256(0)));
         vm.stopBroadcast();
 
         require(ISafe(safe).getThreshold() == 3, "limiar incorreto");

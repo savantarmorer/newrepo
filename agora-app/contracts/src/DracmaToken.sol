@@ -34,13 +34,11 @@ contract DracmaToken is ERC20, ERC20Permit, ERC20Votes, ERC20Capped, AccessContr
     /// @param timelock TimelockController da DAO (emissor e administrador de emissores)
     /// @param distribuidor DistribuidorRecompensas (emissor por épocas)
     /// @param alocacoes alocações iniciais (tesouraria, vesting dos fundadores, fundo do Mutirão)
-    constructor(
-        uint256 cap_,
-        address multisig,
-        address timelock,
-        address distribuidor,
-        Alocacao[] memory alocacoes
-    ) ERC20("Dracma", "DRC") ERC20Permit("Dracma") ERC20Capped(cap_) {
+    constructor(uint256 cap_, address multisig, address timelock, address distribuidor, Alocacao[] memory alocacoes)
+        ERC20("Dracma", "DRC")
+        ERC20Permit("Dracma")
+        ERC20Capped(cap_)
+    {
         if (multisig == address(0) || timelock == address(0) || distribuidor == address(0)) revert EnderecoInvalido();
 
         _setRoleAdmin(MINTER_ROLE, MINTER_ADMIN_ROLE);

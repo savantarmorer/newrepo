@@ -45,7 +45,9 @@ contract DracmaTokenTest is BaseTest {
 
     function test_somenteEmissorCunha() public {
         vm.expectRevert(
-            abi.encodeWithSelector(IAccessControl.AccessControlUnauthorizedAccount.selector, alice, d.token.MINTER_ROLE())
+            abi.encodeWithSelector(
+                IAccessControl.AccessControlUnauthorizedAccount.selector, alice, d.token.MINTER_ROLE()
+            )
         );
         vm.prank(alice);
         d.token.mint(alice, 1);
