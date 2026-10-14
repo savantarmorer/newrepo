@@ -4,6 +4,7 @@
 #   AGORA_SUPABASE_URL, AGORA_SUPABASE_ANON_KEY  → servidor embutido no APK (sem elas o app pede o servidor na 1ª abertura)
 #   AGORA_THIRDWEB_CLIENT_ID                     → carteira embutida
 #   EAS_PROJECT_ID                               → notificações push (Expo)
+#   AGORA_LOGIN_SENHA=false                      → desliga o login por senha (use num projeto real)
 name: Ágora — app Android
 
 on:
@@ -45,7 +46,8 @@ jobs:
       EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.AGORA_SUPABASE_ANON_KEY }}
       EXPO_PUBLIC_THIRDWEB_CLIENT_ID: ${{ vars.AGORA_THIRDWEB_CLIENT_ID }}
       EXPO_PUBLIC_REDE: base-sepolia
-      EXPO_PUBLIC_LOGIN_SENHA: 'true'
+      # Login por senha (contas de teste do seed). Crie a variável AGORA_LOGIN_SENHA=false para desligar
+      EXPO_PUBLIC_LOGIN_SENHA: ${{ vars.AGORA_LOGIN_SENHA || 'true' }}
       EAS_PROJECT_ID: ${{ vars.EAS_PROJECT_ID }}
       # APK de teste: aceita http:// para falar com Supabase local na rede/emulador
       AGORA_PERMITIR_HTTP: '1'
