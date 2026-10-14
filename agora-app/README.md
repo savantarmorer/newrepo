@@ -45,7 +45,7 @@ Todo push que mexe em `agora-app/` roda o workflow **“Ágora — app Android�
    As capturas de cada tela ficam no artefato `agora-e2e-capturas`;
 3. aprovado no teste, o APK é publicado na release **`agora-android`** do repositório.
 
-**Para instalar:** no celular, abra *Releases › Ágora — APK Android (teste)* no GitHub, baixe o `.apk` e permita
+**Para instalar** (Android 8.0 ou superior): no celular, abra *Releases › Ágora — APK Android (teste)* no GitHub, baixe o `.apk` e permita
 “instalar apps de fontes desconhecidas”. (Também dá para baixar o artefato `agora-apk` da execução do workflow.)
 
 ### Conectar o app a um servidor
