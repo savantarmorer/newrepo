@@ -1,34 +1,82 @@
 {
   "expo": {
-    "name": "agora-app",
-    "slug": "agora-app",
+    "name": "Ágora",
+    "slug": "agora",
+    "scheme": "agora",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "description": "Comunidade brasileira de troca de conhecimento horizontal e ações comunitárias.",
+    "primaryColor": "#A9452B",
+    "backgroundColor": "#F5EFE3",
     "ios": {
-      "supportsTablet": true
+      "bundleIdentifier": "br.comunidade.agora",
+      "supportsTablet": true,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "A câmera é usada para ler o QR Code de check-in em eventos e fotografar comprovantes do caixa.",
+        "NSPhotoLibraryUsageDescription": "Usamos suas fotos para avatar, capas e comprovantes que você escolher.",
+        "NSCalendarsUsageDescription": "Para adicionar eventos da Ágora ao seu calendário.",
+        "NSCalendarsFullAccessUsageDescription": "Para adicionar eventos da Ágora ao seu calendário."
+      }
     },
     "android": {
+      "package": "br.comunidade.agora",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F5EFE3",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
+      "permissions": ["CAMERA", "READ_CALENDAR", "WRITE_CALENDAR", "POST_NOTIFICATIONS"],
+      "blockedPermissions": ["android.permission.RECORD_AUDIO", "com.google.android.gms.permission.AD_ID"],
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-splash-screen",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "imageWidth": 160,
+          "resizeMode": "contain",
+          "backgroundColor": "#F5EFE3",
+          "dark": { "image": "./assets/icon.png", "backgroundColor": "#1C1A18" }
+        }
+      ],
       "expo-secure-store",
       "expo-image",
       "expo-web-browser",
-      "expo-sharing"
-    ]
+      "expo-sharing",
+      [
+        "expo-notifications",
+        { "color": "#A9452B", "defaultChannel": "padrao" }
+      ],
+      [
+        "expo-camera",
+        { "cameraPermission": "A câmera é usada para ler o QR Code de check-in em eventos e fotografar comprovantes do caixa.", "recordAudioAndroid": false }
+      ],
+      [
+        "expo-image-picker",
+        { "photosPermission": "Usamos suas fotos para avatar, capas e comprovantes que você escolher.", "cameraPermission": "Para fotografar comprovantes do caixa." }
+      ],
+      [
+        "expo-calendar",
+        { "calendarPermission": "Para adicionar eventos da Ágora ao seu calendário." }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false,
+      "tsconfigPaths": true
+    },
+    "extra": {
+      "eas": { "projectId": "00000000-0000-0000-0000-000000000000" }
+    }
   }
 }
