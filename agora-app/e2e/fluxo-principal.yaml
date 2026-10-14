@@ -4,6 +4,12 @@
 appId: br.comunidade.agora
 name: Ágora — fluxo principal
 ---
+# O emulador do CI às vezes mostra "Pixel Launcher isn't responding": fecha o aviso se aparecer
+- runFlow:
+    when:
+      visible: ".*isn't responding.*"
+    commands:
+      - tapOn: "Wait"
 - launchApp:
     clearState: true
 - waitForAnimationToEnd:
@@ -13,7 +19,7 @@ name: Ágora — fluxo principal
 - extendedWaitUntil:
     visible: "Conecte o app ao servidor.*"
     timeout: 30000
-  optional: true
+    optional: true
 
 # Conexão ao servidor pelo link de convite (mesmo formato do QR Code do painel admin)
 - openLink: "agora://servidor?url=${URL_SERVIDOR}&chave=${CHAVE}"
@@ -25,7 +31,7 @@ name: Ágora — fluxo principal
     element: "Testar e conectar"
     direction: DOWN
     timeout: 10000
-  optional: true
+    optional: true
 - tapOn: "Testar e conectar"
 - extendedWaitUntil:
     visible: "Uma praça para pensar junto"

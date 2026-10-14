@@ -9,6 +9,22 @@ APK="${APK:-$(ls ../dist/*.apk | head -1)}"
 adb install -r -g "$APK"
 adb logcat -c || true
 (adb logcat -v brief '*:W' ReactNativeJS:V ReactNative:V > saida/logcat.txt 2>&1 &) || true
+
+# Emulador recém-ligado fica lento: espera assentar e fecha diálogos de sistema
+sleep 20
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS || true
+
+# Fumaça: o app abre e continua vivo? (independente do Maestro)
+set +x
+adb shell monkey -p br.comunidade.agora -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1 || true
+sleep 25
+echo "::group::Fumaça — app aberto há 25 s"
+if adb shell pidof br.comunidade.agora; then echo "APP RODANDO"; else echo "APP NÃO ESTÁ RODANDO (crash na abertura)"; fi
+adb shell dumpsys activity activities | grep -E "topResumedActivity" || true
+grep -E "AndroidRuntime|FATAL|ReactNativeJS|ReactNative" saida/logcat.txt | tail -80 || true
+echo "::endgroup::"
+adb shell am force-stop br.comunidade.agora || true
+set -x
 cd saida
 set +e
 "$HOME/.maestro/bin/maestro" test \
