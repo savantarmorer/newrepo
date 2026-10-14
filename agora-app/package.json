@@ -85,5 +85,12 @@
     "build:ios": "eas build -p ios --profile preview",
     "postinstall": "patch-package"
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "@coinbase/wallet-mobile-sdk"
+      ]
+    }
+  }
 }
