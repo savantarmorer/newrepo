@@ -21,7 +21,7 @@ sleep 25
 echo "::group::Fumaça — app aberto há 25 s"
 if adb shell pidof br.comunidade.agora; then echo "APP RODANDO"; else echo "APP NÃO ESTÁ RODANDO (crash na abertura)"; fi
 adb shell dumpsys activity activities | grep -E "topResumedActivity" || true
-grep -E "AndroidRuntime|FATAL|ReactNativeJS|ReactNative" saida/logcat.txt | tail -80 || true
+grep -E -A6 "FATAL EXCEPTION|ReactNativeJS.*(Error|TypeError)" saida/logcat.txt | head -40 || true
 echo "::endgroup::"
 adb shell am force-stop br.comunidade.agora || true
 set -x
@@ -45,7 +45,9 @@ if [ "$STATUS" -ne 0 ]; then
     | grep -oE '"(text|accessibilityText|resource-id|hintText)" *: *"[^"]+"' | sort -u | head -120 || true
   echo "::endgroup::"
   echo "::group::Diagnóstico — logcat (erros e JS)"
-  grep -E "ReactNativeJS|ReactNative|AndroidRuntime|FATAL|Exception|agora" logcat.txt | tail -200 || true
+  # mensagens de erro primeiro (sem as linhas "at ..." da pilha), depois o começo de cada pilha
+  grep -E "ReactNativeJS|ReactNative|AndroidRuntime|FATAL|Exception|agora" logcat.txt | grep -vE "^\S+\s*\(\s*[0-9]+\):\s+at " | tail -80 || true
+  grep -E -A6 "FATAL EXCEPTION|ReactNativeJS.*(Error|TypeError)" logcat.txt | head -60 || true
   echo "::endgroup::"
 fi
 exit $STATUS

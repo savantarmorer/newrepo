@@ -21,18 +21,33 @@ export const formatarDataHora = (iso?: string | null) => (iso ? dataHora.format(
 export const formatarEvento = (iso?: string | null) => (iso ? diaSemana.format(new Date(iso)) : '—');
 export const formatarMes = (iso: string) => mesAno.format(new Date(iso + (iso.length === 10 ? 'T12:00:00' : '')));
 
-/** "há 3 dias", "em 2 horas" */
+/** "há 3 dias", "em 2 horas", "ontem".
+ *  Sem Intl.RelativeTimeFormat: o Hermes (motor JS do app no Android/iOS) não o implementa. */
+const UNIDADES = {
+  minuto: ['minuto', 'minutos'],
+  hora: ['hora', 'horas'],
+  dia: ['dia', 'dias'],
+  mes: ['mês', 'meses'],
+  ano: ['ano', 'anos'],
+} as const;
+
 export function tempoRelativo(iso?: string | null): string {
   if (!iso) return '';
   const diff = new Date(iso).getTime() - Date.now();
+  if (Number.isNaN(diff)) return '';
   const abs = Math.abs(diff);
-  const rtf = new Intl.RelativeTimeFormat(LOCALE, { numeric: 'auto' });
   const min = 60_000, hora = 60 * min, dia = 24 * hora;
-  if (abs < hora) return rtf.format(Math.round(diff / min), 'minute');
-  if (abs < dia) return rtf.format(Math.round(diff / hora), 'hour');
-  if (abs < 30 * dia) return rtf.format(Math.round(diff / dia), 'day');
-  if (abs < 365 * dia) return rtf.format(Math.round(diff / (30 * dia)), 'month');
-  return rtf.format(Math.round(diff / (365 * dia)), 'year');
+  if (abs < min) return 'agora';
+  let n: number;
+  let unidade: keyof typeof UNIDADES;
+  if (abs < hora) [n, unidade] = [Math.round(abs / min), 'minuto'];
+  else if (abs < dia) [n, unidade] = [Math.round(abs / hora), 'hora'];
+  else if (abs < 30 * dia) [n, unidade] = [Math.round(abs / dia), 'dia'];
+  else if (abs < 365 * dia) [n, unidade] = [Math.round(abs / (30 * dia)), 'mes'];
+  else [n, unidade] = [Math.round(abs / (365 * dia)), 'ano'];
+  if (unidade === 'dia' && n === 1) return diff < 0 ? 'ontem' : 'amanhã';
+  const texto = `${n} ${UNIDADES[unidade][n === 1 ? 0 : 1]}`;
+  return diff < 0 ? `há ${texto}` : `em ${texto}`;
 }
 
 /** Contagem regressiva legível: "4d 03h", "5h 12min", "encerrado" */
