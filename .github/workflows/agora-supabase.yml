@@ -43,6 +43,20 @@ jobs:
           for v in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD PROJECT_REF; do
             if [ -z "${!v}" ]; then echo "::error::Defina o secret ${v/PROJECT_REF/SUPABASE_PROJECT_REF} no repositório."; exit 1; fi
           done
+          # Espaços ou quebras de linha coladas junto com o valor quebram a CLI: remove
+          TOKEN="$(printf '%s' "$SUPABASE_ACCESS_TOKEN" | tr -d '[:space:]')"
+          REF="$(printf '%s' "$PROJECT_REF" | tr -d '[:space:]')"
+          echo "::add-mask::$TOKEN"
+          case "$TOKEN" in
+            sbp_*) ;;
+            eyJ*) echo "::error::SUPABASE_ACCESS_TOKEN contém uma chave de API do projeto (anon/service_role, começa com eyJ). Use um token pessoal: supabase.com/dashboard/account/tokens › Generate new token (começa com sbp_)."; exit 1 ;;
+            *) echo "::error::SUPABASE_ACCESS_TOKEN precisa ser um token pessoal que começa com sbp_ (supabase.com/dashboard/account/tokens › Generate new token)."; exit 1 ;;
+          esac
+          case "$REF" in
+            *supabase.co*|http*) echo "::error::SUPABASE_PROJECT_REF deve ser só o identificador (ex.: abcdefghijklmnopqrst), não a URL inteira."; exit 1 ;;
+          esac
+          echo "SUPABASE_ACCESS_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+          echo "PROJECT_REF=$REF" >> "$GITHUB_ENV"
 
       - uses: supabase/setup-cli@v1
         with:
