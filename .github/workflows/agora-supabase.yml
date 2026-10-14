@@ -1,0 +1,66 @@
+# Ágora — publica o backend (migrações, seed opcional e Edge Functions) num projeto Supabase.
+# Rodar manualmente em Actions › "Ágora — backend Supabase" › Run workflow.
+#
+# Secrets necessários (Settings › Secrets and variables › Actions › Secrets):
+#   SUPABASE_ACCESS_TOKEN  → supabase.com/dashboard/account/tokens
+#   SUPABASE_PROJECT_REF   → o "ref" do projeto (o "xyz" de https://xyz.supabase.co)
+#   SUPABASE_DB_PASSWORD   → senha do banco definida ao criar o projeto
+name: Ágora — backend Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Popular com os dados de demonstração (contas @agora.test). Só em projeto novo/de teste!'
+        type: boolean
+        default: false
+      funcoes:
+        description: 'Publicar também as Edge Functions'
+        type: boolean
+        default: true
+
+concurrency:
+  group: agora-supabase
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: agora-app
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir secrets
+        run: |
+          for v in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD PROJECT_REF; do
+            if [ -z "${!v}" ]; then echo "::error::Defina o secret ${v/PROJECT_REF/SUPABASE_PROJECT_REF} no repositório."; exit 1; fi
+          done
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Vincular projeto
+        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+
+      - name: Aplicar migrações
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD" ${{ inputs.seed && '--include-seed' || '' }}
+
+      - name: Publicar Edge Functions
+        if: inputs.funcoes
+        run: supabase functions deploy --project-ref "$PROJECT_REF"
+
+      - name: Próximos passos
+        run: |
+          echo "### Backend publicado" >> "$GITHUB_STEP_SUMMARY"
+          echo "URL: https://${PROJECT_REF}.supabase.co" >> "$GITHUB_STEP_SUMMARY"
+          echo "Copie a chave **anon** em Project Settings › API e cole no app (tela Servidor) ou na variável AGORA_SUPABASE_ANON_KEY." >> "$GITHUB_STEP_SUMMARY"
+          echo "Segredos das funções (gateway Pix, push, chave do backend on-chain): \`supabase secrets set --env-file supabase/functions/.env\`." >> "$GITHUB_STEP_SUMMARY"

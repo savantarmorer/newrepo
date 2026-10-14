@@ -16,20 +16,83 @@ de contribuição verificável), **transparência total do dinheiro** e **privac
 
 ## Sumário
 
-1. [Stack e estrutura](#stack-e-estrutura)
-2. [Requisitos](#requisitos)
-3. [Rodar localmente](#rodar-localmente)
-4. [Criar o projeto no Supabase (produção/homologação)](#criar-o-projeto-no-supabase)
-5. [Variáveis de ambiente](#variáveis-de-ambiente)
-6. [Builds com EAS (Android e iOS)](#builds-com-eas)
-7. [Blockchain: deploy em testnet, paymaster e carteira embutida](#blockchain)
-8. [Credenciais de teste](#credenciais-de-teste)
-9. [Testes e verificações](#testes-e-verificações)
-10. [Papéis, níveis e permissões](#papéis-níveis-e-permissões)
-11. [Modelo de dados (Mermaid)](#modelo-de-dados)
-12. [Suposições e pendências](#suposições-e-pendências)
+1. [**Usar no celular (APK pronto, servidor, iPhone)**](#usar-no-celular)
+2. [Stack e estrutura](#stack-e-estrutura)
+3. [Requisitos](#requisitos)
+4. [Rodar localmente](#rodar-localmente)
+5. [Criar o projeto no Supabase (produção/homologação)](#criar-o-projeto-no-supabase)
+6. [Variáveis de ambiente](#variáveis-de-ambiente)
+7. [Builds com EAS (Android e iOS)](#builds-com-eas)
+8. [Blockchain: deploy em testnet, paymaster e carteira embutida](#blockchain)
+9. [Credenciais de teste](#credenciais-de-teste)
+10. [Testes e verificações](#testes-e-verificações)
+11. [Papéis, níveis e permissões](#papéis-níveis-e-permissões)
+12. [Modelo de dados (Mermaid)](#modelo-de-dados)
+13. [Suposições e pendências](#suposições-e-pendências)
 
 ---
+
+## Usar no celular
+
+### Android — instalar o APK pronto
+
+Todo push que mexe em `agora-app/` roda o workflow **“Ágora — app Android”** (`.github/workflows/agora-android.yml`):
+
+1. `expo prebuild` + Gradle geram um **APK release** (arm64, armv7 e x86_64), assinado com chave de teste;
+2. o APK é instalado num **emulador Android 14** e testado de ponta a ponta com [Maestro](https://maestro.mobile.dev)
+   (`e2e/fluxo-principal.yaml`) contra um **Supabase real** subido no CI com todas as migrações e o seed:
+   conexão por link de convite → boas-vindas → login → Biblioteca → artigo → Mutirão → projeto → Assembleia → proposta → Perfil.
+   As capturas de cada tela ficam no artefato `agora-e2e-capturas`;
+3. aprovado no teste, o APK é publicado na release **`agora-android`** do repositório.
+
+**Para instalar:** no celular, abra *Releases › Ágora — APK Android (teste)* no GitHub, baixe o `.apk` e permita
+“instalar apps de fontes desconhecidas”. (Também dá para baixar o artefato `agora-apk` da execução do workflow.)
+
+### Conectar o app a um servidor
+
+O app não depende de rebuild para saber onde está o backend. Na primeira abertura ele mostra a tela **Servidor**:
+
+- **QR Code de convite** — quem é admin abre *Perfil › Administração › Convidar para este servidor* e mostra o QR;
+  o novo membro toca em “Ler QR Code de convite”. O link equivalente é `agora://servidor?url=…&chave=…`;
+- **manual** — cole a *Project URL* e a chave **anon** (Supabase › Project Settings › API). Nunca a `service_role`.
+
+O app testa a conexão (chama `estatisticas_publicas`) antes de salvar. Dá para trocar depois em
+*Perfil › Configurações › Servidor da comunidade*; cada servidor guarda a própria sessão.
+
+Para embutir um servidor padrão no APK (ninguém precisa configurar nada), crie as **variáveis** do repositório
+(*Settings › Secrets and variables › Actions › Variables*, todas públicas): `AGORA_SUPABASE_URL`,
+`AGORA_SUPABASE_ANON_KEY` e, opcionalmente, `AGORA_THIRDWEB_CLIENT_ID` e `EAS_PROJECT_ID` (push).
+
+### Subir o backend sem instalar nada
+
+1. Crie um projeto em [supabase.com](https://supabase.com) (região São Paulo) e anote a senha do banco;
+2. no GitHub, crie os **secrets** `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF` e `SUPABASE_DB_PASSWORD`;
+3. rode *Actions › “Ágora — backend Supabase” › Run workflow* (marque **seed** só num projeto de teste para ter as
+   contas `@agora.test`). O workflow aplica as migrações e publica as Edge Functions;
+4. em *Authentication › URL Configuration* adicione `agora://auth/callback` às Redirect URLs (link mágico e Google);
+5. no app, conecte com a URL e a chave anon do projeto — ou gere o QR de convite depois de entrar como admin.
+
+> O workflow manual (`workflow_dispatch`) aparece em Actions quando o arquivo está na branch padrão (`main`).
+> Antes do merge, use a CLI: `supabase link --project-ref <ref> && supabase db push && supabase functions deploy`.
+
+### Desenvolvimento no próprio celular (Expo Go ou dev build)
+
+```bash
+supabase start                 # Supabase local no computador
+npx expo start                 # escaneie o QR com o Expo Go (mesma rede Wi-Fi)
+```
+
+Em modo desenvolvimento o app usa automaticamente o Supabase local **pelo IP do computador que serve o Metro**
+(`http://<ip-da-rede>:54321`, chave anon padrão do `supabase start`) — sem editar `.env`. O Expo Go roda tudo
+menos a carteira embutida; para ela, gere um dev build (`eas build --profile development -p android` ou
+`npx expo run:android`, que exige Android SDK).
+
+### iPhone
+
+iOS exige assinatura da Apple: com uma conta Apple Developer, `npx eas-cli@latest build -p ios --profile preview`
+gera um build de distribuição interna (instalação por link nos aparelhos registrados) e
+`--profile production` + `eas submit -p ios` envia ao TestFlight. Sem conta paga, use o **Expo Go** no iPhone com
+`npx expo start`. A tela Servidor, o QR de convite e o restante do app funcionam igual no iOS.
 
 ## Stack e estrutura
 
@@ -90,7 +153,7 @@ cp .env.example .env              # cole a "anon key" mostrada pelo `supabase st
 npx expo start                    # abra no Expo Go (Android/iOS) ou pressione w para a web
 ```
 
-> Em celular físico, troque `127.0.0.1` em `EXPO_PUBLIC_SUPABASE_URL` pelo IP da sua máquina na rede local.
+> Sem `.env`, em desenvolvimento o app já aponta para o Supabase local pelo IP do computador (veja [Usar no celular](#usar-no-celular)).
 
 O **Expo Go** roda tudo exceto a carteira embutida (módulos nativos de criptografia). Para a carteira, gere um
 *development build*: `eas build --profile development -p android` (ou `npx expo run:android`). Na versão web,
@@ -152,7 +215,7 @@ denúncias e doações — limites em `configuracoes.limites`), o que vale tamb�
 
 | Variável | Exemplo | Uso |
 |---|---|---|
-| `EXPO_PUBLIC_SUPABASE_URL` | `https://xyz.supabase.co` | URL do projeto |
+| `EXPO_PUBLIC_SUPABASE_URL` | `https://xyz.supabase.co` | servidor padrão embutido (opcional: o app pede na 1ª abertura) |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | `eyJ…` | chave anônima (RLS protege os dados) |
 | `EXPO_PUBLIC_THIRDWEB_CLIENT_ID` | `abc123…` | carteira embutida + paymaster |
 | `EXPO_PUBLIC_REDE` | `base-sepolia` | `base-sepolia` · `base` · `polygon-amoy` · `polygon` |
@@ -167,7 +230,8 @@ e as credenciais do gateway, `EXPO_ACCESS_TOKEN` (opcional), `AGORA_RPC_URL` e `
 
 ```bash
 npx eas-cli@latest login
-npx eas-cli@latest init                       # grava o projectId em app.json (extra.eas.projectId)
+npx eas-cli@latest init                       # cria o projeto e mostra o projectId
+npx eas-cli@latest env:create --name EAS_PROJECT_ID --value <project-id> --environment preview   # lido pelo app.config.ts
 npx eas-cli@latest env:create --name EXPO_PUBLIC_SUPABASE_URL --value https://<ref>.supabase.co --environment preview
 npx eas-cli@latest env:create --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value <anon> --environment preview
 npx eas-cli@latest env:create --name EXPO_PUBLIC_THIRDWEB_CLIENT_ID --value <client-id> --environment preview
@@ -181,7 +245,8 @@ npx eas-cli@latest submit -p ios --latest                  # App Store Connect /
 
 Para push em builds: configure as credenciais FCM (Android) e APNs (iOS) com `eas credentials`.
 Perfis em `eas.json`: `development` (dev client), `preview` (distribuição interna, login por senha ligado),
-`production` (login por senha desligado).
+`production` (login por senha desligado). `app.config.ts` libera HTTP sem TLS (Supabase local na rede) só em
+`development`/`preview`; a produção exige HTTPS. Sem `EAS_PROJECT_ID` o app funciona normalmente, só sem push.
 
 ## Blockchain
 
