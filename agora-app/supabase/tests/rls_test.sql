@@ -113,6 +113,15 @@ select pg_temp.como(pg_temp.u(2)); -- Colaborador
 insert into public.topicos (tema_id, autor_id, titulo, corpo_md)
   select id, pg_temp.u(2), 'Tópico de colaborador', 'Corpo do tópico' from public.temas where slug = 'filosofia';
 select pg_temp.verifica(true, 'Colaborador (nível 2) cria tópico');
+do $$
+declare v_id uuid;
+begin
+  -- INSERT ... RETURNING: o rascunho precisa ser visível a quem o criou (autoria entra por gatilho AFTER)
+  insert into public.artigos (tema_id, criado_por, titulo, corpo_md)
+    select id, auth.uid(), 'Rascunho de colaborador', 'Texto do rascunho' from public.temas where slug = 'filosofia'
+    returning id into v_id;
+  perform pg_temp.verifica(v_id is not null, 'Colaborador cria rascunho de artigo e o vê no retorno');
+end $$;
 select pg_temp.deve_falhar($$insert into public.projetos (titulo, causa, coordenador_id) values ('Projeto sem nível', 'Teste', auth.uid())$$,
   'Colaborador não cria projeto (exige Guardião)');
 select pg_temp.deve_falhar($$insert into public.revisoes (artigo_id, revisor_id, rodada, parecer, comentario) values ('d0000000-0000-4000-8000-000000000010', auth.uid(), 1, 'aprovar', 'quero revisar')$$,

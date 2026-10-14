@@ -94,6 +94,14 @@ gera um build de distribuição interna (instalação por link nos aparelhos reg
 `--profile production` + `eas submit -p ios` envia ao TestFlight. Sem conta paga, use o **Expo Go** no iPhone com
 `npx expo start`. A tela Servidor, o QR de convite e o restante do app funcionam igual no iOS.
 
+## Prévia pelo Discord
+
+Antes do lançamento, a comunidade usa a Ágora pelo bot do Discord (repositório `savantarmorer/discord`, comandos
+`/agora`, `/dracmas`, `/biblioteca`, `/mutirao`, `/assembleia`). O bot age como cada membro **neste mesmo banco**
+— mesmas regras de nível e RLS —, então reputação, artigos, votos, horas e créditos de Dracma da prévia já estão
+aqui no lançamento. A migração `20261014001200_discord.sql` cria a tabela `discord_vinculos` (só o bot a acessa).
+Para usar a mesma conta no app, o membro cadastra o e-mail com `/agora email`.
+
 ## Stack e estrutura
 
 - **App**: React Native 0.86 + **Expo SDK 57**, TypeScript estrito, **Expo Router** (rotas por arquivo),
