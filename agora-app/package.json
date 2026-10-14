@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "patch-package": "^8.0.1",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -81,7 +82,8 @@
     "cobertura:contratos": "cd contracts && forge coverage --no-match-coverage '(script|test)'",
     "functions:check": "cd supabase/functions && deno check */index.ts",
     "build:android": "eas build -p android --profile preview",
-    "build:ios": "eas build -p ios --profile preview"
+    "build:ios": "eas build -p ios --profile preview",
+    "postinstall": "patch-package"
   },
   "private": true
 }
