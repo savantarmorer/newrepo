@@ -9,13 +9,23 @@ name: Ágora — fluxo principal
 - waitForAnimationToEnd:
     timeout: 15000
 - takeScreenshot: 01-abertura
+# APK sem servidor embutido abre direto na tela de conexão (opcional: com servidor embutido abre as boas-vindas)
+- extendedWaitUntil:
+    visible: "Conecte o app ao servidor.*"
+    timeout: 30000
+  optional: true
 
 # Conexão ao servidor pelo link de convite (mesmo formato do QR Code do painel admin)
 - openLink: "agora://servidor?url=${URL_SERVIDOR}&chave=${CHAVE}"
 - extendedWaitUntil:
-    visible: "Testar e conectar"
+    visible: ".*Você abriu um convite.*"
     timeout: 30000
 - takeScreenshot: 02-convite-servidor
+- scrollUntilVisible:
+    element: "Testar e conectar"
+    direction: DOWN
+    timeout: 10000
+  optional: true
 - tapOn: "Testar e conectar"
 - extendedWaitUntil:
     visible: "Uma praça para pensar junto"

@@ -12,15 +12,22 @@ on:
       - 'agora-app/**'
       - '!agora-app/contracts/**'
       - '!agora-app/**/*.md'
+      - '!agora-app/e2e/**'
       - '.github/workflows/agora-android.yml'
   workflow_dispatch:
+    inputs:
+      apk_run_id:
+        description: 'Só testar: ID de uma execução anterior cujo APK será reaproveitado (vazio = compilar de novo)'
+        type: string
+        default: ''
 
 concurrency:
-  group: agora-android-${{ github.ref }}
+  group: agora-android-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
   contents: write
+  actions: read
 
 defaults:
   run:
@@ -29,6 +36,7 @@ defaults:
 jobs:
   apk:
     name: Gerar APK
+    if: ${{ !inputs.apk_run_id }}
     runs-on: ubuntu-latest
     timeout-minutes: 75
     env:
@@ -86,6 +94,7 @@ jobs:
   e2e:
     name: Testar no emulador (Supabase local + Maestro)
     needs: apk
+    if: ${{ !cancelled() && (needs.apk.result == 'success' || inputs.apk_run_id) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -95,6 +104,8 @@ jobs:
         with:
           name: agora-apk
           path: agora-app/dist
+          run-id: ${{ inputs.apk_run_id || github.run_id }}
+          github-token: ${{ github.token }}
 
       - uses: supabase/setup-cli@v1
         with:
