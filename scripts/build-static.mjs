@@ -5,7 +5,8 @@ const root = process.cwd();
 const output = join(root, 'dist');
 const blockedTopLevel = new Set([
   '.git', '.github', '.cursor', '.superdesign', 'node_modules', 'supabase',
-  'scripts', 'tests', 'test-results', 'playwright-report', 'dist'
+  'scripts', 'tests', 'test-results', 'playwright-report', 'dist',
+  'agora-app' // app móvel Ágora: código-fonte, não faz parte do site
 ]);
 const blockedSegments = new Set(['supabase', 'scripts']);
 const blockedFiles = new Set([

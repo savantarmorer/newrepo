@@ -43,7 +43,7 @@ Todo push que mexe em `agora-app/` roda o workflow **“Ágora — app Android�
    (`e2e/fluxo-principal.yaml`) contra um **Supabase real** subido no CI com todas as migrações e o seed:
    conexão por link de convite → boas-vindas → login → Biblioteca → artigo → Mutirão → projeto → Assembleia → proposta → Perfil.
    As capturas de cada tela ficam no artefato `agora-e2e-capturas`;
-3. aprovado no teste, o APK é publicado na release **`agora-android`** do repositório.
+3. o APK é publicado na release **`agora-android`** do repositório (o resultado do teste aparece no job do emulador).
 
 **Para instalar** (Android 8.0 ou superior): no celular, abra *Releases › Ágora — APK Android (teste)* no GitHub, baixe o `.apk` e permita
 “instalar apps de fontes desconhecidas”. (Também dá para baixar o artefato `agora-apk` da execução do workflow.)

@@ -152,8 +152,8 @@ jobs:
 
   publicar:
     name: Publicar APK para download
-    needs: [apk, e2e]
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # Publica assim que o APK compila; o resultado do teste no emulador aparece no próprio workflow
+    needs: apk
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
@@ -172,7 +172,7 @@ jobs:
             --target "$GITHUB_SHA" \
             --prerelease \
             --title "Ágora — APK Android (teste)" \
-            --notes "APK gerado do commit ${GITHUB_SHA::7} (branch ${GITHUB_REF_NAME}) e aprovado no teste de ponta a ponta no emulador.
+            --notes "APK gerado do commit ${GITHUB_SHA::7} (branch ${GITHUB_REF_NAME}). Resultado do teste no emulador: veja o job \"Testar no emulador\" do workflow.
 
           **Instalar:** abra este link no celular Android, baixe o .apk e permita instalar de fontes desconhecidas.
           Na primeira abertura o app pede o servidor da comunidade (QR Code de convite ou endereço + chave pública do Supabase), a menos que o build tenha um servidor embutido.
