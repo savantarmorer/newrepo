@@ -23,6 +23,7 @@ export const ROTULOS_ACAO_REPUTACAO: Record<string, string> = {
   hora_voluntariado: 'Horas de voluntariado confirmadas',
   presenca_evento: 'Presença confirmada em evento',
   presenca_evento_estorno: 'Presença desfeita',
+  aula_ministrada: 'Aula bem avaliada pelos participantes',
   projeto_concluido: 'Projeto concluído',
   proposta_aprovada: 'Proposta aprovada',
   conteudo_removido: 'Conteúdo removido pela moderação',
@@ -33,6 +34,7 @@ export const ROTULOS_ACAO_REPUTACAO: Record<string, string> = {
 export const TIPOS_NOTIFICACAO: { tipo: string; rotulo: string; descricao: string }[] = [
   { tipo: 'resposta_topico', rotulo: 'Respostas', descricao: 'Alguém respondeu a um tópico ou comentário seu' },
   { tipo: 'artigo_revisado', rotulo: 'Revisões', descricao: 'Seu artigo recebeu um parecer' },
+  { tipo: 'aula_avaliada', rotulo: 'Aulas', descricao: 'Resultado da avaliação de uma aula que você deu' },
   { tipo: 'artigo_publicado', rotulo: 'Publicações', descricao: 'Seu artigo foi publicado' },
   { tipo: 'tarefa_atribuida', rotulo: 'Tarefas', descricao: 'Uma tarefa foi atribuída a você' },
   { tipo: 'horas_confirmadas', rotulo: 'Horas', descricao: 'Suas horas de voluntariado foram analisadas' },

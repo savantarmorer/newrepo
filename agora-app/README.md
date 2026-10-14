@@ -105,6 +105,14 @@ Para usar a mesma conta no app, o membro cadastra o e-mail com `/agora email`.
 Eventos do Mutirão e votações da Assembleia viram eventos agendados do servidor do Discord (tabela `discord_eventos`,
 também só do bot).
 
+**Aulas pela call** (migração `20261014001600_aulas_e_presenca_voz.sql`): eventos ganham `tipo` (`mutirao`, `aula`,
+`assembleia`, `encontro`) e `canal_voz_id`. O bot soma os minutos de cada pessoa na call (`presencas_voz`),
+`confirmar_presenca_voz()` marca presença de quem ficou pelo menos metade (até 30 min), quem participou avalia a aula
+por 48 h (`avaliacoes_evento`, anônimo) e `fechar_avaliacoes_aulas()` (pg_cron, de hora em hora) credita
+`aula_ministrada` (+20, ×1,5 com média 4,5+) a quem ensinou, se houver 3+ avaliações de contas com 7+ dias e média 3,5+.
+Aulas: nível 2+; debates ao vivo da Assembleia: nível 3+, e presença neles **não vale pontos**. Regras em
+`configuracoes.aulas`.
+
 ## Acervo da biblioteca do site
 
 A página [iuripiragibe.net/biblioteca](https://iuripiragibe.net/biblioteca) lista os documentos de três pastas públicas

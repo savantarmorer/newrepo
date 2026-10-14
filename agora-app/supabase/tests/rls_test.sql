@@ -292,5 +292,78 @@ select pg_temp.como(null);
 select pg_temp.deve_falhar($$select * from public.buscar_acervo('taro')$$, 'acervo: anônimo não busca');
 reset role;
 
+-- ---------------------------------------------------------------- 16. aulas por voz: presença pela call, avaliação e reputação
+select pg_temp.como(pg_temp.u(15)); -- Aprendiz
+select pg_temp.deve_falhar($$insert into public.eventos (titulo, tipo, criado_por, inicio, fim)
+  values ('Aula de aprendiz', 'aula', auth.uid(), now() + interval '1 day', now() + interval '1 day 1 hour')$$, 'aulas: nível 1 não marca aula');
+reset role;
+select pg_temp.como(pg_temp.u(2)); -- Colaborador dá a aula
+insert into public.eventos (id, titulo, tipo, criado_por, inicio, fim, canal_voz_id)
+values ('e1000000-0000-4000-8000-000000000001', 'Introdução ao hermetismo', 'aula', auth.uid(), now() - interval '70 minutes', now() - interval '5 minutes', '1514437822407381133');
+select pg_temp.verifica(pg_temp.conta($$select * from public.eventos where id = 'e1000000-0000-4000-8000-000000000001'$$) = 1, 'aulas: nível 2 marca aula com canal de voz');
+select pg_temp.deve_falhar($$insert into public.eventos (titulo, tipo, criado_por, inicio, fim) values ('Maratona', 'aula', auth.uid(), now() + interval '1 day', now() + interval '1 day 6 hours')$$,
+  'aulas: duração máxima de 4 horas');
+select pg_temp.deve_falhar($$update public.eventos set avaliacao_media = 5 where id = 'e1000000-0000-4000-8000-000000000001'$$, 'aulas: professor não mexe no resultado');
+select pg_temp.deve_falhar($$insert into public.eventos (titulo, tipo, criado_por, proposta_id, inicio, fim) values ('Sessão', 'assembleia', auth.uid(), '20000000-0000-4000-8000-000000000005', now() + interval '1 day', now() + interval '1 day 1 hour')$$,
+  'sessão da Assembleia exige nível 3');
+reset role;
+-- o bot (service_role) somou os minutos na call
+insert into public.discord_vinculos (discord_id, profile_id, email_tecnico) values
+  ('800000000000000002', pg_temp.u(2), 'd2@x'), ('800000000000000010', pg_temp.u(10), 'd10@x'), ('800000000000000011', pg_temp.u(11), 'd11@x'),
+  ('800000000000000012', pg_temp.u(12), 'd12@x'), ('800000000000000013', pg_temp.u(13), 'd13@x');
+select public.somar_minutos_voz('e1000000-0000-4000-8000-000000000001', array['800000000000000002', '800000000000000010', '800000000000000011', '800000000000000012', '800000000000000099'], 40);
+select public.somar_minutos_voz('e1000000-0000-4000-8000-000000000001', array['800000000000000013'], 5);
+select pg_temp.verifica(public.minutos_minimos_presenca('e1000000-0000-4000-8000-000000000001') = 30, 'presença mínima: metade da duração, até 30 min');
+select pg_temp.verifica(public.confirmar_presenca_voz('e1000000-0000-4000-8000-000000000001') = 3, 'presença pela call: 3 alunos (sem o professor, sem quem ficou 5 min, sem conta não ligada)');
+select pg_temp.verifica(public.confirmar_presenca_voz('e1000000-0000-4000-8000-000000000001') = 0, 'presença pela call não duplica');
+select pg_temp.verifica((select count(*) from public.reputacao_eventos where acao = 'presenca_evento' and referencia_id = 'e1000000-0000-4000-8000-000000000001') = 3,
+  'alunos presentes ganham pontos de presença');
+select pg_temp.como(pg_temp.u(10));
+select pg_temp.deve_falhar($$select * from public.presencas_voz$$, 'minutos na call são só do bot');
+insert into public.avaliacoes_evento (evento_id, profile_id, nota, comentario) values ('e1000000-0000-4000-8000-000000000001', auth.uid(), 5, 'Muito clara!');
+select pg_temp.verifica(pg_temp.conta('select * from public.avaliacoes_evento') = 1, 'aluno presente avalia e vê só a própria nota');
+reset role;
+select pg_temp.como(pg_temp.u(11));
+insert into public.avaliacoes_evento (evento_id, profile_id, nota) values ('e1000000-0000-4000-8000-000000000001', auth.uid(), 5);
+reset role;
+select pg_temp.como(pg_temp.u(12));
+insert into public.avaliacoes_evento (evento_id, profile_id, nota) values ('e1000000-0000-4000-8000-000000000001', auth.uid(), 4);
+select pg_temp.verifica((select comentarios is null and total = 3 from public.resumo_avaliacoes('e1000000-0000-4000-8000-000000000001')), 'resumo: membros veem total e média, não os comentários');
+reset role;
+select pg_temp.como(pg_temp.u(13));
+select pg_temp.deve_falhar($$insert into public.avaliacoes_evento (evento_id, profile_id, nota) values ('e1000000-0000-4000-8000-000000000001', auth.uid(), 1)$$,
+  'quem ficou pouco na call não avalia');
+reset role;
+select pg_temp.como(pg_temp.u(2));
+select pg_temp.deve_falhar($$insert into public.avaliacoes_evento (evento_id, profile_id, nota) values ('e1000000-0000-4000-8000-000000000001', auth.uid(), 5)$$,
+  'professor não avalia a própria aula');
+select pg_temp.verifica((select comentarios = array['Muito clara!'] and media = 4.67 from public.resumo_avaliacoes('e1000000-0000-4000-8000-000000000001')),
+  'professor vê os comentários, sem autoria');
+reset role;
+select pg_temp.verifica(public.fechar_avaliacoes_aulas() = 0, 'avaliação só fecha depois da janela de 48 h');
+update public.eventos set inicio = now() - interval '51 hours', fim = now() - interval '50 hours' where id = 'e1000000-0000-4000-8000-000000000001';
+update public.profiles set created_at = now() - interval '60 days' where id in (pg_temp.u(10), pg_temp.u(11));
+update public.profiles set created_at = now() where id = pg_temp.u(12);
+select pg_temp.verifica(public.fechar_avaliacoes_aulas() = 1, 'janela fechada é processada');
+select pg_temp.verifica(not exists (select 1 from public.reputacao_eventos where acao = 'aula_ministrada' and referencia_id = 'e1000000-0000-4000-8000-000000000001'),
+  'contas com menos de 7 dias não contam: 2 avaliações válidas < 3, sem pontos');
+select pg_temp.verifica((select avaliacao_total = 3 and avaliacao_media = 4.67 from public.eventos where id = 'e1000000-0000-4000-8000-000000000001'), 'resultado registrado no evento');
+select pg_temp.verifica(exists (select 1 from public.notificacoes where chave_unica = 'aula-avaliada:e1000000-0000-4000-8000-000000000001'), 'professor é notificado do resultado');
+-- segunda aula, com 3 avaliações válidas e média excelente
+insert into public.eventos (id, titulo, tipo, criado_por, inicio, fim) values
+  ('e1000000-0000-4000-8000-000000000002', 'Tarô: os arcanos maiores', 'aula', pg_temp.u(2), now() - interval '51 hours', now() - interval '50 hours');
+update public.profiles set created_at = now() - interval '60 days' where id = pg_temp.u(12);
+insert into public.avaliacoes_evento (evento_id, profile_id, nota) values
+  ('e1000000-0000-4000-8000-000000000002', pg_temp.u(10), 5), ('e1000000-0000-4000-8000-000000000002', pg_temp.u(11), 5), ('e1000000-0000-4000-8000-000000000002', pg_temp.u(12), 4);
+select public.fechar_avaliacoes_aulas();
+select pg_temp.verifica((select pontos from public.reputacao_eventos where acao = 'aula_ministrada' and referencia_id = 'e1000000-0000-4000-8000-000000000002') = 30,
+  'aula bem avaliada: 20 pontos ×1,5 (média ≥ 4,5) para o professor');
+-- sessão da Assembleia: presença registrada, sem pontos
+insert into public.eventos (id, titulo, tipo, criado_por, proposta_id, inicio, fim) values
+  ('e1000000-0000-4000-8000-000000000003', 'Debate ao vivo', 'assembleia', pg_temp.u(5), pg_temp.id('2', 5), now() - interval '2 hours', now() - interval '1 hour');
+insert into public.rsvps (evento_id, profile_id, status, presente, checkin_em) values ('e1000000-0000-4000-8000-000000000003', pg_temp.u(10), 'vou', true, now());
+select pg_temp.verifica(not exists (select 1 from public.reputacao_eventos where referencia_id = 'e1000000-0000-4000-8000-000000000003'),
+  'presença em sessão da Assembleia não vale pontos');
+
 do $$ begin raise notice '✔ Todos os testes de RLS e regras passaram'; end $$;
 rollback;
