@@ -207,7 +207,7 @@ jobs:
           fi
           # Só agora remove as versões anteriores (inclusive a antiga tag fixa agora-android)
           gh release list --repo "$GITHUB_REPOSITORY" --limit 100 --json tagName -q '.[].tagName' \
-            | grep -E '^agora-android(-[0-9a-f]+)?$' | grep -vx "$TAG" \
+            | { grep -E '^agora-android(-[0-9a-f]+)?$' || true; } | { grep -vx "$TAG" || true; } \
             | while read -r antiga; do gh release delete "$antiga" --repo "$GITHUB_REPOSITORY" --cleanup-tag --yes || true; done
           echo "### APK publicado" >> "$GITHUB_STEP_SUMMARY"
           echo "https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/agora.apk" >> "$GITHUB_STEP_SUMMARY"
