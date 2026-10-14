@@ -61,7 +61,7 @@ sequenceDiagram
   participant M as Membro (smart account)
   App->>App: evento de reputação (+pontos) → crédito DRC pendente (taxa configurável)
   App->>App: evento negativo (moderação) → reduz créditos pendentes
-  Cron->>App: preparar_epoca(): elegíveis = assinatura ativa + SBT; teto por carteira e por época
+  Cron->>App: preparar_epoca(): elegíveis = assinatura ativa + SBT, com teto por carteira e por época
   Cron->>Cron: árvore Merkle (StandardMerkleTree, folhas address+uint256)
   Cron->>App: grava provas (só o dono lê, por RLS)
   Cron->>Dist: publicarEpoca(n, raiz, total) — só após o fim da semana n
