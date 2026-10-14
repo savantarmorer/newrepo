@@ -135,7 +135,8 @@ function Navegacao() {
         <Stack.Screen name="busca" options={{ title: 'Buscar', presentation: 'modal' }} />
         <Stack.Screen name="notificacoes" options={{ title: 'Notificações', presentation: 'modal' }} />
         <Stack.Screen name="denunciar" options={{ title: 'Denunciar conteúdo', presentation: 'modal' }} />
-        <Stack.Screen name="servidor" options={{ title: 'Servidor', presentation: servidor ? 'modal' : 'card', headerShown: !!servidor }} />
+        {/* Opções fixas: mudar presentation/header de uma tela já montada derruba o react-native-screens no Android */}
+        <Stack.Screen name="servidor" options={{ headerShown: false }} />
       </Stack>
       <ToastHost />
     </>

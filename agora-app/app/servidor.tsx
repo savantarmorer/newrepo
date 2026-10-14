@@ -1,5 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { View } from 'react-native';
+import { Botao } from '@/components/Botao';
 import { Tela } from '@/components/Tela';
 import { Texto } from '@/components/Texto';
 import { FormServidor } from '@/features/servidor/FormServidor';
@@ -15,7 +16,10 @@ export default function TelaServidor() {
   const convite = servidorDoLink(params);
   const primeiraVez = !useServidor((s) => s.servidor);
   return (
-    <Tela teclado bordas={primeiraVez ? ['top', 'left', 'right'] : ['left', 'right']}>
+    <Tela teclado bordas={['top', 'left', 'right']}>
+      {!primeiraVez && router.canGoBack() ? (
+        <Botao titulo="Voltar" icone="arrow-left" variante="fantasma" compacto onPress={() => router.back()} />
+      ) : null}
       {primeiraVez ? (
         <View style={{ alignItems: 'center', gap: 6, marginTop: 24 }}>
           <Texto variante="display" cor="primaria" accessibilityRole="header">Ágora</Texto>
