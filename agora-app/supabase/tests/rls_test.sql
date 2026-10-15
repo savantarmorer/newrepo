@@ -379,5 +379,23 @@ select pg_temp.verifica(public.usar_codigo_login('hash-valido') = pg_temp.u(10),
 select pg_temp.verifica(public.usar_codigo_login('hash-valido') is null, 'código só vale uma vez');
 select pg_temp.verifica(public.usar_codigo_login('hash-vencido') is null, 'código vencido não vale');
 
+-- ---------------------------------------------------------------- 18. reconhecimento de contribuições anteriores
+select pg_temp.como(pg_temp.u(5)); -- Curador, não admin
+select pg_temp.deve_falhar($$select public.reconhecer_contribuicao('a0000000-0000-4000-8000-000000000016', 50, 'Ajudou muito no Discord')$$, 'só admin reconhece');
+reset role;
+select pg_temp.como(pg_temp.u(1)); -- admin
+select pg_temp.deve_falhar($$select public.reconhecer_contribuicao('a0000000-0000-4000-8000-000000000016', 50, 'curto')$$, 'reconhecimento exige motivo');
+select pg_temp.verifica(public.reconhecer_contribuicao(pg_temp.u(16), 60, 'Moderou o canal de estudos por um ano') = 60, 'admin reconhece contribuições');
+select pg_temp.deve_falhar($$select public.reconhecer_contribuicao('a0000000-0000-4000-8000-000000000016', 200, 'Mais contribuições antigas')$$, 'limite de 250 pontos reconhecidos por pessoa');
+select pg_temp.deve_falhar($$select public.reconhecer_contribuicao(auth.uid(), 10, 'Eu mesmo, por favor')$$, 'ninguém reconhece a si mesmo');
+reset role;
+select pg_temp.verifica((select nivel from public.profiles where id = pg_temp.u(16)) = 2, 'reconhecimento sobe o nível (Aprendiz → Colaborador)');
+select pg_temp.verifica(not exists (select 1 from public.drc_pendentes d join public.reputacao_eventos r on r.id = d.reputacao_evento_id
+                                     where r.profile_id = pg_temp.u(16) and r.acao = 'contribuicao_historica'), 'reconhecimento não gera Dracmas');
+select pg_temp.como(pg_temp.u(2));
+select pg_temp.verifica(pg_temp.conta('select * from public.reconhecimentos') >= 1, 'reconhecimentos são públicos para os membros');
+select pg_temp.deve_falhar($$insert into public.reconhecimentos (profile_id, pontos, motivo, admin_id) values (auth.uid(), 250, 'Eu me reconheço muito', auth.uid())$$, 'membro não grava reconhecimento direto');
+reset role;
+
 do $$ begin raise notice '✔ Todos os testes de RLS e regras passaram'; end $$;
 rollback;
